@@ -4396,7 +4396,7 @@ extern void TranslationSetup(void)
 }
 
 
-#if 0
+#ifndef LINUX
 #ifndef _MSC_VER
 void TranslatePoint(int *source, int *dest, int *matrix);
 #pragma aux TranslatePoint = \
@@ -4496,6 +4496,13 @@ void TranslatePoint(int *source, int *dest, int *matrix)
 }
 
 #endif
+#else /* LINUX */
+static void TranslatePoint(const float *source, float *dest, const float *matrix)
+{
+	dest[0] = matrix[ 0] * source[0] + matrix[ 1] * source[1] + matrix[ 2] * source[2] + matrix[ 3];
+	dest[1] = matrix[ 4] * source[0] + matrix[ 5] * source[1] + matrix[ 6] * source[2] + matrix[ 7];
+	dest[2] = matrix[ 8] * source[0] + matrix[ 9] * source[1] + matrix[10] * source[2] + matrix[11];
+}
 #endif
 
 void TranslatePointIntoViewspace(VECTORCH *pointPtr)

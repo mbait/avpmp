@@ -94,8 +94,6 @@ extern int FindHeatSourcesInHModel(DISPLAYBLOCK *dispPtr);
 
 extern void TranslationSetup(void);
 extern void TranslatePointIntoViewspace(VECTORCH *pointPtr);
-void TranslatePoint(float *source, float *dest, float *matrix);
-
 
 extern void CheckRenderStatesForModule(MODULE *modulePtr);
 

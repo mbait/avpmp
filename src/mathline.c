@@ -209,22 +209,22 @@ int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 		llgs:
 	}
 */
-#if 0
-int retval;
-/* TODO */
+#if 1
+	int retval;
+
 __asm__("movl	0(%%ebx), %%eax		\n\t"
 	"movl	4(%%ebx), %%edx		\n\t"
 	"subl	0(%%ecx), %%eax		\n\t"
 	"sbbl	4(%%ecx), %%edx		\n\t"
 	"xorl	%%ebx, %%ebx            \n\t"
 	"andl	%%edx, %%edx		\n\t"
-	"jne	0			\n\t" /* llnz */
+	"jne	0f			\n\t" /* llnz */
 	"andl	%%eax, %%eax		\n\t"
-	"je	1			\n"   /* llgs */
+	"je	1f			\n"   /* llgs */
 "0:					\n\t" /* llnz */
 	"movl	$1, %%ebx		\n\t"
 	"andl	%%edx, %%edx		\n\t"
-	"jge	1			\n\t" /* llgs */
+	"jge	1f			\n\t" /* llgs */
 	"negl	%%ebx			\n"
 "1:					\n\t" /* llgs */
 	: "=b" (retval)
@@ -628,10 +628,9 @@ __asm__ volatile
 #endif
 }
 
+#if 0 // SBF - converted to C in kshape.c 
 void TranslatePoint(float *source, float *dest, float *matrix)
 {
-//      fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
-
 /* TODO - implement the inline assembly here? */
 /* Moved it to a separate file because I can't figure out the damn syntax! */
 /* This is currently not inlined for testing */
@@ -640,3 +639,4 @@ __asm__("call   TranslatePoint_Asm      \n\t"
         : "S" (source), "b" (dest), "D" (matrix)
         );
 }
+#endif
