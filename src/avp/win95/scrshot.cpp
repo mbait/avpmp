@@ -8,11 +8,10 @@
 #include "gamedef.h"
 #include "ourasert.h"
 #include "frontend/avp_menus.h"
+
 extern "C"{
-// extern DDPIXELFORMAT DisplayPixelFormat;
  extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
  extern int VideoModeTypeScreen;
- extern long BackBufferPitch;
  extern unsigned char *ScreenBuffer;
  extern unsigned char TestPalette[];
  extern unsigned char KeyboardInput[];
@@ -94,12 +93,22 @@ void HandleScreenShot()
 
 	#endif
 }
-					 
+
+extern "C" {
+unsigned char *GetScreenShot24(int *width, int *height);
+};
+				 
 void ScreenShot()
 {
 	int i;
 	char Name[40];
-	strcpy(Name,"AVP");
+	
+	int width, height;
+	unsigned char *buf = GetScreenShot24(&width, &height);
+	if (buf == NULL)
+		return;
+	
+	strcpy(Name,"avp");
 	int length=strlen(Name);
 	strncpy(&Name[length],"00.bmp",8);
 	for(i=0;i<100;i++)
@@ -109,13 +118,12 @@ void ScreenShot()
 		FILE* tempfp=fopen(Name,"r");
 		if(!tempfp)break;
 		else
-		{
+ 		{
 			fclose(tempfp);
 		}
 	}
 	if(i==100) return;
 	
-
 	FILE * fp = fopen(Name,"wb");
 	if (!fp)
 	{
@@ -139,8 +147,8 @@ void ScreenShot()
 	h.Pm2Info.Size  = 0;
 
 	h.WinInfo.Size          = 40;
-	h.WinInfo.Width         = ScreenDescriptorBlock.SDB_Width;
-	h.WinInfo.Height        = ScreenDescriptorBlock.SDB_Height;
+	h.WinInfo.Width         = width;
+	h.WinInfo.Height        = height;
 	h.WinInfo.Planes        = 1;
 	h.WinInfo.BitCount      = 24;
 	h.WinInfo.Compression   = 0;
@@ -176,76 +184,26 @@ void ScreenShot()
     PutDword(h.WinInfo.ClrUsed, fp);
     PutDword(h.WinInfo.ClrImportant, fp);
 
-	
-	int red_shift,red_scale,green_shift,green_scale,blue_shift,blue_scale;
-	if(VideoModeTypeScreen==VideoModeType_15)
-	{
-		fprintf(stderr, "ScreenShot: VideoModeTypeScreen==VideoModeType_15\n");
-/*
-    	int m;
-    	for (red_shift = 0, m = DisplayPixelFormat.dwRBitMask; 
-    	   !(m & 1); red_shift++, m >>= 1);
-    	red_scale=255/m;
-    	
-    	for (green_shift = 0, m = DisplayPixelFormat.dwGBitMask; 
-    	   !(m & 1); green_shift++, m >>= 1);
-    	green_scale=255/m;
-    	
-    	for (blue_shift = 0, m = DisplayPixelFormat.dwBBitMask; 
-    	   !(m & 1); blue_shift++, m >>= 1);
-    	blue_scale=255/m;
-*/		
-	}
-	
 	// write 24 bit image
 
-	LockSurfaceAndGetBufferPointer();
-	unsigned char* BufferPtr=ScreenBuffer+BackBufferPitch*(h.WinInfo.Height-1);
+//	unsigned char *BufferPtr = &buf[(width * 3) * (height - 1)];
+	unsigned char *BufferPtr = &buf[0];
 	for (i=h.WinInfo.Height-1; i>=0; --i)
 	{
 		int j;
-		if(VideoModeTypeScreen==VideoModeType_8)
+		for (j=0; j<h.WinInfo.Width; ++j)
 		{
-			for (j=0; j<h.WinInfo.Width; ++j)
-			{
-				PutByte((BYTE)TestPalette[BufferPtr[j]*3+2]<<2,fp);  //b
-				PutByte((BYTE)TestPalette[BufferPtr[j]*3+1]<<2,fp);  //g
-				PutByte((BYTE)TestPalette[BufferPtr[j]*3]<<2,fp);  //r
-			}
+			PutByte((BYTE)BufferPtr[j*3+2],fp);  //b
+			PutByte((BYTE)BufferPtr[j*3+1],fp);  //g
+			PutByte((BYTE)BufferPtr[j*3],fp);  //r
 		}
-		else if(VideoModeTypeScreen==VideoModeType_15)
-		{
-			short colour;
-			for (j=0; j<h.WinInfo.Width; ++j)
-			{
-				colour=*(short*)&BufferPtr[j*2];
-				
-				fprintf(stderr, "ScreenShot: VideoModeTypeScreen==VideoModeType_15\n");
-/*
-				PutByte((BYTE)(((colour & DisplayPixelFormat.dwBBitMask)>>blue_shift)*blue_scale),fp);  //b
-				PutByte((BYTE)(((colour & DisplayPixelFormat.dwGBitMask)>>green_shift)*green_scale),fp);  //g
-				PutByte((BYTE)(((colour & DisplayPixelFormat.dwRBitMask)>>red_shift)*red_scale),fp);  //r
-*/				
-			}
-		}
-		else if(VideoModeTypeScreen==VideoModeType_24)
-		{
-			for (j=0; j<h.WinInfo.Width; ++j)
-			{
-				PutByte((BYTE)BufferPtr[j*3+2],fp);  //b
-				PutByte((BYTE)BufferPtr[j*3+1],fp);  //g
-				PutByte((BYTE)BufferPtr[j*3],fp);  //r
-			}
 			
-		}
 		// pad to 4 byte boundary
 		for (j=~(h.WinInfo.Width*3-1) & 3; j; --j) PutByte(0,fp);
-		BufferPtr-=BackBufferPitch;
+//		BufferPtr -= width * 3;
+		BufferPtr += width * 3;
 	}
-	UnlockSurface();
 
-	fclose(fp);
-	
+	free(buf);
+	fclose(fp);	
 }
-
-

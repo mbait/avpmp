@@ -140,6 +140,65 @@ int SetEndOfFile(HANDLE file);
 unsigned int timeGetTime();
 unsigned int GetTickCount();
 
+typedef struct DPNAME
+{
+	int dwSize;
+	
+	char *lpszShortNameA;
+	char *lpszLongNameA;
+} DPNAME;
+
+#define DP_OK	0
+
+typedef int HRESULT;
+
+#define DPRECEIVE_ALL			1
+#define DPSYS_ADDPLAYERTOGROUP		2
+#define	DPSYS_CREATEPLAYERORGROUP	3
+#define DPPLAYERTYPE_PLAYER		4
+#define DPSYS_DELETEPLAYERFROMGROUP	5
+#define DPSYS_HOST			6
+#define DPSYS_SESSIONLOST		7
+#define DPSYS_SETPLAYERORGROUPDATA	8
+#define DPSYS_SETPLAYERORGROUPNAME	9
+#define DPEXT_HEADER_SIZE		10
+#define DPERR_BUSY			11
+#define DPERR_CONNECTIONLOST		12
+#define DPERR_INVALIDPARAMS		13
+#define DPERR_INVALIDPLAYER		14
+#define DPERR_NOTLOGGEDIN		15
+#define DPERR_SENDTOOBIG		16
+#define DPERR_BUFFERTOOSMALL		17
+#define DPID_SYSMSG			18
+#define DPSYS_DESTROYPLAYERORGROUP	19
+#define DPID_ALLPLAYERS			20
+
+typedef struct DPMSG_GENERIC
+{
+	int dwType;
+} DPMSG_GENERIC;
+typedef DPMSG_GENERIC * LPDPMSG_GENERIC;
+
+typedef struct DPMSG_CREATEPLAYERORGROUP
+{
+	int dwType;
+	
+	DPID dpId;
+	int dwPlayerType;
+	
+	DPNAME dpnName;
+} DPMSG_CREATEPLAYERORGROUP;
+typedef DPMSG_CREATEPLAYERORGROUP * LPDPMSG_CREATEPLAYERORGROUP;
+
+typedef struct DPMSG_DESTROYPLAYERORGROUP
+{
+	int dwType;
+	
+	DPID dpId;
+	int dwPlayerType;	
+} DPMSG_DESTROYPLAYERORGROUP;
+typedef DPMSG_DESTROYPLAYERORGROUP * LPDPMSG_DESTROYPLAYERORGROUP;
+
 #ifdef __cplusplus
 };
 #endif

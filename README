@@ -75,6 +75,7 @@ language.txt (Regular Ed.) or aenglish.txt (Alien Demo).
 Linux Port-specific commands:
 - ALT-ENTER for fullscreen
 - CTRL-G for mouse grab
+- PRTSCN for screenshot
 
 
 The source code that was released only works with Aliens vs Predator Gold. 

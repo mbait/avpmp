@@ -60,6 +60,31 @@ void ReadJoysticks()
 
 /* ** */
 
+unsigned char *GetScreenShot24(int *width, int *height)
+{
+	unsigned char *buf;
+	
+	if (surface == NULL) {
+		return NULL;
+	}
+	
+	buf = (unsigned char *)malloc(surface->w * surface->h * 3);
+	
+	if (surface->flags & SDL_OPENGL) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_BYTE, buf);
+	} else {
+		fprintf(stderr, "GetScreenShot24: add software mode 16->24!\n");
+	}
+	
+	*width = surface->w;
+	*height = surface->h;
+	
+	return buf;
+}
+
+/* ** */
+
 PROCESSORTYPES ReadProcessorType()
 {
 	return PType_PentiumMMX;
@@ -219,6 +244,8 @@ int InitialiseWindowsSystem()
 	return 0;
 }
 
+static int GotPrintScn, HavePrintScn;
+
 static int KeySymToKey(int keysym)
 {
 	switch(keysym) {
@@ -328,7 +355,7 @@ static int KeySymToKey(int keysym)
 		case SDLK_COMMA:
 			return KEY_COMMA;
 		case SDLK_PERIOD:
-			return KEY_FSTOP; /* fstop? */
+			return KEY_FSTOP;
 		case SDLK_SPACE:
 			return KEY_SPACE;
 			
@@ -553,10 +580,21 @@ void CheckForWindowsMessages()
 				case SDL_MOUSEBUTTONUP:
 					break;
 				case SDL_KEYDOWN:
-					handle_keypress(KeySymToKey(event.key.keysym.sym), event.key.keysym.unicode, 1);
+					if (event.key.keysym.sym == SDLK_PRINT) {
+						if (HavePrintScn == 0)
+							GotPrintScn = 1;
+						HavePrintScn = 1;
+					} else {
+						handle_keypress(KeySymToKey(event.key.keysym.sym), event.key.keysym.unicode, 1);
+					}
 					break;
 				case SDL_KEYUP:
-					handle_keypress(KeySymToKey(event.key.keysym.sym), 0, 0);
+					if (event.key.keysym.sym == SDLK_PRINT) {
+						GotPrintScn = 0;
+						HavePrintScn = 0;
+					} else {
+						handle_keypress(KeySymToKey(event.key.keysym.sym), 0, 0);
+					}
 					break;
 				case SDL_QUIT:
 					AvP.MainLoopRunning = 0; /* TODO */
@@ -616,7 +654,11 @@ void CheckForWindowsMessages()
 			SDL_ShowCursor(0);
 	}
 	
-	/* ctrl-z for iconify window? */
+	if (GotPrintScn) {
+		GotPrintScn = 0;
+		
+		ScreenShot();
+	}
 }
         
 void InGameFlipBuffers()

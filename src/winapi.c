@@ -45,8 +45,10 @@ HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags
 				exit(EXIT_FAILURE);
 			}
  			fd = open(file, O_RDONLY);
- 			if (fd == -1)
+ 			if (fd == -1) {
+ 				perror("CreateFile");
  				return INVALID_HANDLE_VALUE;
+ 			}
 			break;
 		case GENERIC_WRITE:
 			if (flags != CREATE_ALWAYS) {
