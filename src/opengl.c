@@ -79,7 +79,6 @@ switch(RenderPolygon.TranslucencyMode)
 		int x1, y1;
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
-/* this is just random garbage */
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
 		x = x1;
@@ -88,14 +87,14 @@ switch(RenderPolygon.TranslucencyMode)
 		x =  (x - 320.0)/320.0;
 		y = -(y - 240.0)/240.0;
 		
-		zvalue = 65536 - vertices->Z+HeadUpDisplayZOffset;
-		zvalue = 1.0 - ZNear/zvalue;
-		z = -zvalue;
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		zvalue = 1.0 - ZNear/zvalue*2;
+		z = zvalue;
 		
 		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
 		glVertex3f(x, y, z);
 //		fprintf(stderr, "Vertex %d: (%f, %f, %f)\n\t[%d, %d, %d]->[%d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, x1, y1, vertices->R, vertices->G, vertices->B, vertices->A);
-//		fprintf(stderr, "znear = %f, zvalue = %f, z = %f\n", ZNear, zvalue, z);
+//		fprintf(stderr, "GREP: z = %d, znear = %f, zvalue = %f, z = %f\n", vertices->Z, ZNear, zvalue, z);
 	}
 	glEnd();
 	
