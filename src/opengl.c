@@ -30,6 +30,9 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	int texoffset;
 	void *TextureHandle;
 	int i;
+	GLfloat ZNear, zvalue;
+	
+	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
 	
 	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
 	if (texoffset) {
@@ -41,7 +44,34 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
 	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
-	
+
+switch(RenderPolygon.TranslucencyMode)
+{
+	case TRANSLUCENCY_OFF:
+		glBlendFunc(GL_ONE, GL_ZERO);
+		break;
+	case TRANSLUCENCY_NORMAL:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
+	case TRANSLUCENCY_COLOUR:
+		glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+		break;
+	case TRANSLUCENCY_INVCOLOUR:
+		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+		break;
+	case TRANSLUCENCY_GLOWING:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		break;
+	case TRANSLUCENCY_DARKENINGCOLOUR:
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+		break;
+	case TRANSLUCENCY_JUSTSETZ:
+		glBlendFunc(GL_ZERO, GL_ONE);
+		break;
+	default:
+		fprintf(stderr, "RenderPolygon.TranslucencyMode: invalid %d\n", RenderPolygon.TranslucencyMode);
+}
+
 	glBegin(GL_POLYGON);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		GLfloat x, y, z;
@@ -49,14 +79,30 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
 /* this is just random garbage */
-//		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
-//		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-		x = vertices->X;
-		y = vertices->Y;
-				
-		x = x/32768.0;
-		y = y/32768.0;
-		z = -1+-1.0f/vertices->Z;
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+//		x = vertices->X;
+//		y = vertices->Y;
+		x = x1;
+		y = y1;
+						
+//		x = x/32768.0;
+//		y = y/32768.0;
+//		x = (x - 32768.0)/32768.0;
+//		y = (y - 32768.0)/32768.0;
+		x = (x - 320.0)/320.0;
+		y = (y - 240.0)/240.0;
+		
+//		z = vertices->Z*16;
+//		z = -z/65536;
+
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		zvalue = 1.0f - ZNear/zvalue;
+		z = -zvalue;
+		
+//		x *= 16.0;
+//		y *= 16.0;
+//		z *= 16.0;
 		
 		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
 		glVertex3f(x, y, z);

@@ -4508,7 +4508,7 @@ static void TranslatePoint(float *source, float *dest, float *matrix)
 /* Moved to a separate file because I can't figure out the damn syntax! */
 __asm__("call	TranslatePoint_Asm	\n\t"
 	:
-	: "S" (source), "b" (dest), "d" (matrix)
+	: "S" (source), "b" (dest), "D" (matrix)
 	);
 }
 

@@ -1,7 +1,7 @@
 CC = gcc
 NASM = nasm
 
-CFLAGS = -g -Wall -pipe -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+CFLAGS = -g -Wall -pipe -O2 -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
 CXXFLAGS = $(CFLAGS)
 LDLIBS = -lm # /home/relnev/ElectricFence-2.2.2/libefence.a
 

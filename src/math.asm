@@ -4,7 +4,7 @@ SECTION .text
 GLOBAL TranslatePoint_Asm
 
 ; float *source, float *dest, float *matrix
-; "S" (source), "b" (dest), "d" (matrix)
+; "S" (source), "b" (dest), "D" (matrix)
 TranslatePoint_Asm:
 	fld	dword [esi]
 	fmul	dword [edi]
@@ -49,4 +49,3 @@ TranslatePoint_Asm:
 	fstp	dword [ebx+8]
 	
 	ret
-	

@@ -56,10 +56,12 @@ int InitialiseWindowsSystem()
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-1, 1, -1, 1, 1, 1000);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+		
 	return 0;
 }
 
