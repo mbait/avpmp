@@ -23,25 +23,6 @@ BOOL KeepMainRifFile = FALSE;
 int HWAccel = 1;
 
 
-/* krender.c -- thought this file was unused */
-void KDraw_Item_2dTexturePolygon(int *itemptr)
-{
-	fprintf(stderr, "KDraw_Item_2dTexturePolygon(%p)\n", itemptr);
-}
-
-
-/* item.c -- thought this file was unused */
-void Draw_Item_2dTexturePolygon(int *itemptr)
-{
-	extern int ScanDrawMode;
-	
-	if (ScanDrawMode == ScanDrawDirectDraw) {
-		KDraw_Item_2dTexturePolygon(itemptr);
-	}
-}
-
-
-
 /* avp_mp_config.cpp */
 char* GetCustomMultiplayerLevelName(int index, int gameType)
 {
@@ -266,11 +247,6 @@ void InitDrawTest()
 	fprintf(stderr, "InitDrawTest()\n");
 }
 
-void InitForceField()
-{
-	fprintf(stderr, "InitForceField()\n");
-}
-
 void SetFogDistance(int fogDistance)
 {
 	fprintf(stderr, "SetFontDistance(%d)\n", fogDistance);
@@ -332,11 +308,6 @@ BOOL EndD3DScene()
 	fprintf(stderr, "EndD3DScene()\n");
 	
 	return FALSE;
-}
-
-void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
-{
-	fprintf(stderr, "D3D_DrawCable(%p, %p)\n", centrePtr, orientationPtr);
 }
 
         

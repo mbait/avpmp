@@ -1930,6 +1930,7 @@ void D3D_DrawBackdrop()
 
 extern int sine[];
 extern int cosine[];
+extern int NormalFrameTime;
 
 void UpdateForceField(void);
 void D3D_DrawForceField(int xOrigin, int yOrigin, int zOrigin, int fieldType);
@@ -2062,7 +2063,7 @@ void PostLandscapeRendering()
 
 	extern char LevelName[];
 
-#if 0 /* not yet */
+
 	if (!strcmp(LevelName,"fall")||!strcmp(LevelName,"fall_m"))
 	{
 		char drawWaterFall = 0;
@@ -2100,24 +2101,11 @@ void PostLandscapeRendering()
 
 		if (drawWaterFall)
 		{
-			// Turn OFF texturing if it is on...
-			if (CurrTextureHandle != NULL)
-			{
-				OP_STATE_RENDER(1, ExecBufInstPtr);
-				STATE_DATA(D3DRENDERSTATE_TEXTUREHANDLE, NULL, ExecBufInstPtr);
-				CurrTextureHandle = NULL;
-			}
+			CurrTextureHandle = NULL;
+			CheckBoundTextureIsCorrect(NULL);
 			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-			if (NumVertices)
-			{
-			   WriteEndCodeToExecuteBuffer();
-		  	   UnlockExecuteBufferAndPrepareForUse();
-			   ExecuteBuffer();
-		  	   LockExecuteBuffer();
-			}
-			OP_STATE_RENDER(1, ExecBufInstPtr);
-		    //STATE_DATA(D3DRENDERSTATE_ZFUNC, D3DCMP_ALWAYS, ExecBufInstPtr);
-			STATE_DATA(D3DRENDERSTATE_ZWRITEENABLE, FALSE, ExecBufInstPtr);
+			
+			glDepthMask(GL_FALSE);
 
 	   		//UpdateWaterFall();
 			WaterFallBase = 109952;
@@ -2129,10 +2117,8 @@ void PostLandscapeRendering()
 //			MeshZScale = -(538490-392169);
 //			MeshXScale = 55000;
 	//		D3D_DrawWaterPatch(-100000, WaterFallBase, 538490);
-										
-			OP_STATE_RENDER(1, ExecBufInstPtr);
-		    //STATE_DATA(D3DRENDERSTATE_ZFUNC, D3DCMP_LESSEQUAL, ExecBufInstPtr);
-		    STATE_DATA(D3DRENDERSTATE_ZWRITEENABLE, TRUE, ExecBufInstPtr);
+			
+			glDepthMask(GL_TRUE);
 		}
 		if (drawStream)
 		{
@@ -2153,34 +2139,48 @@ void PostLandscapeRendering()
 		 	MeshXScale/=4;
 		 	MeshZScale/=2;
 			
-			// Turn OFF texturing if it is on...
-			D3DTEXTUREHANDLE TextureHandle = (D3DTEXTUREHANDLE)ImageHeaderArray[ChromeImageNumber].D3DHandle;
-			if (CurrTextureHandle != TextureHandle)
-			{
-				OP_STATE_RENDER(1, ExecBufInstPtr);
-				STATE_DATA(D3DRENDERSTATE_TEXTUREHANDLE, TextureHandle, ExecBufInstPtr);
-				CurrTextureHandle = TextureHandle;
-			}	 
+			CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
 			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-			if (NumVertices)
-			{
-			   WriteEndCodeToExecuteBuffer();
-		  	   UnlockExecuteBufferAndPrepareForUse();
-			   ExecuteBuffer();
-		  	   LockExecuteBuffer();
-			}
 		 	D3D_DrawWaterPatch(x, y, z);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale, y, z);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale*2, y, z);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x, y, z+MeshZScale);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale, y, z+MeshZScale);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale*2, y, z+MeshZScale);
+		 	
+		 	CurrTextureHandle = ImageHeaderArray[ChromeImageNumber].D3DTexture;
+			CheckBoundTextureIsCorrect(CurrTextureHandle);
+			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale);
 		}
 	}
-#endif /* not yet */	
-	#if 0
+#if 0
 	else if ( (!__stricmp(LevelName,"e3demo")) || (!__stricmp(LevelName,"e3demosp")) )
 	{
 		int drawOctagonPool = -1;
@@ -2427,10 +2427,10 @@ void PostLandscapeRendering()
 
 		}
 	}
-	#endif
-#if 0 /* not yet */
-	else if (!_stricmp(LevelName,"hangar"))
+#endif
+	else if (!strcasecmp(LevelName,"hangar"))
 	{
+#if 0 /* not yet */
 	   	#if FMV_ON
 		#if WIBBLY_FMV_ON
 		UpdateFMVTextures(1);
@@ -2443,10 +2443,9 @@ void PostLandscapeRendering()
 			D3D_DrawCable(&v);
 		}
 		#endif
+#endif		
 	}
-	else 
-#endif /* not yet */	
-	if (!strcasecmp(LevelName,"invasion_a"))
+	else if (!strcasecmp(LevelName,"invasion_a"))
 	{
 		char drawWater = 0;
 		char drawEndWater = 0;
@@ -2609,8 +2608,7 @@ void PostLandscapeRendering()
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale);
 		}
 	}
-	else 
-	if (!strcasecmp(LevelName, "derelict"))
+	else if (!strcasecmp(LevelName, "derelict"))
 	{
 		char drawMirrorSurfaces = 0;
 		char drawWater = 0;
@@ -2723,12 +2721,9 @@ void PostLandscapeRendering()
 
 void D3D_DrawWaterTest(MODULE *testModulePtr)
 {
-#if 0 /* not yet */
 	extern char LevelName[];
 	if (!strcmp(LevelName,"genshd1"))
 	{
-		extern DISPLAYBLOCK *Player;
-
 //		DISPLAYBLOCK *objectPtr = OnScreenBlockList[numOfObjects];
 		MODULE *modulePtr = testModulePtr;//objectPtr->ObMyModule;
 #if 0
@@ -2752,36 +2747,44 @@ void D3D_DrawWaterTest(MODULE *testModulePtr)
 					extern void CheckForObjectsInWater(int minX, int maxX, int minZ, int maxZ, int averageY);
 					CheckForObjectsInWater(x, x+MeshXScale, z, z+MeshZScale, y);
 				}
-				D3DTEXTUREHANDLE TextureHandle = (D3DTEXTUREHANDLE)ImageHeaderArray[WaterShaftImageNumber].D3DHandle;
-				if (CurrTextureHandle != TextureHandle)
-				{
-					OP_STATE_RENDER(1, ExecBufInstPtr);
-					STATE_DATA(D3DRENDERSTATE_TEXTUREHANDLE, TextureHandle, ExecBufInstPtr);
-					CurrTextureHandle = TextureHandle;
-				}	 
+				
+				CurrTextureHandle = ImageHeaderArray[WaterShaftImageNumber].D3DTexture;
+				CheckBoundTextureIsCorrect(CurrTextureHandle);
 				CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-				if (NumVertices)
-				{
-				   WriteEndCodeToExecuteBuffer();
-			  	   UnlockExecuteBufferAndPrepareForUse();
-				   ExecuteBuffer();
-			  	   LockExecuteBuffer();
-				}
+
 				WaterXOrigin=x;
 				WaterZOrigin=z;
 				WaterUScale = 4.0f/(float)(MeshXScale);
 				WaterVScale = 4.0f/(float)MeshZScale;
-				#if 1
+			#if 1
 				MeshXScale/=2;
 				MeshZScale/=2;
+				
+				CurrTextureHandle = ImageHeaderArray[WaterShaftImageNumber].D3DTexture;
+				CheckBoundTextureIsCorrect(CurrTextureHandle);
+				CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 				D3D_DrawWaterPatch(x, y, z);
+				
+				CurrTextureHandle = ImageHeaderArray[WaterShaftImageNumber].D3DTexture;
+				CheckBoundTextureIsCorrect(CurrTextureHandle);
+				CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 				D3D_DrawWaterPatch(x+MeshXScale, y, z);
+				
+				CurrTextureHandle = ImageHeaderArray[WaterShaftImageNumber].D3DTexture;
+				CheckBoundTextureIsCorrect(CurrTextureHandle);
+				CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 				D3D_DrawWaterPatch(x, y, z+MeshZScale);
+				
+				CurrTextureHandle = ImageHeaderArray[WaterShaftImageNumber].D3DTexture;
+				CheckBoundTextureIsCorrect(CurrTextureHandle);
+				CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 				D3D_DrawWaterPatch(x+MeshXScale, y, z+MeshZScale);
-
-				extern void HandleRainShaft(MODULE *modulePtr, int bottomY, int topY, int numberOfRaindrops);
-				HandleRainShaft(modulePtr, y,-21000,1);
-				#else
+				
+				{
+					extern void HandleRainShaft(MODULE *modulePtr, int bottomY, int topY, int numberOfRaindrops);
+					HandleRainShaft(modulePtr, y,-21000,1);
+				}
+			#else
 				MeshXScale/=4;
 				MeshZScale/=4;
 				D3D_DrawWaterPatch(x, y, z);
@@ -2801,11 +2804,11 @@ void D3D_DrawWaterTest(MODULE *testModulePtr)
 				D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale*2);
 				D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale*3);
 				HandleRainDrops(modulePtr,2);
-				#endif
+			#endif
 			}
 		}
 	}
-	#if 0
+#if 0
 	else if ( (!_stricmp(LevelName,"e3demo")) || (!_stricmp(LevelName,"e3demosp")) )
 	{
 		if (testModulePtr && testModulePtr->name)
@@ -2855,8 +2858,7 @@ void D3D_DrawWaterTest(MODULE *testModulePtr)
 			}
 		}
 	}
-	#endif
-#endif /* not yet */
+#endif
 }
 
 
@@ -3021,7 +3023,7 @@ void D3D_DrawWaterPatch(int xOrigin, int yOrigin, int zOrigin)
 	
 }
 
-#if 0 /* not yet */
+#if 0 
 
 void D3D_DrawWaterMesh_Unclipped(void)
 {
@@ -3263,6 +3265,275 @@ void D3D_DrawWaterMesh_Clipped(void)
 	#endif
 }
 
+#endif
+
+#if 0
+
+void D3D_DrawMoltenMetalMesh_Unclipped(void)
+{
+	float ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+
+	VECTORCH *point = MeshVertex;
+	VECTORCH *pointWS = MeshWorldVertex;
+
+	int i, x, y, z;
+	int tc;
+
+	for (i=0; i<256; i++) {
+		GLfloat xf, yf, zf;
+		GLfloat sf, tf, rhw;
+		int r, g, b, a;
+		
+		if (point->vz < 1) point->vz = 1;
+
+		x = (point->vx*(Global_VDB_Ptr->VDB_ProjX+1))/point->vz+Global_VDB_Ptr->VDB_CentreX;
+		y = (point->vy*(Global_VDB_Ptr->VDB_ProjY+1))/point->vz+Global_VDB_Ptr->VDB_CentreY;
+
+		if (x<Global_VDB_Ptr->VDB_ClipLeft) {
+			x=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x>Global_VDB_Ptr->VDB_ClipRight) {
+			x=Global_VDB_Ptr->VDB_ClipRight;	
+		}			
+
+		if (y<Global_VDB_Ptr->VDB_ClipUp) {
+			y=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y>Global_VDB_Ptr->VDB_ClipDown) {
+			y=Global_VDB_Ptr->VDB_ClipDown;	
+		}
+			
+		sf = pointWS->vx*WaterUScale+(1.0f/256.0f);
+		tf = pointWS->vy*WaterVScale+(1.0f/256.0f);
+	
+		z = point->vz + HeadUpDisplayZOffset;
+		rhw = 1.0f / (float)point->vz;		  	
+		
+		b = (MeshVertexColour[i] >> 0)  & 0xFF;
+		g = (MeshVertexColour[i] >> 8)  & 0xFF;
+		r = (MeshVertexColour[i] >> 16) & 0xFF;
+		a = (MeshVertexColour[i] >> 24) & 0xFF;
+			
+		xf =  ((float)x - (float)ScreenDescriptorBlock.SDB_CentreX - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreX - 0.5f);
+		yf = -((float)y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
+		zf = 1.0f - 2.0f*ZNear/(float)z;
+			
+		tarr[i].v[0] = xf/rhw;
+		tarr[i].v[1] = yf/rhw;
+		tarr[i].v[2] = zf/rhw;
+		tarr[i].v[3] = 1.0f/rhw;
+		
+		tarr[i].t[0] = sf;
+		tarr[i].t[1] = tf;
+		
+		tarr[i].c[0] = r;
+		tarr[i].c[1] = g;
+		tarr[i].c[2] = b;
+		tarr[i].c[3] = a;
+		
+		point++;
+		pointWS++;
+	}
+    
+	/* CONSTRUCT POLYS */
+	
+	tc = 0;
+	for (x = 0; x < 15; x++) {
+		for(y = 0; y < 15; y++) {
+//			OUTPUT_TRIANGLE(0+x+(16*y),1+x+(16*y),16+x+(16*y), 256);
+//			OUTPUT_TRIANGLE(1+x+(16*y),17+x+(16*y),16+x+(16*y), 256);
+			if ((16+x+(16*y)) < 256) {
+				tris[tc+0].a = 0+x+(16*y);
+				tris[tc+0].b = 1+x+(16*y);
+				tris[tc+0].c = 16+x+(16*y);
+				tris[tc+1].a = 1+x+(16*y);
+				tris[tc+1].b = 17+x+(16*y);
+				tris[tc+1].c = 16+x+(16*y);
+			
+				tc += 2;
+			}
+		}
+	}
+	DrawTriangleArray_T2F_C4UB_V4F(tc);
+}
+
+void D3D_DrawMoltenMetalMesh_Clipped(void)
+{
+	int i, x, y, z;
+	
+	float ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);	
+
+	{
+		VECTORCH *point = MeshVertex;
+		VECTORCH *pointWS = MeshWorldVertex;
+
+		for (i=0; i<256; i++)
+		{
+			GLfloat xf, yf, zf;
+			GLfloat sf, tf, rhw;
+			int r, g, b, a;
+			
+			if (point->vz < 1) point->vz = 1;
+			
+			x = (point->vx*(Global_VDB_Ptr->VDB_ProjX+1))/point->vz+Global_VDB_Ptr->VDB_CentreX;
+			y = (point->vy*(Global_VDB_Ptr->VDB_ProjY+1))/point->vz+Global_VDB_Ptr->VDB_CentreY;
+
+			if (x<Global_VDB_Ptr->VDB_ClipLeft) {
+				x=Global_VDB_Ptr->VDB_ClipLeft;
+			} else if (x>Global_VDB_Ptr->VDB_ClipRight) {
+				x=Global_VDB_Ptr->VDB_ClipRight;	
+			}
+				
+			if (y<Global_VDB_Ptr->VDB_ClipUp) {
+				y=Global_VDB_Ptr->VDB_ClipUp;
+			} else if (y>Global_VDB_Ptr->VDB_ClipDown) {
+				y=Global_VDB_Ptr->VDB_ClipDown;	
+			}
+			
+			sf = pointWS->vx*WaterUScale+(1.0f/256.0f);
+			tf = pointWS->vy*WaterVScale+(1.0f/256.0f);
+	
+			z = point->vz + HeadUpDisplayZOffset;
+		  	rhw = 1.0f / (float)point->vz;
+		  	
+			b = (MeshVertexColour[i] >> 0)  & 0xFF;
+			g = (MeshVertexColour[i] >> 8)  & 0xFF;
+			r = (MeshVertexColour[i] >> 16) & 0xFF;
+			a = (MeshVertexColour[i] >> 24) & 0xFF;
+			
+			xf =  ((float)x - (float)ScreenDescriptorBlock.SDB_CentreX - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreX - 0.5f);
+			yf = -((float)y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
+			zf = 1.0f - 2.0f*ZNear/(float)z;
+			
+			tarr[i].v[0] = xf/rhw;
+			tarr[i].v[1] = yf/rhw;
+			tarr[i].v[2] = zf/rhw;
+			tarr[i].v[3] = 1.0f/rhw;
+			
+			tarr[i].t[0] = sf;
+			tarr[i].t[1] = tf;
+			
+			tarr[i].c[0] = r;
+			tarr[i].c[1] = g;
+			tarr[i].c[2] = b;
+			tarr[i].c[3] = a;
+			
+			point++;
+			pointWS++;
+		}
+	}
+
+	/* CONSTRUCT POLYS */
+	{
+		int tc = 0;
+		
+		for (x=0; x<15; x++)
+		{
+			for(y=0; y<15; y++)
+			{
+				int p1 = 0+x+(16*y);
+				int p2 = 1+x+(16*y);
+				int p3 = 16+x+(16*y);
+				int p4 = 17+x+(16*y);
+				
+				if (p3 > 255)
+					continue;
+#if 0
+				#if 0
+				if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3])
+				{
+					OP_TRIANGLE_LIST(1, ExecBufInstPtr);
+					OUTPUT_TRIANGLE(p1,p2,p3, 256);
+				}
+				if (MeshVertexOutcode[p2]&&MeshVertexOutcode[p3]&&MeshVertexOutcode[p4])
+				{
+					OP_TRIANGLE_LIST(1, ExecBufInstPtr);
+					OUTPUT_TRIANGLE(p2,p4,p3, 256);
+				}	
+				#else
+				if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3]&&MeshVertexOutcode[p4])
+				{
+					OP_TRIANGLE_LIST(2, ExecBufInstPtr);
+					OUTPUT_TRIANGLE(p1,p2,p3, 256);
+					OUTPUT_TRIANGLE(p2,p4,p3, 256);
+				}	
+
+				#endif
+#endif
+				if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3]&&MeshVertexOutcode[p4]) {
+					tris[tc+0].a = p1;
+					tris[tc+0].b = p2;
+					tris[tc+0].c = p3;
+					tris[tc+1].a = p2;
+					tris[tc+1].b = p4;
+					tris[tc+1].c = p3;
+					tc += 2;
+				}
+			}
+		}
+		DrawTriangleArray_T2F_C4UB_V4F(tc);
+	}
+	{
+		POLYHEADER fakeHeader;
+
+		fakeHeader.PolyFlags = 0;
+		fakeHeader.PolyColour = 0;
+		RenderPolygon.TranslucencyMode = TRANSLUCENCY_NORMAL;
+		
+		for (x=0; x<15; x++)
+		{
+			for(y=0; y<15; y++)
+			{
+				int p[4];
+				p[0] = 0+x+(16*y);
+				p[1] = 1+x+(16*y);
+				p[2] = 17+x+(16*y);
+				p[3] = 16+x+(16*y);
+
+				if (p[3] > 255)
+					continue;
+					
+				if (!(MeshVertexOutcode[p[0]]&&MeshVertexOutcode[p[1]]&&MeshVertexOutcode[p[2]]&&MeshVertexOutcode[p[3]]))
+				{
+					for (i=0; i<4; i++) 
+					{
+						VerticesBuffer[i].X	= MeshVertex[p[i]].vx;
+						VerticesBuffer[i].Y	= MeshVertex[p[i]].vy;
+						VerticesBuffer[i].Z	= MeshVertex[p[i]].vz;
+						VerticesBuffer[i].U = MeshWorldVertex[p[i]].vx*(WaterUScale*128.0f*65536.0f);
+						VerticesBuffer[i].V = MeshWorldVertex[p[i]].vy*(WaterVScale*128.0f*65536.0f);
+															   
+						VerticesBuffer[i].A = (MeshVertexColour[p[i]]&0xff000000)>>24;
+						VerticesBuffer[i].R = (MeshVertexColour[p[i]]&0x00ff0000)>>16;
+						VerticesBuffer[i].G	= (MeshVertexColour[p[i]]&0x0000ff00)>>8;
+						VerticesBuffer[i].B = MeshVertexColour[p[i]]&0x000000ff;
+						VerticesBuffer[i].SpecularR = 0;
+						VerticesBuffer[i].SpecularG = 0;
+						VerticesBuffer[i].SpecularB = 0;
+						RenderPolygon.NumberOfVertices=4;
+						
+					}
+					if (QuadWithinFrustrum())
+					{		 
+						GouraudTexturedPolygon_ClipWithZ();
+						if(RenderPolygon.NumberOfVertices<3) continue;
+						GouraudTexturedPolygon_ClipWithNegativeX();
+						if(RenderPolygon.NumberOfVertices<3) continue;
+						GouraudTexturedPolygon_ClipWithPositiveY();
+						if(RenderPolygon.NumberOfVertices<3) continue;
+						GouraudTexturedPolygon_ClipWithNegativeY();
+						if(RenderPolygon.NumberOfVertices<3) continue;
+						GouraudTexturedPolygon_ClipWithPositiveX();
+						if(RenderPolygon.NumberOfVertices<3) continue;
+					   //	D3D_ZBufferedGouraudPolygon_Output(&fakeHeader,RenderPolygon.Vertices);
+				   	   	D3D_ZBufferedGouraudTexturedPolygon_Output(&fakeHeader,RenderPolygon.Vertices);
+					}
+				}
+			}
+		}
+	}
+}
+
+#endif
+
 signed int ForceFieldPointDisplacement[15*3+1][16];
 signed int ForceFieldPointDisplacement2[15*3+1][16];
 signed int ForceFieldPointVelocity[15*3+1][16];
@@ -3273,8 +3544,10 @@ int Phase=0;
 int ForceFieldPhase=0;
 void InitForceField(void)
 {
-	for (int x=0; x<15*3+1; x++)
-		for (int y=0; y<16; y++)
+	int x, y;
+	
+	for (x=0; x<15*3+1; x++)
+		for (y=0; y<16; y++)
 		{
 			ForceFieldPointDisplacement[x][y]=0;
 			ForceFieldPointDisplacement2[x][y]=0;
@@ -3282,17 +3555,22 @@ void InitForceField(void)
 		}
 	ForceFieldPhase=0;
 }
+
+#if 0 /* not used */
+
 #if 1
+
+extern int NormalFrameTime;
 
 void UpdateForceField(void)
 {
 	#if 1
+	int x, y;
+	
 	Phase+=NormalFrameTime>>6;
 	ForceFieldPhase+=NormalFrameTime>>5;
-	int x;
 	for (x=1; x<15*3; x++)
 	{
-		int y;
 		for (y=1; y<15; y++)
 		{
 			
@@ -3352,8 +3630,8 @@ void UpdateForceField(void)
 	  	if(ForceFieldPhase>1000)
 		{
 			ForceFieldPhase=0;
-			int x = 1+(FastRandom()%(15*3-2));
-			int y = 1+(FastRandom()%13);
+			x = 1+(FastRandom()%(15*3-2));
+			y = 1+(FastRandom()%13);
 			ForceFieldPointVelocity[x][y] = 10000;
 			ForceFieldPointVelocity[x][y+1] = 10000;
 			ForceFieldPointVelocity[x+1][y] = 10000;
@@ -3363,8 +3641,8 @@ void UpdateForceField(void)
 	   //	if(ForceFieldPhase>1000)
 		{
 			ForceFieldPhase=0;
-			int x = 1+(FastRandom()%(15*3-2));
-			int y = 1+(FastRandom()%13);
+			x = 1+(FastRandom()%(15*3-2));
+			y = 1+(FastRandom()%13);
 			ForceFieldPointVelocity[x][y] = (FastRandom()&16383)+8192;
 		}
 		#endif				   
@@ -3427,6 +3705,10 @@ void UpdateWaterFall(void)
 }
 
 #endif
+#endif /* not used */
+
+#if 0 /* not yet */
+
 void D3D_DrawForceField(int xOrigin, int yOrigin, int zOrigin, int fieldType)
 {
 	MeshXScale = 4096/16;
@@ -3637,23 +3919,27 @@ void D3D_DrawPowerFence(int xOrigin, int yOrigin, int zOrigin, int xScale, int y
 	}
 }
 
+#endif /* not yet */
+
 void D3D_DrawWaterFall(int xOrigin, int yOrigin, int zOrigin)
 {
+	int i;
+	int noRequired = MUL_FIXED(250,NormalFrameTime);
+	for (i=0; i<noRequired; i++)
 	{
-		int noRequired = MUL_FIXED(250,NormalFrameTime);
-		for (int i=0; i<noRequired; i++)
-		{
-			VECTORCH velocity;
-			VECTORCH position;
-			position.vx = xOrigin;
-			position.vy = yOrigin-(FastRandom()&511);//+45*MeshXScale;
-			position.vz = zOrigin+(FastRandom()%(15*MeshZScale));
+		VECTORCH velocity;
+		VECTORCH position;
+		position.vx = xOrigin;
+		position.vy = yOrigin-(FastRandom()&511);//+45*MeshXScale;
+		position.vz = zOrigin+(FastRandom()%(15*MeshZScale));
 
-			velocity.vy = (FastRandom()&511)+512;//-((FastRandom()&1023)+2048)*8;
-			velocity.vx = ((FastRandom()&511)+256)*2;
-			velocity.vz = 0;//-((FastRandom()&511))*8;
-			MakeParticle(&(position), &velocity, PARTICLE_WATERFALLSPRAY);
-		}
+		velocity.vy = (FastRandom()&511)+512;//-((FastRandom()&1023)+2048)*8;
+		velocity.vx = ((FastRandom()&511)+256)*2;
+		velocity.vz = 0;//-((FastRandom()&511))*8;
+		MakeParticle(&(position), &velocity, PARTICLE_WATERFALLSPRAY);
+	}
+
+#if 0 /* not used */
 		#if 0
 		noRequired = MUL_FIXED(200,NormalFrameTime);
 		for (i=0; i<noRequired; i++)
@@ -3669,8 +3955,7 @@ void D3D_DrawWaterFall(int xOrigin, int yOrigin, int zOrigin)
 			velocity.vz = -((FastRandom()&2047)+1048);
 			MakeParticle(&(position), &velocity, PARTICLE_WATERFALLSPRAY);
 		}
-		#endif
-	}
+		#endif	
 	{
 		extern void RenderWaterFall(int xOrigin, int yOrigin, int zOrigin);
 		//RenderWaterFall(xOrigin, yOrigin-500, zOrigin+50);
@@ -3788,7 +4073,10 @@ void D3D_DrawWaterFall(int xOrigin, int yOrigin, int zOrigin)
 		D3D_DrawWaterMesh_Clipped();
 	}	
 	}
+#endif	
 }
+
+#if 0 /* not yet */
 
 void D3D_DrawMoltenMetal(int xOrigin, int yOrigin, int zOrigin)
 {
@@ -4341,35 +4629,21 @@ void D3D_DrawWaterOctagonPatch(int xOrigin, int yOrigin, int zOrigin, int xOffse
 	
 }
 
+#endif /* not yet */
+
 void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 {
-	{
-			// Turn OFF texturing if it is on...
-			if (CurrTextureHandle != NULL)
-			{
-				OP_STATE_RENDER(1, ExecBufInstPtr);
-				STATE_DATA(D3DRENDERSTATE_TEXTUREHANDLE, NULL, ExecBufInstPtr);
-				CurrTextureHandle = NULL;
-			}
+	int field;
 	
-			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	
-			if (NumVertices)
-			{
-			   WriteEndCodeToExecuteBuffer();
-		  	   UnlockExecuteBufferAndPrepareForUse();
-			   ExecuteBuffer();
-		  	   LockExecuteBuffer();
-			}
-	
-			OP_STATE_RENDER(1, ExecBufInstPtr);
-			STATE_DATA(D3DRENDERSTATE_ZWRITEENABLE, FALSE, ExecBufInstPtr);
-	
-	}
+	CurrTextureHandle = NULL;
+	CheckBoundTextureIsCorrect(NULL);
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	glDepthMask(GL_FALSE);
+
 	MeshXScale = 4096/16;
 	MeshZScale = 4096/16;
 	
-	for (int field=0; field<3; field++)
+	for (field=0; field<3; field++)
 	{
 	int i=0;			   
 	int x;
@@ -4397,7 +4671,7 @@ void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 				point->vy = centrePtr[x].vy+radius.vy;
 				point->vz = centrePtr[x].vz+radius.vz;
 
-				MeshVertexColour[i] = RGBALIGHT_MAKE(0,rOffset,255,128);
+				MeshVertexColour[i] = RGBA_MAKE(0,rOffset,255,128);
 
 			}
 			
@@ -4449,11 +4723,9 @@ void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
   	   //	D3D_DrawWaterMesh_Clipped();
 	}	
 	}
-			OP_STATE_RENDER(1, ExecBufInstPtr);
-			STATE_DATA(D3DRENDERSTATE_ZWRITEENABLE, TRUE, ExecBufInstPtr);
+	
+	glDepthMask(GL_TRUE);
 }
-
-#endif
 
 #if 0
 /* ** menu-type stuff that should be moved later ** */

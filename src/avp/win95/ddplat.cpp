@@ -1428,10 +1428,10 @@ int BLTFontOffsetToHUD(PFFONT* font , int xdest, int ydest, int offset)
 
 
 
-#if 1
 void YClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2);
 void XClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2);
 
+#if 0 /* not used */
 static void DrawMotionTrackerPoly(void)
 {
 	struct VertexTag vertex[4];
@@ -1530,6 +1530,7 @@ static void DrawMotionTrackerPoly(void)
 		Draw_Item_2dTexturePolygon(TrackerPolyBuffer);
 	}
 }
+#endif
 
 void YClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2)
 {
@@ -1628,10 +1629,6 @@ static void SetupScanlinePoly(char const *filenamePtr, int width)
 
 	ScanlinePolyBuffer[20] = Term;
 }
-
-
-
-#endif
 
 #define MAX_MESSAGE_LENGTH 50
 #define MESSAGE_FONT_WIDTH 5
