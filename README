@@ -2,7 +2,7 @@ Aliens vs Predator Linux  http://icculus.org/avp/
 ------------------------
 
 This is an unofficial Linux port of the Fox Interactive / Rebellion
-Developments game, Aliens Verses Predator.
+Developments game, Aliens Versus Predator.
 
 The port is currently under development; it is not yet "suitable for
 end users."  Hopefully this status will change in the not-so-distant future.
@@ -30,16 +30,18 @@ You can find the original source code and other related tools at:
 http://www.avpnews.com/mods/tools/
 
 
-Yes, the code does currently do something.  No, it's not ready for a release.
-No, it is not vaporware.  I hope to at least complete the single portion of
-the game before making an official release.
+Yes, the code does something.  No, it's not ready for a release. No, it is not
+vaporware.  I hope to at least complete the single portion of the game before
+making an official release.  Check out the TODO to see what's needed to be
+done.
 
 
 If you are really itching to try this out, either install the Gold Ed. in
 windows/vmware (read below to find out why), or download the AvP Alien demo.
 If you are wanting to run the Alien demo (the installer is an .exe but you
 can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
-CFLAGS (the one that's uncommented). Rename all game files lowercase.
+CFLAGS (the one that's uncommented). Rename all game files lowercase. 
+Be sure to install the latest OpenAL (http://www.openal.org) CVS.
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
 aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/
@@ -62,19 +64,24 @@ save games (save games were added in the gold edition).
 
 At least with the Gold edition, a number of files are encoded on the CD. So
 you would need to install the game in Windows (VMware works also) in order
-to get this to work.  Currently wine does not work because it fails the CD
-Check.
+to get this to work.  WINE will not work because the CD Check fails.
 
 
 Currently, all AvP files and directories need to be lowercase, and the
 program ran from the directory with all the game data (language.txt,
-avp_huds, avp_rifs, fastfile).
+avp_huds, avp_rifs, fastfile).  zakk recommends
+http://blemished.net/chcase.html for renaming the files.
+
+
+If you think the default game controls are terrible and insist on changing
+them, take a look at avp/win95/usr_io.c.
 
 
 Apparantly AvP Gold is no longer available at most places.  I had ordered my
 copy May 2001 from http://www.dragon.ca, but they no longer list it. 
 Someone did mention in an avpnews forum post (see below) that 
-http://www.qvc.com does have AvP Gold, so you may want to try there.
+http://www.qvc.com does have AvP Gold, so you may want to try there.  Try
+searching the bargin bin at your local computer store.
 
 What are the differences between AvP and AvP Gold?
 http://www.aliensvpredator.com/ubb/Forum2/HTML/001635.html
@@ -92,8 +99,8 @@ http://www.avpnews.com.
 
 Last, but surely not least:
 Thanks go out to Chuck Mason for testing and the OpenAL code, Dan Olson for
-trying the code out with the Regular version, and Ryan C. Gordon for hosting
-this project.
+trying the code out with the Regular version, Zachary 'zakk' Slater for
+providing feedback, and Ryan C. Gordon for hosting this project.
 
 ---
 Steven Fuller <relnev@icculus.org>

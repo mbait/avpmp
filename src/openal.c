@@ -107,7 +107,7 @@ int PlatStartSoundSys()
 		/*
 		alSourcef(p, AL_ROLLOFF_FACTOR, 0.0f);
 		*/
-		alSourcef(p, AL_ROLLOFF_FACTOR, 1.0f);
+		alSourcef(p, AL_ROLLOFF_FACTOR, 0.01f);
 		alSourcef(p, AL_REFERENCE_DISTANCE, 1.0f);
 	}
 	
@@ -579,11 +579,12 @@ int PlatDo3dSound(int activeIndex)
 		newVolume = VOLUME_MIN;
 	
 	printf("PlatDo3dSound: idx = %d, volume = %d, distance = %d\n", activeIndex, newVolume, distance);
-	
+
+/*	
 	if (PlatChangeSoundVolume (activeIndex, newVolume) == SOUND_PLATFORMERROR) {
 		return SOUND_PLATFORMERROR;
 	}
-	
+*/	
 	if (distance < ActiveSounds[activeIndex].threedeedata.outer_range) {
 #if 0
 		ActiveSounds[activeIndex].PropSetP_pos[0] = ActiveSounds[activeIndex].threedeedata.position.vx; // 10000.0;
