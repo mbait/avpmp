@@ -46,10 +46,19 @@ HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags
 			}
  			fd = open(file, O_RDONLY);
  			if (fd == -1)
- 				return -1;
+ 				return INVALID_HANDLE_VALUE;
 			break;
 		case GENERIC_WRITE:
-//			break;
+			if (flags != CREATE_ALWAYS) {
+				fprintf(stderr, "CreateFile: GENERIC_WRITE flags = %d\n", flags);
+				exit(EXIT_FAILURE);
+			}
+			fd = open(file, O_WRONLY|O_TRUNC|O_CREAT, S_IRUSR|S_IWUSR);
+			if (fd == -1) {
+				perror("CreateFile");
+				return INVALID_HANDLE_VALUE;
+			}
+			break;
 		case GENERIC_READ|GENERIC_WRITE:
 //			break;
 		default:
