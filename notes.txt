@@ -1,8 +1,3 @@
-win95/awtexld.hpp line 79:
-/* TODO */
-/*|pixelFormat.ddpf.dwRGBAlphaBitMask*/
-
-========
 Changed filenames:
 avp/win95/system.c (avp_load_rif calls)
 and other places that forgot to be documented

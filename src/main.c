@@ -378,12 +378,15 @@ static void handle_buttonpress(int button, int press)
 void CheckForWindowsMessages()
 {
 	SDL_Event event;
-	int x, y, buttons;
+	int x, y, buttons, wantmouse;
 	
 	GotAnyKey = 0;
 	DebouncedGotAnyKey = 0;
 	memset(DebouncedKeyboardInput, 0, sizeof(DebouncedKeyboardInput));
 	
+	wantmouse =	(surface->flags & SDL_FULLSCREEN) ||
+			(SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON);
+
 	KeyboardInput[KEY_MOUSEWHEELUP] = 0;
 	KeyboardInput[KEY_MOUSEWHEELDOWN] = 0;
 	
@@ -391,10 +394,10 @@ void CheckForWindowsMessages()
 		do {
 			switch(event.type) {
 				case SDL_MOUSEBUTTONDOWN:
-					handle_buttonpress(event.button.button, 1);
+					if (wantmouse)
+						handle_buttonpress(event.button.button, 1);
 					break;
 				case SDL_MOUSEBUTTONUP:
-					handle_buttonpress(event.button.button, 0);
 					break;
 				case SDL_KEYDOWN:
 					handle_keypress(KeySymToKey(event.key.keysym.sym), 1);
@@ -412,24 +415,41 @@ void CheckForWindowsMessages()
 	}
 	
 	buttons = SDL_GetRelativeMouseState(&x, &y);
-	if (buttons & SDL_BUTTON(1))
-		handle_keypress(KEY_LMOUSE, 1);
-	else
-		handle_keypress(KEY_LMOUSE, 0);
-	if (buttons & SDL_BUTTON(2))
-		handle_keypress(KEY_MMOUSE, 1);
-	else
-		handle_keypress(KEY_MMOUSE, 0);
-	if (buttons & SDL_BUTTON(3))
-		handle_keypress(KEY_RMOUSE, 1);
-	else
-		handle_keypress(KEY_RMOUSE, 0);
 	
-	MouseVelX = DIV_FIXED(x, NormalFrameTime);
-	MouseVelY = DIV_FIXED(y, NormalFrameTime);
+	if (wantmouse) {
+		if (buttons & SDL_BUTTON(1))
+			handle_keypress(KEY_LMOUSE, 1);
+		else
+			handle_keypress(KEY_LMOUSE, 0);
+		if (buttons & SDL_BUTTON(2))
+			handle_keypress(KEY_MMOUSE, 1);
+		else
+			handle_keypress(KEY_MMOUSE, 0);
+		if (buttons & SDL_BUTTON(3))
+			handle_keypress(KEY_RMOUSE, 1);
+		else
+			handle_keypress(KEY_RMOUSE, 0);
+	
+		MouseVelX = DIV_FIXED(x, NormalFrameTime);
+		MouseVelY = DIV_FIXED(y, NormalFrameTime);
+	} else {
+		KeyboardInput[KEY_LMOUSE] = 0;
+		KeyboardInput[KEY_MMOUSE] = 0;
+		KeyboardInput[KEY_RMOUSE] = 0;
+		MouseVelX = 0;
+		MouseVelY = 0;
+	}
 	
 	if (KeyboardInput[KEY_LEFTALT] && DebouncedKeyboardInput[KEY_CR]) {
+		SDL_GrabMode gm;
+		
 		SDL_WM_ToggleFullScreen(surface);
+		
+		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+		if (gm == SDL_GRAB_OFF && !(surface->flags & SDL_FULLSCREEN))
+			SDL_ShowCursor(1);
+		else
+			SDL_ShowCursor(0);
 	}
 
 	if (KeyboardInput[KEY_LEFTCTRL] && DebouncedKeyboardInput[KEY_G]) {
@@ -437,6 +457,12 @@ void CheckForWindowsMessages()
 		
 		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 		SDL_WM_GrabInput((gm == SDL_GRAB_ON) ? SDL_GRAB_OFF : SDL_GRAB_ON);
+		
+		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+		if (gm == SDL_GRAB_OFF && !(surface->flags & SDL_FULLSCREEN))
+			SDL_ShowCursor(1);
+		else
+			SDL_ShowCursor(0);
 	}
 	
 	if (DebouncedKeyboardInput[KEY_ESCAPE])
