@@ -120,10 +120,11 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	GLuint h;
 	
 	glGenTextures(1, &h);
-	
+
+/* TODO: d3d code doesn't explicitly enable repeating but some levels (namely predator beginning level waterfall) have clamped textures */
 	glBindTexture(GL_TEXTURE_2D, h);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -192,7 +193,8 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CheckBoundTextureIsCorrect(TextureHandle->id);
 	
-	glBegin(GL_POLYGON);
+	// glBegin(GL_POLYGON);
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
@@ -203,6 +205,9 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
 
+//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
+//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
+			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
 
@@ -368,8 +373,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	}
 
 	//glBegin(GL_POLYGON);
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
-	
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -422,4 +426,80 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 #endif		
 	}
 	glEnd();
+}
+
+void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
+{
+	float ZNear;
+	int i;
+	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	CheckBoundTextureIsCorrect(0); /* disable texturing */
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_OFF);
+	
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];
+		
+		int x1, y1;
+		GLfloat x, y, z;
+		float rhw, zvalue;
+		
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+
+#if 0
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+				
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+#endif
+		
+		x = x1;
+		y = y1;
+		
+		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		z = 1.0 - 2*ZNear/zvalue;
+		
+//		zvalue = vertices->Z+HeadUpDisplayZOffset;
+//		zvalue = ((zvalue-ZNear)/zvalue);
+		
+		rhw = 1.0/(float)vertices->Z;
+		
+		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+	}
+	glEnd();
+}
+
+void D3D_PredatorScreenInversionOverlay()
+{
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
+	CheckBoundTextureIsCorrect(0);
+	glDepthFunc(GL_ALWAYS);
+	
+	SelectPolygonBeginType(3); /* triangles */
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	glVertex3f(-1.0f, -1.0f, 1.0f);
+	glVertex3f( 1.0f, -1.0f, 1.0f);
+	glVertex3f(-1.0f,  1.0f, 1.0f);
+	
+	glVertex3f( 1.0f, -1.0f, 0.0f);
+	glVertex3f( 1.0f,  1.0f, 0.0f);
+	glVertex3f(-1.0f,  1.0f, 0.0f);
+	
+	glEnd();
+	
+	glDepthFunc(GL_LEQUAL);
 }

@@ -517,16 +517,6 @@ void D3D_ScreenInversionOverlay()
 	fprintf(stderr, "D3D_ScreenInversionOverlay()\n");
 }
 
-void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_PredatorThermalVisionPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-}
-
-void D3D_PredatorScreenInversionOverlay()
-{
-	fprintf(stderr, "D3D_PredatorScreenInversionOverlay()\n");
-}
-
 void D3D_PlayerOnFireOverlay()
 {
 	fprintf(stderr, "D3D_PlayerOnFireOverlay()\n");

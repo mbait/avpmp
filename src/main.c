@@ -61,6 +61,10 @@ int InitialiseWindowsSystem()
 		exit(EXIT_FAILURE);
 	}
 	
+	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
+	        
+//	SDL_ShowCursor(0);
+	                
 	glViewport(0, 0, MyWidth, MyHeight);
 	
 	glMatrixMode(GL_PROJECTION);
@@ -447,8 +451,6 @@ int main(int argc, char *argv[])
 
 //	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-//	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
-
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
