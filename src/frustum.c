@@ -14,7 +14,7 @@
 
 #include "kshape.h"
 #include "kzsort.h"
-#include "frustrum.h"
+#include "frustum.h"
 
 #include "particle.h"
 

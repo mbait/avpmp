@@ -1228,7 +1228,9 @@ int NarrowDivide(LONGLONGCH *a, int b);
 int WideMulNarrowDiv(int a, int b, int c);
 void RotateVector_ASM(VECTORCH *v, MATRIXCH *m);
 void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m);
-int f2i(float f);
+
+int FloatToInt(float);
+#define f2i(a, b) { a = FloatToInt(b); }
 
 #endif
 

@@ -3,6 +3,7 @@
 
 #include "d3_func.h"
 #include "vision.h"
+
 enum DECAL_ID
 {
 	DECAL_FMV=0,
@@ -84,7 +85,9 @@ typedef struct
 	VECTORCH Normal[3];
 	VECTORCH LightSource;
 	char DotIsOnPlayer;
-	DPID TargetID;
+//	DPID TargetID;
+	int TargetID;
+	
 	int ShouldBeDrawn;
 
 } THREE_LASER_DOT_DESC;
@@ -94,6 +97,7 @@ extern void MakeDecal(enum DECAL_ID decalID, VECTORCH *normalPtr, VECTORCH *posi
 extern void AddDecal(enum DECAL_ID decalID, VECTORCH *normalPtr, VECTORCH *positionPtr, int moduleIndex);
 extern void HandleDecalSystem(void);
 
+struct section_data; // hmodel.h
 extern void AddDecalToHModel(VECTORCH *normalPtr, VECTORCH *positionPtr, struct section_data *sectionPtr);
 
 extern FIXED_DECAL* AllocateFixedDecal(void);

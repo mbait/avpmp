@@ -11,7 +11,7 @@
 
 #include "kshape.h"
 #include "kzsort.h"
-#include "frustrum.h"
+#include "frustum.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

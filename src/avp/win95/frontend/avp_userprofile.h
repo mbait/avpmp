@@ -2,7 +2,7 @@
 #define _avp_user_profile_h_ 1
 
 #include "usr_io.h"
-#include "AvP_EnvInfo.h"
+#include "avp_envinfo.h"
 #include "game_statistics.h"
 #include "detaillevels.h"
 /* KJL 14:17:41 10/12/98 - User profile

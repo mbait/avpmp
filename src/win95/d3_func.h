@@ -5,6 +5,47 @@
 extern "C" {
 #endif
 
+
+/* KJL 14:24:45 12/4/97 - render state information */
+enum TRANSLUCENCY_TYPE
+{
+	TRANSLUCENCY_OFF,
+	TRANSLUCENCY_NORMAL,
+	TRANSLUCENCY_INVCOLOUR,
+	TRANSLUCENCY_COLOUR,
+	TRANSLUCENCY_GLOWING,
+	TRANSLUCENCY_DARKENINGCOLOUR,
+	TRANSLUCENCY_JUSTSETZ,
+	TRANSLUCENCY_NOT_SET
+};
+
+enum FILTERING_MODE_ID
+{
+	FILTERING_BILINEAR_OFF,
+	FILTERING_BILINEAR_ON,
+	FILTERING_NOT_SET
+};
+
+typedef struct
+{
+	enum TRANSLUCENCY_TYPE TranslucencyMode;
+	enum FILTERING_MODE_ID FilteringMode;
+	int FogDistance;
+	unsigned int FogIsOn :1;
+	unsigned int WireFrameModeIsOn :1;
+
+} RENDERSTATES;
+
+typedef struct D3DTextureFormat {
+//    DDSURFACEDESC ddsd; /* DDSURFACEDESC for the surface description */
+    BOOL Palette;   /* is Palettized? */
+    int RedBPP;         /* #red bits per pixel */
+    int BlueBPP;        /* #blue bits per pixel */
+    int GreenBPP;       /* #green bits per pixel */
+    int IndexBPP;       /* number of bits in palette index */
+} D3DTEXTUREFORMAT;
+
+#if 0 // disabled direct3d stuff 
 /*
   Direct3D globals
 */
@@ -95,6 +136,7 @@ typedef struct
 
 } RENDERSTATES;
 
+#endif
 
 
 

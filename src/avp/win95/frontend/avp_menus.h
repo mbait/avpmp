@@ -34,7 +34,7 @@
 
 #define SAVE_GAME_ON 1 
 
-#include "AvP_MenuGfx.hpp"
+#include "avp_menugfx.hpp"
 #include "language.h"
 
 enum MENUSSTATE_ID

@@ -817,11 +817,11 @@ void ReleaseDirectMouse(void);
 /*
 	Internal
 */
-#ifdef AVP_DEBUG_VERSION
+//#ifdef AVP_DEBUG_VERSION
 int textprint(const char* t, ...);
-#else
-#define textprint(ignore)
-#endif
+//#else
+//#define textprint(ignore)
+//#endif
 
 
 void MakePaletteShades(VGAPALETTEENTRY *vga_palptr, int hue, int pal_shades_per_hue);

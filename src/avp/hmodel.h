@@ -390,6 +390,7 @@ extern int HModel_DepthTest(HMODELCONTROLLER *controller,SECTION_DATA *test_sect
 extern void DeInitialise_HModel(HMODELCONTROLLER *controller);
 
 
+struct save_block_header; // savegame.h
 extern void LoadHierarchy(struct save_block_header* header,HMODELCONTROLLER* controller);
 extern void SaveHierarchy(HMODELCONTROLLER* controller);
 

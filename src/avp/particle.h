@@ -98,12 +98,12 @@ typedef struct
 	VECTORCH Velocity;
 	VECTORCH Offset;
 
-	union
-	{
-		unsigned int Colour;
-
-		struct ColourComponents ColourComponents;
-	};
+//	union
+//	{
+//		unsigned int Colour;
+//		struct ColourComponents ColourComponents;
+//	};
+	unsigned int Colour;
 
 	unsigned int Size;
 

@@ -166,7 +166,9 @@ typedef enum netgame_connectiontype
   ----------------------------------------------------------------------*/
 typedef struct netgame_playerdata
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	char name[NET_PLAYERNAMELENGTH];
 	NETGAME_CHARACTERTYPE characterType;
 	NETGAME_SPECIALISTCHARACTERTYPE characterSubType;
@@ -311,7 +313,9 @@ typedef struct netmessageheader
 
 typedef struct gamedescription_playerdata
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	unsigned char characterType:2;
 	unsigned char characterSubType:6;
 	unsigned char startFlag;
@@ -467,7 +471,9 @@ typedef struct netmessage_frametimer
 typedef struct netmessage_playerkilled
 {
 	int objectId;
-	DPID killerId;
+//	DPID killerId;
+	int killerId;
+	
 	NETGAME_CHARACTERTYPE myType;  //take character types at time of death , in case they change
 	NETGAME_CHARACTERTYPE killerType;
 	char weaponIcon;
@@ -544,7 +550,9 @@ typedef struct netmessage_lobstate
 //stuff that isn't required
 typedef struct netmessage_lobdamaged_header
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	signed int objectId;
 	short ammo_id:11;
 	
@@ -620,7 +628,9 @@ typedef struct netmessage_damage_direction
 
 typedef struct netmessage_lobdestroyed_request
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	signed int objectId;
 }NETMESSAGE_LOBDESTROYED_REQUEST;
 
@@ -736,7 +746,8 @@ typedef struct netmessage_predatorsights
 	signed int zPos: 23;
 	signed int zOrient: 9;
 
-	DPID TargetID;
+	// DPID TargetID;
+	int TargetID;
 
 	// 16 bytes (DPID 4 bytes?)
 
@@ -744,7 +755,9 @@ typedef struct netmessage_predatorsights
 
 typedef struct netmessage_lobonfire
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	signed int objectId;
 
 }NETMESSAGE_LOBONFIRE;
@@ -798,7 +811,9 @@ typedef struct netmessage_alienaikilled
 	int death_time;
 	int GibbFactor;
 
-	DPID killerId;
+//	DPID killerId;
+	int killerId;
+	
 	int killCount;
 	unsigned char AlienType: 2;//alien/predalien/praetorian
 
@@ -814,16 +829,14 @@ typedef struct netmessage_faralienposition
 	unsigned int indexIsModuleIndex:1;
 	unsigned int alienType:2;
 
-	
-
-}NETMESSAGE_FARALIENPOSITION;
+} NETMESSAGE_FARALIENPOSITION;
 
 typedef struct netmessage_gibbing
 {
 	signed int Guid;
 	int gibbFactor;
 	int seed;
-}NETMESSAGE_GIBBING;
+} NETMESSAGE_GIBBING;
 
 typedef struct netmessage_spotaliensound
 {
@@ -866,12 +879,16 @@ typedef struct netmessage_strategysynch
 //for messages that just require a player id
 typedef struct netmessage_playerid
 {
-	DPID playerID; 
+//	DPID playerID; 
+	int playerID;
+	
 }NETMESSAGE_PLAYERID;
 
 typedef struct netmessage_lms_restart
 {
-	DPID playerID; 
+//	DPID playerID; 
+	int playerID;
+	
 	int seed;
 }NETMESSAGE_LMS_RESTART;
 
@@ -912,13 +929,15 @@ extern void InitAVPNetGame(void);
 extern void NetCollectMessages(void);
 extern void NetSendMessages(void);
 extern void EndAVPNetGame(void);
-extern int PlayerIdInPlayerList(DPID Id);
+//extern int PlayerIdInPlayerList(DPID Id);
+extern int PlayerIdInPlayerList(int Id);
 //use assignnewsbname instead of addnetgameobjectid
 #define AddNetGameObjectID AssignNewSBName
 extern void AddNetGameObjectID(STRATEGYBLOCK *sbPtr);
 extern void RecordFinalNetGameScores(void);
 extern void DoNetScoresForHostDeath(NETGAME_CHARACTERTYPE myType,NETGAME_CHARACTERTYPE killerType);
-extern void RemovePlayerFromGame(DPID id);
+//extern void RemovePlayerFromGame(DPID id);
+extern void RemovePlayerFromGame(int id);
 extern int EmptySlotInPlayerList(void);
 extern void TeleportNetPlayerToAStartingPosition(STRATEGYBLOCK *playerSbPtr, int startOfGame);
 extern int AddUpPlayerFrags(int playerId);
@@ -967,9 +986,11 @@ extern void AddNetMsg_SpotAlienSound(int soundCategory,int alienType,int pitch,V
 extern void AddNetMsg_LocalObjectDestroyed_Request(STRATEGYBLOCK *sbPtr);
 extern void AddNetMsg_ScoreChange(int killerIndex,int victimIndex);
 
-extern void AddNetMsg_PlayerID(DPID playerID,unsigned char message);
+//extern void AddNetMsg_PlayerID(DPID playerID,unsigned char message);
+extern void AddNetMsg_PlayerID(int playerID,unsigned char message);
 extern void AddNetMsg_LastManStanding_RestartTimer(unsigned char time);
-extern void AddNetMsg_LastManStanding_Restart(DPID alienID,int seed);
+//extern void AddNetMsg_LastManStanding_Restart(DPID alienID,int seed);
+extern void AddNetMsg_LastManStanding_Restart(int alienID,int seed);
 
 extern void AddNetMsg_CreateWeapon(char* objectName,int type,VECTORCH* location);
 
@@ -1019,5 +1040,6 @@ extern int LobbiedGame;
 
 #ifdef __cplusplus
 }
+
 #endif
 #endif

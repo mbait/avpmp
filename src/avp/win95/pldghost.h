@@ -16,7 +16,9 @@ extern "C" {
 
 typedef struct netghostdatablock
 {
-	DPID playerId;
+//	DPID playerId;
+	int playerId;
+	
 	signed int playerObjectId; /* -1 == player, all other numbers used for objects */
 	AVP_BEHAVIOUR_TYPE type;
 	INANIMATEOBJECT_TYPE IOType;
@@ -25,11 +27,11 @@ typedef struct netghostdatablock
 
 	/* KJL 17:33:41 22/01/99 - I've made this a union because I needed a storage space,
 	and the currentAnimSequence is only used by specific objects */
-	union
-	{
+	//union
+	//{
 		int currentAnimSequence;
-		int EventCounter; // used by grenades
-	};
+	//	int EventCounter; // used by grenades
+	//};
 	
 	DISPLAYBLOCK *myGunFlash;
 	SECTION_DATA *GunflashSectionPtr;
@@ -70,10 +72,14 @@ typedef struct netghostdatablock
   ----------------------------------------------------------------------*/
 extern void UpdateGhost(STRATEGYBLOCK *sbPtr,VECTORCH *position,EULER *orientation,int sequence, int special);
 extern void RemoveGhost(STRATEGYBLOCK *sbPtr);
-extern void RemovePlayersGhosts(DPID id);
-extern void RemovePlayerGhost(DPID id);
-extern STRATEGYBLOCK *FindGhost(DPID Id, int obId);
-extern STRATEGYBLOCK *CreateNetGhost(DPID playerId, int objectId, VECTORCH *position, EULER* orientation, AVP_BEHAVIOUR_TYPE type, unsigned char IOType, unsigned char subtype);
+//extern void RemovePlayersGhosts(DPID id);
+//extern void RemovePlayerGhost(DPID id);
+//extern STRATEGYBLOCK *FindGhost(DPID Id, int obId);
+//extern STRATEGYBLOCK *CreateNetGhost(DPID playerId, int objectId, VECTORCH *position, EULER* orientation, AVP_BEHAVIOUR_TYPE type, unsigned char IOType, unsigned char subtype);
+extern void RemovePlayersGhosts(int id);
+extern void RemovePlayerGhost(int id);
+extern STRATEGYBLOCK *FindGhost(int Id, int obId);
+extern STRATEGYBLOCK *CreateNetGhost(int playerId, int objectId, VECTORCH *position, EULER* orientation, AVP_BEHAVIOUR_TYPE type, unsigned char IOType, unsigned char subtype);
 extern void MakeGhostNear(STRATEGYBLOCK *sbPtr);
 extern void MakeGhostFar(STRATEGYBLOCK *sbPtr);
 extern void DamageNetworkGhost(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multiple, SECTION_DATA *section,VECTORCH* incoming);
