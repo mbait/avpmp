@@ -210,7 +210,7 @@ typedef struct
 	{
 		enum TEXTSTRING_ID TextDescription;
 		enum AVPMENUGFX_ID GfxID;
-	};
+	} a;
 
 	union
 	{
@@ -218,7 +218,7 @@ typedef struct
 		int MaxSliderValue;
 		int MaxTextLength;
 		int MaxValue; //for number fields
-	};
+	} b;
 
 	union
 	{
@@ -227,23 +227,20 @@ typedef struct
 		char *TextPtr;
 		int *NumberPtr;
 		int Value;
-	};
+	} c;
 
 	union
 	{
 		enum TEXTSTRING_ID FirstTextSliderString;
 		enum TEXTSTRING_ID NumberFieldUnitsString; 
 		char** TextSliderStringPointer;
-	};
+	} d;
 	
 	enum TEXTSTRING_ID HelpString;
 	
-	union
-	{
-		enum TEXTSTRING_ID NumberFieldZeroString; //special string for 0
-	};
-	int Brightness;
+	enum TEXTSTRING_ID NumberFieldZeroString; //special string for 0
 
+	int Brightness;
 } AVPMENU_ELEMENT;
 
 typedef struct
@@ -254,8 +251,6 @@ typedef struct
 	AVPMENU_ELEMENT		*MenuElements;
 	enum AVPMENU_ID		ParentMenu;
 	int					DefaultElement;
-
-
 } AVPMENU;
 
 
@@ -280,7 +275,6 @@ typedef struct
 	unsigned int		UserEnteringNumber :1;
 	unsigned int		UserChangingKeyConfig :1;
 	unsigned int		ChangingPrimaryConfig :1;
-
 } AVP_MENUS;
 
 

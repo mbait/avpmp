@@ -1,4 +1,5 @@
-#include "advwin32.h"
+#include "fixer.h"
+
 #ifndef DB_LEVEL
 #define DB_LEVEL 4
 #endif
@@ -19,10 +20,8 @@
 #include <stdarg.h>
 #include <limits.h>
 
-#include "awTexLd.h"
-#pragma warning(disable: 4701)
-#include "awTexLd.hpp"
-#pragma warning(default: 4701)
+#include "awtexld.h"
+#include "awtexld.hpp"
 
 #ifdef _CPPRTTI
 	#include <typeinfo.h>

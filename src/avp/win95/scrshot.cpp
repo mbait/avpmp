@@ -1,15 +1,15 @@
 #include "3dc.h"
 #include "bmp2.h"
 #include "endianio.h"
-#include <String.hpp>
+#include "string.hpp"
 #include "scrshot.hpp"
 #include "module.h"
 #include "stratdef.h"
 #include "gamedef.h"
 #include "ourasert.h"
-#include "frontend\avp_menus.h"
+#include "frontend/avp_menus.h"
 extern "C"{
- extern DDPIXELFORMAT DisplayPixelFormat;
+// extern DDPIXELFORMAT DisplayPixelFormat;
  extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
  extern int VideoModeTypeScreen;
  extern long BackBufferPitch;
@@ -97,11 +97,12 @@ void HandleScreenShot()
 					 
 void ScreenShot()
 {
+	int i;
 	char Name[40];
 	strcpy(Name,"AVP");
 	int length=strlen(Name);
 	strncpy(&Name[length],"00.bmp",8);
-	for(int i=0;i<100;i++)
+	for(i=0;i<100;i++)
 	{
 		Name[length]=i/10+'0';
 		Name[length+1]=(i%10)+'0';
@@ -179,6 +180,8 @@ void ScreenShot()
 	int red_shift,red_scale,green_shift,green_scale,blue_shift,blue_scale;
 	if(VideoModeTypeScreen==VideoModeType_15)
 	{
+		fprintf(stderr, "ScreenShot: VideoModeTypeScreen==VideoModeType_15\n");
+/*
     	int m;
     	for (red_shift = 0, m = DisplayPixelFormat.dwRBitMask; 
     	   !(m & 1); red_shift++, m >>= 1);
@@ -191,7 +194,7 @@ void ScreenShot()
     	for (blue_shift = 0, m = DisplayPixelFormat.dwBBitMask; 
     	   !(m & 1); blue_shift++, m >>= 1);
     	blue_scale=255/m;
-		
+*/		
 	}
 	
 	// write 24 bit image
@@ -216,9 +219,13 @@ void ScreenShot()
 			for (j=0; j<h.WinInfo.Width; ++j)
 			{
 				colour=*(short*)&BufferPtr[j*2];
+				
+				fprintf(stderr, "ScreenShot: VideoModeTypeScreen==VideoModeType_15\n");
+/*
 				PutByte((BYTE)(((colour & DisplayPixelFormat.dwBBitMask)>>blue_shift)*blue_scale),fp);  //b
 				PutByte((BYTE)(((colour & DisplayPixelFormat.dwGBitMask)>>green_shift)*green_scale),fp);  //g
 				PutByte((BYTE)(((colour & DisplayPixelFormat.dwRBitMask)>>red_shift)*red_scale),fp);  //r
+*/				
 			}
 		}
 		else if(VideoModeTypeScreen==VideoModeType_24)

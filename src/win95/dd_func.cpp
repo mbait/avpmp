@@ -53,7 +53,7 @@ LPDIRECTDRAW            lpDD;           // DirectDraw object
 LPDIRECTDRAWSURFACE     lpDDSPrimary;   // DirectDraw primary surface
 LPDIRECTDRAWSURFACE     lpDDSBack;      // DirectDraw back surface
 LPDIRECTDRAWSURFACE     lpDDSHiddenBack; // for system memory rendering target, stable configuration
-LPDIRECTDRAWPALETTE     lpDDPal[MaxPalettes];        // DirectDraw palette
+LPDIRECTDRAWPALETTE     lpDDPal[1];        // DirectDraw palette
 #if debug || PreBeta
 LPDIRECTDRAWSURFACE     lpDDDbgFont; // Debugging font, specific to current video mode
 #endif

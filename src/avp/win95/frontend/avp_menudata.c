@@ -890,21 +890,21 @@ extern void MakeSelectSessionMenu(void)
 		for (i=0; i<NumberOfSessionsFound; i++)
 		{
 			AvPMenu_MultiplayerSelectSession[i].ElementID = AVPMENU_ELEMENT_LISTCHOICE;
-			AvPMenu_MultiplayerSelectSession[i].TextPtr = SessionData[i].Name;
-			AvPMenu_MultiplayerSelectSession[i].MenuToGoTo = AVPMENU_MULTIPLAYER_JOINING;
+			AvPMenu_MultiplayerSelectSession[i].c.TextPtr = SessionData[i].Name;
+			AvPMenu_MultiplayerSelectSession[i].b.MenuToGoTo = AVPMENU_MULTIPLAYER_JOINING;
 			AvPMenu_MultiplayerSelectSession[i].HelpString = TEXTSTRING_MULTIPLAYER_SELECTSESSION_HELP;
 		}
 	}
 	else
 	{
 		AvPMenu_MultiplayerSelectSession[0].ElementID = AVPMENU_ELEMENT_GOTOMENU;
-		AvPMenu_MultiplayerSelectSession[0].TextDescription = TEXTSTRING_MULTIPLAYER_NOSESSIONSFOUND;
-		AvPMenu_MultiplayerSelectSession[0].MenuToGoTo = AVPMENU_MULTIPLAYERJOINGAME;
+		AvPMenu_MultiplayerSelectSession[0].a.TextDescription = TEXTSTRING_MULTIPLAYER_NOSESSIONSFOUND;
+		AvPMenu_MultiplayerSelectSession[0].b.MenuToGoTo = AVPMENU_MULTIPLAYERJOINGAME;
 		AvPMenu_MultiplayerSelectSession[0].HelpString = TEXTSTRING_MULTIPLAYER_NOSESSIONSFOUND_HELP;
 
 		if(netGameData.connectionType!=CONN_TCPIP)
 		{
-			AvPMenu_MultiplayerSelectSession[0].MenuToGoTo = AVPMENU_MULTIPLAYER;
+			AvPMenu_MultiplayerSelectSession[0].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
 		}
 			
 		i=1;
@@ -936,29 +936,29 @@ extern void MakeInGameMenu(void)
 	{
 		case I_Marine:
 		{
-			AvPMenu_InGame[6].TextDescription = TEXTSTRING_MARINEKEYCONTROLS_TITLE;
-			AvPMenu_InGame[6].MenuToGoTo = AVPMENU_MARINEKEYCONFIG;
+			AvPMenu_InGame[6].a.TextDescription = TEXTSTRING_MARINEKEYCONTROLS_TITLE;
+			AvPMenu_InGame[6].b.MenuToGoTo = AVPMENU_MARINEKEYCONFIG;
 			
-			AvPMenu_InNetGame[3].TextDescription = TEXTSTRING_MARINEKEYCONTROLS_TITLE;
-			AvPMenu_InNetGame[3].MenuToGoTo = AVPMENU_MARINEKEYCONFIG;
+			AvPMenu_InNetGame[3].a.TextDescription = TEXTSTRING_MARINEKEYCONTROLS_TITLE;
+			AvPMenu_InNetGame[3].b.MenuToGoTo = AVPMENU_MARINEKEYCONFIG;
 			break;
 		}
 		case I_Predator:
 		{
-			AvPMenu_InGame[6].TextDescription = TEXTSTRING_PREDATORKEYCONTROLS_TITLE;
-			AvPMenu_InGame[6].MenuToGoTo = AVPMENU_PREDATORKEYCONFIG;
+			AvPMenu_InGame[6].a.TextDescription = TEXTSTRING_PREDATORKEYCONTROLS_TITLE;
+			AvPMenu_InGame[6].b.MenuToGoTo = AVPMENU_PREDATORKEYCONFIG;
 			
-			AvPMenu_InNetGame[3].TextDescription = TEXTSTRING_PREDATORKEYCONTROLS_TITLE;
-			AvPMenu_InNetGame[3].MenuToGoTo = AVPMENU_PREDATORKEYCONFIG;
+			AvPMenu_InNetGame[3].a.TextDescription = TEXTSTRING_PREDATORKEYCONTROLS_TITLE;
+			AvPMenu_InNetGame[3].b.MenuToGoTo = AVPMENU_PREDATORKEYCONFIG;
 			break;
 		}
 		case I_Alien:
 		{
-			AvPMenu_InGame[6].TextDescription = TEXTSTRING_ALIENKEYCONTROLS_TITLE;
-			AvPMenu_InGame[6].MenuToGoTo = AVPMENU_ALIENKEYCONFIG;
+			AvPMenu_InGame[6].a.TextDescription = TEXTSTRING_ALIENKEYCONTROLS_TITLE;
+			AvPMenu_InGame[6].b.MenuToGoTo = AVPMENU_ALIENKEYCONFIG;
 			
-			AvPMenu_InNetGame[3].TextDescription = TEXTSTRING_ALIENKEYCONTROLS_TITLE;
-			AvPMenu_InNetGame[3].MenuToGoTo = AVPMENU_ALIENKEYCONFIG;
+			AvPMenu_InNetGame[3].a.TextDescription = TEXTSTRING_ALIENKEYCONTROLS_TITLE;
+			AvPMenu_InNetGame[3].b.MenuToGoTo = AVPMENU_ALIENKEYCONFIG;
 			break;
 		}
 	}
@@ -970,26 +970,26 @@ extern void MakePredatorKeyConfigMenu(void)
 	int j;
 	
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_KEYCONFIGOK;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
-	AvPMenu_KeyConfig[i].MenuToGoTo = AVPMENU_INGAME;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
+	AvPMenu_KeyConfig[i].b.MenuToGoTo = AVPMENU_INGAME;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS_HELP;
 	i++;
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_RESETKEYCONFIG;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_CONTROLS_RESETTODEFAULT_HELP;
 	i++;
 	#if 1
 	for(j=0; j<NUMBER_OF_PREDATOR_INPUTS; j++)
 	{
 		AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
-		AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_PREDATOR_KEY_FORWARD+j;
-		AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
+		AvPMenu_KeyConfig[i+j].a.TextDescription = TEXTSTRING_PREDATOR_KEY_FORWARD+j;
+		AvPMenu_KeyConfig[i+j].b.MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 
 	}
 	#else
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_BUTTONSETTING;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_PREDATOR_KEY_FORWARD;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_PREDATOR_KEY_FORWARD;
 	AvPMenu_KeyConfig[i].MaxSliderValue = NUMBER_OF_PREDATOR_INPUTS-1;
 	i++;
 	#endif
@@ -1004,26 +1004,26 @@ extern void MakeMarineKeyConfigMenu(void)
 	int j;
 	
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_KEYCONFIGOK;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
-	AvPMenu_KeyConfig[i].MenuToGoTo = AVPMENU_INGAME;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
+	AvPMenu_KeyConfig[i].b.MenuToGoTo = AVPMENU_INGAME;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS_HELP;
 	i++;
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_RESETKEYCONFIG;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_CONTROLS_RESETTODEFAULT_HELP;
 	i++;
 	#if 1
 	for(j=0; j<NUMBER_OF_MARINE_INPUTS; j++)
 	{
 		AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
-		AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_MARINE_KEY_FORWARD+j;
-		AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
+		AvPMenu_KeyConfig[i+j].a.TextDescription = TEXTSTRING_MARINE_KEY_FORWARD+j;
+		AvPMenu_KeyConfig[i+j].b.MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 	}
 	#else
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_BUTTONSETTING;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_MARINE_KEY_FORWARD;
-	AvPMenu_KeyConfig[i].MaxSliderValue = NUMBER_OF_MARINE_INPUTS-1;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_MARINE_KEY_FORWARD;
+	AvPMenu_KeyConfig[i].b.MaxSliderValue = NUMBER_OF_MARINE_INPUTS-1;
 	i++;
 	#endif
 
@@ -1032,10 +1032,10 @@ extern void MakeMarineKeyConfigMenu(void)
 	AutoWeaponChangeOn_Temp = AutoWeaponChangeOn;
 	//add autoweapon change option , for lack of anywhere better to put it
 	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_TEXTSLIDER;
-	AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_AUTOWEAPONCHANGE;	
-	AvPMenu_KeyConfig[i+j].MaxSliderValue = 1;	
-	AvPMenu_KeyConfig[i+j].SliderValuePtr = &AutoWeaponChangeOn_Temp;	
-	AvPMenu_KeyConfig[i+j].FirstTextSliderString = TEXTSTRING_NO;	
+	AvPMenu_KeyConfig[i+j].a.TextDescription = TEXTSTRING_AUTOWEAPONCHANGE;	
+	AvPMenu_KeyConfig[i+j].b.MaxSliderValue = 1;	
+	AvPMenu_KeyConfig[i+j].c.SliderValuePtr = &AutoWeaponChangeOn_Temp;	
+	AvPMenu_KeyConfig[i+j].d.FirstTextSliderString = TEXTSTRING_NO;	
 	AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_AUTOWEAPONCHANGE_HELP;	
 
 	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
@@ -1046,26 +1046,26 @@ extern void MakeAlienKeyConfigMenu(void)
 	int j;
 	
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_KEYCONFIGOK;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
-	AvPMenu_KeyConfig[i].MenuToGoTo = AVPMENU_INGAME;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS;
+	AvPMenu_KeyConfig[i].b.MenuToGoTo = AVPMENU_INGAME;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_MOUSECONTROLS_SAVETHESESETTINGS_HELP;
 	i++;
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_RESETKEYCONFIG;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_CONTROLS_RESETTODEFAULT;
 	AvPMenu_KeyConfig[i].HelpString = TEXTSTRING_CONTROLS_RESETTODEFAULT_HELP;
 	i++;
 	#if 1
 	for(j=0; j<NUMBER_OF_ALIEN_INPUTS; j++)
 	{
 		AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
-		AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_ALIEN_KEY_FORWARD+j;
-		AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
+		AvPMenu_KeyConfig[i+j].a.TextDescription = TEXTSTRING_ALIEN_KEY_FORWARD+j;
+		AvPMenu_KeyConfig[i+j].b.MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 	}
 	#else
 	AvPMenu_KeyConfig[i].ElementID = AVPMENU_ELEMENT_BUTTONSETTING;
-	AvPMenu_KeyConfig[i].TextDescription = TEXTSTRING_ALIEN_KEY_FORWARD;
-	AvPMenu_KeyConfig[i].MaxSliderValue = NUMBER_OF_ALIEN_INPUTS-1;
+	AvPMenu_KeyConfig[i].a.TextDescription = TEXTSTRING_ALIEN_KEY_FORWARD;
+	AvPMenu_KeyConfig[i].b.MaxSliderValue = NUMBER_OF_ALIEN_INPUTS-1;
 	i++;
 	#endif
 	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
@@ -1074,7 +1074,7 @@ extern void MakeAlienKeyConfigMenu(void)
 extern void MakeUserProfileSelectMenu(void)
 {
 	int n = NumberOfUserProfiles();
-	AvPMenu_UserProfileSelect[0].MaxSliderValue = n;
+	AvPMenu_UserProfileSelect[0].b.MaxSliderValue = n;
 	
 	if (n>0) UserProfileNumber=1;
 	else UserProfileNumber=0;
@@ -1087,36 +1087,36 @@ extern void MakeConnectionSelectMenu()
 	if(netGameData.tcpip_available)
 	{
 		AvPMenu_MultiplayerConnection[pos].ElementID = AVPMENU_ELEMENT_CONNECTIONCHOICE;
-		AvPMenu_MultiplayerConnection[pos].TextDescription = TEXTSTRING_MULTIPLAYER_TCPIP;
-		AvPMenu_MultiplayerConnection[pos].MenuToGoTo = AVPMENU_MULTIPLAYER;
-		AvPMenu_MultiplayerConnection[pos].Value = CONN_TCPIP;
+		AvPMenu_MultiplayerConnection[pos].a.TextDescription = TEXTSTRING_MULTIPLAYER_TCPIP;
+		AvPMenu_MultiplayerConnection[pos].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
+		AvPMenu_MultiplayerConnection[pos].c.Value = CONN_TCPIP;
 		AvPMenu_MultiplayerConnection[pos].HelpString = TEXTSTRING_MULTIPLAYER_PROTOCOL_HELP;
 		pos++;
 	}
 	if(netGameData.ipx_available)
 	{
 		AvPMenu_MultiplayerConnection[pos].ElementID = AVPMENU_ELEMENT_CONNECTIONCHOICE;
-		AvPMenu_MultiplayerConnection[pos].TextDescription = TEXTSTRING_MULTIPLAYER_IPX;
-		AvPMenu_MultiplayerConnection[pos].MenuToGoTo = AVPMENU_MULTIPLAYER;
-		AvPMenu_MultiplayerConnection[pos].Value = CONN_IPX;
+		AvPMenu_MultiplayerConnection[pos].a.TextDescription = TEXTSTRING_MULTIPLAYER_IPX;
+		AvPMenu_MultiplayerConnection[pos].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
+		AvPMenu_MultiplayerConnection[pos].c.Value = CONN_IPX;
 		AvPMenu_MultiplayerConnection[pos].HelpString = TEXTSTRING_MULTIPLAYER_PROTOCOL_HELP;
 		pos++;
 	}
 	if(netGameData.modem_available)
 	{
 		AvPMenu_MultiplayerConnection[pos].ElementID = AVPMENU_ELEMENT_CONNECTIONCHOICE;
-		AvPMenu_MultiplayerConnection[pos].TextDescription = TEXTSTRING_MULTIPLAYER_MODEM;
-		AvPMenu_MultiplayerConnection[pos].MenuToGoTo = AVPMENU_MULTIPLAYER;
-		AvPMenu_MultiplayerConnection[pos].Value = CONN_Modem;
+		AvPMenu_MultiplayerConnection[pos].a.TextDescription = TEXTSTRING_MULTIPLAYER_MODEM;
+		AvPMenu_MultiplayerConnection[pos].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
+		AvPMenu_MultiplayerConnection[pos].c.Value = CONN_Modem;
 		AvPMenu_MultiplayerConnection[pos].HelpString = TEXTSTRING_MULTIPLAYER_PROTOCOL_HELP;
 		pos++;
 	}
 	if(netGameData.serial_available)
 	{
 		AvPMenu_MultiplayerConnection[pos].ElementID = AVPMENU_ELEMENT_CONNECTIONCHOICE;
-		AvPMenu_MultiplayerConnection[pos].TextDescription = TEXTSTRING_MULTIPLAYER_SERIAL;
-		AvPMenu_MultiplayerConnection[pos].MenuToGoTo = AVPMENU_MULTIPLAYER;
-		AvPMenu_MultiplayerConnection[pos].Value = CONN_Serial;
+		AvPMenu_MultiplayerConnection[pos].a.TextDescription = TEXTSTRING_MULTIPLAYER_SERIAL;
+		AvPMenu_MultiplayerConnection[pos].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
+		AvPMenu_MultiplayerConnection[pos].c.Value = CONN_Serial;
 		AvPMenu_MultiplayerConnection[pos].HelpString = TEXTSTRING_MULTIPLAYER_PROTOCOL_HELP;
 		pos++;
 	}
@@ -1125,9 +1125,9 @@ extern void MakeConnectionSelectMenu()
     //Add an option for launching a game using mplayer
     {
 		AvPMenu_MultiplayerConnection[pos].ElementID =	AVPMENU_ELEMENT_CONNECTIONCHOICE;
-		AvPMenu_MultiplayerConnection[pos].TextDescription = TEXTSTRING_MPLAYER_TEXT_1;
-		AvPMenu_MultiplayerConnection[pos].MenuToGoTo = AVPMENU_MULTIPLAYER;
-		AvPMenu_MultiplayerConnection[pos].Value = CONN_Mplayer;
+		AvPMenu_MultiplayerConnection[pos].a.TextDescription = TEXTSTRING_MPLAYER_TEXT_1;
+		AvPMenu_MultiplayerConnection[pos].b.MenuToGoTo = AVPMENU_MULTIPLAYER;
+		AvPMenu_MultiplayerConnection[pos].c.Value = CONN_Mplayer;
 		 pos++;           
     }
 	#endif
@@ -1138,8 +1138,8 @@ extern void MakeConnectionSelectMenu()
 	{
 		//no available connections
 		AvPMenu_MultiplayerConnection[0].ElementID = AVPMENU_ELEMENT_GOTOMENU;
-		AvPMenu_MultiplayerConnection[0].TextDescription = TEXTSTRING_MULTIPLAYER_NOCONNECTIONS;
-		AvPMenu_MultiplayerConnection[0].MenuToGoTo = AVPMENU_MAIN;
+		AvPMenu_MultiplayerConnection[0].a.TextDescription = TEXTSTRING_MULTIPLAYER_NOCONNECTIONS;
+		AvPMenu_MultiplayerConnection[0].b.MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_MultiplayerConnection[pos].HelpString = TEXTSTRING_MULTIPLAYER_NOCONNECTIONS_HELP;
 
 		pos=1;			
@@ -1161,6 +1161,3 @@ extern void MakeOpenIPAddressMenu()
 	}
 
 }
-
-
-

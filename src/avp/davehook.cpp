@@ -414,7 +414,7 @@ void DAVEHOOK_Maintain(void)
 	#if SupportWindows95
 	if ( bFirstFrame )
 	{
-		RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing();
+//		RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing();
 		// this is a hack to ensure that none of the keypresses used
 		// in the menu get through to the first frame of the game and 
 		// for example, switch to typing mode (for CR presses)
@@ -424,7 +424,7 @@ void DAVEHOOK_Maintain(void)
 	else
 	{
 		// Flush the WinProc messages:
-		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
+//		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
 	}
 	#endif // SupportWindows95
 

@@ -59,24 +59,6 @@ typedef enum {
 
 } PROCESSORTYPES;
 
-
-/*
-
- VGA Palette Entry
-
-*/
-
-typedef struct vgapaletteentry {
-
-	unsigned char vga_r;
-	unsigned char vga_g;
-	unsigned char vga_b;
-
-} VGAPALETTEENTRY;
-
-
-extern void LoadAndChangeToPalette(char*);
-
 /*
 	Video mode decsription (to be filled
 	in by DirectDraw callback).
@@ -378,15 +360,6 @@ typedef enum {
 
 
 /*
-	Max no of palettes -- at present there is NO
-	code for palette switching and ALL palette
-	calls within the DirectDraw interface system
-	run on palette 0
-*/
-
-#define MaxPalettes 4 
-
-/*
 
  Video Mode Types
 
@@ -446,21 +419,6 @@ typedef enum {
 	RestartOutOfVidMemForPrimary
 
 } VIDEORESTARTMODES;
-
-/*
-	Load modes for putting an image
-	in a DirectDraw surface --- either
-	do or do not deallocate the
-	system memory image, but always
-	keep the DirectDraw one
-*/
-
-typedef enum {
-
-	LoadModeDirectDrawOnly,
-	LoadModeFull
-
-} IMAGELOADMODES;
 
 
 /*
@@ -561,42 +519,6 @@ typedef enum {
 	VideoMemoryPreferred
 
 } DXMEMORYMODES;
-
-/*
-
- .BMP File header
-
-*/
-
-/* 
-  Pack the header to 1 byte alignment so that the 
-  loader works (John's code, still under test).
-*/
-
-typedef struct bmpheader {
-
-	unsigned short BMP_ID;	/* Contains 'BM' */
-	int BMP_Size;
-
-	short BMP_Null1;
-	short BMP_Null2;
-
-	int BMP_Image;		/* Byte offset of image start relative to offset 14 */
-	int BMP_HeadSize;	/* Size of header (40 for Windows, 12 for OS/2) */
-	int BMP_Width;		/* Width of image in pixels */
-	int BMP_Height;		/* Height of image in pixels */
-
-	short BMP_Planes;	/* Number of image planes (must be 1) */
-	short BMP_Bits;		/* Number of bits per pixel (1,4,8 or 24) */
-
-	int BMP_Comp;			/* Compression type */
-	int BMP_CSize;		/* Size in bytes of compressed image */
-	int BMP_Hres;			/* Horizontal resolution in pixels/meter */
-	int BMP_Vres;			/* Vertical resolution in pixels/meter */
-	int BMP_Colours;		/* Number of colours used, below (N) */
-	int BMP_ImpCols;		/* Number of important colours */
-
-} PACKED BMPHEADER;
 
 /*
 	Types of texture files that can be
@@ -802,7 +724,6 @@ int textprint(const char* t, ...);
 //#endif
 
 
-void MakePaletteShades(VGAPALETTEENTRY *vga_palptr, int hue, int pal_shades_per_hue);
 void ConvertToDDPalette(unsigned char* src, unsigned char* dst, int length, int flags);
 int textprintXY(int x, int y, const char* t, ...);
 void LoadSystemFonts(char* fname);

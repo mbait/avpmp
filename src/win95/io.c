@@ -36,25 +36,6 @@
 #define ClearScreenColour 1000
 
 /*
-   To filter frame rate values from
-   Windows timer to provide a smoother
-   ride.  This may make some AI systems
-   etc behave better, though it will take
-   some time to catch up if there is a genuine
-   abrupt transition in the frame rate.
-
-   There may also be some sort of convergence
-   instability here!!!! IMPORTANT
-   FIXME!!!! (possibly)
-
-   Although this code was derived from
-   some of Jamie's filter algorithms, I have
-   mangled it hideously, so _don't blame him_!
-*/
-
-#define KalmanTimer No
-
-/*
   Experiment to try and fix mystery driver problems
   Don't set with ForceWindowsPalette on!!!
   Leave this on!!!

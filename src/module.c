@@ -1127,5 +1127,3 @@ int IsAIModuleVisibleFromAIModule(AIMODULE *source,AIMODULE *target) {
 }
 
 #endif
-
-

@@ -72,7 +72,7 @@ avp/equipmnt.c
 avp/equiputl.cpp
 avp/extents.c
 avp/game.c
-TODO avp/game_statistics.c
+avp/game_statistics.c
 avp/gamecmds.cpp
 avp/gameflow.c
 avp/gamevars.cpp
@@ -133,7 +133,7 @@ avp/win95/cheat.c
 avp/win95/chtcodes.cpp
 avp/win95/d3d_hud.cpp
 TODO avp/win95/d3d_render.cpp
-TODO avp/win95/ddplat.cpp
+avp/win95/ddplat.cpp
 TODO avp/win95/directplay.c
 TODO avp/win95/dp_func.c
 TODO avp/win95/dplayext.c
@@ -161,7 +161,7 @@ TODO avp/win95/pldnet.c
 TODO avp/win95/progress_bar.cpp
 avp/win95/projload.cpp
 TODO avp/win95/psndplat.c
-TODO avp/win95/scrshot.cpp
+avp/win95/scrshot.cpp
 avp/win95/strachnk.cpp
 avp/win95/system.c
 TODO avp/win95/usr_io.c
@@ -171,7 +171,7 @@ TODO avp/win95/winmain.c
 
 avp/win95/frontend/avp_envinfo.c
 avp/win95/frontend/avp_intro.cpp
-TODO avp/win95/frontend/avp_menudata.c
+avp/win95/frontend/avp_menudata.c
 TODO avp/win95/frontend/avp_menugfx.cpp
 TODO avp/win95/frontend/avp_menus.c
 TODO avp/win95/frontend/avp_mp_config.cpp
