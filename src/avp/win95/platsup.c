@@ -24,7 +24,6 @@ extern int InputMode;
 extern unsigned char KeyboardInput[];
 
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
-extern void (*SetVideoMode[]) (void);
 extern unsigned char *ScreenBuffer;
 
 extern  unsigned char KeyASCII;

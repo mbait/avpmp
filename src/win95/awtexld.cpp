@@ -2149,6 +2149,20 @@ DDSurface * AwCreateSurface(char const * _argFormatS, ...)
 	
 	using namespace AwTl;
 	
+	/* Just convert the texture to 32bpp */
+	pixelFormat.palettizedB = 0;
+	
+	pixelFormat.alphaB = 1;
+	pixelFormat.validB = 1;
+	pixelFormat.bitsPerPixel = 32;
+	pixelFormat.redLeftShift = 0;
+	pixelFormat.greenLeftShift = 8;
+	pixelFormat.blueLeftShift = 16;
+	pixelFormat.redRightShift = 0;
+	pixelFormat.greenRightShift = 0;
+	pixelFormat.blueRightShift = 0;
+	pixelFormat.dwRGBAlphaBitMask = 0xFF000000;
+
 	va_list ap;
 	va_start(ap,_argFormatS);
 	CreateTextureParms parms;

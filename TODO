@@ -1,17 +1,20 @@
 [DONE] [08/24/01] Finish OpenGL code.
 [DONE] [08/26/01] Fix sound code.
 * Menus.
+* Debug "pure virtual method called"
 * Proper file loading/saving (ignore case, search certain directories) and
   config handling (~/.avp/{ge, re, ad, md, pd}/?)
 * Command line options.
 * CD Audio.
 * Joystick support.
+* Save/Load Game support.
 * Revisit sound code.
 * Try to get demos and regular edition to work.
 * See what FOX/Rebellion has to say (if anything) about redistribution of the
   demos and if its possible to create an installer for regular/gold edition
   CDs.
 * Do something with the ingame movies. Might just leave as-is.
+* Possible Idea: implement demos?
 * See if the build process can be made easier for those who download the
   source.
 * Write documentation.

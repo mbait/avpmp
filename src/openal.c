@@ -730,7 +730,7 @@ void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
 void UpdateSoundFrequencies()
 {
 	extern int SoundSwitchedOn;
-	extern int TimeScale;
+/*	extern int TimeScale; */
 	int i;
 	
 /*	printf("FREQ UpdateSoundFreqncies()\n"); */

@@ -41,7 +41,8 @@ windows/vmware (read below to find out why), or download the AvP Alien demo.
 If you are wanting to run the Alien demo (the installer is an .exe but you
 can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
 CFLAGS (the one that's uncommented). Rename all game files lowercase. 
-Be sure to install the latest OpenAL (http://www.openal.org) CVS.
+Be sure to install nasm (0.98) and the latest OpenAL (http://www.openal.org)
+CVS.
 
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 
@@ -56,13 +57,9 @@ text is incorrect/missing).
 
 
 The source code that was released only works with Aliens vs Predator Gold. 
-In the future I'd like this port to support Gold, Regular and the three
-demos.  Plus, I am told that the Regular edition does seem to work by
-renaming a file or two.
+In the future I'd like this port to support Gold, Regular and the Alien
+demo.  (The Marine and Predator demos are a bit older and might not work.)
 
-
-Unless someone feels strongly about it, I probably will decide not to support
-save games (save games were added in the gold edition).
 
 
 At least with the Gold edition, a number of files are encoded on the CD. So

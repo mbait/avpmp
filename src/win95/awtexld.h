@@ -103,11 +103,13 @@ struct AwCreateGraphicRegion
 {
 	unsigned left, top, right, bottom; /* rectangle to cut from the original image */
 	unsigned width, height; /* width and height of the resulting surface or texture */
+#if 0
 	union /* DDSurface or D3DTexture pointer depending on the context used */
 	{
 		DDSurface * pSurface; /* Direct Draw Surface object pointer */
 		D3DTexture * pTexture; /* Direct 3D Texture object pointer */
 	};
+#endif	
 };
 
 /* typedef to save typing 'struct' when not using C++ */

@@ -311,9 +311,9 @@ int AVP_ChangeDisplayMode
 		and other request modes such as
 		zbuffering.
 	*/
-
+/*
 	SetVideoMode[VideoMode]();
-
+*/
 
 
     return TRUE;

@@ -23,8 +23,8 @@
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
 
-#define MyWidth		1024
-#define MyHeight	768
+#define MyWidth		800
+#define MyHeight	600
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -65,15 +65,10 @@ PROCESSORTYPES ReadProcessorType()
 	return PType_PentiumMMX;
 }
 
-int InitialiseWindowsSystem()
+int SetVideoMode(int Width, int Height)
 {
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
 	
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -81,7 +76,10 @@ int InitialiseWindowsSystem()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
-	if ((surface = SDL_SetVideoMode(MyWidth, MyHeight, 0, SDL_OPENGL)) == NULL) {
+	if (surface != NULL)
+		SDL_FreeSurface(surface);
+	
+	if ((surface = SDL_SetVideoMode(Width, Height, 0, SDL_OPENGL)) == NULL) {
 		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
@@ -98,7 +96,7 @@ int InitialiseWindowsSystem()
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
 	                
-	glViewport(0, 0, MyWidth, MyHeight);
+	glViewport(0, 0, Width, Height);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -119,6 +117,22 @@ int InitialiseWindowsSystem()
 	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	
+	ScreenDescriptorBlock.SDB_Width     = Width;
+	ScreenDescriptorBlock.SDB_Height    = Height;
+	ScreenDescriptorBlock.SDB_CentreX   = Width/2;
+	ScreenDescriptorBlock.SDB_CentreY   = Height/2;
+	ScreenDescriptorBlock.SDB_ProjX     = Width/2;
+	ScreenDescriptorBlock.SDB_ProjY     = Height/2;
+	ScreenDescriptorBlock.SDB_ClipLeft  = 0;
+	ScreenDescriptorBlock.SDB_ClipRight = Width;
+	ScreenDescriptorBlock.SDB_ClipUp    = 0;
+	ScreenDescriptorBlock.SDB_ClipDown  = Height;
+	
+	return 0;
+}
+
+int InitialiseWindowsSystem()
+{
 	return 0;
 }
 
@@ -542,6 +556,11 @@ int main(int argc, char *argv[])
 	int menusActive = 0;
 	int thisLevelHasBeenCompleted = 0;
 	
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	
 	LoadCDTrackList();
 	
 	SetFastRandom();
@@ -562,6 +581,8 @@ int main(int argc, char *argv[])
 #endif
 	InitGame();
 
+	SetVideoMode(640, 480);
+	
 	InitialVideoMode();
 
 	/* Env_List can probably be removed */
@@ -639,11 +660,15 @@ int main(int argc, char *argv[])
 
 #endif
 
+	
+	
 while(AvP_MainMenus()) {
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
+	SetVideoMode(MyWidth, MyHeight);
+#if 0	
 	/* this was in windows SetGameVideoMode: */
 	ScreenDescriptorBlock.SDB_Width     = MyWidth;
 	ScreenDescriptorBlock.SDB_Height    = MyHeight;
@@ -655,8 +680,7 @@ while(AvP_MainMenus()) {
 	ScreenDescriptorBlock.SDB_ClipRight = MyWidth;
 	ScreenDescriptorBlock.SDB_ClipUp    = 0;
 	ScreenDescriptorBlock.SDB_ClipDown  = MyHeight;
-	
-	// GetCorrectDirectDrawObject();
+#endif	
 	
 	InitialiseGammaSettings(RequestedGammaSetting);
 	
@@ -796,7 +820,8 @@ while(AvP_MainMenus()) {
 	}
 	
 	ClearMemoryPool();
-		
+	
+	SetVideoMode(640, 480);	
 }
 
 	SoundSys_StopAll();

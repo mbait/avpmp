@@ -4,8 +4,7 @@
 #include "tallfont.hpp"
 #include "strtab.hpp"
 
-#include "awTexLd.h"
-#include "alt_tab.h"
+#include "awtexld.h"
 
 #include "chnktexi.h"
 #include "hud_layout.h"
@@ -19,10 +18,10 @@ extern void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour);
 
 extern "C"
 {
-#include "AvP_Menus.h"
+#include "avp_menus.h"
 extern unsigned char *ScreenBuffer;
 extern long BackBufferPitch;
-extern DDPIXELFORMAT DisplayPixelFormat;
+/* extern DDPIXELFORMAT DisplayPixelFormat; */
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 
 char AAFontWidths[256];

@@ -443,59 +443,8 @@ int NearestColour(int rs, int gs, int bs, unsigned char *palette)
 }
 
 
-
-
-
-
-
-
-
-
 /*************************************************************************/
 /*************************************************************************/
-
-
-
-
-
-/*
-
- PC Video Mode Array Functions
-
-*/
-
-
-#define m320diag (378 + 6)
-
-
-
-
-
-/*
-
- PC Video Mode Function Arrays
-
-*/
-
-void (*SetVideoMode[]) (void) = {
-
-0
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*
@@ -1797,12 +1746,10 @@ int ChangeDisplayModes(HINSTANCE hInst, int nCmd,
 		obviously...
 		FIXME!!!
 	*/
-    /* test only!!! */
-    #if 0
-	chdir("d:\3dc");
-	#endif
 
+/*
     SetVideoMode[VideoMode]();
+*/
 
 /*
 	Lose all the textures and reload the 
