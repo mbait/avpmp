@@ -13,7 +13,7 @@ CFLAGS += `sdl-config --cflags`
 LDLIBS = -L/usr/X11R6/lib -lX11 -lXext -lGL `sdl-config --libs` -lopenal
 
 # Debian SDL+NVIDIA workaround (change /usr/lib to the real location of the files)
-#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext /usr/lib/libGL.so.1 `sdl-config` --libs -lopenal -lm
+#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext /usr/lib/libGL.so.1 `sdl-config --libs` -lopenal -lm
 
 # required for gcc-3.0
 #LDLIBS += -lstdc++
