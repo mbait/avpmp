@@ -13,12 +13,13 @@
 * GL_EXT_secondary_color
 * Revisit sound code. (Try AL_PITCH support, etc)
 * Try to get demos and regular edition to work.
+* Possible Idea: implement demos? (the kind you watch)
 * See what FOX/Rebellion has to say (if anything) about redistribution of the
   demos and if its possible to create an installer for regular/gold edition
   CDs.
 * Do something with the ingame movies. Might just leave as-is.
+* Intro screens.
 * Disable Mutliplayer in the Main Menu.
-* Possible Idea: implement demos?
 * See if the build process can be made easier for those who download the
   source.
 * Write documentation.
@@ -36,3 +37,5 @@
   inline.h
 * Remove unused files.
 * Squelch any unnecessary debug output
+* Common\\foxlogo.RIM, Common\\logo.RIM: do these exist in the Alien Demo
+  and Regular Ed.?

@@ -811,7 +811,8 @@ static void handle_keypress(int key, int unicode, int press)
 		DebouncedGotAnyKey = 1;
 	}
 	
-	GotAnyKey = 1;
+	if (press)
+		GotAnyKey = 1;
 	KeyboardInput[key] = press;
 }
 
@@ -1037,7 +1038,7 @@ int main(int argc, char *argv[])
 	
 	SetFastRandom();
 	
-	WeWantAnIntro();
+	/* WeWantAnIntro(); */
 	GetPathFromRegistry();
 
 #if MARINE_DEMO
