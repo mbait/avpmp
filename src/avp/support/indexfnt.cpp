@@ -1308,29 +1308,3 @@ void IndexedFont_HUD :: RenderChar_Unclipped
 }
 
 /* Internal function definitions ***********************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -4401,6 +4401,7 @@ extern void TranslationSetup(void)
 }
 
 
+#if 0
 #ifndef _MSC_VER
 void TranslatePoint(int *source, int *dest, int *matrix);
 #pragma aux TranslatePoint = \
@@ -4500,20 +4501,29 @@ void TranslatePoint(int *source, int *dest, int *matrix)
 }
 
 #endif
+#endif
+
+/* TODO */
+static void TranslatePoint(float *source, float *dest, float *matrix)
+{
+	fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
+}
+
 
 void TranslatePointIntoViewspace(VECTORCH *pointPtr)
 {
-
 	Source[0] = pointPtr->vx;
 	Source[1] = pointPtr->vy;
 	Source[2] = pointPtr->vz;
 
-	TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
+//	TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
+	TranslatePoint(Source, Dest, ViewMatrix);
 
 	f2i(pointPtr->vx,Dest[0]);
 	f2i(pointPtr->vy,Dest[1]);
 	f2i(pointPtr->vz,Dest[2]);
 }
+
 void SquishPoints(SHAPEINSTR *shapeinstrptr)
 {
 	int **shapeitemarrayptr = shapeinstrptr->sh_instr_data;
@@ -4541,7 +4551,8 @@ void SquishPoints(SHAPEINSTR *shapeinstrptr)
 			Source[1] = point.vy;
 			Source[2] = point.vz;
 
-			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
+//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
+			TranslatePoint(Source, Dest, ViewMatrix);
 
 			f2i(RotatedPts[i].vx,Dest[0]);
 			f2i(RotatedPts[i].vy,Dest[1]);
@@ -4626,8 +4637,9 @@ void MorphPoints(SHAPEINSTR *shapeinstrptr)
 			Source[1] = srcPtr->vy+Global_ODB_Ptr->ObWorld.vy;
 			Source[2] = srcPtr->vz+Global_ODB_Ptr->ObWorld.vz;
 
-			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
-
+//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
+			TranslatePoint(Source, Dest, ViewMatrix);
+			
 			f2i(destPtr->vx,Dest[0]);
 			f2i(destPtr->vy,Dest[1]);
 			f2i(destPtr->vz,Dest[2]);
@@ -4683,9 +4695,11 @@ void TranslateShapeVertices(SHAPEINSTR *shapeinstrptr)
 			Source[1] = srcPtr->vy;
 			Source[2] = srcPtr->vz;
 
-			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ObjectViewMatrix);
-			TranslatePoint((int*)&Dest,(int*)&Source,(int*)&ViewMatrix);
-
+//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ObjectViewMatrix);
+//			TranslatePoint((int*)&Dest,(int*)&Source,(int*)&ViewMatrix);
+			TranslatePoint(Source, Dest, ObjectViewMatrix);
+			TranslatePoint(Dest, Source, ViewMatrix);
+			
 			f2i(destPtr->vx,Source[0]);
 			f2i(destPtr->vy,Source[1]);
 			f2i(destPtr->vz,Source[2]);
@@ -6392,7 +6406,7 @@ void DrawWaterFallPoly(VECTORCH *v)
 		RenderPolygon.TranslucencyMode = TRANSLUCENCY_NORMAL;
 	}
 	{
-		static wv=0;
+		static int wv=0;
 		unsigned int a;
 		for (a=0; a<4; a++) 
 		{

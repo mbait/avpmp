@@ -9,19 +9,12 @@
  *******************************************************************/
 
 /* Includes ********************************************************/
+
 #include "3dc.h"
 #include "scstring.hpp"
 
-#if SupportHHStuff
-	#include "hhfonts.h"
-	#include "hhfile.h"
-	#include "ifmisc.h"
-	#include "holder.hpp"
-	#include "mcstring.hpp"
-#else
-	#include "strutil.h"
-	#include "indexfnt.hpp"
-#endif
+#include "strutil.h"	
+#include "indexfnt.hpp"
 
 	#if TrackReferenceCounted
 	#include "dcontext.hpp"
@@ -29,13 +22,7 @@
 
 	#define UseLocalAssert Yes
 	#include "ourasert.h"
-
-#ifdef __WATCOMC__
-#pragma warning 139 5
-#pragma message("Disabled Warning W139")
-#endif
-
-
+                        
 /* Version settings ************************************************/
 	#define LogStringTables	No
 
@@ -67,6 +54,7 @@
 #endif
 
 
+#include "teletype.hpp"
 
 /* Exported globals ************************************************/
 	/*static*/ SCString* SCString :: pFirst = NULL;

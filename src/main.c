@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "3dc.h"
-
 #include "fixer.h"
+
+#include "3dc.h"
+#include "cdtrackselection.h"
 
 PROCESSORTYPES ReadProcessorType()
 {
@@ -23,5 +24,7 @@ int ExitWindowsSystem()
 
 int main(int argc, char *argv[])
 {
+	LoadCDTrackList();
+	
 	return 0;
 }

@@ -44,7 +44,11 @@
 	{
 	public:
 		static IndexedFont* GetFont( FontIndex I_Font_ToGet );
-			// can return NULL if no font loaded in that slot
+//		static IndexedFont* GetFont( FontIndex I_Font_ToGet )
+//		{
+//			return pIndexedFont[ I_Font_ToGet ];
+//		}
+		// can return NULL if no font loaded in that slot
 
 		static void UnloadFont( FontIndex I_Font_ToGet );
 			// there must be a font loaded in that slot
@@ -160,11 +164,13 @@
 		static IndexedFont* pIndexedFont[ IndexedFonts_MAX_NUMBER_OF_FONTS ];
 
 	};
+#if 0 /* moved elsewhere because of GCC! */
 	// Inline methods:
-		inline/*static*/ IndexedFont* IndexedFont::GetFont( FontIndex I_Font_ToGet )
+		/*inline*/ /* static */ IndexedFont* IndexedFont::GetFont( FontIndex I_Font_ToGet )
 		{
 			return pIndexedFont[ I_Font_ToGet ];
 		}
+#endif
 
 	#if 0
 	class IndexedFont_FixedSpace : public IndexedFont
@@ -250,15 +256,16 @@
 		) const;
 
 //	protected:
-		IndexedFont_HUD
-		(
-			FontIndex I_Font_New
-		) : IndexedFont
+		IndexedFont_HUD(FontIndex I_Font_New); 
+
+		#if 0
+		 : IndexedFont
 			(
 				I_Font_New
-			)
+			) ;
 		{
 		}
+		#endif
 	};
 		inline r2size IndexedFont_HUD::CalcSize
 		(
