@@ -117,9 +117,8 @@ int InitialiseWindowsSystem()
 	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_CULL_FACE);
 	
-/*	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-*/	
+	
 	return 0;
 }
 
@@ -764,8 +763,6 @@ int main(int argc, char *argv[])
 */			
 			RestartLevel();
 		}
-		
-//		break; /* TODO -- remove when loop works */
 	}
 	
 	AvP.LevelCompleted = thisLevelHasBeenCompleted;

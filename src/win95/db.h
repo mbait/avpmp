@@ -31,8 +31,6 @@
  * that fires at level 3 or above, use db_assert3().
  */
 
-#pragma once
-
 /* If you do not set the DB_LEVEL, it is set for you: to 3 */
 #ifndef DB_LEVEL
 	#define DB_LEVEL 3

@@ -15,9 +15,7 @@
 #include "bh_debri.h"
 #include "pvisible.h"
 #include "bh_plift.h"
-#include "dplayext.h"
 #include "pldnet.h"
-#include "dp_func.h"
 #include "pldghost.h"
 #include "equipmnt.h"
 #include "weapons.h"
@@ -46,9 +44,118 @@
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #define DB_LEVEL 3
 #include "db.h"
+
+
+/* This is stuff I added to get this file to compile for the Linux port */
+#include <ctype.h>
+
+DPID AVPDPNetID;
+int QuickStartMultiplayer=1;
+
+typedef struct DPNAME
+{
+	char lpszShortNameA[64];
+} DPNAME;
+DPNAME AVPDPplayerName;
+
+#define DP_OK	0
+
+typedef int HRESULT;
+
+int glpDP; /* directplay object */
+
+#define DPRECEIVE_ALL			1
+#define DPSYS_ADDPLAYERTOGROUP		2
+#define	DPSYS_CREATEPLAYERORGROUP	3
+#define DPPLAYERTYPE_PLAYER		4
+#define DPSYS_DELETEPLAYERFROMGROUP	5
+#define DPSYS_HOST			6
+#define DPSYS_SESSIONLOST		7
+#define DPSYS_SETPLAYERORGROUPDATA	8
+#define DPSYS_SETPLAYERORGROUPNAME	9
+#define DPEXT_HEADER_SIZE		10
+#define DPERR_BUSY			11
+#define DPERR_CONNECTIONLOST		12
+#define DPERR_INVALIDPARAMS		13
+#define DPERR_INVALIDPLAYER		14
+#define DPERR_NOTLOGGEDIN		15
+#define DPERR_SENDTOOBIG		16
+#define DPERR_BUFFERTOOSMALL		17
+#define DPID_SYSMSG			18
+#define DPSYS_DESTROYPLAYERORGROUP	19
+#define DPID_ALLPLAYERS			20
+
+typedef struct LPDPMSG_GENERIC
+{
+	int dwType;
+} DPMSG_GENERIC;
+typedef DPMSG_GENERIC * LPDPMSG_GENERIC;
+
+typedef struct LPDPMSG_CREATEPLAYERORGROUP
+{
+	int dwType;
+	
+	DPID dpId;
+	int dwPlayerType;
+	
+	DPNAME dpnName;
+} DPMSG_CREATEPLAYERORGROUP;
+typedef DPMSG_CREATEPLAYERORGROUP * LPDPMSG_CREATEPLAYERORGROUP;
+
+typedef struct LPDPMSG_DESTROYPLAYERORGROUP
+{
+	int dwType;
+	
+	DPID dpId;
+	int dwPlayerType;	
+} DPMSG_DESTROYPLAYERORGROUP;
+typedef DPMSG_DESTROYPLAYERORGROUP * LPDPMSG_DESTROYPLAYERORGROUP;
+
+BOOL DpExtInit(DWORD cGrntdBufs, DWORD cBytesPerBuf, BOOL bErrChcks)
+{
+	fprintf(stderr, "DpExtInit(%d, %d, %d)\n", cGrntdBufs, cBytesPerBuf, bErrChcks);
+	
+	return FALSE;
+}
+
+void DpExtUnInit()
+{
+	fprintf(stderr, "DpExtUnInit()\n");
+}
+
+HRESULT DpExtRecv(int lpDP2A, void *lpidFrom, void *lpidTo, DWORD dwFlags, void *lplpData, LPDWORD lpdwDataSize)
+{
+	fprintf(stderr, "DpExtRecv(%d, %p, %p, %d, %p, %p)\n", lpDP2A, lpidFrom, lpidTo, dwFlags, lplpData, lpdwDataSize);
+
+	return 1;
+}
+
+HRESULT DpExtSend(int lpDP2A, DPID idFrom, DPID idTo, DWORD dwFlags, void *lpData, DWORD dwDataSize)
+{
+	fprintf(stderr, "DpExtSend(%d, %d, %d, %d, %p, %d)\n", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
+
+	return 1;
+}
+
+int DirectPlay_Disconnect()
+{
+	fprintf(stderr, "DirectPlay_Disconnect()\n");
+	
+	return 1;
+}
+
+HRESULT IDirectPlayX_GetPlayerName(int glpDP, DPID id, void *data, void *size)
+{
+	fprintf(stderr, "IDirectPlayX_GetPlayerName(%d, %d, %p, %p)\n", glpDP, id, data, size);
+
+	return 1;
+}
+
+/* End of Linux-related junk */
+
 
 #define CalculateBytesSentPerSecond 0
 							  
@@ -62,7 +169,7 @@ NETGAME_GAMEDATA netGameData=
 	0,	//NETGAME_CHARACTERTYPE myNextCharacterType; //if player is currently dead and about to become a new character
 	0,	//NETGAME_SPECIALISTCHARACTERTYPE myCharacterSubType;
 	0,	//unsigned char myStartFlag;
-	{0,},	//NETGAME_PLAYERDATA playerData[NET_MAXPLAYERS];
+	{{0},},	//NETGAME_PLAYERDATA playerData[NET_MAXPLAYERS];
 	{0,},	//int teamScores[3];
 	0,	//NETGAME_TYPE gameType;
 	0,	//unsigned char levelNumber;
@@ -220,8 +327,8 @@ int LobbiedGame=0;
 static char sendBuffer[NET_MESSAGEBUFFERSIZE];
 static char *endSendBuffer;
 static int netNextLocalObjectId = 1;
-DPID myNetworkKillerId = NULL;
-DPID myIgniterId = NULL;
+DPID myNetworkKillerId = 0;
+DPID myIgniterId = 0;
 int MyHitBodyPartId=-1;
 DPID MultiplayerObservedPlayer=0;
 
@@ -392,7 +499,7 @@ void InitAVPNetGame(void)
 		int i,j;
 		for(i=0;i<(NET_MAXPLAYERS);i++)
 		{
-			netGameData.playerData[i].playerId = NULL;		
+			netGameData.playerData[i].playerId = 0;
 			for(j=0;j<(NET_PLAYERNAMELENGTH);j++) netGameData.playerData[i].name[j] = '\0';
 			netGameData.playerData[i].characterType = NGCT_Marine;
 			netGameData.playerData[i].characterSubType = NGSCT_General;
@@ -695,8 +802,8 @@ void InitAVPNetGameForJoin(void)
 void MinimalNetCollectMessages(void)
 {			
 	HRESULT res = DP_OK;
-	DPID	dPlayFromId = NULL;
-	DPID 	dPlayToId = NULL;
+	DPID	dPlayFromId = 0;
+	DPID 	dPlayToId = 0;
 	unsigned char *msgP = NULL;
 	unsigned msgSize = 0;
 		
@@ -705,7 +812,7 @@ void MinimalNetCollectMessages(void)
 	{
 		while((res==DP_OK) && glpDP && AVPDPNetID)
 		{
-			res = DpExtRecv(glpDP,&dPlayFromId,&dPlayToId,DPRECEIVE_ALL,&msgP,(LPDWORD)&msgSize);				
+			res = DpExtRecv(glpDP,&dPlayFromId,&dPlayToId,DPRECEIVE_ALL,&msgP,(LPDWORD)&msgSize);
 			if(res==DP_OK)
 			{
 				/* process last message, if there is one */
@@ -840,7 +947,9 @@ void NetCollectMessages(void)
 								numPredators++;
 								numPredatorsWithLifeLeft+=netGameData.playerData[i].playerHasLives;
 								break;
-
+							
+							default:
+								break;
 						}
 					}
 				}
@@ -2864,6 +2973,8 @@ char GetWeaponIconFromDamage(DAMAGE_PROFILE* damage)
 		case AMMO_PC_ALIEN_BITE :
 		case AMMO_ALIEN_BITE_KILLSECTION_SUPER :
 			return ICON_JAWS;
+		default:
+			break;
 	}
 
 	return 0;
@@ -2955,6 +3066,8 @@ void AddNetMsg_PlayerKilled(int objectId,DAMAGE_PROFILE* damage)
 			case AMMO_NPC_PRAETORIAN_BITE :
 			case AMMO_NPC_PRAETORIAN_TAIL :
 				messagePtr->killerType=NGCT_AI_Praetorian;
+				break;
+			default:
 				break;
 		}
 	}
@@ -4629,6 +4742,8 @@ void AddNetMsg_StrategySynch(void)
 						break;
 					case I_BehaviourTrackObject :
 			 			WriteStrategySynch(objectNumber++,TrackObjectGetSynchData(sbPtr));
+						break;
+					default:
 						break;
 				}
 				
@@ -6472,7 +6587,7 @@ static void ProcessNetMsg_LocalObjectState(NETMESSAGE_LOBSTATE *messagePtr, DPID
 static int GetSizeOfLocalObjectDamagedMessage(char *messagePtr)
 {
 	int size=sizeof(NETMESSAGE_LOBDAMAGED_HEADER);
-	NETMESSAGE_LOBDAMAGED_HEADER *messageHeader = (NETMESSAGE_LOBDAMAGED_HEADER*) messagePtr;(NETMESSAGE_LOBDAMAGED_HEADER*) messagePtr;
+	NETMESSAGE_LOBDAMAGED_HEADER *messageHeader = (NETMESSAGE_LOBDAMAGED_HEADER*) messagePtr;
 
 	if(messageHeader->damageProfile) size+=sizeof(NETMESSAGE_DAMAGE_PROFILE);	
 	if(messageHeader->multiple) size+=sizeof(NETMESSAGE_DAMAGE_MULTIPLE);	
@@ -7393,6 +7508,8 @@ static void ProcessNetMsg_StrategySynch(NETMESSAGE_STRATEGYSYNCH *messagePtr)
 					break;
 				case I_BehaviourTrackObject :
 		 			TrackObjectSetSynchData(sbPtr,ReadStrategySynch(objectNumber++));
+					break;
+				default:
 					break;
 			}
 			
@@ -9425,11 +9542,13 @@ void CreatePlayersImageInMirror(void)
 			CreateAlienHModel(ghostData);
 			break;
 		}
-			case(I_BehaviourPredatorPlayer):
+		case(I_BehaviourPredatorPlayer):
 		{
 			CreatePredatorHModel(ghostData,WEAPON_PRED_WRISTBLADE);
 			break;
 		}
+		default:
+			break;
 	}
 		sbPtr->SBdptr->HModelControlBlock=&ghostData->HModelController;
 		ProveHModel(sbPtr->SBdptr->HModelControlBlock,sbPtr->SBdptr);
@@ -10504,6 +10623,9 @@ int DetermineAvailableCharacterTypes(BOOL ConsiderUsedCharacters)
 						case NGCT_Alien :
 							CharacterTypesAvailable[NGCT_Alien]--;
 							break;
+							
+						default:
+							break;
 					}
 				}
 			}
@@ -11041,6 +11163,9 @@ void DoMultiplayerEndGameScreen(void)
 					case NGCT_Predator :
 						symbol[0]=FONT_PREDATORSYMBOL;
 						RenderStringCentred(symbol,100,y,0xffffffff);
+						break;
+						
+					default:
 						break;
 				}
 			}
