@@ -53,6 +53,9 @@ If you get "Aborted" after starting a new game the second time or so,
 try recompiling with gcc-3.0.2.  It seems to have fixed it for me, but I'll
 try to find a workaround that works with gcc-2.95.
 
+If you have Debian, the Debian SDL package, and an NVIDIA card, you will
+have to uncomment a LDLIBS line in the Makefile.
+
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
 aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/  MPConfig/
