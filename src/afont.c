@@ -635,7 +635,7 @@ void BLTString(FONT_DESC str_packet)
 	int not_finished = Yes;
 	int pos_x = str_packet.destx;
 	int pos_y = str_packet.desty;
-	int white_space_width = CHAR_WIDTH(str_packet.fontnum, 0);	
+	int white_space_width = CHAR_WIDTH(str_packet.fontnum, 0);
 
 
 	// set up the font processing varibles depending on the type of font

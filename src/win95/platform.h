@@ -1,6 +1,8 @@
 #ifndef PLATFORM_INCLUDED
 #define PLATFORM_INCLUDED
 
+#include "shape.h" // struct imageheader
+
 /*
 
  Platform Specific Header Include
@@ -27,6 +29,16 @@ extern "C"  {
  Types
 
 */
+
+typedef int BOOL;
+
+typedef struct RECT
+{
+	int left;
+	int top;
+	int right;
+	int bottom;
+} RECT;
 
 typedef RECT RECT_AVP;
 
@@ -709,12 +721,12 @@ typedef struct trianglearray {
 
 long GetWindowsTickCount(void);
 void CheckForWindowsMessages(void);
-BOOL ExitWindowsSystem(void);
-BOOL InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode);
-void KeyboardHandlerKeyDown(WPARAM wParam);
-void KeyboardHandlerKeyUp(WPARAM wParam);
-void MouseVelocityHandler(UINT message, LPARAM lParam);
-void MousePositionHandler(UINT message, LPARAM lParam);
+//BOOL ExitWindowsSystem(void);
+//BOOL InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode);
+//void KeyboardHandlerKeyDown(WPARAM wParam);
+//void KeyboardHandlerKeyUp(WPARAM wParam);
+//void MouseVelocityHandler(UINT message, LPARAM lParam);
+//void MousePositionHandler(UINT message, LPARAM lParam);
 int  ReadJoystick(void); 
 int  CheckForJoystick(void);
 BOOL SpawnRasterThread();
@@ -742,7 +754,7 @@ void finiObjectsExceptDD(void);
 BOOL TestMemoryAccess(void);
 int ChangePalette (unsigned char* NewPalette);
 int GetAvailableVideoMemory(void);
-void HandleVideoModeRestarts(HINSTANCE hInstance, int nCmdShow);
+//void HandleVideoModeRestarts(HINSTANCE hInstance, int nCmdShow);
 void* MakeBackdropSurface(void);
 void ReleaseBackdropSurface(void);
 void LockBackdropSurface(void);
@@ -789,14 +801,6 @@ void WriteZB3dTexturedPolygonToExecuteBuffer(int* itemptr);
 void WriteZBGouraud3dTexturedPolygonToExecuteBuffer(int* itemptr);
 #endif
 
-#ifdef __cplusplus
-HRESULT WINAPI DeviceEnumerator(LPGUID lpGuid,
-   LPSTR lpDeviceDescription, LPSTR lpDeviceName,
-   LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext);
-HRESULT CALLBACK TextureFormatsEnumerator
-   (LPDDSURFACEDESC lpDDSD, LPVOID lpContext);
-#endif
-
 /* KJL 11:28:31 9/9/97 - Direct Input prototypes */
 BOOL InitialiseDirectInput(void);
 void ReleaseDirectInput(void);
@@ -827,18 +831,17 @@ void FlushTextprintBuffer(void);
 void InitPrintQueue(void);
 void InitJoysticks(void);
 void ReadJoysticks(void);
-int ChangeDisplayModes(HINSTANCE hInst, int nCmd, 
-     int NewVideoMode, int NewWindowMode,
-     int NewZBufferMode, int NewRasterisationMode, 
-     int NewSoftwareScanDrawMode, int NewDXMemoryMode);
+//int ChangeDisplayModes(HINSTANCE hInst, int nCmd, 
+//     int NewVideoMode, int NewWindowMode,
+//     int NewZBufferMode, int NewRasterisationMode, 
+//     int NewSoftwareScanDrawMode, int NewDXMemoryMode);
 int DeallocateAllImages(void);
 int MinimizeAllImages(void);
 int RestoreAllImages(void);
 void ConvertDDToInternalPalette(unsigned char* src, unsigned char* dst, int length);
 PROCESSORTYPES ReadProcessorType(void);
 
-/* EXTERNS FOR GLOBALS GO HERE !!!!!! */
-extern DDCAPS direct_draw_caps;
+//extern DDCAPS direct_draw_caps;
 
 /*
 
