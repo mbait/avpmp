@@ -55,8 +55,10 @@ static D3DTexture *CurrentlyBoundTexture = NULL;
 #define TA_MAXVERTICES		2048
 #define TA_MAXTRIANGLES		2048
 
+#if 0 /* NVIDIA header problem */
 #if GL_EXT_secondary_color
 extern PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
+#endif
 #endif
 
 typedef struct VertexArray

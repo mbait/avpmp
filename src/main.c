@@ -68,8 +68,10 @@ static int WantCDRom = 1;
 static int WantJoystick = 1;
 #endif
 
+#if 0 /* NVIDIA gl.h breaks this */
 #if GL_EXT_secondary_color
 PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
+#endif
 #endif
 
 /* ** */
@@ -509,6 +511,7 @@ int SetOGLVideoMode(int Width, int Height)
 /*	
 	printf("OpenGL Extensions: %s\n", ext);
 */	
+#if 0 /* NVIDIA header problem */
 #if GL_EXT_secondary_color
 	pglSecondaryColorPointerEXT = NULL;
 	
@@ -524,6 +527,7 @@ int SetOGLVideoMode(int Width, int Height)
 	} else {
 		printf("GL_EXT_secondary_color not found...\n");
 	}
+#endif
 #endif
 
 	InitOpenGL();
