@@ -1,11 +1,15 @@
-#include <windows.h>
 #include <string.h>
+
+#include "fixer.h"
+
 #include "string.hpp"
 #ifndef DB_LEVEL
 	#define DB_LEVEL 4
 #endif
 #include "db.h"
-#include "awTexLd.h"
+
+#include "awtexld.h"
+
 #include "chnkload.hpp"
 #include "chunkpal.hpp"
 
@@ -16,12 +20,12 @@
 	#include "ffstdio.h"
 #endif
 
-#ifndef CL_SUPPORT_ALTTAB
-	#error "Please #define CL_SUPPORT_ALTTAB to 0 or 1 in projload.hpp"
-#endif
-#if CL_SUPPORT_ALTTAB
-	#include "alt_tab.h"
-#endif
+//#ifndef CL_SUPPORT_ALTTAB
+//	#error "Please #define CL_SUPPORT_ALTTAB to 0 or 1 in projload.hpp"
+//#endif
+//#if CL_SUPPORT_ALTTAB
+//	#include "alt_tab.h"
+//#endif
 
 #include "chnktexi.h"
 
@@ -36,7 +40,9 @@ char const * cl_pszGameMode = NULL;
 // used to determine if the display is palettized
 // currently assuming that if this is <= 8 then all
 // surfaces et. except d3d textures have a global palette
-extern "C" extern int VideoModeColourDepth;
+extern "C" {
+	extern int VideoModeColourDepth;
+};
 
 // useful filename handling functions
 
@@ -649,7 +655,9 @@ char * CL_GetImageFileName(char * pszDestBuf, unsigned nBufSize, char const * ps
 	}
 }
 
-extern "C" extern void CheckForWindowsMessages(void);
+extern "C" {
+	extern void CheckForWindowsMessages(void);
+};
 
 int CL_LoadImageOnce(char const * pszFileName, unsigned fFlagsEtc)
 {

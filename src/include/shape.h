@@ -829,9 +829,9 @@ typedef struct imageheader {
 	TEXTURE *ImagePtr;					/* Pointer to texture in memory */
 
 #if SupportWindows95	
-//	LPDIRECTDRAWSURFACE DDSurface;
-//	LPDIRECT3DTEXTURE D3DTexture;
-//	D3DTEXTUREHANDLE D3DHandle;
+	LPDIRECTDRAWSURFACE DDSurface;	
+	LPDIRECT3DTEXTURE D3DTexture;
+	D3DTEXTUREHANDLE D3DHandle;
 	AW_BACKUPTEXTUREHANDLE hBackup;
 #endif
 

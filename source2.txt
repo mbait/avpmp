@@ -194,13 +194,13 @@ TODO win95/alt_tab.cpp
 win95/animchnk.cpp
 win95/animobs.cpp
 TODO win95/awbmpld.cpp
-TODO win95/awiffld.cpp
+win95/awiffld.cpp
 TODO win95/awpnmld.cpp
 TODO win95/awtexld.cpp
 win95/bmpnames.cpp
 TODO win95/cd_player.c
 win95/chnkload.cpp
-TODO win95/chnktexi.cpp
+win95/chnktexi.cpp
 win95/chnktype.cpp
 win95/chunk.cpp
 win95/chunkpal.cpp
@@ -236,7 +236,7 @@ win95/shpchunk.cpp
 win95/sndchunk.cpp
 win95/sprchunk.cpp
 win95/string.cpp
-TODO win95/texio.c
+win95/texio.c
 win95/toolchnk.cpp
 win95/txioctrl.cpp
 TODO win95/videomodes.cpp

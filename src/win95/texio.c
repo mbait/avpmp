@@ -34,8 +34,8 @@
 #endif
 
 
-#include "awTexLd.h"
-#include "alt_tab.h"
+#include "awtexld.h"
+//#include "alt_tab.h"
 
 /*
 	#define for experimental purposes 
@@ -1557,7 +1557,7 @@ static void DeallocateImageHeader(IMAGEHEADER * ihptr)
 	{
 		ReleaseD3DTexture(ihptr->D3DTexture);
 		ihptr->D3DTexture = (void*) 0;
-		ihptr->D3DHandle = (void*) 0;
+		ihptr->D3DHandle = /* (void*) */ 0;
 	}
 }
 
@@ -1573,7 +1573,7 @@ static void MinimizeImageHeader(IMAGEHEADER * ihptr)
 	{
 		ReleaseD3DTexture(ihptr->D3DTexture);
 		ihptr->D3DTexture = (void*) 0;
-		ihptr->D3DHandle = (void*) 0;
+		ihptr->D3DHandle = /* (void*) */ 0;
 	}
 }
 

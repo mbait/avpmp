@@ -1,7 +1,7 @@
 #ifndef _INCLUDED_AWTEXLD_HPP_
 #define _INCLUDED_AWTEXLD_HPP_
 
-#include "awTexLd.h"
+#include "awtexld.h"
 #include "media.hpp"
 #include "db.h"
 #ifndef DB_COMMA
@@ -51,7 +51,7 @@ namespace AwTl {
 		unsigned blueLeftShift;
 		unsigned blueRightShift;
 		
-		DDPIXELFORMAT ddpf;
+//		DDPIXELFORMAT ddpf;
 	};
 
 	// DO SOMTHING ABOUT THIS
@@ -76,7 +76,8 @@ namespace AwTl {
 						 static_cast<unsigned>(_colP->r)>>pixelFormat.redRightShift<<pixelFormat.redLeftShift
 						|static_cast<unsigned>(_colP->g)>>pixelFormat.greenRightShift<<pixelFormat.greenLeftShift
 						|static_cast<unsigned>(_colP->b)>>pixelFormat.blueRightShift<<pixelFormat.blueLeftShift
-						|pixelFormat.ddpf.dwRGBAlphaBitMask
+/* TODO */
+/*|pixelFormat.ddpf.dwRGBAlphaBitMask*/
 					;
 				}
 				static inline unsigned DoConv(BYTE const * _colP, Colour const * _paletteP db_code1(DB_COMMA unsigned _paletteSize))

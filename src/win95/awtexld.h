@@ -1,6 +1,77 @@
 #ifndef _INCLUDED_AWTEXLD_H_
 #define _INCLUDED_AWTEXLD_H_
 
+#ifdef __cplusplus
+	extern "C" {
+	#define _AWTL_DEFAULTPARM(v) = (v)
+#else /* ! __cplusplus */
+	#define _AWTL_DEFAULTPARM(v)
+#endif /* ? __cplusplus */
+
+#ifdef _MSC_VER
+	#define _AWTL_VARARG __cdecl
+#else
+	#define _AWTL_VARARG
+#endif
+
+#include "aw.h"
+
+/******************************/
+/* return codes & error codes */
+/******************************/
+
+typedef
+enum AwTlErc
+{
+	/* General Errors */
+	  AW_TLE_OK /* apparent success */
+	, AW_TLE_DXERROR /* unexpected DirectX error - see awTlLastDxErr */
+	, AW_TLE_BADPARMS /* parameters passed to function were invalid, or requested unsupported functionality */
+	, AW_TLE_NOINIT /* initialization functions have not been successfully called */
+	/* File reading errors */
+	, AW_TLE_CANTOPENFILE /* file open failed - see awTlLastWinErr for the Windows error code */
+	, AW_TLE_CANTREADFILE /* unexpected error reading file - see awTlLastWinErr for the Windows error code */
+	, AW_TLE_EOFMET /* unexpected end of file encountered */
+	, AW_TLE_BADFILEFORMAT /* file format identifier not recognized */
+	, AW_TLE_BADFILEDATA /* file data not consistent */
+	/* Conversion errors */
+	, AW_TLE_CANTPALETTIZE /* texture format is palettized; file data is not */
+	, AW_TLE_IMAGETOOLARGE /* image size is larger in one or both dimensions than maximum texture size */
+	, AW_TLE_CANTRELOAD /* loading a new texture into an existing surface failed because the existing surface is an unsuitable size, etc. */
+}
+	AW_TL_ERC;
+
+
+/*********/
+/* Flags */
+/*********/
+
+enum
+{
+	  AW_TLF_DEFAULT     = 0x00000000U /* no flags set */
+	, AW_TLF_TRANSP      = 0x00000001U /* src data has transparency */
+	, AW_TLF_PREVSRC     = 0x00000002U /* in AwRestoreTexture, use previously stored source data flags (AW_TLF_TRANSP only) */
+	, AW_TLF_COMPRESS    = 0x00000004U /* use ALLOCONLOAD flag */
+	, AW_TLF_CHROMAKEY   = 0x00000008U /* use chroma keying for transparency when the texture format has an alpha channel */
+	, AW_TLF_VIDMEM      = 0x00000010U /* use Video memory for surfaces which are not textures */
+	, AW_TLF_PREVSRCALL  = 0x00000020U /* in AwRestoreTexture, use ALL previously stored flags, except AW_TLF_CHECKLOST and AW_TLF_SKIPNOTLOST */
+	, AW_TLF_TEXTURE     = 0x00000040U /* in AwCreateSurface, create a surface in the texture format with the texture flag set */
+	, AW_TLF_MINSIZE     = 0x00000080U /* with the 'a' option, ensure all surfaces/textures created are at least as big as the rectangle specified even if the rect is partially off the image */
+	, AW_TLF_CHECKLOST   = 0x00000100U /* checks for lost surfaces and calls restore on them */
+	, AW_TLF_SKIPNOTLOST = 0x00000200U /* if the above flag also is specified, does not bother trying to restore surfaces which weren't lost */
+	
+	, _AW_TLF_FORCE32BITENUM = 0x0fffffffU /* probably entirely unnecessary */
+};
+
+/* alt_tab junk */
+#define ATIncludeSurfaceDb(p, d, s) fprintf(stderr, "ATIncludeSurfaceDb: %s/%d: %s\n", __FILE__, __LINE__, s)
+#define ATIncludeTextureDb(p, d, s) fprintf(stderr, "ATIncludeTextureDb: %s/%d: %s\n", __FILE__, __LINE__, s)
+
+extern D3DTexture * AwCreateTexture(char const * _argFormatS, ...);
+extern DDSurface * AwCreateSurface(char const * _argFormatS, ...);
+
+#if 0
+
 #include <windows.h>
 #include <d3d.h>
 
@@ -556,6 +627,17 @@ extern DDSurface * _AWTL_VARARG AwCreateSurface(char const * _argFormatS, ...);
 		AW_TLE_BADPARMS if the handle was not valid.
 */
 extern AW_TL_ERC AwDestroyBackupTexture(AW_BACKUPTEXTUREHANDLE _bH);
+
+#endif
+
+
+
+
+
+
+
+
+
 
 /* End Wrappers */
 #ifdef __cplusplus

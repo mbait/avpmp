@@ -1,0 +1,4 @@
+win95/awtexld.hpp line 79:
+/* TODO */
+/*|pixelFormat.ddpf.dwRGBAlphaBitMask*/
+

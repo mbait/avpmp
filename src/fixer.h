@@ -8,6 +8,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <inttypes.h> // int64_t
 
 #define PACKED __attribute__((packed))
@@ -41,6 +42,8 @@ extern "C" {
 size_t _mbclen(const unsigned char *s);
 
 #define RGBA_MAKE(r,g,b,a) (((r) << 24) | ((g) << 16) | ((b) << 8) | (a))
+
+#define MAX_PATH	PATH_MAX
 
 /* windows junk */
 typedef int GUID;
@@ -86,17 +89,18 @@ typedef struct SYSTEMTIME
 	int wDay;
 } SYSTEMTIME;
 
-#define INVALID_HANDLE_VALUE	-1
-#define GENERIC_WRITE		0
-#define CREATE_ALWAYS		1
-#define FILE_FLAG_RANDOM_ACCESS	2
-#define GENERIC_READ		3
-#define OPEN_EXISTING		4
-#define FILE_ATTRIBUTE_READONLY	5
-#define FILE_CURRENT		6
-#define FILE_BEGIN		7
-#define FILE_END		8
-#define FILE_SHARE_READ		9
+#define INVALID_HANDLE_VALUE		-1
+#define GENERIC_WRITE			0
+#define CREATE_ALWAYS			1
+#define FILE_FLAG_RANDOM_ACCESS		2
+#define GENERIC_READ			3
+#define OPEN_EXISTING			4
+#define FILE_ATTRIBUTE_READONLY		5
+#define FILE_CURRENT			6
+#define FILE_BEGIN			7
+#define FILE_END			8
+#define FILE_SHARE_READ			9
+#define FILE_ATTRIBUTE_DIRECTORY	10
 
 HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z);
 HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z);
@@ -106,7 +110,7 @@ int GetFileSize(HANDLE file, int x);
 int CloseHandle(HANDLE file);
 int DeleteFile(const char *file);
 int DeleteFileA(const char *file);
-int GetDiskFreeSpace(int x, unsigned long *a, unsigned long *b, unsigned long *c, unsigned long *d);                                                
+int GetDiskFreeSpace(int x, unsigned long *a, unsigned long *b, unsigned long *c, unsigned long *d);
 int CreateDirectory(char *dir, int x);
 int MoveFile(const char *newfile, const char *oldfile);
 int MoveFileA(const char *newfile, const char *oldfile);

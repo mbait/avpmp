@@ -1,4 +1,5 @@
-#include "advwin32.h"
+#include "fixer.h"
+
 #ifndef DB_LEVEL
 #define DB_LEVEL 4
 #endif
@@ -7,12 +8,10 @@
 	#define DB_COMMA ,
 #endif
 
-#pragma warning(disable: 4701)
-#include "awTexLd.hpp"
-#pragma warning(default: 4701)
+#include "awtexld.hpp"
 
 #include "iff.hpp"
-#include "iff_ILBM.hpp"
+#include "iff_ilbm.hpp"
 
 #include "list_tem.hpp"
 
@@ -245,12 +244,12 @@ void AwIffLoader::LoadHeaderInfo(MediaMedium * pMedium)
 	
 	if (!m_ifData.Load(pMedium) || !m_ifData.GetContents())
 	{
-		if (NO_ERROR == (awTlLastWinErr = GetLastError()))
-			awTlLastErr = AW_TLE_BADFILEDATA;
-		else
-			awTlLastErr = AW_TLE_CANTREADFILE;
+//		if (NO_ERROR == (awTlLastWinErr = GetLastError()))
+//			awTlLastErr = AW_TLE_BADFILEDATA;
+//		else
+//			awTlLastErr = AW_TLE_CANTREADFILE;
 			
-		db_log3("AwCreateTexture(): ERROR: IFF file load failed");
+		db_log3("AwCreateTexture() [AwIffLoader::LoadHeaderInfo] : ERROR: IFF file load failed");
 	}
 	else
 	{
@@ -378,20 +377,20 @@ void AwIffLoader::OnBeginRestoring(unsigned nMaxPaletteSize)
 							|static_cast<unsigned>(m_pPalette[AwIffConvTransp::iTranspCol].b)>>pixelFormat.blueRightShift<<pixelFormat.blueLeftShift;
 					break;
 				default:
-					db_log3("AwCreateTexture(): ERROR: IFF mask field wrong");
-					awTlLastErr = AW_TLE_BADFILEDATA;
+					db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: IFF mask field wrong");
+//					awTlLastErr = AW_TLE_BADFILEDATA;
 			}
 		}
 		else
 		{
-	 		awTlLastErr = AW_TLE_CANTPALETTIZE; // no suitable chunk found
-		 	db_log3("AwCreateTexture(): ERROR: No suitable IFF body chunk found");
+//	 		awTlLastErr = AW_TLE_CANTPALETTIZE; // no suitable chunk found
+		 	db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: No suitable IFF body chunk found");
 	 	}
 	}
 	else
 	{
-	 	awTlLastErr = AW_TLE_BADFILEDATA;
-	 	db_log3("AwCreateTexture(): ERROR: IFF file not loaded or contains no image data");
+//	 	awTlLastErr = AW_TLE_BADFILEDATA;
+	 	db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: IFF file not loaded or contains no image data");
 	}
 }
 
@@ -465,8 +464,8 @@ void AwIffLoader::ConvertRow(AwTl::PtrUnion pDest, unsigned nDestWidth, AwTl::Pt
 				GenericConvertRow<AwIffConvTransp,unsigned>::Do(pDest, nDestWidth, pSrc.uintP+nSrcOffset, nSrcWidth, pPalette db_code1(DB_COMMA nPaletteSize));
 				break;
 			default:
-				db_log3("AwCreateTexture(): ERROR: IFF mask field wrong");
-				awTlLastErr = AW_TLE_BADFILEDATA;
+				db_log3("AwCreateTexture() [AwIffLoader::ConvertRow] : ERROR: IFF mask field wrong");
+//				awTlLastErr = AW_TLE_BADFILEDATA;
 		}
 	}
 }
@@ -497,11 +496,7 @@ AwBackupTexture * AwIffLoader::CreateBackupTexture()
 }
 
 // Valid file ID fields: 'FORM' 'LIST' 'CAT ' - we can load them all
-#ifdef _MSC_VER
-	// VC5.0 tries to compile out code that is in a library
-	// and it thinks isn't being used
-	#line 427
-#endif
+
 AWTEXLD_IMPLEMENT_DYNCREATE("FORM",AwIffLoader)
 AWTEXLD_IMPLEMENT_DYNCREATE("LIST",AwIffLoader)
 AWTEXLD_IMPLEMENT_DYNCREATE("CAT ",AwIffLoader)
