@@ -2323,8 +2323,6 @@ int DestroyActiveVDB(VIEWDESCRIPTORBLOCK *dblockptr);
 void PlatformSpecificVDBInit(VIEWDESCRIPTORBLOCK *vdb);
 
 
-int SqRoot32(int A);
-int SqRoot64(LONGLONGCH *A);
 /* CDF 4/2/98 */
 int GetOneOverSin(int a);
 /* CDF 4/2/98 */

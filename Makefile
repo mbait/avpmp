@@ -6,7 +6,7 @@ CXXFLAGS = $(CFLAGS)
 LDLIBS = -lm # /home/relnev/ElectricFence-2.2.2/libefence.a
 
 CFLAGS += `sdl-config --cflags`
-LDLIBS += `sdl-config --libs`
+LDLIBS += -L/usr/X11R6/lib -lX11 -lXext `sdl-config --libs`
 
 AFLAGS = -g -Iinclude/ -w+macro-params -w+orphan-labels -w+number-overflow
 

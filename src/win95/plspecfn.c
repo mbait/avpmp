@@ -18,6 +18,11 @@
 #include "kshape.h"
 #endif
 
+/* globals from inline.h */
+int sqrt_temp1;
+int sqrt_temp2;
+float fti_fptmp;
+int fti_itmp;
 
 /*
 
@@ -511,88 +516,6 @@ int WideMul2NarrowDiv(int a, int b, int c, int d, int e)
 	return NarrowDivide(&f, e);
 
 }
-
-
-
-
-
-/*
-
- Square Root
-
- Returns the Square Root of a 32-bit number
-
-*/
-
-#if (SupportFPMathsFunctions || SupportFPSquareRoot)
-#else
-
-
-int SqRoot32(int A)
-
-{
-
-	unsigned int edx = A;
-	unsigned int ecx;
-
-	unsigned int ax = 0;
-	unsigned int bx = 0;
-	unsigned int di = 0;
-
-
-	for(ecx = 15; ecx!=0; ecx--) {
-
-		bx <<= 1;
-		if(edx & 0x80000000) bx |= 1;
-		edx <<= 1;
-
-		bx <<= 1;
-		if(edx & 0x80000000) bx |= 1;
-		edx <<= 1;
-
-		ax += ax;
-		di =  ax;
-		di += di;
-
-		if(bx > di) {
-
-			di++;
-			ax++;
-
-			bx -= di;
-
-		}
-
-	}
-
-	bx <<= 1;
-	if(edx & 0x80000000) bx |= 1;
-	edx <<= 1;
-
-	bx <<= 1;
-	if(edx & 0x80000000) bx |= 1;
-	edx <<= 1;
-
-	ax += ax;
-	di =  ax;
-	di += di;
-
-	if(bx > di) {
-
-		ax++;
-
-	}
-
-	return ((int)ax);
-
-}
-
-
-#endif	/* SupportFPMathsFunctions */
-
-
-
-
 
 
 /*
@@ -1114,99 +1037,6 @@ int Magnitude(VECTORCH *v)
 
 
 }
-
-
-
-
-
-
-
-
-
-
-/*
-
- 64-bit Square Root returns 32-bit result
-
- All 64-bit operations are now done using the type LONGLONGCH whose format
- varies from platform to platform, although it is always 64-bits in size.
-
- NOTE:
-
- Function currently not available to Watcom C users
- A Floating point version is STRONGLY advised for the PC anyway
-
-*/
-
-#if 0
-int SqRoot64(LONGLONGCH *A)
-
-{
-
-#if 0
-
-	unsigned long long edx = *A;
-
-	unsigned int eax = 0;
-	unsigned int ebx = 0;
-	unsigned int edi = 0;
-
-	unsigned int ecx;
-
-
-	unsigned long long TopBit = 0x8000000000000000LL;
-
-	for(ecx = 31; ecx != 0; ecx--) {
-
-		ebx <<= 1;
-		if(edx & TopBit) ebx |= 1;
-		edx <<= 1;
-
-		ebx <<= 1;
-		if(edx & TopBit) ebx |= 1;
-		edx <<= 1;
-
-		eax += eax;
-		edi  = eax;
-		edi += edi;
-
-		if(ebx > edi) {
-
-			edi++;
-			eax++;
-			ebx -= edi;
-
-		}
-
-	}
-
-	ebx <<= 1;
-	if(edx & TopBit) ebx |= 1;
-	edx <<= 1;
-
-	ebx <<= 1;
-	if(edx & TopBit) ebx |= 1;
-	edx <<= 1;
-
-	eax += eax;
-	edi  = eax;
-	edi += edi;
-
-	if(ebx > edi) {
-
-		eax++;
-
-	}
-
-	return eax;
-
-#endif
-
-	return (0);
-
-}
-
-#endif /* for #if 0 */
 
 /*
 
