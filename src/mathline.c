@@ -183,8 +183,8 @@ __asm__("imull	%%edx			\n\t"
 
 int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 {
-	int retval;
 /*
+	int retval;
 	_asm
 	{
 		mov ebx,a
@@ -205,6 +205,8 @@ int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 		llgs:
 	}
 */
+#if 0
+int retval;
 /* TODO */
 __asm__("movl	0(%%ebx), %%eax		\n\t"
 	"movl	4(%%ebx), %%edx		\n\t"
@@ -227,6 +229,18 @@ __asm__("movl	0(%%ebx), %%eax		\n\t"
 	);
 	
 	return retval;
+#else
+	if (a->hi32 > b->hi32)
+		return 1;
+	else if (a->hi32 < b->hi32)
+		return -1;
+	else if (a->lo32 > b->lo32)
+		return 1;
+	else if (a->lo32 < b->lo32)
+		return -1;
+	else
+		return 0;
+#endif		
 }
 
 /* EQUALS */
@@ -244,6 +258,7 @@ void EQUALS_LL(LONGLONGCH *a, LONGLONGCH *b)
 		mov	[edi+4],edx
 	}
 */
+#if 0
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"movl	4(%%esi), %%edx		\n\t"
 	"movl	%%eax, 0(%%edi)		\n\t"
@@ -252,6 +267,9 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	: "D" (a), "S" (b)
 	: "%eax", "%edx", "memory"
 	);
+#else
+	*a = *b;
+#endif
 }
 
 /* NEGATE */
