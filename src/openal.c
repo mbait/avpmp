@@ -139,7 +139,7 @@ void PlatEndSoundSys()
 // this table plots the frequency change for
 // 128/ths of a semitone for one octave (0-1535),
 // divide or multiply by 2 to subtract or add an octave
-static float pitch_to_frequency_mult_table [] = 
+static const float pitch_to_frequency_mult_table [] = 
 {
 	1.0F,	1.00045137F,	1.000902943F,	1.00135472F,	1.001806701F,	1.002258886F,	1.002711275F,	1.003163868F,
 	1.003616666F,	1.004069668F,	1.004522874F,	1.004976285F,	1.005429901F,	1.005883722F,	1.006337747F,	1.006791977F,
@@ -397,9 +397,11 @@ int PlatPlaySound(int activeIndex)
 	if (!PlatSoundHasStopped(activeIndex))		
 		PlatStopSound (activeIndex);
 
+#if 0
 	/* TODO: hack until pitching works right */
 	if (GameSounds[si].pitch < -500)
 		return 0;
+#endif
 
 	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_BUFFER,
 		   GameSounds[si].dsBufferP);
@@ -471,7 +473,7 @@ void PlatStopSound(int activeIndex)
    c = -600.0 / log10(.5);
    x = pow(10, (double)vol_to_atten_table[volume]/c);
 */   
-static float vol_to_gain_table[] = {
+static const float vol_to_gain_table[] = {
 0.000000f, 0.000011f, 0.000054f, 0.000142f, 0.000279f, 0.000474f, 0.000730f, 0.001052f,
 0.001441f, 0.001904f, 0.002444f, 0.003061f, 0.003764f, 0.004544f, 0.005417f, 0.006382f,
 0.007434f, 0.008579f, 0.009820f, 0.011164f, 0.012604f, 0.014147f, 0.015788f, 0.017538f,
@@ -514,25 +516,36 @@ int PlatChangeSoundVolume(int activeIndex, int volume)
 int PlatChangeSoundPitch(int activeIndex, int pitch)
 {
 	float frequency;
-
+	
+	SOUNDINDEX gsi = ActiveSounds[activeIndex].soundIndex;
+	
 	if (!SoundActivated)
 		return 0;	
 
 	if ((pitch < PITCH_MIN) || (pitch >= PITCH_MAX))
 		return 0;
 	
-	if (pitch == PITCH_DEFAULTPLAT) {
-		frequency = 0;
+	if (pitch == PITCH_DEFAULTPLAT) {		
+		frequency = GameSounds[gsi].dsFrequency;
 	} else {
-		SOUNDINDEX gsi = ActiveSounds[activeIndex].soundIndex;
 		frequency = ToneToFrequency (GameSounds[gsi].dsFrequency,
 			GameSounds[gsi].pitch, pitch);
 	}
+
+	frequency = frequency / (float)GameSounds[gsi].dsFrequency;
+	if (frequency > 2.0) {
+		alSourceStop(ActiveSounds[activeIndex].ds3DBufferP);
+		return 0;
+	}
 	
+	alSourcef(ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);
+	fprintf(stderr, "OPENAL: freq change = %f\n", frequency);
+#if 0	
 	if (pitch < -500) { /* currently can't play it anyway... */
 		alSourceStop(ActiveSounds[activeIndex].ds3DBufferP);
 		return 0;
 	}
+#endif	
 	ActiveSounds[activeIndex].pitch = pitch;
 
 #ifdef OPENAL_DEBUG	
@@ -774,7 +787,8 @@ void InitialiseBaseFrequency(SOUNDINDEX soundNum)
 	
 	frequency = ToneToFrequency(GameSounds[soundNum].dsFrequency,
 		PITCH_DEFAULTPLAT, GameSounds[soundNum].pitch);
-	
+
+fprintf(stderr, "OPENAL: old=%d,new=%d\n", GameSounds[soundNum].dsFrequency, frequency);	
 	GameSounds[soundNum].dsFrequency = frequency;
 }
 
