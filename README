@@ -41,13 +41,18 @@ windows/vmware (read below to find out why), or download the AvP Alien demo.
 If you are wanting to run the Alien demo (the installer is an .exe but you
 can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
 the CFLAGS line (the one that's uncommented) in the Makefile. Rename all game 
-files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org), nasm
-0.98, and the latest OpenAL CVS (http://www.openal.org).
+files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org) with
+OpenGL support, nasm 0.98, and the latest OpenAL CVS (http://www.openal.org).
+AvP requires a 3d card with OpenGL support to work.
 
 Create the MPConfig and User_Profiles directories if they do not exist. 
 (Note: Windows profiles probably do not work in Linux and vice versa)
 
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
+
+If the version you want to use is not the Gold Edition, download
+http://www.icculus.org/avp/english.txt.gz, extract it, and rename it
+language.txt (Regular Ed.) or aenglish.txt (Alien Demo). 
 
 If you get "Aborted" after starting a new game the second time or so,
 try recompiling with gcc-3.0.2.  It seems to have fixed it for me, but I'll
@@ -66,10 +71,6 @@ MPConfig/  User_Profiles/
 
 Support for the demo is not quite complete (some sounds are missing and some
 text is incorrect/missing).
-
-If the version you want to use is not the Gold Edition, download
-http://www.icculus.org/avp/english.txt.gz, extract it, and rename it
-language.txt (Regular Ed.) or aenglish.txt (Alien Demo). 
 
 
 Linux Port-specific commands:

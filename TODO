@@ -2,7 +2,7 @@
 [DONE] [08/26/01] Fix sound code.
 [DONE] [11/10/01] Save/Load Game support.
 [DONE] [11/25/01] CD Audio.
-* Menus.
+[DONE] [12/05/01] Menus.
 * Progress bar.
 * Make vidmodes work.
 * Debug "pure virtual method called"

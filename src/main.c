@@ -99,7 +99,36 @@ unsigned char *GetScreenShot24(int *width, int *height)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_BYTE, buf);
 	} else {
-		fprintf(stderr, "GetScreenShot24: add software mode 16->24!\n");
+		unsigned char *ptrd;
+		unsigned short int *ptrs;
+		int x, y;
+	
+		if (SDL_MUSTLOCK(surface)) {
+			if (SDL_LockSurface(surface) < 0) {
+				free(buf);
+				return NULL; /* ... */
+			}
+		}
+		
+		ptrd = buf;
+		for (y = 0; y < surface->h; y++) {
+			ptrs = (unsigned short *)(((unsigned char *)surface->pixels) + (surface->h-y-1)*surface->pitch);
+			for (x = 0; x < surface->w; x++) {
+				unsigned int c;
+				
+				c = *ptrs;
+				ptrd[0] = (c & 0xF800)>>8;
+				ptrd[1] = (c & 0x07E0)>>3;
+				ptrd[2] = (c & 0x001F)<<3;
+				
+				ptrs++;
+				ptrd += 3;
+			}
+		}
+		
+		if (SDL_MUSTLOCK(surface)) {
+			SDL_UnlockSurface(surface);
+		}
 	}
 	
 	*width = surface->w;
