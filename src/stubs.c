@@ -146,8 +146,8 @@ void UpdateAllFMVTextures()
 
 /* psndplat.cpp */
 ACTIVESOUNDSAMPLE ActiveSounds[SOUND_MAXACTIVE];
-ACTIVESOUNDSAMPLE BlankActiveSound = {SID_NOSOUND,ASP_Minimum,0,0,NULL,0,0,0,0,0,{{0,0,0},0,0},NULL, NULL, NULL};
-SOUNDSAMPLEDATA BlankGameSound = {0,0,0,0,NULL,0,NULL};
+ACTIVESOUNDSAMPLE BlankActiveSound = {SID_NOSOUND,ASP_Minimum,0,0,NULL,0,0,0,0,0, { {0,0,0},{0,0,0},0,0 }, NULL, NULL, NULL};
+SOUNDSAMPLEDATA BlankGameSound = {0,0,0,0,NULL,0,0,NULL,0};
 SOUNDSAMPLEDATA GameSounds[SID_MAXIMUM];
 
 int PlatStartSoundSys()

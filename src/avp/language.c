@@ -29,7 +29,7 @@
 
 static char EmptyString[]="";
 
-static char *TextStringPtr[MAX_NO_OF_TEXTSTRINGS]={&EmptyString,};
+static char *TextStringPtr[MAX_NO_OF_TEXTSTRINGS] = { EmptyString };
 static char *TextBufferPtr;
 
 void InitTextStrings(void)
@@ -41,15 +41,15 @@ void InitTextStrings(void)
 	GLOBALASSERT(AvP.Language>=0);
 	GLOBALASSERT(AvP.Language<I_MAX_NO_OF_LANGUAGES);
 	
-	#if MARINE_DEMO
+#if MARINE_DEMO
 	TextBufferPtr = LoadTextFile("menglish.txt");
-	#elif ALIEN_DEMO
+#elif ALIEN_DEMO
 	TextBufferPtr = LoadTextFile("aenglish.txt");
-	#elif USE_LANGUAGE_TXT
+#elif USE_LANGUAGE_TXT
 	TextBufferPtr = LoadTextFile("language.txt");
-	#else
+#else
 	TextBufferPtr = LoadTextFile(LanguageFilename[AvP.Language]);
-	#endif
+#endif
 	
 	LOCALASSERT(TextBufferPtr);
 
@@ -65,7 +65,7 @@ void InitTextStrings(void)
 	}
 
 	#if SupportWindows95
-	AddToTable( &EmptyString );
+	AddToTable( EmptyString );
 	#endif
 
 	for (i=1; i<MAX_NO_OF_TEXTSTRINGS; i++)

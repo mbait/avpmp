@@ -26,8 +26,10 @@ typedef struct soundsampledata
 	int activeInstances;	 
 	int volume;		
 	int pitch;					
-//	LPDIRECTSOUNDBUFFER dsBufferP;
 
+//	LPDIRECTSOUNDBUFFER dsBufferP;
+	void *buffer;
+	
 	unsigned int flags;
 	int dsFrequency;
 	char * wavName;
@@ -61,7 +63,10 @@ typedef struct activesoundsample
 //	LPDIRECTSOUNDBUFFER dsBufferP;
 //	LPDIRECTSOUND3DBUFFER ds3DBufferP;
 //	LPKSPROPERTYSET	PropSetP;
-	
+
+	void *buffer;
+	void *buffer3d;
+	void *propset;	
 }ACTIVESOUNDSAMPLE;
 
 /* Patrick 5/6/97 -------------------------------------------------------------

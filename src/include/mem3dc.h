@@ -32,10 +32,6 @@
 #endif
 #endif
 
-#if PSX
-#define DBGMALLOC 0
-#endif
-
 /* parameters for DumpMallocInfo */
 #define PARTIALDUMP 0    /* print outstanding mallocs number and total memory allocated */
 #define DUMPTOSCREEN  1  /* print all outstanding mallocs to screen */
