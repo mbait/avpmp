@@ -49,6 +49,10 @@ Create the MPConfig and User_Profiles directories if they do not exist.
 
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 
+If you get "Aborted" after starting a new game the second time or so,
+try recompiling with gcc-3.0.2.  It seems to have fixed it for me, but I'll
+try to find a workaround that works with gcc-2.95.
+
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
 aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/  MPConfig/

@@ -676,8 +676,7 @@ int InitSDL()
 
 int main(int argc, char *argv[])
 {
-	int menusActive = 0;
-	int thisLevelHasBeenCompleted = 0;
+	
 	
 	InitSDL();
 		
@@ -781,7 +780,10 @@ while(AvP_MainMenus())
 	SetBriefingTextToBlank();
 #endif
 {
-
+	int menusActive = 0;
+	int thisLevelHasBeenCompleted = 0;
+	
+	/* turn off any special effects */
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
