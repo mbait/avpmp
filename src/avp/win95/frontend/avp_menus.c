@@ -91,6 +91,7 @@ static void RenderConfigurationDescriptionString();
 static void ActUponUsersInput(void);
 static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interactionID);
 static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y);
+static int HeightOfMenuElement(AVPMENU_ELEMENT *elementPtr);
 void DisplayVideoModeUnavailableScreen(void);
 void CheckForCredits(void);
 void DoCredits(void);
@@ -213,7 +214,7 @@ static const char* MultiplayerConfigurationName=0; //ditto
 
 extern int DebuggingCommandsActive;
 
-extern int AvP_MainMenus(void)
+int AvP_MainMenus(void)
 {
 	#if 0
 	SaveDefaultPrimaryConfigs();
@@ -450,7 +451,8 @@ extern void AvP_TriggerInGameMenus(void)
 	if (IOFOCUS_AcceptTyping()) IOFOCUS_Toggle();
 //	SoundSys_PauseOn();
 }
-extern int AvP_InGameMenus(void)
+
+int AvP_InGameMenus(void)
 {
 	if(AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS)
 	{
@@ -463,7 +465,7 @@ extern int AvP_InGameMenus(void)
 	else return 0;
 }
 
-extern int InGameMenusAreRunning(void)
+int InGameMenusAreRunning(void)
 {
 	return (AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS);
 }
@@ -2887,7 +2889,6 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
-				extern int MP_LevelNumber;
 				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 				netGameData.myStartFlag = 1;	    
 //				netGameData.myGameState = NGS_Playing;
@@ -5402,7 +5403,7 @@ static char KeyboardEntryQueue[MAX_ITEMS_IN_KEYBOARDENTRYQUEUE];
 static int NumberOfItemsInKeyboardEntryQueue;
 static int KeyboardEntryQueue_ProcessingIndex;
 
-extern void KeyboardEntryQueue_Add(char c)
+void KeyboardEntryQueue_Add(char c)
 {
 	if (c<32) return;
 

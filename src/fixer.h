@@ -135,7 +135,7 @@ int MoveFileA(const char *newfile, const char *oldfile);
 int CopyFile(const char *newfile, const char *oldfile, int x);
 int GetFileAttributes(const char *file);
 int GetFileAttributesA(const char *file);
-int SetFilePointer(HANDLE file, int x, int y, int z);
+unsigned int SetFilePointer(HANDLE file, int x, int y, int z);
 int SetEndOfFile(HANDLE file);
 
 unsigned int timeGetTime();

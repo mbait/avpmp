@@ -28,6 +28,7 @@ so player.c is looking a bit bare at the moment. */
 
 #include "psnd.h"
 #include "psndplat.h"
+#include "player.h"
 
 /* for win 95 net support */
 #if SupportWindows95

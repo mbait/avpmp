@@ -8,6 +8,7 @@
 #include "dynblock.h"
 #include "dynamics.h"
 #include "pldghost.h"
+#include "particle.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -366,8 +367,7 @@ void MakePlacedLightNear(STRATEGYBLOCK *sbPtr)
 
 void KillLightForRespawn(STRATEGYBLOCK *sbPtr)
 {
-	PLACED_LIGHT_BEHAV_BLOCK* pl_bhv = sbPtr->SBdataptr;
-	LOCALASSERT(pl_bhv);
+	LOCALASSERT(sbPtr->SBdataptr);
 	LOCALASSERT(AvP.Network!=I_No_Network);
 
 	/* make the light invisible, and remove it from visibility management */

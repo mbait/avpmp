@@ -609,8 +609,8 @@ typedef enum {
 
 long GetWindowsTickCount(void);
 void CheckForWindowsMessages(void);
-//BOOL ExitWindowsSystem(void);
-//BOOL InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode);
+BOOL ExitWindowsSystem(void);
+BOOL InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode);
 //void KeyboardHandlerKeyDown(WPARAM wParam);
 //void KeyboardHandlerKeyUp(WPARAM wParam);
 //void MouseVelocityHandler(UINT message, LPARAM lParam);

@@ -18,7 +18,7 @@ Enum_Constant::Enum_Constant(char const * const _cname, int const _value) : cnam
 	}
 }
 
-Enum_Constant::Enum_Constant(Enum_Constant const & ec2) : reserved(ec2.reserved), value(ec2.value), cname(0)
+Enum_Constant::Enum_Constant(Enum_Constant const & ec2) : cname(0), value(ec2.value), reserved(ec2.reserved)
 {
 	if (ec2.cname)
 	{
@@ -65,7 +65,7 @@ BOOL Enum_Constant::operator < (Enum_Constant const & ec2) const
 
 
 Enum_Constant::Enum_Constant(char const * sdata)
-: value(*(int *)sdata), reserved(*(int *)(sdata+4)), cname(0)
+: cname(0), value(*(int *)sdata), reserved(*(int *)(sdata+4))
 {
 	sdata+=8;
 	if (*sdata)
@@ -95,10 +95,7 @@ void Enum_Constant::fill_data_block (char * data_start)
 RIF_IMPLEMENT_DYNCREATE("BMPENUMS",BMP_Enums_Chunk)
 
 BMP_Enums_Chunk::BMP_Enums_Chunk(Chunk_With_Children * const parent, char const * sdata, size_t const /*ssize*/)
-: Chunk(parent,"BMPENUMS")
-, reserved1(*(int *)sdata)
-, reserved2(*(int *)(sdata+4))
-, ctype(0)
+: Chunk(parent,"BMPENUMS"), ctype(0), reserved1(*(int *)sdata), reserved2(*(int *)(sdata+4))
 {
 	sdata+=8;
 	unsigned int const len = strlen(sdata)+1;

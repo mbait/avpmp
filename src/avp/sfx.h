@@ -41,11 +41,13 @@ typedef struct forcefield
 extern void InitialiseSfxBlocks(void);
 extern SFXBLOCK* AllocateSfxBlock(void);
 extern void DeallocateSfxBlock(SFXBLOCK *sfxPtr);
+DISPLAYBLOCK *CreateSFXObject(enum SFX_ID sfxID);
 
 
 extern struct displayblock *CreateSFXObject(enum SFX_ID sfxID);
 extern void DrawSfxObject(struct displayblock *dispPtr);
 
 extern void HandleSfxForObject(DISPLAYBLOCK *dispPtr);
+void HandleObjectOnFire(DISPLAYBLOCK *dispPtr);
 
 #endif

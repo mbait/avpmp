@@ -52,7 +52,7 @@ Object_Hierarchy_Name_Chunk * Object_Hierarchy_Chunk::get_name ()
 RIF_IMPLEMENT_DYNCREATE("OBJHIERD",Object_Hierarchy_Data_Chunk)
 
 Object_Hierarchy_Data_Chunk::Object_Hierarchy_Data_Chunk (Object_Hierarchy_Chunk * parent, const char * obname)
-: Chunk (parent, "OBJHIERD"), ob_name (0), object(0)
+: Chunk (parent, "OBJHIERD"), object(0), ob_name (0)
 {
 	num_extra_data=0;
 	extra_data=0;

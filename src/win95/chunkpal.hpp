@@ -763,7 +763,7 @@ public:
 			strcpy(filename,fname);
 		}
 	}
-	BMP_Flags(BMP_Name const & bn) : enum_id(bn.enum_id), version_num(bn.version_num), flags((BMPN_Flags)(bn.flags & COPY_BMPN_FLAGS)), filename(0)
+	BMP_Flags(BMP_Name const & bn) : filename(0), flags((BMPN_Flags)(bn.flags & COPY_BMPN_FLAGS)), version_num(bn.version_num), enum_id(bn.enum_id)
 	{
 		if (bn.filename)
 		{
@@ -771,7 +771,7 @@ public:
 			strcpy(filename,bn.filename);
 		}
 	}
-	BMP_Flags(BMP_Flags const & c) : filename(0), enum_id(c.enum_id), version_num(c.version_num), flags(c.flags)
+	BMP_Flags(BMP_Flags const & c) : filename(0), flags(c.flags), version_num(c.version_num), enum_id(c.enum_id)
 	{
 		if (c.filename)
 		{

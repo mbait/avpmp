@@ -241,7 +241,7 @@ RIF_IMPLEMENT_DYNCREATE("SHPVTINT",Shape_Vertex_Intensities_Chunk)
 
 Shape_Vertex_Intensities_Chunk::Shape_Vertex_Intensities_Chunk
 (Chunk_With_Children *parent, char *lsn, int num_v, int * i_array)
-: Chunk (parent, "SHPVTINT"), num_vertices(num_v), pad (0)
+: Chunk (parent, "SHPVTINT"), pad (0), num_vertices(num_v)
 {
 	strncpy (light_set_name, lsn, 8);
 	

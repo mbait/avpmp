@@ -803,8 +803,8 @@ int AGunSight_FrustrumReject(VECTORCH *localOffset) {
 	fixed_offset=*localOffset;
 	fixed_offset.vy-=300; /* ish */
 
-	if ((fixed_offset.vz <0) && (
-		((fixed_offset.vy) < (-fixed_offset.vz))&&(fixed_offset.vy>=0))
+	if (((fixed_offset.vz <0) && (
+		((fixed_offset.vy) < (-fixed_offset.vz))&&(fixed_offset.vy>=0)))
  		||((fixed_offset.vy<0)&&((-fixed_offset.vy) < (-fixed_offset.vz))
  		)) {
 		/* 180 horizontal, 90 vertical. */

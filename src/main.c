@@ -27,6 +27,15 @@
 #include "pldnet.h"
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
+#include "opengl.h"
+#include "avp_menus.h"
+#include "avp_mp_config.h"
+#include "npcsetup.h"
+#include "cdplayer.h"
+#include "hud.h"
+#include "player.h"
+#include "mempool.h"
+#include "avpview.h"
 #include "version.h"
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
@@ -525,7 +534,7 @@ int SetOGLVideoMode(int Width, int Height)
 	return 0;
 }
 
-int InitialiseWindowsSystem()
+int InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode)
 {
 	return 0;
 }

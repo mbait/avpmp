@@ -269,8 +269,7 @@ void Object_Animation_Sequence_Chunk::get_frames(List <Object_Animation_Sequence
 	for (LIF<Chunk *> cli(&cl); !cli.done(); cli.next())
 	{
 		pList->add_entry((Object_Animation_Sequence_Frame_Chunk *)cli());
-	}
-	
+	}	
 }
 
 ////////////////////////////////
@@ -319,9 +318,7 @@ Object_Animation_Sequence_Chunk::Object_Animation_Sequence_Chunk(Object_Animatio
 			break;
 		}
 		framelist.delete_first_entry();
-	}
-
-	
+	}	
 }
 
 Object_Animation_Sequence_Chunk * Object_Animation_Sequences_Chunk::get_sequence (int num, int subnum)
@@ -346,10 +343,7 @@ Object_Animation_Sequence_Chunk * Object_Animation_Sequences_Chunk::get_sequence
 	{
 		return(sli());
 	}
-	else
-	{
-		return(0);
-	}
+	return 0;
 }
 
 int Object_Animation_Sequence_Chunk::get_sequence_time()

@@ -7,6 +7,7 @@
 #include "dynblock.h"
 #include "bh_types.h"
 #include "avpview.h"
+#include "opengl.h"
 
 #include "kshape.h"
 #include "kzsort.h"
@@ -101,6 +102,7 @@ extern int GetSingleColourForPrimary(int Colour);
 extern void ColourFillBackBuffer(int FillColour);
 
 static void ModifyHeadOrientation(void);
+int AVPViewVolumePlaneTest(CLIPPLANEBLOCK *cpb, DISPLAYBLOCK *dblockptr, int or);
 
 
 

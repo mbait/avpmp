@@ -7,6 +7,7 @@
 #include "module.h"
 #include "stratdef.h"
 #include "gamedef.h"
+#include "game_statistics.h"
 #include "dynblock.h"
 #include "dynamics.h"
 #include "comp_shp.h"

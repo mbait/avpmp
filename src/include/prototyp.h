@@ -2289,6 +2289,7 @@ void InitialiseSystem(void);
 void InitialiseRenderer(void);
 void ExitSystem(void);
 void InitialVideoMode(void);
+void RestartLevel();
 void ResetFrameCounter(void);
 void FrameCounterHandler(void);
 

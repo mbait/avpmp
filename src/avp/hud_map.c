@@ -5,6 +5,7 @@
 #include "dynamics.h"
 #include "hud_map.h"
 #include "gamedef.h"
+#include "hud.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -47,7 +48,6 @@ static int PointInsideCircle(int x, int y);
 static int IsHUDMapOn = 0;
 
 extern int SetupPolygonAccessFromShapeIndex(int shapeIndex);
-extern void RotateVertex(VECTOR2D *vertexPtr, int theta);
 
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern DISPLAYBLOCK *Player;

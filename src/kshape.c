@@ -8,6 +8,7 @@
 
 #include "stratdef.h"
 #include "gamedef.h"
+#include "maths.h"
 
 #include "kshape.h"
 #include "kzsort.h"
@@ -27,10 +28,13 @@
 #include "vision.h"
 #include "sfx.h"
 #include "d3d_render.h"
+#include "opengl.h"
 #include "avpview.h"
 #include "sphere.h"
 #include "detaillevels.h"
 #include "avp_userprofile.h"
+#include "hud.h"
+#include "weapons.h"
 
 #define ALIENS_LIFEFORCE_GLOW_COLOUR 0x20ff8080
 #define MARINES_LIFEFORCE_GLOW_COLOUR 0x208080ff
@@ -198,7 +202,9 @@ HEATSOURCE HeatSourceList[MAX_NUMBER_OF_HEAT_SOURCES];
 int NumberOfHeatSources;
 int CloakingMode;
 char CloakedPredatorIsMoving;
+#if 0
 static VECTORCH LocalCameraZAxis;
+#endif
 
 static int ObjectCounter;
 
@@ -4915,7 +4921,6 @@ void RenderParticle(PARTICLE *particlePtr)
 
 		if ((particlePtr->ParticleID == PARTICLE_MUZZLEFLASH) )
 		{
-			extern void RotateVertex(VECTOR2D *vertexPtr, int theta);
 			int theta = FastRandom()&4095;
 			RotateVertex(&offset[0],theta);
 			RotateVertex(&offset[1],theta);
@@ -4927,7 +4932,6 @@ void RenderParticle(PARTICLE *particlePtr)
 			||(particlePtr->ParticleID == PARTICLE_PARGEN_FLAME) 
 			||(particlePtr->ParticleID == PARTICLE_FLAME)) 
 		{
-			extern void RotateVertex(VECTOR2D *vertexPtr, int theta);
 			int theta = (particlePtr->Offset.vx+MUL_FIXED(CloakingPhase,particlePtr->Offset.vy))&4095;
 			RotateVertex(&offset[0],theta);
 			RotateVertex(&offset[1],theta);
@@ -6255,8 +6259,6 @@ void RenderPredatorTargetingSegment(int theta, int scale, int drawInRed)
 
 		if (theta)
 		{
-			extern void RotateVertex(VECTOR2D *vertexPtr, int theta);
-
 			RotateVertex(&offset[0],theta);
 			RotateVertex(&offset[1],theta);
 			RotateVertex(&offset[2],theta);

@@ -165,6 +165,7 @@ extern PARTICLE_DESC ParticleDescription[];
 extern void InitialiseParticleSystem(void);
 extern void MakeParticle(VECTORCH *positionPtr, VECTORCH *velocityPtr, enum PARTICLE_ID particleID);
 extern void HandleParticleSystem(void);
+void RenderAllParticlesFurtherAwayThan(int zThreshold);
 
 extern void HandleRainDrops(MODULE *modulePtr,int numberOfRaindrops);
 extern int EffectOfRipples(VECTORCH *point);
@@ -193,6 +194,8 @@ extern void MakeDewlineTrailParticles(DYNAMICSBLOCK *dynPtr, int number);
 extern void MakeBloodExplosion(VECTORCH *originPtr, int creationRadius, VECTORCH *blastPositionPtr, int noOfParticles, enum PARTICLE_ID particleID);
 extern void MakeFocusedExplosion(VECTORCH *originPtr, VECTORCH *blastPositionPtr, int noOfParticles, enum PARTICLE_ID particleID);
 extern void MakeElectricalExplosion(VECTORCH *positionPtr);
+void MakeSprayOfSparks(MATRIXCH *orientationPtr, VECTORCH *positionPtr);
+void PlayerPheromoneTrail(DYNAMICSBLOCK *dynPtr);
 
 
 #define MAX_NO_OF_BLOOD_PARTICLES 500

@@ -45,7 +45,6 @@ int Simplify_HModel_Rendering=0;
 extern enum PARTICLE_ID GetBloodType(STRATEGYBLOCK *sbPtr);
 extern void DoShapeAnimation (DISPLAYBLOCK * dptr);
 extern void RenderThisHierarchicalDisplayblock(DISPLAYBLOCK *dbPtr);
-extern void MakeSprayOfSparks(MATRIXCH *orientationPtr, VECTORCH *positionPtr);
 void MatToQuat (MATRIXCH *m, QUAT *quat);
 
 /* protos for this file */

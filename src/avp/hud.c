@@ -48,6 +48,7 @@
 #include "game_statistics.h"
 #include "pldnet.h"
 #include "avp_userprofile.h"
+#include "hud.h"
 
 extern int ScanDrawMode;
 
@@ -146,15 +147,13 @@ static void InitAlienHUD();
 //static void CalcCoordsAndBLTWeapon(WEAPON_DATA* wptr);
 
 
-void MaintainHUD(void);
-
 static void DisplayHealthAndArmour(void);
 static void DisplayMarinesAmmo(void);
 
 
 static void DoMotionTracker(void);
 static int DoMotionTrackerBlips(void);
-static void UpdateMarineStatusValues(void);
+//static void UpdateMarineStatusValues(void);
 
 static void HandleMarineWeapon(void);
 static void AimGunSight(int aimingSpeed, TEMPLATE_WEAPON_DATA *twPtr);
@@ -167,7 +166,7 @@ void CentreGunSight(void);
 
 
 static void InitPredatorHUD();
-static int FindPredatorThreats(void);
+//static int FindPredatorThreats(void);
 #if DO_PREDATOR_OVERLAY
 static void UpdatePredatorStatusValues(void);
 #endif
@@ -180,8 +179,6 @@ static void UpdateAlienStatusValues(void);
 
 int Fast2dMagnitude(int dx, int dy);
 
-
-void RotateVertex(VECTOR2D *vertexPtr, int theta);
 
 /*KJL****************************************************************************************
 *                                     F U N C T I O N S	                                    *
@@ -272,7 +269,7 @@ static void InitAlienHUD(void)
 
 }
 
-extern void ReInitHUD(void)
+void ReInitHUD(void)
 {
 	/* KJL 14:21:33 17/11/98 - Alien */
 	AlienTeethOffset = 0;
@@ -574,7 +571,7 @@ void MaintainHUD(void)
 	}
 }	
 
-extern void DoCompletedLevelStatisticsScreen(void)
+void DoCompletedLevelStatisticsScreen(void)
 {
 	extern int DebouncedGotAnyKey;
 	extern unsigned char DebouncedKeyboardInput[];
@@ -759,7 +756,7 @@ static void DoMotionTracker(void)
 /*KJL*********************************************************
 * DoMotionTrackerBlips() looks a bit messy but works well.   *
 *********************************************************KJL*/
-extern int ObjectShouldAppearOnMotionTracker(STRATEGYBLOCK *sbPtr)
+int ObjectShouldAppearOnMotionTracker(STRATEGYBLOCK *sbPtr)
 {
 	DYNAMICSBLOCK *objectDynPtr = sbPtr->DynPtr;
 

@@ -1,5 +1,6 @@
 #include "3dc.h"
 #include "inline.h"
+#include "maths.h"
 
 #define UseTimsPinp Yes
 
@@ -2150,7 +2151,7 @@ dx = 0; /* TODO: uninitialized?? */
           /* small line -- use 32-bit values */
           /* interpolate z */
           t = (polyp[1] - sz) * (x - sx) - (polyp[0] - sx) * (z - sz);
-          if (t < 0 && sgnx < 0 || 0 < t && 0 < sgnx)
+          if ((t < 0 && sgnx < 0) || (0 < t && 0 < sgnx))
           {
             /* we have an intersection */
             intersects++;

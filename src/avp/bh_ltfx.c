@@ -7,6 +7,7 @@
 
 #include "dynblock.h"
 #include "dynamics.h"
+#include "plat_shp.h"
 
 #define UseLocalAssert Yes
 

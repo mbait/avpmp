@@ -23,6 +23,7 @@
 #include "bh_marin.h"
 #include "weapons.h"
 #include "showcmds.h"
+#include "pldnet.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

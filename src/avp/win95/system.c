@@ -13,16 +13,19 @@
 #include "bh_far.h"
 #include "pheromon.h"
 #include "huddefs.h"
+#include "hud.h"
 //#include "hudgfx.h"
 #include "font.h"
 #include "bh_gener.h"
 #include "pvisible.h"
+#include "system.h"
 
 #include "projload.hpp" // c++ header which ignores class definitions/member functions if __cplusplus is not defined ?
 #include "chnkload.hpp" // c++ header which ignores class definitions/member functions if __cplusplus is not defined ?
 
 #include "ffstdio.h" // fast file stdio
 #include "avp_menus.h"
+#include "cdplayer.h"
 
 /*------------Patrick 1/6/97---------------
 New sound system 
@@ -82,7 +85,7 @@ WINSCALEXY ExtentXYSubWindow;
 
 // static 
 
-int ReadModuleMapList(MODULEMAPBLOCK *mmbptr);
+static int ReadModuleMapList(MODULEMAPBLOCK *mmbptr);
 RIFFHANDLE env_rif = INVALID_RIFFHANDLE;
 RIFFHANDLE player_rif = INVALID_RIFFHANDLE;
 RIFFHANDLE alien_weapon_rif = INVALID_RIFFHANDLE;
@@ -635,7 +638,7 @@ void ProcessSystemObjects()
 	#endif
 }
 
-int ReadModuleMapList(MODULEMAPBLOCK *mmbptr)
+static int ReadModuleMapList(MODULEMAPBLOCK *mmbptr)
 {
 	MODULE m_temp;
 

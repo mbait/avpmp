@@ -162,7 +162,7 @@ static void MakeHuffTreeFromHuffItems(HuffNode *base, HuffItem *source, int coun
     {
     	temp[n].bits = source[n].Count;
 	}
-    while (upperlim = --count)
+    while ((upperlim = --count))
     {
         if (temp[0].zero)
             temp[0].zero->parent = temp[0].one->parent = movdest;

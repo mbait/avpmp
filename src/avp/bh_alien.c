@@ -73,18 +73,20 @@ MODULEMAPBLOCK AlienDefaultMap =
 {
 	MapType_Sprite,
 	I_ShapeCube, /* default value */
-    0,0,0,
-	0,0,0,
+    {0,0,0},
+    {0,0,0},
 	ObFlag_NoInfLSrc|ObFlag_MultLSrc,
 	0,
 	0,
 	0,							
 	0,							
 	0,	
-	0,0,0,					
+    {0,0,0},
 	0,						 
-	0,						 
-	0,0,0,					
+	0,
+    0,
+    0,						 
+    {0,0,0}
 };
 
 /* CDF 12/2/98 */
@@ -361,7 +363,7 @@ void CreateAlienBot(VECTORCH *Position,int type)
 			alienStatus->EnablePounce=0;
 		}
 		
-		alienStatus->aliensIgniterId=NULL;
+		alienStatus->aliensIgniterId=0;
 
 		MakeAlienNear(sbPtr);
 
@@ -583,7 +585,7 @@ void CreateAlienDynamic(STRATEGYBLOCK *Generator, ALIEN_TYPE type_of_alien)
 			alienStatus->PounceDetected=0;
 			alienStatus->EnablePounce=0;
 		}
-		alienStatus->aliensIgniterId=NULL;
+		alienStatus->aliensIgniterId=0;
 
 	}
 	else
@@ -805,7 +807,7 @@ void InitAlienBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 			alienStatus->EnablePounce=0;
 		}
 		
-		alienStatus->aliensIgniterId=NULL;
+		alienStatus->aliensIgniterId=0;
 
 	}
 	else

@@ -1151,7 +1151,7 @@ static int DHM_MoveBufferToQueue(int* pPosX,int* pPosY,int fZeroLeftMargin)
 							/* It is a standard character or a space */
 							DHM_AddToQueue(*pPosX,(*pPosY)+textprint_Y_offset, *pCh);
 
-							(*pPosX)+=AAFontWidths[*pCh];//CharWidthInPixels(*pCh);
+							(*pPosX)+=AAFontWidths[(int)*pCh];//CharWidthInPixels(*pCh);
 
 							if ((*pPosX)>LastDisplayableXForChars())
 							{

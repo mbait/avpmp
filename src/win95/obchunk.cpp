@@ -630,8 +630,7 @@ RIF_IMPLEMENT_DYNCREATE("OBJNOTES",Object_Notes_Chunk)
 
 Object_Notes_Chunk::Object_Notes_Chunk (Chunk_With_Children * parent,
  const char * _data, size_t _data_size) 
-: Chunk(parent, "OBJNOTES"), 
-data(NULL), data_size(_data_size) 
+: Chunk(parent, "OBJNOTES"), data_size(_data_size), data(NULL)
 {
 	data_store = new char [data_size];
 

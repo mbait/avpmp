@@ -179,9 +179,9 @@ ChunkVector& ChunkVector::operator-=(const ChunkVector& a)
 ChunkVector::operator VECTORCH () const
 {
 	VECTORCH v;
-	v.vx = x;
-	v.vy = y;
-	v.vz = z;
+	v.vx = (int)x;
+	v.vy = (int)y;
+	v.vz = (int)z;
 
 	return(v);
 }

@@ -75,6 +75,8 @@ extern void UpdateWeaponShape(void);
 **********************************************KJL*/
 
 extern void GrabWeaponShape(PLAYER_WEAPON_DATA *weaponPtr);
+void HandleWeaponImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_ID AmmoID, VECTORCH *directionPtr, int multiple, SECTION_DATA *this_section_data);
+void HandleSpearImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_ID AmmoID, VECTORCH *directionPtr, int multiple, SECTION_DATA *this_section_data);
 extern void GrabMuzzleFlashShape(TEMPLATE_WEAPON_DATA *twPtr);
 extern void FindEndOfShape(VECTORCH* endPositionPtr, int shapeIndex);
 extern void InitThisWeapon(PLAYER_WEAPON_DATA *pwPtr);

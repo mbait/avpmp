@@ -290,7 +290,7 @@ class _base_HashTable
 		_base_HashTable(unsigned = HT_DEFAULTTABLESIZESHIFT);
 		
 		// destructor
-		~_base_HashTable();
+		virtual ~_base_HashTable();
 		
 		// copy constructor and assignment not provided in v1.0
 		_base_HashTable(_base_HashTable<TYPE,ARG_TYPE,CMP_ARG_TYPE> const &);

@@ -38,6 +38,7 @@
 #include "bh_corpse.h"
 #include "bh_dummy.h"
 #include "scream.h"
+#include "targeting.h"
 
 #include "dxlog.h"
 
@@ -48,6 +49,7 @@
 #include "showcmds.h"
 #include "extents.h"
 #include "avp_userprofile.h"
+#include "hud.h"
 
 #define ALL_PULSERIFLES 0
 #define MOTIONTRACKERS 0
@@ -82,7 +84,6 @@ extern STRATEGYBLOCK* CreateGrenadeKernel(AVP_BEHAVIOUR_TYPE behaviourID, VECTOR
 extern STRATEGYBLOCK* CreateRocketKernel(VECTORCH *position, MATRIXCH *orient,int fromplayer);
 extern STRATEGYBLOCK* CreateFrisbeeKernel(VECTORCH *position, MATRIXCH *orient, int fromplayer);
 extern int AlienPCIsCurrentlyVisible(int checktime,STRATEGYBLOCK *sbPtr);
-extern int ObjectShouldAppearOnMotionTracker(STRATEGYBLOCK *sbPtr);
 extern int SBIsEnvironment(STRATEGYBLOCK *sbPtr);
 void Marine_SwitchExpression(STRATEGYBLOCK *sbPtr,int state);
 
@@ -139,6 +140,9 @@ static STATE_RETURN_CONDITION Execute_MNS_PanicFireUnarmed(STRATEGYBLOCK *sbPtr)
 
 void NPC_Maintain_Minigun(STRATEGYBLOCK *sbPtr, DELTA_CONTROLLER *mgd);
 void Marine_AssumePanicExpression(STRATEGYBLOCK *sbPtr);
+static STATE_RETURN_CONDITION Execute_MFS_Respond(STRATEGYBLOCK *sbPtr);
+static STATE_RETURN_CONDITION Execute_MNS_PumpAction(STRATEGYBLOCK *sbPtr);
+static STATE_RETURN_CONDITION Execute_MFS_Retreat(STRATEGYBLOCK *sbPtr);
 
 static void Execute_Dying(STRATEGYBLOCK *sbPtr); /* used for near and far */
 
@@ -16805,14 +16809,14 @@ static STATE_RETURN_CONDITION Execute_MNS_PanicFireUnarmed(STRATEGYBLOCK *sbPtr)
 
 	/* Stabilise sequence. */
 	if ((marineStatusPointer->HModelController.Sequence_Type!=HMSQT_MarineStand)
-		||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_WildFire_0))
+		||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_WildFire_0)
 			&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_WildFire_45)
-			&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_WildFire_90)) {
+			&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_WildFire_90))) {
 
 		/* If we're not in one of the 'extreme panic' animations, are we in one of the others? */
 		if ((marineStatusPointer->HModelController.Sequence_Type!=HMSQT_MarineStand)
-			||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One))
-				&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two)) {
+			||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One)
+				&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two))) {
 			/* No, we're not.  See which level of panic to go into... */
 			if (MarineRetreatsInTheFaceOfDanger(sbPtr)) {
 				/* It's PaNiC tImE! */
@@ -16896,8 +16900,8 @@ static STATE_RETURN_CONDITION Execute_MNS_PanicFireUnarmed(STRATEGYBLOCK *sbPtr)
 				marineStatusPointer->using_squad_suspicion=0;
 	
 				if ((marineStatusPointer->HModelController.Sequence_Type!=HMSQT_MarineStand)
-					||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One))
-						&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two)) {
+					||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One)
+						&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two))) {
 					Marine_EnterLesserPanicAnimation(sbPtr);
 					return(SRC_No_Change);
 				} else {
@@ -16982,8 +16986,8 @@ static STATE_RETURN_CONDITION Execute_MNS_PanicFireUnarmed(STRATEGYBLOCK *sbPtr)
 					Sound_Play(marineStatusPointer->My_Weapon->EndSound,"d",&(sbPtr->DynPtr->Position));
 				}
 				if ((marineStatusPointer->HModelController.Sequence_Type!=HMSQT_MarineStand)
-					||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One))
-						&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two)) {
+					||((marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_One)
+						&&(marineStatusPointer->HModelController.Sub_Sequence!=MSSS_Panic_Two))) {
 					Marine_EnterLesserPanicAnimation(sbPtr);
 					marineStatusPointer->internalState=1;
 					/* This is a bit pre-emptive, but never mind. */

@@ -6,6 +6,7 @@
 
 #include "fixer.h"
 #include "win95/cd_player.h"
+#include "cdplayer.h"
 
 static int HaveCDROM = 0;
 static SDL_CD *cdrom = NULL;

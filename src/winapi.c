@@ -200,7 +200,7 @@ int GetFileAttributesA(const char *file)
 	return GetFileAttributes(file);
 }
 
-int SetFilePointer(HANDLE file, int x, int y, int z)
+unsigned int SetFilePointer(HANDLE file, int x, int y, int z)
 {
 	fprintf(stderr, "SetFilePointer(%d, %d, %d, %d)\n", file, x, y, z);
 	

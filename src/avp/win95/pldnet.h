@@ -1003,6 +1003,9 @@ extern void DoMultiplayerSpecificHud();
 extern void GetNextMultiplayerObservedPlayer();
 extern void TurnOffMultiplayerObserveMode();
 extern void CheckStateOfObservedPlayer();
+void MinimalNetCollectMessages(void);
+void InitAVPNetGameForHost(int species, int gamestyle, int level);
+void InitAVPNetGameForJoin(void);
 
 
 /* ---------------------------------------------------------------------

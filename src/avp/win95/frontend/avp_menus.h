@@ -342,4 +342,13 @@ typedef struct
 
 #define NUMBER_OF_SAVE_SLOTS 8
 
+
+void KeyboardEntryQueue_Add(char c);
+
+int AvP_MainMenus(void);
+
+int AvP_InGameMenus(void);
+
+int InGameMenusAreRunning(void);
+
 #endif

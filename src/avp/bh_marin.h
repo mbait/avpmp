@@ -401,6 +401,7 @@
 	extern void DoSquad(void);
 	extern void ZoneAlert(int level,AIMODULE *targetModule);
 	extern void Marine_CorpseSightingTest(STRATEGYBLOCK *corpse);
+    int MarineSight_FrustrumReject(STRATEGYBLOCK *sbPtr,VECTORCH *localOffset,STRATEGYBLOCK *target);
 
 	#ifdef __cplusplus
 

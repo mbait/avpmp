@@ -28,6 +28,7 @@ you should have seen the previous versions. */
 #include "dxlog.h"
 #include "avp_userprofile.h"
 #include "pfarlocs.h"
+#include "particle.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

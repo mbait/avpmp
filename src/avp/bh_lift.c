@@ -185,6 +185,16 @@ void * LiftBehaveInit(void* bhdata, STRATEGYBLOCK* sbptr)
 }
 
 
+// this function reposts anything that would prevent 
+// The palyer most be in the module and nothing
+// else can be
+
+
+BOOL BadGuyInModuleOrNoPlayer()
+{
+	return(0);
+}	
+
 /*************************** LIFT CONTROL *****************************/
 
 void LiftBehaveFun(STRATEGYBLOCK* sbptr)
@@ -585,17 +595,6 @@ void LiftBehaveFun(STRATEGYBLOCK* sbptr)
    	}							
 
 }
-
-
-// this function reposts anything that would prevent 
-// The palyer most be in the module and nothing
-// else can be
-
-
-BOOL BadGuyInModuleOrNoPlayer()
-{
-	return(0);
-}	
 
 
 void TeleportContents(MODULE* new_pos, MODULE* old_pos,BOOL floor_switches_fixed)

@@ -231,8 +231,7 @@ Chunk_With_Children const * Chunk::GetRootChunk(void) const
 
 Miscellaneous_Chunk::Miscellaneous_Chunk (Chunk_With_Children * parent, const char * identifier,
  const char * _data, size_t _data_size) 
-: Chunk (parent, identifier), 
-data(NULL), data_size (_data_size) 
+: Chunk (parent, identifier), data_size (_data_size), data(NULL) 
 {
 	if (data_size)
 	{
@@ -407,7 +406,7 @@ void Chunk_With_Children::lookup_child (const char * class_ident,List<Chunk*>& c
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp (class_ident, child_ptr->identifier, 8) == NULL)
+			if (strncmp (class_ident, child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				child_list.add_entry(child_ptr);
@@ -426,7 +425,7 @@ unsigned Chunk_With_Children::count_children (char const * class_ident) const
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp (class_ident, child_ptr->identifier, 8) == NULL)
+			if (strncmp (class_ident, child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				++ nChildren;
@@ -445,7 +444,7 @@ Chunk* Chunk_With_Children::lookup_single_child (const char * class_ident) const
 	Chunk * chunk_found=0;
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp (class_ident, child_ptr->identifier, 8) == NULL)
+			if (strncmp (class_ident, child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				assert(!chunk_found); 

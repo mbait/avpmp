@@ -12,10 +12,10 @@
 #include "3dc.h"
 #include "iofocus.h"
 #include "gadget.h"
-#include "avp_menus.h"
 #include "psnd.h"
 extern "C"
 {
+#include "avp_menus.h"
 	
 	#define UseLocalAssert Yes
 	#include "ourasert.h"

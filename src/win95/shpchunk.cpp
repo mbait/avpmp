@@ -2265,7 +2265,7 @@ Shape_Morphing_Data_Chunk::Shape_Morphing_Data_Chunk (Shape_Chunk * parent, cons
 	
 }	
 Shape_Morphing_Data_Chunk::Shape_Morphing_Data_Chunk (Shape_Sub_Shape_Chunk * parent, const char *data, size_t size)
-: Chunk_With_Children (parent, "SHPMORPH"), parent_sub_shape (parent), parent_shape (0)
+: Chunk_With_Children (parent, "SHPMORPH"), parent_shape (0), parent_sub_shape (parent) 
 {
 	const char * buffer_ptr = data;
 

@@ -167,7 +167,6 @@ extern int NPCSetVelocity(STRATEGYBLOCK *sbPtr, VECTORCH* targetDirn, int in_spe
 extern int NPCOrientateToVector(STRATEGYBLOCK *sbPtr, VECTORCH *zAxisVector, int turnspeed, VECTORCH *offset);
 extern void NPCGetMovementTarget(STRATEGYBLOCK *sbPtr, STRATEGYBLOCK *target, VECTORCH *targetPosition, int* targetIsAirduct,int alien);
 extern void NPCGetMovementDirection(STRATEGYBLOCK *sbPtr, VECTORCH *velocityDirection, VECTORCH* target, WAYPOINT_MANAGER *waypointManager);
-extern int FindMyFloorPoly(VECTORCH* currentPosition, MODULE* currentModule);
 extern void NPC_InitWanderData(NPC_WANDERDATA *wanderData);
 extern void NPC_FindWanderTarget(STRATEGYBLOCK *sbPtr, NPC_WANDERDATA *wanderData, NPC_MOVEMENTDATA *moveData);
 extern void NPC_FindAIWanderTarget(STRATEGYBLOCK *sbPtr, NPC_WANDERDATA *wanderData, NPC_MOVEMENTDATA *moveData, int alien);

@@ -137,8 +137,10 @@ static int InitialisedLog = 0;
 static int db_display_type = DB_DOS;
 
 /* For DirectDraw mode. */
+#ifndef DB_NODIRECTDRAW			
 static struct db_dd_mode_tag dd_mode = {NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0};
 static fontPtr FontP = NULL;
+#endif
 
 /* Volatile zero. */
 static volatile int db_vol_zero = 0;
@@ -150,10 +152,12 @@ static const char* db_assert_textA[ 3 ] =
 	"Expression: %s",
 	"File: %s Line: %d"
 };
+#if 0
 static const char* db_prompt_std =
 	"Quit program/force e(x)ception? [y/n/x]";
 static const char* db_prompt_windows =
 	"Quit program? [Yes/No]/force exception? [Cancel]";
+#endif
 static const char* db_assert_log_begin_text =
 	"DB: FAILED ASSERTION BEGINS";
 static const char* db_assert_log_end_text =

@@ -23,6 +23,7 @@
 #include "hud_layout.h"
 #include "avp_userprofile.h"
 #include "aw.h"
+#include "opengl.h"
 
 int LightIntensityAtPoint(VECTORCH *pointPtr);
 

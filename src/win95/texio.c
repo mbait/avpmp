@@ -35,7 +35,7 @@
 
 
 #include "awtexld.h"
-//#include "alt_tab.h"
+#include "alt_tab.h"
 
 /*
 	#define for experimental purposes 
@@ -62,7 +62,6 @@ int tripc = 0;
 */
 
 	extern SHAPEHEADER **mainshapelist;
-	extern (*ShapeLanguageFunctions[])(SHAPEINSTR *shapeinstrptr);
 	extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 	extern unsigned char *ScreenBuffer;
 	extern char projectsubdirectory[];
