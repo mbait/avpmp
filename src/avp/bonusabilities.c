@@ -184,7 +184,7 @@ static DISPLAYBLOCK* CreateGrapplingHook(void)
 
 }
 
-extern void GrapplingHookBehaviour(STRATEGYBLOCK *sbPtr)
+void GrapplingHookBehaviour(STRATEGYBLOCK *sbPtr)
 {
 	DYNAMICSBLOCK *dynPtr = sbPtr->DynPtr;
 

@@ -12,6 +12,7 @@
 extern "C"
 {
 #include "language.h"
+#include "avp_menus.h"
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 //extern LPDIRECTDRAWSURFACE     lpDDSBack;      // DirectDraw back surface
 extern int DebouncedGotAnyKey;
@@ -25,7 +26,6 @@ extern void ThisFramesRenderingHasFinished(void);
 
 extern int AAFontImageNumber;
 extern int FadingGameInAfterLoading;
-extern void RenderBriefingText(int centreY, int brightness);
 
 extern void InGameFlipBuffers();
 

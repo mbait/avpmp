@@ -6,6 +6,7 @@ extern "C"
 	#include "inline.h"
 	//#include "smacker.h"
 	#include "avp_menus.h"
+    #include "avp_intro.h"
 	extern int NormalFrameTime;
 	extern int GotAnyKey;
 	extern int DebouncedGotAnyKey;

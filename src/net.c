@@ -35,14 +35,22 @@ void DpExtUnInit()
 
 HRESULT DpExtRecv(int lpDP2A, void *lpidFrom, void *lpidTo, DWORD dwFlags, void *lplpData, LPDWORD lpdwDataSize)
 {
+/*
 	fprintf(stderr, "DpExtRecv(%d, %p, %p, %d, %p, %p)\n", lpDP2A, lpidFrom, lpidTo, dwFlags, lplpData, lpdwDataSize);
-
+*/
 	return 1;
 }
 
 HRESULT DpExtSend(int lpDP2A, DPID idFrom, DPID idTo, DWORD dwFlags, void *lpData, DWORD dwDataSize)
 {
+/*
 	fprintf(stderr, "DpExtSend(%d, %d, %d, %d, %p, %d)\n", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
+*/
+	FILE *fp = fopen("net.log", "ab");
+	fprintf(fp, "\nDpExtSend(%d, %d, %d, %d, %p, %d) ", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
+	fprintf(fp, "time = %d\n", timeGetTime());
+	fwrite(lpData, dwDataSize, 1, fp);
+	fclose(fp);
 
 	return 1;
 }

@@ -39,6 +39,7 @@
 #include "bh_alien.h"
 #include "bh_corpse.h"
 #include "bh_dummy.h"
+#include "game_statistics.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -4124,7 +4125,9 @@ void Execute_Xeno_TurnToFace_Far(STRATEGYBLOCK *sbPtr)
 void Execute_Xeno_Follow_Far(STRATEGYBLOCK *sbPtr)
 {
 	XENO_STATUS_BLOCK *xenoStatusPointer;
+#if FAR_XENO_ACTIVITY
 	int anglex,angley;
+#endif
 
 	LOCALASSERT(sbPtr);
 	xenoStatusPointer = (XENO_STATUS_BLOCK *)(sbPtr->SBdataptr);    	
@@ -4319,7 +4322,9 @@ void Execute_Xeno_Return_Far(STRATEGYBLOCK *sbPtr)
 void Execute_Xeno_Avoidance_Far(STRATEGYBLOCK *sbPtr)
 {
 	XENO_STATUS_BLOCK *xenoStatusPointer;    
+#if FAR_XENO_ACTIVITY
 	int anglex,angley;
+#endif
 	
 	LOCALASSERT(sbPtr);
 	xenoStatusPointer = (XENO_STATUS_BLOCK *)(sbPtr->SBdataptr);    

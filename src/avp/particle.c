@@ -24,15 +24,19 @@
 #include "sphere.h"
 #include "bh_rubberduck.h"
 #include "bh_weap.h"
+#include "weapons.h"
 #include "avpview.h"
 #include "pldghost.h"
 #include "detaillevels.h"
 #include "psnd.h"
+#include "kzsort.h"
 #include "avp_userprofile.h"
 #define UseLocalAssert Yes
 #include "ourasert.h"
 #include "savegame.h"
 #include "los.h"
+#include "chnkload.h"
+#include "maths.h"
 
 #include <math.h>
 

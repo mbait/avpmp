@@ -47,6 +47,7 @@ int NewFindThisRoute(WAYPOINT_HEADER *waypoints, WAYPOINT_ROUTE *thisroute,WAYPO
 void SweepWaypoints(WAYPOINT_HEADER *waypoints, STRATEGYBLOCK *sbPtr, VECTORCH *targetPosition);
 int FindBestRoute(WAYPOINT_ROUTE *bestroute,WAYPOINT_HEADER *waypoints);
 int NPCContainsPoint(STRATEGYBLOCK *sbPtr,VECTORCH *point);
+static int WaypointContainsPoint(WAYPOINT_VOLUME *waypoint, VECTORCH *point);
 void GetTargetPositionInWaypoint(WAYPOINT_VOLUME *waypoint,VECTORCH *output);
 
 
@@ -270,7 +271,7 @@ int NPCGetWaypointDirection(WAYPOINT_HEADER *waypoints, STRATEGYBLOCK *sbPtr, VE
 
 }
 
-int WaypointContainsPoint(WAYPOINT_VOLUME *waypoint, VECTORCH *point) {
+static int WaypointContainsPoint(WAYPOINT_VOLUME *waypoint, VECTORCH *point) {
 
 	/* 'point' should be in module space. */
 

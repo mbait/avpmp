@@ -9,6 +9,7 @@
 extern void MissionObjectiveTriggered(void* mission_objective);
 extern void MakeMissionVisible(void* mission_objective);
 extern void MakeMissionPossible(void* mission_objective);
+extern void	StartTriggerPlotFMV(int number);
 
 void * MissionCompleteBehaveInit(void* bhdata,STRATEGYBLOCK* sbptr)
 {

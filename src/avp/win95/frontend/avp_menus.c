@@ -23,6 +23,9 @@
 #include "avp_mp_config.h"
 #include "psnd.h"
 #include "savegame.h"
+#include "game.h"
+#include "avp_menugfx.hpp"
+#include "avp_intro.h"
 
 /* used to get file time */
 #include <sys/types.h>
@@ -102,7 +105,6 @@ extern void DrawMainMenusBackdrop(void);
 static void TestValidityOfCheatMenu(void);
 void SetBriefingTextForEpisode(int episode, I_PLAYER_TYPE playerID);
 void SetBriefingTextToBlank(void);
-void RenderBriefingText(int centreY, int brightness);
 void CheckForKeysWithMultipleAssignments(void);
 void HandleCheatModeFeatures(void);
 void ShowMenuFrameRate(void);

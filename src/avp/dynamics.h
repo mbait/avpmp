@@ -53,5 +53,6 @@ extern void GetPolygonNormal(struct ColPolyTag *polyPtr);
 extern EULER HeadOrientation;
 
 extern int ParticleDynamics(PARTICLE *particlePtr, VECTORCH *obstacleNormalPtr, int *moduleIndexPtr);
+void AddEffectsOfForceGenerators(VECTORCH *positionPtr, VECTORCH *impulsePtr, int mass);
 
 #endif /* end of preprocessor condition for file wrapping */

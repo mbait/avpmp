@@ -7,6 +7,7 @@
 #include "stratdef.h"
 #include "gamedef.h"
 #include "bh_types.h"
+#include "bonusabilities.h"
 
 #include "weapons.h"
 #include "comp_shp.h"

@@ -15,9 +15,6 @@
 
 
 #ifdef __cplusplus
-	extern "C" {
-#endif
-
 /* Version settings *****************************************************/
 
 /* Constants  ***********************************************************/
@@ -84,11 +81,17 @@
 			// not allowed to be NULL
 	};
 	#endif // UseGadgets
+#endif
 
 /* Exported globals *****************************************************/
 
-/* Function prototypes **************************************************/
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
+/* Function prototypes **************************************************/
+void BringDownConsoleWithSayTypedIn();
+void BringDownConsoleWithSaySpeciesTypedIn();
 
 
 /* End of the header ****************************************************/

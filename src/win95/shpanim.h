@@ -72,7 +72,7 @@ typedef struct shapeanimationheader
 
 	// Private variables
 	
-	unsigned long num_sequences;
+	int num_sequences;
 	
 	SHAPEANIMATIONSEQUENCE * anim_sequences;
 	

@@ -61,6 +61,8 @@ extern void Execute_Alien_Dying(STRATEGYBLOCK *sbPtr);
 
 int AlienIsAbleToClimb(STRATEGYBLOCK *sbPtr);
 int AlienIsAbleToStand(STRATEGYBLOCK *sbPtr);
+static int StartAlienPounce(STRATEGYBLOCK *sbPtr);
+static int AlienHasPathToTarget(STRATEGYBLOCK *sbPtr);
 
 extern ATTACK_DATA Alien_Special_Gripping_Attack;
 
@@ -612,6 +614,7 @@ static enum AMMO_ID GetAttackDamageType(STRATEGYBLOCK *sbPtr,int flagnum) {
 
 }
 
+#if 0
 static void DoAlienAIAttackSound(STRATEGYBLOCK *sbPtr) {
 
 	DYNAMICSBLOCK *dynPtr;
@@ -642,6 +645,7 @@ static void DoAlienAIAttackSound(STRATEGYBLOCK *sbPtr) {
 	#endif
 
 }
+#endif
 
 static void DoAlienAIRandomHiss(STRATEGYBLOCK *sbPtr) {
 
@@ -2137,7 +2141,7 @@ int AlienIsAwareOfTarget(STRATEGYBLOCK *sbPtr) {
 	return 1;
 }
 
-int AlienHasPathToTarget(STRATEGYBLOCK *sbPtr) {
+static int AlienHasPathToTarget(STRATEGYBLOCK *sbPtr) {
 
 	ALIEN_STATUS_BLOCK *alienStatusPointer=(ALIEN_STATUS_BLOCK *)(sbPtr->SBdataptr);
 
@@ -2147,10 +2151,10 @@ int AlienHasPathToTarget(STRATEGYBLOCK *sbPtr) {
 	{
 		GLOBALASSERT(alienStatusPointer->Target->containingModule);
 		{
+			#if 0
 			PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
 			LOCALASSERT(playerStatusPtr);
 
-			#if 0
 			if((playerStatusPtr->cloakOn==1)&&(playerStatusPtr->cloakPositionGivenAway==0)) {
 				return 0;
 			}

@@ -376,7 +376,7 @@ static void UnloadMenuFont()
 	IntroFont_Light.info.ImagePtr = NULL;
 }
 
-int LengthOfMenuText(char *textPtr)
+int LengthOfMenuText(const char *textPtr)
 {
 	int width = 0;
 	
@@ -400,7 +400,7 @@ int LengthOfSmallMenuText(char *textPtr)
 	return width;
 }
 
-int RenderMenuText(char *textPtr, int sx, int sy, int alpha, enum AVPMENUFORMAT_ID format)
+int RenderMenuText(const char *textPtr, int sx, int sy, int alpha, enum AVPMENUFORMAT_ID format)
 {
 	int width;
 	

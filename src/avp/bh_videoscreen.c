@@ -8,6 +8,7 @@
 #include "dynblock.h"
 #include "dynamics.h"
 #include "bh_debri.h"
+#include "plat_shp.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

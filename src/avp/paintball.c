@@ -2,6 +2,7 @@
 #include "3dc.h"
 #include "module.h"
 #include "inline.h"
+#include "kshape.h"
 
 #include "paintball.h"
 #include "showcmds.h"

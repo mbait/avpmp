@@ -90,6 +90,7 @@ static BOOL TargetIsFiringFlamethrowerAtQueen(STRATEGYBLOCK *sbPtr);
 static void MakeNonFragable(HMODELCONTROLLER *controller);
 static void QueenCalculateTargetInfo(STRATEGYBLOCK *sbPtr);
 void HandleHangarAirlock();
+static BOOL LockerDoorIsClosed();
 
 QUEEN_MANOEUVRE Queen_Next_Command;
 
@@ -1144,7 +1145,7 @@ void QueenMove_Walk(STRATEGYBLOCK *sbPtr) {
 			else
 			{
 				VECTORCH velocity;
-				int walkSpeed;
+				//int walkSpeed;
 	
 				velocity.vx=sbPtr->DynPtr->OrientMat.mat31;
 				velocity.vy=0;
@@ -4509,7 +4510,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 }
 
 
-BOOL LockerDoorIsClosed()
+static BOOL LockerDoorIsClosed()
 {
 	TRACK_OBJECT_BEHAV_BLOCK* door;
 	GLOBALASSERT(LockerDoorSbptr);

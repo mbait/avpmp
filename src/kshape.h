@@ -2,6 +2,7 @@
 #define _kshape_h_ 1
 
 #include "particle.h"
+#include "sphere.h"
 
 
 typedef struct 
@@ -101,6 +102,14 @@ extern void CheckRenderStatesForModule(MODULE *modulePtr);
 
 extern void RenderDecal(DECAL *decalPtr);
 extern void RenderParticle(PARTICLE *particlePtr);
+void RenderInsideAlienTongue(int offset);
+void RenderPredatorTargetingSegment(int theta, int scale, int drawInRed);
+void RenderPredatorPlasmaCasterCharge(int value, VECTORCH *worldOffsetPtr, MATRIXCH *orientationPtr);
+void CreateStarArray(void);
+void OutputTranslucentPolyList(void);
+void RenderLightFlare(VECTORCH *positionPtr, unsigned int colour);
+extern void RenderFlechetteParticle(PARTICLE *particlePtr);
+void RenderExplosionSurface(VOLUMETRIC_EXPLOSION *explosionPtr);
 
 /* KJL 10:25:44 7/23/97 - this offset is used to push back the normal game gfx,
 so that the HUD can be drawn over the top without sinking into walls, etc. */

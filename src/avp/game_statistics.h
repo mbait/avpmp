@@ -100,6 +100,9 @@ extern void CurrentGameStats_CreatureKilled(STRATEGYBLOCK *sbPtr,SECTION_DATA *s
 extern void CurrentGameStats_TrophyCollected(STRATEGYBLOCK *sbPtr);
 extern void CurrentGameStats_HeadBitten(STRATEGYBLOCK *sbPtr);
 extern void InitialiseCurrentGameStatistics(void);
+extern void CurrentGameStats_Initialise(void);
+extern void DoFailedLevelStatisticsScreen(void);
+extern void DoStatisticsScreen(int completed_level);
 
 #ifdef __cplusplus
 }

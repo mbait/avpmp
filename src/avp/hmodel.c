@@ -27,6 +27,8 @@
 #include "load_shp.h"
 #include "plat_shp.h"
 #include "avp_userprofile.h"
+#include "maths.h"
+#include "opengl.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -4940,7 +4942,7 @@ void LoadHierarchy(SAVE_BLOCK_HEADER* header,HMODELCONTROLLER* controller)
 	{
 		SAVE_BLOCK_HEADER* delta_header;
 
-		while(delta_header = GetNextBlockIfOfType(SaveBlock_HierarchyDelta))
+		while((delta_header = GetNextBlockIfOfType(SaveBlock_HierarchyDelta)))
 		{
 			LoadHierarchyDelta(delta_header,controller);
 		}

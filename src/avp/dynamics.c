@@ -165,6 +165,7 @@ static void MakeStaticBoundingBoxForNRBB(STRATEGYBLOCK *sbPtr);
 static int RelocateNRBB(STRATEGYBLOCK *sbPtr);
 
 static void FindLandscapePolygonsInObjectsVicinity(STRATEGYBLOCK *sbPtr);
+#if 0
 static signed int DistanceMovedBeforeNRBBHitsNegYPolygon(DYNAMICSBLOCK *dynPtr, struct ColPolyTag *polyPtr, int distanceToMove);
 static signed int DistanceMovedBeforeNRBBHitsPosYPolygon(DYNAMICSBLOCK *dynPtr, struct ColPolyTag *polyPtr, int distanceToMove);
 static signed int DistanceMovedBeforeNRBBHitsNegXPolygon(DYNAMICSBLOCK *dynPtr, struct ColPolyTag *polyPtr, int distanceToMove);
@@ -172,6 +173,7 @@ static signed int DistanceMovedBeforeNRBBHitsPosXPolygon(DYNAMICSBLOCK *dynPtr, 
 static signed int DistanceMovedBeforeNRBBHitsNegZPolygon(DYNAMICSBLOCK *dynPtr, struct ColPolyTag *polyPtr, int distanceToMove);
 static signed int DistanceMovedBeforeNRBBHitsPosZPolygon(DYNAMICSBLOCK *dynPtr, struct ColPolyTag *polyPtr, int distanceToMove);
 static void TestForValidMovement(STRATEGYBLOCK *sbPtr);
+#endif
 static int MoveObject(STRATEGYBLOCK *sbPtr);
 static void TestForValidPlayerStandUp(STRATEGYBLOCK *sbPtr);
 static int SteppingUpIsValid(STRATEGYBLOCK *sbPtr);
@@ -188,7 +190,6 @@ static int (*RelocationIsValid)(STRATEGYBLOCK *sbPtr);
 
 static void MovePlatformLift(STRATEGYBLOCK *sbPtr);
 static void FindLandscapePolygonsInParticlesPath(PARTICLE *particlePtr, VECTORCH *displacementPtr);
-void AddEffectsOfForceGenerators(VECTORCH *positionPtr, VECTORCH *impulsePtr, int mass);
 
 VECTORCH *GetNearestModuleTeleportPoint(MODULE* thisModulePtr, VECTORCH* positionPtr);
 
@@ -1570,17 +1571,13 @@ static int MoveObject(STRATEGYBLOCK *sbPtr)
 	    	
 		if (!wentUpStep)
 		{
-			STRATEGYBLOCK *obstacleSBPtr;
+			STRATEGYBLOCK *obstacleSBPtr = 0;
 			
 			if (polygonPtr->ParentObject)
-			if (polygonPtr->ParentObject->ObStrategyBlock)
-			{
-				obstacleSBPtr = polygonPtr->ParentObject->ObStrategyBlock;
-			}
-			else
-			{
-				obstacleSBPtr = 0;
-			}
+                if (polygonPtr->ParentObject->ObStrategyBlock)
+                {
+                    obstacleSBPtr = polygonPtr->ParentObject->ObStrategyBlock;
+                }
 		
 			DistanceToStepUp = 0;
 
@@ -3479,6 +3476,7 @@ static int AxisToIgnore(VECTORCH *normal)
 	}
 }
 
+#if 0
 static void TestForValidMovement(STRATEGYBLOCK *sbPtr)
 {
 	#if 1
@@ -3503,6 +3501,7 @@ static void TestForValidMovement(STRATEGYBLOCK *sbPtr)
 	}
 	#endif
 }   
+#endif
 
 static int RelocateSphere(STRATEGYBLOCK *sbPtr)
 {

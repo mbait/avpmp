@@ -196,6 +196,10 @@ extern void MakeFocusedExplosion(VECTORCH *originPtr, VECTORCH *blastPositionPtr
 extern void MakeElectricalExplosion(VECTORCH *positionPtr);
 void MakeSprayOfSparks(MATRIXCH *orientationPtr, VECTORCH *positionPtr);
 void PlayerPheromoneTrail(DYNAMICSBLOCK *dynPtr);
+void MakeGrenadeTrailParticles(VECTORCH *prevPositionPtr, VECTORCH *positionPtr);
+void MakePlasmaTrailParticles(DYNAMICSBLOCK *dynPtr, int number);
+void NewTrailPoint(DYNAMICSBLOCK *dynPtr);
+void TimeScaleThingy();
 
 
 #define MAX_NO_OF_BLOOD_PARTICLES 500

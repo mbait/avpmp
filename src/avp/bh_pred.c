@@ -37,6 +37,7 @@ Source file for predator AI
 #include "bh_dummy.h"
 #include "bh_agun.h"
 #include "scream.h"
+#include "game_statistics.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -77,9 +78,15 @@ static PRED_RETURN_CONDITION Execute_PFS_Pathfinder(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PFS_Return(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PFS_Engage(STRATEGYBLOCK *sbPtr);
 
+#if 0
 static PRED_RETURN_CONDITION Execute_PNS_Approach(STRATEGYBLOCK *sbPtr);
-static PRED_RETURN_CONDITION Execute_PNS_Avoidance(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_StandGround(STRATEGYBLOCK *sbPtr);
+static PRED_RETURN_CONDITION Execute_PNS_NewDischargePistol(STRATEGYBLOCK *sbPtr);
+static PRED_RETURN_CONDITION Predator_ThreatAnalysis(STRATEGYBLOCK *sbPtr);
+static void CreateNPCPredatorPlasBolt(VECTORCH *startingPosition, VECTORCH *targetDirection);
+static void CreateNPCPredatorDisc(VECTORCH *startingPosition, VECTORCH *targetDirection);
+#endif
+static PRED_RETURN_CONDITION Execute_PNS_Avoidance(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_Wander(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_Hunt(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_Retreat(STRATEGYBLOCK *sbPtr);
@@ -98,14 +105,11 @@ static PRED_RETURN_CONDITION Execute_PNS_Recover(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_Taunting(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_DischargeSpeargun(STRATEGYBLOCK *sbPtr);
 static PRED_RETURN_CONDITION Execute_PNS_AttackBrutallyWithPlasmaCaster(STRATEGYBLOCK *sbPtr);
-static PRED_RETURN_CONDITION Execute_PNS_NewDischargePistol(STRATEGYBLOCK *sbPtr);
 
-static PRED_RETURN_CONDITION Predator_ThreatAnalysis(STRATEGYBLOCK *sbPtr);
+static PRED_RETURN_CONDITION Execute_PNS_SelfDestruct(STRATEGYBLOCK *sbPtr);
 
 static void Execute_Dying(STRATEGYBLOCK *sbPtr);
 
-static void CreateNPCPredatorPlasBolt(VECTORCH *startingPosition, VECTORCH *targetDirection);
-static void CreateNPCPredatorDisc(VECTORCH *startingPosition, VECTORCH *targetDirection);
 static void SetPredatorAnimationSequence(STRATEGYBLOCK *sbPtr,HMODEL_SEQUENCE_TYPES type, int subtype, int length, int tweening);
 static int PredatorShouldBeCrawling(STRATEGYBLOCK *sbPtr);
 static int PredatorShouldAttackPlayer(STRATEGYBLOCK *sbPtr);
@@ -2812,6 +2816,7 @@ static PRED_RETURN_CONDITION Execute_PNS_Avoidance(STRATEGYBLOCK *sbPtr)
         return(PRC_No_Change);
 }
 
+#if 0
 static PRED_RETURN_CONDITION Execute_PNS_Approach(STRATEGYBLOCK *sbPtr)
 {
         PREDATOR_STATUS_BLOCK *predatorStatusPointer;    
@@ -2914,6 +2919,7 @@ static PRED_RETURN_CONDITION Execute_PNS_Approach(STRATEGYBLOCK *sbPtr)
         }
         return(PRC_No_Change);
 }
+#endif
 
 static PRED_RETURN_CONDITION Execute_PNS_EngageWithPistol(STRATEGYBLOCK *sbPtr)
 {
@@ -3484,6 +3490,7 @@ static PRED_RETURN_CONDITION Execute_PNS_AttackWithWristblade(STRATEGYBLOCK *sbP
 
 }
 
+#if 0
 static PRED_RETURN_CONDITION Execute_PNS_StandGround(STRATEGYBLOCK *sbPtr)
 {
         PREDATOR_STATUS_BLOCK *predatorStatusPointer;    
@@ -3524,6 +3531,7 @@ static PRED_RETURN_CONDITION Execute_PNS_StandGround(STRATEGYBLOCK *sbPtr)
         }
         return(PRC_No_Change);
 }
+#endif
 
 static PRED_RETURN_CONDITION Execute_PNS_SwapWeapon(STRATEGYBLOCK *sbPtr) {
         
@@ -4162,6 +4170,7 @@ static void Execute_Dying(STRATEGYBLOCK *sbPtr)
         predStatusPointer->stateTimer -= NormalFrameTime;
 }
 
+#if 0
 /* Patrick 4/7/97 --------------------------------------------------
 Behaviour support functions 
 ---------------------------------------------------------------------*/
@@ -4255,6 +4264,7 @@ static void CreateNPCPredatorDisc(VECTORCH *startingPosition, VECTORCH *targetDi
     dynPtr->LinVelocity.vy = MUL_FIXED(targetDirection->vy,PRED_DISCSPEED);
     dynPtr->LinVelocity.vz = MUL_FIXED(targetDirection->vz,PRED_DISCSPEED);
 }
+#endif
 
 static void SetPredatorAnimationSequence(STRATEGYBLOCK *sbPtr,HMODEL_SEQUENCE_TYPES type, int subtype, int length, int tweening)
 {
@@ -6479,6 +6489,7 @@ static PRED_RETURN_CONDITION Execute_PNS_AttackBrutallyWithPlasmaCaster(STRATEGY
         return(PRC_No_Change);
 }
 
+#if 0
 static PRED_RETURN_CONDITION Predator_ThreatAnalysis(STRATEGYBLOCK *sbPtr) {
 
         PREDATOR_STATUS_BLOCK *predatorStatusPointer;    
@@ -6701,6 +6712,7 @@ static PRED_RETURN_CONDITION Execute_PNS_NewDischargePistol(STRATEGYBLOCK *sbPtr
         #endif
         return(PRC_No_Change);
 }
+#endif
 
 static PRED_RETURN_CONDITION Execute_PNS_SelfDestruct(STRATEGYBLOCK *sbPtr)
 {

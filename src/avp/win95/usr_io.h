@@ -317,6 +317,7 @@ typedef struct
 
 	extern void LoadAKeyConfiguration(char* Filename);
 	extern void SaveAKeyConfiguration(char* Filename);
+void LoadDefaultPrimaryConfigs(void);
 
 #ifdef __cplusplus
 	};

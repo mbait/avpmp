@@ -11,6 +11,7 @@
 #include "dynblock.h"
 #include "dynamics.h"
 #include "showcmds.h"
+#include "weapons.h"
 
 #define UseLocalAssert Yes
 

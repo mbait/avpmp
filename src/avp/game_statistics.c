@@ -12,6 +12,7 @@
 #include "bh_debri.h"
 #include "bh_weap.h"
 #include "pldghost.h"
+#include "opengl.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -40,7 +41,6 @@ extern int AlienEpisodeToPlay;
 extern char LevelName[];
 
 extern AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_OF_LIST];
-extern void DoStatisticsScreen(int completed_level);
 
 /* Default structure: */
 AvP_GameStats_Stored DefaultLevelGameStats = {
@@ -78,7 +78,7 @@ AvP_GameStats_Stored DefaultLevelGameStats = {
 
 #define NEWLINE_SPACING	((ScreenDescriptorBlock.SDB_Height<400)? 12:15)
 
-extern void CurrentGameStats_Initialise(void)
+void CurrentGameStats_Initialise(void)
 {
 	int i;
 	for (i=0; i<STATS_VICTIM_MAXIMUM; i++)
@@ -834,7 +834,7 @@ extern void CurrentGameStats_CreatureKilled(STRATEGYBLOCK *sbPtr,SECTION_DATA *s
 }
 
 
-extern void DoFailedLevelStatisticsScreen(void)
+void DoFailedLevelStatisticsScreen(void)
 {
 	extern int deathFadeLevel;
 	D3D_FadeDownScreen(deathFadeLevel,0);

@@ -1696,7 +1696,7 @@ static void LoadInMovementValues(void)
 
 
 
-extern void ThrowAFlare(void)
+void ThrowAFlare(void)
 {
 	extern int NumberOfFlaresActive;
 	

@@ -22,10 +22,12 @@
 #include "usr_io.h"
 #include "hud_map.h"
 #include "hud.h"
+#include "messagehistory.h"
 
 #include "iofocus.h"
 
 #include "paintball.h"
+#include "ahudgadg.hpp"
 #include "avp_menus.h"
 
 extern int InGameMenusAreRunning(void);
@@ -85,18 +87,18 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig =
 	KEY_LMOUSE, 		// FirePrimaryWeapon;
 	KEY_RMOUSE, 		// FireSecondaryWeapon;
 
-	KEY_RBRACKET,  		// NextWeapon;
-	KEY_LBRACKET,  		// PreviousWeapon;
-	KEY_BACKSPACE,		// FlashbackWeapon;
+    {KEY_RBRACKET},  	// NextWeapon;
+    {KEY_LBRACKET},  	// PreviousWeapon;
+    {KEY_BACKSPACE},	// FlashbackWeapon;
 
-	KEY_SLASH,	  		// ImageIntensifier;
-	KEY_FSTOP,    		// ThrowFlare;
-	KEY_APOSTROPHE,	  	// Jetpack;
-	KEY_SEMICOLON,		// Taunt
-	KEY_F1,
-	KEY_F11,
-	KEY_F12,
-	KEY_TAB,
+    {KEY_SLASH},	  	// ImageIntensifier;
+    {KEY_FSTOP},    	// ThrowFlare;
+    {KEY_APOSTROPHE},  	// Jetpack;
+    {KEY_SEMICOLON},	// Taunt
+    {KEY_F1},
+    {KEY_F11},
+    {KEY_F12},
+    {KEY_TAB}
 };
 PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig =
 {
@@ -122,21 +124,21 @@ PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig =
 	KEY_LMOUSE, 		// FirePrimaryWeapon;
 	KEY_RMOUSE, 		// FireSecondaryWeapon;
 	
-	KEY_RBRACKET,		// NextWeapon;
-	KEY_LBRACKET, 			// PreviousWeapon;
-	KEY_BACKSPACE,		// FlashbackWeapon;
+    {KEY_RBRACKET},		// NextWeapon;
+    {KEY_LBRACKET}, 	// PreviousWeapon;
+    {KEY_BACKSPACE},	// FlashbackWeapon;
 	
-	KEY_FSTOP,	 		// Cloak;
-	KEY_SLASH,	 		// CycleVisionMode;
-	KEY_PAGEUP,			// ZoomIn;
-	KEY_PAGEDOWN,		// ZoomOut;
-	KEY_APOSTROPHE,	  	// GrapplingHook
-	KEY_COMMA,			// RecallDisk
-	KEY_SEMICOLON,		// Taunt
-	KEY_F1,
-	KEY_F11,
-	KEY_F12,
-	KEY_TAB,
+    {KEY_FSTOP},	 	// Cloak;
+    {KEY_SLASH},	 	// CycleVisionMode;
+    {KEY_PAGEUP},		// ZoomIn;
+    {KEY_PAGEDOWN},		// ZoomOut;
+    {KEY_APOSTROPHE},  	// GrapplingHook
+    {KEY_COMMA},		// RecallDisk
+    {KEY_SEMICOLON},	// Taunt
+    {KEY_F1},
+    KEY_F11,
+    KEY_F12,
+    KEY_TAB
 };
 
 PLAYER_INPUT_CONFIGURATION DefaultAlienInputPrimaryConfig =
@@ -163,12 +165,12 @@ PLAYER_INPUT_CONFIGURATION DefaultAlienInputPrimaryConfig =
 	KEY_LMOUSE, 		// FirePrimaryWeapon;
 	KEY_RMOUSE, 		// FireSecondaryWeapon;
 
-	KEY_SLASH,			// AlternateVision;
-	KEY_FSTOP,				// Taunt;
-	KEY_F1,
-	KEY_F11,
-	KEY_F12,
-	KEY_TAB,
+    {KEY_SLASH},		// AlternateVision;
+    {KEY_FSTOP},		// Taunt;
+    {KEY_F1},
+    {KEY_F11},
+    {KEY_F12},
+    {KEY_TAB}
 };
 #elif 0	// Dutch
 PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig =
@@ -635,19 +637,19 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputSecondaryConfig =
 	KEY_NUMPAD0, 		// FirePrimaryWeapon;
 	KEY_NUMPADDEL, 		// FireSecondaryWeapon;
 
-	KEY_MOUSEWHEELUP,  		// NextWeapon;
-	KEY_MOUSEWHEELDOWN,		// PreviousWeapon;
-	KEY_VOID,			// FlashbackWeapon;
+    {KEY_MOUSEWHEELUP},  	// NextWeapon;
+    {KEY_MOUSEWHEELDOWN},	// PreviousWeapon;
+    {KEY_VOID},			// FlashbackWeapon;
 
-	KEY_VOID,			// ImageIntensifier;
-	KEY_VOID, 			// ThrowFlare;
-	KEY_VOID, 			// Jetpack;
-	KEY_VOID,			// Taunt
+    {KEY_VOID},			// ImageIntensifier;
+    {KEY_VOID}, 		// ThrowFlare;
+    {KEY_VOID}, 		// Jetpack;
+    {KEY_VOID},			// Taunt
 
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
+    {KEY_VOID},
+    {KEY_VOID},
+    {KEY_VOID},
+    {KEY_VOID}
 };
 
 
@@ -677,22 +679,22 @@ PLAYER_INPUT_CONFIGURATION DefaultPredatorInputSecondaryConfig =
 	KEY_NUMPAD0, 		// FirePrimaryWeapon;
 	KEY_NUMPADDEL, 		// FireSecondaryWeapon;
 
-	KEY_VOID,			// NextWeapon;
-	KEY_VOID, 			// PreviousWeapon;
-	KEY_VOID,			// FlashbackWeapon;
+    {KEY_VOID},			// NextWeapon;
+    {KEY_VOID}, 		// PreviousWeapon;
+    {KEY_VOID},			// FlashbackWeapon;
 	
-	KEY_VOID,	 		// Cloak;
-	KEY_VOID,	 		// CycleVisionMode;
-	KEY_MOUSEWHEELUP,		// ZoomIn;
-	KEY_MOUSEWHEELDOWN,		// ZoomOut;
-	KEY_VOID,	 		// GrapplingHook;
-	KEY_VOID,			// RecallDisk
-	KEY_VOID,			// Taunt
+    {KEY_VOID},	 		// Cloak;
+    {KEY_VOID},	 		// CycleVisionMode;
+    {KEY_MOUSEWHEELUP},	// ZoomIn;
+    {KEY_MOUSEWHEELDOWN},	// ZoomOut;
+    {KEY_VOID},	 		// GrapplingHook;
+    {KEY_VOID},			// RecallDisk
+    {KEY_VOID},			// Taunt
 	
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
+    {KEY_VOID},
+    KEY_VOID,
+    KEY_VOID,
+    KEY_VOID
 
 };
 
@@ -720,12 +722,12 @@ PLAYER_INPUT_CONFIGURATION DefaultAlienInputSecondaryConfig =
 	KEY_NUMPAD0, 		// FirePrimaryWeapon;
 	KEY_NUMPADDEL, 		// FireSecondaryWeapon;
 	
-	KEY_VOID, 			// AlternateVision;
-	KEY_VOID,	 		// Taunt;
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
-	KEY_VOID,
+    {KEY_VOID}, 		// AlternateVision;
+    {KEY_VOID},	 		// Taunt;
+    {KEY_VOID},
+    {KEY_VOID},
+    {KEY_VOID},
+    {KEY_VOID}
 };
 
 

@@ -23,11 +23,16 @@
 #include "bh_alien.h"
 #include "bh_marin.h"
 #include "bh_dummy.h"
+#include "bh_rubberduck.h"
 #include "pvisible.h"
 #include "pheromon.h"
 #include "psnd.h"
 #include "psndplat.h"
 #include "huddefs.h"
+#include "ai_sight.h"
+#include "targeting.h"
+#include "inventry.h"
+#include "game_statistics.h"
 
 #include "particle.h"
 #include "sfx.h"
@@ -66,7 +71,6 @@ void InitialiseEnergyBoltBehaviour(DAMAGE_PROFILE *damage, int factor);
 static void InitialiseFlameThrowerBehaviour(void);
 void InitialiseDiscBehaviour(STRATEGYBLOCK *target,SECTION_DATA *disc_section);
 static void InitialiseAlienSpitBehaviour(void);
-static void InitialiseFragmentationGrenade(VECTORCH *originPtr);
 STRATEGYBLOCK* InitialiseEnergyBoltBehaviourKernel(VECTORCH *position,MATRIXCH *orient, int player, DAMAGE_PROFILE *damage, int factor);
 static void InitialiseFrisbeeBehaviour(void);
 STRATEGYBLOCK* InitialiseFrisbeeBoltBehaviourKernel(VECTORCH *position,MATRIXCH *orient, int player, DAMAGE_PROFILE *damage, int factor);
@@ -80,6 +84,8 @@ STRATEGYBLOCK *PredDisc_GetNewTarget(PC_PRED_DISC_BEHAV_BLOCK *bptr,VECTORCH *di
 int ObjectIsOnScreen(DISPLAYBLOCK *object);
 void Frisbee_Hit_Environment(STRATEGYBLOCK *sbPtr,COLLISIONREPORT *reportPtr);
 void Crunch_Position_For_Players_Weapon(VECTORCH *position);
+static int SBForcesBounce(STRATEGYBLOCK *sbPtr);
+static int Reflect(VECTORCH *Incident, VECTORCH *Normal, EULER *Output);
 
 /*KJL****************************************************************************************
 *  										G L O B A L S 	            					    *
@@ -240,11 +246,10 @@ int FrisbeeSight_FrustrumReject(STRATEGYBLOCK *sbPtr,VECTORCH *localOffset,STRAT
  		)) {
 		/* 90 horizontal, 90 vertical? */
 	#else
-	if ((fixed_offset.vx <0) && (
-		((fixed_offset.vy) < (-fixed_offset.vx))&&(fixed_offset.vy>=0))
- 		||((fixed_offset.vy<0)&&((-fixed_offset.vy) < (-fixed_offset.vx))
- 		)&&(
-		(fixed_offset.vz>0)
+	if (((fixed_offset.vx <0) && (
+		((fixed_offset.vy) < (-fixed_offset.vx))&&(fixed_offset.vy>=0)))
+ 		|| (((fixed_offset.vy<0)&&((-fixed_offset.vy) < (-fixed_offset.vx))
+ 		)&&((fixed_offset.vz>0))
  		)) {
 		/* 90 horizontal, 90 vertical? */
 	#endif
@@ -468,7 +473,6 @@ STRATEGYBLOCK* CreateFrisbeeKernel(VECTORCH *position, MATRIXCH *orient, int fro
 	/* Create HModel. */
 	{
 		SECTION *root_section;
-		SECTION_DATA *local_disc;
 
 		root_section=GetNamedHierarchyFromLibrary("mdisk","Mdisk");
 				
@@ -483,6 +487,7 @@ STRATEGYBLOCK* CreateFrisbeeKernel(VECTORCH *position, MATRIXCH *orient, int fro
 		dispPtr->HModelControlBlock=&fblk->HModelController;
 
 		#if 0
+		SECTION_DATA *local_disc;
 		/* Match disks. */
 		local_disc=GetThisSectionData(bblk->HModelController.section_data,"disk");
 		local_disc->World_Offset=disc_section->World_Offset;
@@ -1345,6 +1350,7 @@ extern void ClusterGrenadeBehaviour(STRATEGYBLOCK *sbPtr)
 	}
 }
 
+#if 0
 static void InitialiseFragmentationGrenade(VECTORCH *originPtr)
 {
 	DISPLAYBLOCK *dispPtr;
@@ -1405,6 +1411,8 @@ static void InitialiseFragmentationGrenade(VECTORCH *originPtr)
 	if(AvP.Network != I_No_Network)	AddNetGameObjectID(dispPtr->ObStrategyBlock);
 	#endif
 }
+#endif
+
 extern void ProximityGrenadeBehaviour(STRATEGYBLOCK *sbPtr) 
 {
 	DYNAMICSBLOCK *dynPtr = sbPtr->DynPtr;
@@ -3391,7 +3399,7 @@ static void GetGunDirection(VECTORCH *gunDirectionPtr, VECTORCH *positionPtr)
 	Normalise(gunDirectionPtr);
 }
 
-int Reflect(VECTORCH *Incident, VECTORCH *Normal, EULER *Output) {
+static int Reflect(VECTORCH *Incident, VECTORCH *Normal, EULER *Output) {
 	
 	int dot,retval;
 	VECTORCH outVec,normInc;
@@ -3420,7 +3428,7 @@ int Reflect(VECTORCH *Incident, VECTORCH *Normal, EULER *Output) {
 	return(retval);
 }
 
-int SBForcesBounce(STRATEGYBLOCK *sbPtr) {
+static int SBForcesBounce(STRATEGYBLOCK *sbPtr) {
 
 	if (sbPtr==NULL) {
 		return(0);

@@ -97,6 +97,7 @@ static void ShowFPS(void)
 {
 	ShowDebuggingText.FPS = ~ShowDebuggingText.FPS;
 }
+#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
 static void ShowEnvironment(void)
 {
 	ShowDebuggingText.Environment = ~ShowDebuggingText.Environment;
@@ -129,17 +130,19 @@ static void ShowTears(void)
 {
 	ShowDebuggingText.Tears = ~ShowDebuggingText.Tears;
 }
-static void ShowPolyCount(void)
-{
-	ShowDebuggingText.PolyCount = ~ShowDebuggingText.PolyCount;
-}
 static void ShowSounds(void)
 {
 	ShowDebuggingText.Sounds = ~ShowDebuggingText.Sounds;
 }
+#endif
+static void ShowPolyCount(void)
+{
+	ShowDebuggingText.PolyCount = ~ShowDebuggingText.PolyCount;
+}
 
 
 extern void ChangeToMarine();
+#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
 static void ChangeToSpecialist_General()
 {
 	netGameData.myCharacterSubType=NGSCT_General;
@@ -208,6 +211,12 @@ static void ChangeToSpecialist_Pistols()
 	ChangeToMarine();
 }
 
+static void ForceAssertionFailure(void)
+{
+	LOCALASSERT("This assertion has been forced to stop the game"==0);
+}
+#endif
+
 extern void ShowMultiplayerScores(void)
 {
 	ShowMultiplayerScoreTimer=5*ONE_FIXED;
@@ -223,11 +232,6 @@ static void DoMultiplayerSay(char* string)
 static void DoMultiplayerSaySpecies(char* string)
 {
 	AddNetMsg_ChatBroadcast(string,TRUE);
-}
-
-static void ForceAssertionFailure(void)
-{
-	LOCALASSERT("This assertion has been forced to stop the game"==0);
 }
 
 
@@ -265,6 +269,7 @@ static void CDCommand_Volume(int volume)
 }
 
 
+#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
 static void GunX(int x)
 {
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
@@ -289,12 +294,14 @@ static void GunZ(int z)
 
 	twPtr->RestPosition.vz = z;
 }
+#endif
 
 static void MakeRotatingLight(void)
 {
 	MakeLightElement(&Player->ObWorld,LIGHTELEMENT_ROTATING);
 }
 
+#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
 static void RestartMultiplayer(void)
 {
 	/* obviously have to be in a network game... */
@@ -309,6 +316,7 @@ static void CompleteLevel(void)
 {
 	AvP.LevelCompleted = 1;
 }
+#endif
 
 
 void CreateGameSpecificConsoleCommands(void)

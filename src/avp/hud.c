@@ -35,6 +35,8 @@
 #include "pldghost.h"
 
 #include "d3d_render.h"
+#include "kshape.h"
+#include "opengl.h"
 #include "bh_ais.h"
 #include "bh_alien.h"
 
@@ -49,6 +51,7 @@
 #include "pldnet.h"
 #include "avp_userprofile.h"
 #include "hud.h"
+#include "chnkload.h"
 
 extern int ScanDrawMode;
 
@@ -1881,7 +1884,6 @@ void DrawWristDisplay(void)
 {
 	extern HMODELCONTROLLER PlayersWeaponHModelController;
 	SECTION_DATA *sectionPtr;
-	int i;
 
  	char *sectionName[]= {"Dum bar display","Dum 1 display","Dum 2 display","Dum 3 display","Dum 4 display"};
 
@@ -1890,7 +1892,7 @@ void DrawWristDisplay(void)
 	
 	RenderPredatorPlasmaCasterCharge(PlayerStatusPtr->PlasmaCasterCharge, &sectionPtr->World_Offset, &sectionPtr->SecMat);
 	#if 0
-   	for (i=0; i<5; i++)
+   	for (int i=0; i<5; i++)
    	{
    		DECAL CurrentDecal;	
 		extern MODULE *playerPherModule;

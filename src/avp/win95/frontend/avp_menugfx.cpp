@@ -143,7 +143,7 @@ extern int LengthOfMenuText(char *textPtr)
 	return (pFont->CalcSize(textPtr).w);
 }
 
-extern int RenderMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format) 
+extern int RenderMenuText(const char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format) 
 {
 	IndexedFont* pFont = IndexedFont :: GetFont(IntroFont_Light);
 	r2pos R2Pos_StartOfRow;

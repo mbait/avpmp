@@ -27,6 +27,7 @@ void FirePredPistolFlechettes(VECTORCH *base_position,VECTORCH *base_offset,MATR
 extern void FrisbeeEnergyBoltBehaviour(STRATEGYBLOCK *sbPtr);
 
 extern int SBIsEnvironment(STRATEGYBLOCK *sbPtr);
+int ValidTargetForProxMine(STRATEGYBLOCK *obstaclePtr);
 
 typedef struct OneShotBehaviourType
 {

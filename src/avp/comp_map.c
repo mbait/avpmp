@@ -180,7 +180,7 @@ MAPBLOCK6 Term_Type6 = {
 MAPBLOCK8 Player_and_Camera_Type8[] = {
 #if SupportModules
 	/*  Ship */
-					 
+  {					 
 	MapType_Player,
 
 	I_ShapeMarinePlayer, 	/*mainshapelist position 0*/
@@ -188,8 +188,8 @@ MAPBLOCK8 Player_and_Camera_Type8[] = {
 
 	/* MapType_Camera, */
 
-	0, 0, 0,							/* Loc */
-	0, 3062, 0,							/* Orient */
+    {0, 0, 0},							/* Loc */
+    {0, 3062, 0},						/* Orient */
 
 	ObFlag_MultLSrc
 	|0
@@ -227,7 +227,7 @@ MAPBLOCK8 Player_and_Camera_Type8[] = {
 	0,											/* MapMass */
 	0,0,0,									/* MapNewtonV */
 	#endif
-	0,0,0,									/* MapOrigin */
+    {0,0,0},									/* MapOrigin */
 					   
 	0,											/* MapSimShapes */
 	0,											/* MapViewType */
@@ -235,8 +235,8 @@ MAPBLOCK8 Player_and_Camera_Type8[] = {
 	0,					/* MapMPtr */
 
 	0,											/* MapDPtr */
-	0,0,0,									/* MapMOffset */
-
+    {0,0,0}									/* MapMOffset */
+  },
 
 /****************************************************************************/
 
@@ -295,10 +295,11 @@ MAPBLOCK8 Player_and_Camera_Type8[] = {
 /****************************************************************************/
 	/* Map End */
 #endif /*SupportModules*/
+  {
 	MapType_Term,		/* Map Type Function */
 	0,						/* Shape */
-	0,0,0,				/* Loc */
-	0,0,0,				/* Orient */
+    {0,0,0},				/* Loc */
+    {0,0,0},				/* Orient */
 	0,						/* Flags 1 */
 	0,						/* Flags 2 */
 	0,						/* Flags 3 */
@@ -316,13 +317,13 @@ MAPBLOCK8 Player_and_Camera_Type8[] = {
 	0,						/* MapMass */
 	0,0,0,				/* MapNewtonV */
 	#endif
-	0,0,0,				/* MapOrigin */
+    {0,0,0},				/* MapOrigin */
 	0,						/* MapSimShapes */
 	0,						/* MapViewType */
 	0,						/* MapMPtr */
 	0,						/* MapDPtr */
-	0,0,0,				/* MapMOffset */
-
+    {0,0,0}				/* MapMOffset */
+  }
 };
 
 

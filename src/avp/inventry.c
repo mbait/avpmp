@@ -33,7 +33,6 @@ rounds fired etc etc etc*/
 void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr);
 void MaintainPlayersInventory(void);
 void SetPlayerSecurityClearance(STRATEGYBLOCK *sbPtr, unsigned int securityLevel);
-int SlotForThisWeapon(enum WEAPON_ID weaponID);
 
 static int AbleToPickupAmmo(enum AMMO_ID ammoID);
 static int AbleToPickupWeapon(enum WEAPON_ID weaponID);

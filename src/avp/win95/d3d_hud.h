@@ -64,5 +64,7 @@ extern void D3D_BlitWhiteChar(int x, int y, unsigned char c);
 /* KJL 17:55:48 18/04/98 - called by HUD.c */
 extern void Render_HealthAndArmour(unsigned int health, unsigned int armour);
 extern void Render_MarineAmmo(enum TEXTSTRING_ID ammoText, enum TEXTSTRING_ID magazinesText, unsigned int magazines, enum TEXTSTRING_ID roundsText, unsigned int rounds, int primaryAmmo);
+void D3D_DrawHUDPredatorDigit(HUDCharDesc *charDescPtr, int scale);
+void Draw_HUDImage(HUDImageDesc *imageDescPtr);
 
 #endif

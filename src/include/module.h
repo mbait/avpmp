@@ -395,6 +395,7 @@ void UpdateModules(void);
 void ModuleFunctions(MODULE *mptr, MFUNCTION mf);
 void AllocateModuleObject(MODULE *mptr);
 void DeallocateModuleObject(MODULE *mptr);
+void AllNewModuleHandler(void);
 
 
 /*

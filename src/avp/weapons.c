@@ -297,7 +297,6 @@ void HandleWeaponImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_I
 
 
 void FireAutoGun(STRATEGYBLOCK *sbPtr);
-void MakeMatrixFromDirection(VECTORCH *directionPtr, MATRIXCH *matrixPtr);
 void FindEndOfShape(VECTORCH* endPositionPtr, int shapeIndex);
 static void CalculateTorque(EULER *rotationPtr, VECTORCH *directionPtr, STRATEGYBLOCK *sbPtr);
 static void CalculateTorqueAtPoint(EULER *rotationPtr, VECTORCH *pointPtr, STRATEGYBLOCK *sbPtr);

@@ -351,4 +351,6 @@ int AvP_InGameMenus(void);
 
 int InGameMenusAreRunning(void);
 
+void RenderBriefingText(int centreY, int brightness);
+
 #endif

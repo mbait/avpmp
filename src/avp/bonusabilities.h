@@ -6,3 +6,4 @@ extern void ActivateGrapplingHook(void);
 extern void HandleGrapplingHookForces(void);
 extern void RenderGrapplingHook(void);
 extern void DisengageGrapplingHook(void);
+void GrapplingHookBehaviour(STRATEGYBLOCK *sbPtr);

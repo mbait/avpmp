@@ -1,3 +1,6 @@
+#ifndef INVENTRY_H
+#define INVENTRY_H
+
 /*KJL*****************************************************
 * INVENTRY.H - contains externs to the fns in INVENTRY.C *
 *****************************************************KJL*/
@@ -13,6 +16,7 @@ extern void MaintainPlayersInventory(void);
   ------------------------------------------------------------------------------*/
 extern void SetPlayerSecurityClearance(STRATEGYBLOCK *sbPtr, unsigned int securityLevel);
 extern int ReturnPlayerSecurityClearance(STRATEGYBLOCK *sbPtr, unsigned int securityLevel);
+int SlotForThisWeapon(enum WEAPON_ID weaponID);
 
 
 
@@ -34,3 +38,5 @@ typedef struct player_starting_equipment
 extern PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
 #define PISTOL_INFINITE_AMMO	(netGameData.pistolInfiniteAmmo)
+
+#endif

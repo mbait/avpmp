@@ -4,6 +4,7 @@
 #include "stratdef.h"
 #include "gamedef.h"
 #include "language.h"
+#include "messagehistory.h"
 
 #define MAX_NO_OF_MESSAGES_IN_HISTORY 64
 

@@ -30,5 +30,9 @@ extern void PaintBallMode_DrawCurrentDecalAtTarget(void);
 extern void PaintBallMode_ChangeSelectedDecalID(int delta);
 extern void PaintBallMode_ChangeSize(int delta);
 extern void PaintBallMode_AddDecal(void);
+extern void PaintBallMode_ChangeSubclass(int delta);
+extern void PaintBallMode_Randomise(void);
+extern void PaintBallMode_RemoveDecal(void);
+extern void PaintBallMode_Rotate(void);
 
 #endif
