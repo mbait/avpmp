@@ -1,3 +1,6 @@
+#ifndef __AVP_WIN95_FRONTEND_AVP_MENUGFX_HPP__
+#define __AVP_WIN95_FRONTEND_AVP_MENUGFX_HPP__
+
 /* KJL 12:27:18 26/06/98 - AvP_MenuGfx.hpp */
 
 enum AVPMENUGFX_ID
@@ -114,3 +117,5 @@ extern int HeightOfMenuGfx(enum AVPMENUGFX_ID menuGfxID);
 
 
 extern void ClearScreenToBlack(void);
+
+#endif

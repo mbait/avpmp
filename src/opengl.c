@@ -35,6 +35,7 @@ extern int StaticImageNumber;
 extern int PredatorNumbersImageNumber;
 extern int BurningImageNumber;
 extern int HUDFontsImageNumber;
+extern int AAFontImageNumber;
 
 extern int FMVParticleColour;
 extern int HUDScaleFactor;
@@ -44,6 +45,8 @@ static D3DTexture *CurrTextureHandle;
 
 
 static enum TRANSLUCENCY_TYPE CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
+static enum FILTERING_MODE_ID CurrentFilteringMode = FILTERING_BILINEAR_OFF;
+
 static GLuint CurrentlyBoundTexture = 0; /* opengl state variable */
 
 static void CheckBoundTextureIsCorrect(GLuint tex)
@@ -52,6 +55,20 @@ static void CheckBoundTextureIsCorrect(GLuint tex)
 		return;
 
 	glBindTexture(GL_TEXTURE_2D, tex);
+
+/*	
+	switch(CurrentFilteringMode) {
+		case FILTERING_BILINEAR_OFF:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+		case FILTERING_BILINEAR_ON:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			break;
+		default:
+	}
+*/
 	
 	CurrentlyBoundTexture = tex;
 }
@@ -98,6 +115,27 @@ static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
 		glEnable(GL_BLEND);
 		
 	CurrentTranslucencyMode = mode;
+}
+
+void CheckFilteringModeIsCorrect(enum FILTERING_MODE_ID filter)
+{
+	if (filter == CurrentFilteringMode)
+		return;
+
+	switch(filter) {
+		case FILTERING_BILINEAR_OFF:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+		case FILTERING_BILINEAR_ON:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			break;
+		default:
+			fprintf(stderr, "CheckFilteringModeIsCorrect: filter = %d\n", filter);
+	}
+			                			                
+	CurrentFilteringMode = filter;		
 }
 
 #define TA_MAXVERTICES		8
@@ -989,8 +1027,8 @@ void D3D_PlayerOnFireOverlay()
 	tex = ImageHeaderArray[BurningImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	//CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	
 	glColor4ub(r, g, b, a);
 	
@@ -1059,9 +1097,8 @@ void D3D_PlayerDamagedOverlay(int intensity)
 			break;
 	}
 	
-	
-	// CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	
 	colour = 0xffffff - baseColour + (intensity<<24);
 	
@@ -1143,8 +1180,8 @@ void DrawNoiseOverlay(int tr)
 	tex = ImageHeaderArray[StaticImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	// CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	glDepthFunc(GL_ALWAYS);
 	
 	u = FastRandom()&255;
@@ -1201,8 +1238,8 @@ void D3D_ScreenInversionOverlay()
 	tex = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
-//	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
@@ -1284,8 +1321,8 @@ void DrawScanlinesOverlay(float level)
 	tex = ImageHeaderArray[PredatorNumbersImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-	//CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	glDepthFunc(GL_ALWAYS);
 	
 	c = 255;
@@ -1458,7 +1495,7 @@ void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
 	
 	x += (3*w)/2;
 	
-//	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
 	
 	do {
 		int topLeftU, topLeftV;
@@ -1493,6 +1530,212 @@ void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
 		D3D_HUDQuad_Output(HUDFontsImageNumber, quadVertices, colour);
 		
 	} while (--noOfDigits);
+}
+
+void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour)
+{
+	struct VertexTag quadVertices[4];
+
+	quadVertices[0].Y = y-1;
+	quadVertices[1].Y = y-1;
+	quadVertices[2].Y = y + HUD_FONT_HEIGHT + 1;
+	quadVertices[3].Y = y + HUD_FONT_HEIGHT + 1;
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+
+	while( *stringPtr )
+	{
+		char c = *stringPtr++;
+
+		{
+			int topLeftU = 1+((c-32)&15)*16;
+			int topLeftV = 1+((c-32)>>4)*16;
+
+			quadVertices[0].U = topLeftU - 1;
+			quadVertices[0].V = topLeftV - 1;
+			quadVertices[1].U = topLeftU + HUD_FONT_WIDTH + 1;
+			quadVertices[1].V = topLeftV - 1;
+			quadVertices[2].U = topLeftU + HUD_FONT_WIDTH + 1;
+			quadVertices[2].V = topLeftV + HUD_FONT_HEIGHT + 1;
+			quadVertices[3].U = topLeftU - 1;
+			quadVertices[3].V = topLeftV + HUD_FONT_HEIGHT + 1;
+			
+			quadVertices[0].X = x - 1;
+			quadVertices[3].X = x - 1;
+			quadVertices[1].X = x + HUD_FONT_WIDTH + 1;
+			quadVertices[2].X = x + HUD_FONT_WIDTH + 1;
+				
+			D3D_HUDQuad_Output
+			(
+				AAFontImageNumber,
+				quadVertices,
+				colour
+			);
+		}
+		x += AAFontWidths[(int)c];
+	}
+}
+
+void D3D_RenderHUDString_Clipped(char *stringPtr,int x,int y,int colour)
+{
+	struct VertexTag quadVertices[4];
+
+// 	LOCALASSERT(y<=0);
+
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+
+	quadVertices[2].Y = y + HUD_FONT_HEIGHT + 1;
+	quadVertices[3].Y = y + HUD_FONT_HEIGHT + 1;
+	
+	quadVertices[0].Y = 0;
+	quadVertices[1].Y = 0;
+
+	while ( *stringPtr )
+	{
+		char c = *stringPtr++;
+
+		{
+			int topLeftU = 1+((c-32)&15)*16;
+			int topLeftV = 1+((c-32)>>4)*16;
+
+			quadVertices[0].U = topLeftU - 1;
+			quadVertices[0].V = topLeftV - y;
+			quadVertices[1].U = topLeftU + HUD_FONT_WIDTH+1;
+			quadVertices[1].V = topLeftV - y;
+			quadVertices[2].U = topLeftU + HUD_FONT_WIDTH+1;
+			quadVertices[2].V = topLeftV + HUD_FONT_HEIGHT+1;
+			quadVertices[3].U = topLeftU - 1;
+			quadVertices[3].V = topLeftV + HUD_FONT_HEIGHT+1;
+			
+			quadVertices[0].X = x - 1;
+			quadVertices[3].X = x - 1;
+			quadVertices[1].X = x + HUD_FONT_WIDTH + 1;
+			quadVertices[2].X = x + HUD_FONT_WIDTH + 1;
+				
+			D3D_HUDQuad_Output
+			(
+				AAFontImageNumber,
+				quadVertices,
+				colour
+			);
+		}
+		x += AAFontWidths[(int)c];
+	}
+}
+
+void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour)
+{
+	int x, length = 0;
+	char *ptr = stringPtr;
+	struct VertexTag quadVertices[4];
+	
+	while(*ptr)
+	{
+		length+=AAFontWidths[(int)*ptr++];
+	}
+	length = MUL_FIXED(HUDScaleFactor,length);
+
+	x = centreX-length/2;
+
+	quadVertices[0].Y = y-MUL_FIXED(HUDScaleFactor,1);
+	quadVertices[1].Y = y-MUL_FIXED(HUDScaleFactor,1);
+	quadVertices[2].Y = y + MUL_FIXED(HUDScaleFactor,HUD_FONT_HEIGHT + 1);
+	quadVertices[3].Y = y + MUL_FIXED(HUDScaleFactor,HUD_FONT_HEIGHT + 1);
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+
+	while( *stringPtr )
+	{
+		char c = *stringPtr++;
+
+		{
+			int topLeftU = 1+((c-32)&15)*16;
+			int topLeftV = 1+((c-32)>>4)*16;
+
+			quadVertices[0].U = topLeftU - 1;
+			quadVertices[0].V = topLeftV - 1;
+			quadVertices[1].U = topLeftU + HUD_FONT_WIDTH + 1;
+			quadVertices[1].V = topLeftV - 1;
+			quadVertices[2].U = topLeftU + HUD_FONT_WIDTH + 1;
+			quadVertices[2].V = topLeftV + HUD_FONT_HEIGHT + 1;
+			quadVertices[3].U = topLeftU - 1;
+			quadVertices[3].V = topLeftV + HUD_FONT_HEIGHT + 1;
+
+			quadVertices[0].X = x - MUL_FIXED(HUDScaleFactor,1);
+			quadVertices[3].X = x - MUL_FIXED(HUDScaleFactor,1);
+			quadVertices[1].X = x + MUL_FIXED(HUDScaleFactor,HUD_FONT_WIDTH + 1);
+			quadVertices[2].X = x + MUL_FIXED(HUDScaleFactor,HUD_FONT_WIDTH + 1);
+				
+			D3D_HUDQuad_Output
+			(
+				AAFontImageNumber,
+				quadVertices,
+				colour
+			);
+		}
+		x += MUL_FIXED(HUDScaleFactor,AAFontWidths[(int)c]);
+	}
+}
+
+void RenderString(char *stringPtr, int x, int y, int colour)
+{
+	D3D_RenderHUDString(stringPtr,x,y,colour);
+}
+
+void RenderStringCentred(char *stringPtr, int centreX, int y, int colour)
+{
+	int length = 0;
+	char *ptr = stringPtr;
+
+	while(*ptr)
+	{
+		length+=AAFontWidths[(int)*ptr++];
+	}
+	D3D_RenderHUDString(stringPtr,centreX-length/2,y,colour);
+}
+
+void RenderStringVertically(char *stringPtr, int centreX, int bottomY, int colour)
+{
+	struct VertexTag quadVertices[4];
+	int y = bottomY;
+
+	quadVertices[0].X = centreX - (HUD_FONT_HEIGHT/2) - 1;
+	quadVertices[1].X = quadVertices[0].X;
+	quadVertices[2].X = quadVertices[0].X+2+HUD_FONT_HEIGHT*1;
+	quadVertices[3].X = quadVertices[2].X;
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	while( *stringPtr )
+	{
+		char c = *stringPtr++;
+
+		{
+			int topLeftU = 1+((c-32)&15)*16;
+			int topLeftV = 1+((c-32)>>4)*16;
+
+			quadVertices[0].U = topLeftU - 1;
+			quadVertices[0].V = topLeftV - 1;
+			quadVertices[1].U = topLeftU + HUD_FONT_WIDTH;
+			quadVertices[1].V = topLeftV - 1;
+			quadVertices[2].U = topLeftU + HUD_FONT_WIDTH;
+			quadVertices[2].V = topLeftV + HUD_FONT_HEIGHT + 1;
+			quadVertices[3].U = topLeftU - 1;
+			quadVertices[3].V = topLeftV + HUD_FONT_HEIGHT + 1;
+
+			quadVertices[0].Y = y ;
+			quadVertices[1].Y = y - HUD_FONT_WIDTH*1 -1;
+			quadVertices[2].Y = y - HUD_FONT_WIDTH*1 -1;
+			quadVertices[3].Y = y ;
+				
+			D3D_HUDQuad_Output
+			(								  
+				AAFontImageNumber,
+				quadVertices,
+				colour
+			);
+		}
+	   	y -= AAFontWidths[(int)c];
+	}
 }
 
 void ColourFillBackBuffer(int FillColour)
@@ -1565,3 +1808,98 @@ void D3D_DrawBackdrop()
 		return;
 	}
 }
+
+#if 0
+/* ** menu-type stuff that should be moved later ** */
+#include "avp_menugfx.hpp"
+
+int Hardware_RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format) 
+{
+	switch(format)
+	{
+		default:
+//		GLOBALASSERT("UNKNOWN TEXT FORMAT"==0);
+		case AVPMENUFORMAT_LEFTJUSTIFIED:
+		{
+			// supplied x is correct
+			break;
+		}
+		case AVPMENUFORMAT_RIGHTJUSTIFIED:
+		{
+			int length = 0;
+			char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length;
+			break;
+		}
+		case AVPMENUFORMAT_CENTREJUSTIFIED:
+		{
+			int length = 0;
+			char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length/2;
+			break;
+		}	
+	}
+
+//	LOCALASSERT(x>0);
+
+	{
+		unsigned int colour = alpha>>8;
+		if (colour>255) colour = 255;
+		colour = (colour<<24)+0xffffff;
+		D3D_RenderHUDString(textPtr,x,y,colour);
+	}
+	return x;
+}
+
+void RenderBriefingText(int centreY, int brightness)
+{
+	int lengthOfLongestLine=-1;
+	int x,y,i;
+
+	for(i=0; i<5; i++)
+	{
+		int length = 0;
+		{
+			char *ptr = BriefingTextString[i];
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+		}
+		
+		if (lengthOfLongestLine < length)
+		{
+			lengthOfLongestLine = length;
+		}
+	}
+
+	x = (ScreenDescriptorBlock.SDB_Width-lengthOfLongestLine)/2;
+	y = centreY - 3*HUD_FONT_HEIGHT;
+	for(i=0; i<5; i++)
+	{
+//		if (AvPMenus.MenusState != MENUSSTATE_MAINMENUS)
+		{
+			Hardware_RenderSmallMenuText(BriefingTextString[i], x, y, brightness, AVPMENUFORMAT_LEFTJUSTIFIED/*,MENU_CENTREY-60-100,MENU_CENTREY-60+180*/);
+//		}
+//		else
+//		{
+//			RenderSmallMenuText(BriefingTextString[i], x, y, brightness, AVPMENUFORMAT_LEFTJUSTIFIED);
+//		}
+		if (i) y+=HUD_FONT_HEIGHT;
+		else y+=HUD_FONT_HEIGHT*2;
+	}
+}
+#endif

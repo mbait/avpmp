@@ -41,12 +41,6 @@ void Draw_Item_2dTexturePolygon(int *itemptr)
 }
 
 
-/* indexfnt.cpp */
-void INDEXFNT_PFLoadHook(FontIndex I_Font_New, PFFONT *pffont_New)
-{
-	fprintf(stderr, "INDEXFNT_PFLoadHook(%d, %p)\n", I_Font_New, pffont_New);
-}	
-
 
 /* avp_mp_config.cpp */
 char* GetCustomMultiplayerLevelName(int index, int gameType)
@@ -136,7 +130,7 @@ void ATRemoveTexture(void * pTexture)
 
 
 /* avp_menugfx.cpp */
-char AAFontWidths[256];
+/* char AAFontWidths[256]; */
 AVPMENUGFX AvPMenuGfxStorage[MAX_NO_OF_AVPMENUGFXS]; /* TODO: this is initialized in avp_menugfx.cpp */
 
 void FadedScreen(int alpha)
@@ -277,16 +271,6 @@ void InitForceField()
 	fprintf(stderr, "InitForceField()\n");
 }
 
-void RenderString(char *stringPtr, int x, int y, int colour)
-{
-	fprintf(stderr, "RenderString(%s, %d, %d, %d)\n", stringPtr, x, y, colour);
-}
-
-void RenderStringCentred(char *stringPtr, int centreX, int y, int colour)
-{
-	fprintf(stderr, "RenderStringCentred(%s, %d, %d, %d)\n", stringPtr, centreX, y, colour);
-}
-
 void PostLandscapeRendering()
 {
 	fprintf(stderr, "PostLandscapeRendering()\n");
@@ -375,10 +359,6 @@ void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVer
 	fprintf(stderr, "D3D_BackdropPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 }
 
-void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour)
-{
-	fprintf(stderr, "D3D_RenderHUDString_Centred(%s, %d, %d, %d)\n", stringPtr, centreX, y, colour);
-}
         
 /* dd_func.cpp */
 long BackBufferPitch;
@@ -737,3 +717,5 @@ void AddNetMsg_SpotOtherSound(enum soundindex SoundIndex,VECTORCH *position,int 
 	fprintf(stderr, "AddNetMsg_SpotOtherSound(%d, %p, %d)\n", SoundIndex, position, explosion);
 }
 
+
+#include "aafont.h"

@@ -12,7 +12,7 @@
 #include "3dc.h"
 #include "inline.h"
 #include "indexfnt.hpp"
-#include "tallfont.hpp"
+//#include "tallfont.hpp"
 
 extern "C"
 {
@@ -29,8 +29,10 @@ extern "C"
 /* Macros **********************************************************/
 
 /* Imported function prototypes ************************************/
+extern "C" {
 extern void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour);
 extern void D3D_RenderHUDString_Clipped(char *stringPtr,int x,int y,int colour);
+};
 
 /* Imported data ***************************************************/
 #ifdef __cplusplus
@@ -39,22 +41,13 @@ extern void D3D_RenderHUDString_Clipped(char *stringPtr,int x,int y,int colour);
 #endif
 		extern unsigned char *ScreenBuffer;
 		extern long BackBufferPitch;
+#if 0	/* LINUX */	
 		extern LPDIRECTDRAWSURFACE lpDDSBack;
 		extern DDPIXELFORMAT DisplayPixelFormat;
+#endif		
 		extern int CloudTable[128][128];
 		extern int CloakingPhase;
-		#if 0
-		extern OurBool			DaveDebugOn;
-		extern FDIEXTENSIONTAG	FDIET_Dummy;
-		extern IFEXTENSIONTAG	IFET_Dummy;
-		extern FDIQUAD			FDIQuad_WholeScreen;
-		extern FDIPOS			FDIPos_Origin;
-		extern FDIPOS			FDIPos_ScreenCentre;
-		extern IFOBJECTLOCATION IFObjLoc_Origin;
-		extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-		extern IFCOLOUR			IFColour_Dummy;
- 		extern IFVECTOR			IFVec_Zero;
-		#endif
+
 #ifdef __cplusplus
 	};
 #endif
@@ -422,6 +415,9 @@ IndexedFont_Kerned :: RenderString_Clipped
 	const SCString& SCStr
 ) const
 {
+	fprintf(stderr, "IndexedFont_Kerned :: RenderString_Clipped\n");
+
+#if 0 /* LINUX */
 	ProjChar* pProjChar_I = SCStr . pProjCh();
 
 	const LPDIRECTDRAWSURFACE image_ptr = GetImagePtr();
@@ -575,6 +571,7 @@ IndexedFont_Kerned :: RenderString_Clipped
 		pProjChar_I++;
 	}
 	image_ptr->Unlock((LPVOID)ddsdimage.lpSurface);
+#endif	
 }
 
 void
@@ -586,6 +583,8 @@ IndexedFont_Kerned :: RenderString_Unclipped
 ) const
 #if 1
 {
+	fprintf(stderr, "IndexedFont_Kerned :: RenderString_Unclipped\n");
+#if 0 /* LINUX */
 	ProjChar* pProjChar_I = SCStr . pProjCh();
 
 	const LPDIRECTDRAWSURFACE image_ptr = GetImagePtr();
@@ -743,6 +742,7 @@ IndexedFont_Kerned :: RenderString_Unclipped
 		pProjChar_I++;
 	}
 	image_ptr->Unlock((LPVOID)ddsdimage.lpSurface);
+#endif	
 }
 #else
 {

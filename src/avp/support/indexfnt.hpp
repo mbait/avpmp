@@ -243,16 +243,13 @@
 		) const;
 
 //	protected:
-		IndexedFont_HUD(FontIndex I_Font_New); 
-
-		#if 0
+		IndexedFont_HUD(FontIndex I_Font_New)
 		 : IndexedFont
 			(
 				I_Font_New
-			) ;
+			) 
 		{
 		}
-		#endif
 	};
 		inline r2size IndexedFont_HUD::CalcSize
 		(

@@ -1,0 +1,55 @@
+Aliens vs Predator Linux  http://icculus.org/avp/
+------------------------
+
+This is an unofficial Linux port of the Fox Interactive / Rebellion
+Developments game, Aliens Verses Predator.
+
+The port is currently under development; it is not yet "suitable for
+end users."  Hopefully this status will change in the not-so-distant future.
+
+
+
+
+
+
+
+Obviously this README is totally incomplete, and will probably remain so for
+quite a while, so I'll just try to list a few important notes.
+
+
+The original copyright statement for the source code:
+"The source code to Aliens Vs Predator is copyright (c) 1999-2000 Rebellion
+ and is provided as is with no warranty for its suitability for use. You may
+ not use this source code in full or in part for commercial purposes. Any use
+ must include a clearly visible credit to Rebellion as the creators and 
+ owners, and reiteration of this license."
+Take that as you will.
+You can find the original source code and other related tools at: 
+http://www.avpnews.com/mods/tools/
+
+
+The source code that was released only works with Aliens vs Predator Gold. 
+In the future I'd like this port to support Gold, Regular and the three
+demos.  Plus, I am told that the Regular edition does seem to work by
+renaming a file or two.
+
+
+At least with the Gold edition, a number of files are encoded on the CD. So
+you would need to install the game in Windows (VMware works also) in order
+to get this to work.  Currently wine does not work because it fails the CD
+Check.
+
+
+The full motion sequences cannot be played because they are encoded with
+proprietary codecs (Bink and Smacker).  But I do not think they will be
+greatly missed.
+
+
+More information about the game and the series can be found at
+http://www.avpnews.com.
+
+
+Last, but surely not least:
+Thanks go out to Chuck Mason for testing and the OpenAL code, Dan Olson for
+trying the code out with the Regular version, and Ryan C. Gordon for hosting
+this project.

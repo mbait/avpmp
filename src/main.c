@@ -23,8 +23,8 @@
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
 
-#define MyWidth		512
-#define MyHeight	384
+#define MyWidth		1024
+#define MyHeight	768
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -555,7 +555,6 @@ int main(int argc, char *argv[])
 		
 	LoadKeyConfiguration();
 	
-	
 	SoundSys_Start();
 	CDDA_Start();
 	
@@ -567,18 +566,24 @@ int main(int argc, char *argv[])
 	AvP.LevelCompleted = 0;
 	LoadSounds("PLAYER");
 
+{
+	extern int DebuggingCommandsActive;
+//	AvP.Network = I_Host; /* for exploring */
+	DebuggingCommandsActive = 1;
+}
+
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
 //	AvP.PlayerType = I_Alien;
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
-
+	
 	AvP.PlayerType = I_Marine;
-//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 
