@@ -90,21 +90,24 @@ typedef struct SYSTEMTIME
 } SYSTEMTIME;
 
 #define INVALID_HANDLE_VALUE		-1
-#define GENERIC_WRITE			0
-#define CREATE_ALWAYS			1
-#define FILE_FLAG_RANDOM_ACCESS		2
-#define GENERIC_READ			3
-#define OPEN_EXISTING			4
-#define FILE_ATTRIBUTE_READONLY		5
-#define FILE_CURRENT			6
-#define FILE_BEGIN			7
-#define FILE_END			8
-#define FILE_SHARE_READ			9
-#define FILE_ATTRIBUTE_DIRECTORY	10
+#define GENERIC_WRITE			1
+#define CREATE_ALWAYS			2
+#define FILE_FLAG_RANDOM_ACCESS		3
+#define GENERIC_READ			4
+#define OPEN_EXISTING			5
+#define FILE_ATTRIBUTE_READONLY		6
+#define FILE_CURRENT			7
+#define FILE_BEGIN			8	
+#define FILE_END			9
+#define FILE_SHARE_READ			10
+#define FILE_ATTRIBUTE_DIRECTORY	11
+#define FILE_SHARE_WRITE		12
+#define OPEN_ALWAYS			13
+#define FILE_ATTRIBUTE_NORMAL		14
 
 HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z);
 HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z);
-int WriteFile(HANDLE file, const void *data, int len, unsigned long *byteswritten, int x);
+int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *byteswritten, int x);
 int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x);
 int GetFileSize(HANDLE file, int x);
 int CloseHandle(HANDLE file);

@@ -10,9 +10,7 @@
 	#include "hash_tem.hpp" // for the backup surfaces memory leak checking
 #endif
 
-#ifdef _MSC_VER
-	#include "iff.hpp"
-#endif
+#include "iff.hpp"
 
 #include "list_tem.hpp"
 
@@ -20,6 +18,7 @@
 #include <stdarg.h>
 #include <limits.h>
 
+#include "media.hpp"
 #include "awtexld.h"
 #include "awtexld.hpp"
 
@@ -96,9 +95,12 @@ namespace AwTl
 	#if DB_LEVEL > 4
 	static unsigned GetRefCount(IUnknown * pUnknown)
 	{
+#if 0
 		if (!pUnknown) return 0;
 		pUnknown->AddRef();
 		return static_cast<unsigned>(pUnknown->Release());
+		return 0;
+#endif		
 	}
 	#endif
 	
@@ -142,7 +144,7 @@ namespace AwTl
 		
 		DWORD memFlag;
 		
-		DDObject * ddP;
+		void * ddP;
 	}
 		driverDesc;
 
@@ -165,7 +167,6 @@ namespace AwTl
 				, originalHeightP(NULL)
 				, widthP(NULL)
 				, heightP(NULL)
-				, backupHP(NULL)
 				, prevTexP(static_cast<D3DTexture *>(NULL))
 				, prevTexB(false)
 				, loadTextureB(false)
@@ -178,7 +179,7 @@ namespace AwTl
 			
 			bool loadTextureB;
 			
-			LPCTSTR fileNameS;
+			char *fileNameS;
 			HANDLE fileH;
 			PtrUnionConst dataP;
 			AW_BACKUPTEXTUREHANDLE restoreH;
@@ -193,8 +194,6 @@ namespace AwTl
 			
 			unsigned * originalWidthP;
 			unsigned * originalHeightP;
-			
-			AW_BACKUPTEXTUREHANDLE * backupHP;
 			
 			SurfUnion prevTexP;
 			bool prevTexB; // used when rectA is non-NULL, otherwise prevTexP is used
@@ -417,6 +416,8 @@ DWORD AwBackupTexture::GetTransparentColour()
 
 void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR)
 {
+	fprintf(stderr, "AwBackupTexture::ChoosePixelFormat(...)\n");
+#if 0
 	using namespace AwTl;
 	
 	pixelFormat.validB = false; // set invalid first
@@ -504,11 +505,15 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 		// use display surface format
 		pixelFormat = pfSurfaceFormat;
 	}
-		
+#endif		
 }
 
 AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & _parmsR)
 {
+	fprintf(stderr, "AwBackupTexture::CreateTexture(...)\n");
+
+	return static_cast<D3DTexture *>(NULL);
+#if 0
 	using namespace AwTl;
 	
 	// which flags to use?
@@ -666,20 +671,6 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 			ddsd.dwHeight = pLoadInfo->surface_height;
 			ddsd.dwWidth = pLoadInfo->surface_width;
 		
-			#if MIPMAPTEST
-			/*
-			D3DPTEXTURECAPS_POW2 
-			All nonmipmapped textures must have widths and heights specified as powers of two if this flag is set.
-			(Note that all mipmapped textures must always have dimensions that are powers of two.)
-			*/
-			if (128==pLoadInfo->surface_width && 128==pLoadInfo->surface_height)
-			{
-				ddsd.ddsCaps.dwCaps |= DDSCAPS_MIPMAP | DDSCAPS_COMPLEX;
-				ddsd.dwFlags |= DDSD_MIPMAPCOUNT;
-				ddsd.dwMipMapCount = 3;
-			}
-			#endif
-		
 			if (pLoadInfo->prevTexP.voidP && (!_parmsR.loadTextureB || !(fMyFlags & AW_TLF_COMPRESS)))
 			{
 				if (_parmsR.loadTextureB)
@@ -821,30 +812,6 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 					pLoadInfo->prevTexP.surfaceP->AddRef();
 			}
 		
-			#if MIPMAPTEST
-			if (128==surface_width && 128==surface_height)
-			{
-				// test if we can get attached surfaces...
-				DDSCAPS ddscaps;
-				ZEROFILL(ddscaps);
-				ddscaps.dwCaps = DDSCAPS_TEXTURE | DDSCAPS_MIPMAP;
-				DDSurface * mip2P;
-				awTlLastDxErr = pLoadInfo->surfaceP->GetAttachedSurface(&ddscaps,&mip2P);
-				HANDLE_DXERROR("getting first mipmap")
-				DDSurface * mip3P;
-				awTlLastDxErr = mip2P->GetAttachedSurface(&ddscaps,&mip3P);
-				HANDLE_DXERROR("getting second mipmap")
-				db_logf5(("\tabout to release 2nd mip with ref %u",GetRefCount(mip2P)));
-				db_code1(refcnt =)
-				mip2P->Release();
-				db_onlyassert1(1==refcnt);
-				db_logf5(("\tabout to release 3nd mip with ref %u",GetRefCount(mip3P)));
-				db_code1(refcnt =)
-				mip3P->Release();
-				db_onlyassert1(1==refcnt);
-			}
-			#endif
-			
 			bSkipAll = bSkipAll && pLoadInfo->skipB;
 		}}
 		
@@ -1337,6 +1304,7 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 		
 		return static_cast<D3DTexture *>(NULL);
 	}
+#endif	
 }
 
 void AwBackupTexture::OnBeginRestoring(unsigned nMaxPaletteSize)
@@ -1420,7 +1388,7 @@ namespace AwTl {
 		
 		LoadHeaderInfo(pMedium);
 		
-		CHECK_MEDIA_ERRORS("loading file headers")
+//		CHECK_MEDIA_ERRORS("loading file headers")
 		ON_ERROR_RETURN_NULL("loading file headers")
 		
 		ChoosePixelFormat(rParams);
@@ -1434,9 +1402,7 @@ namespace AwTl {
 		
 		ON_ERROR_RETURN_NULL("initializing load")
 		
-		AllocateBuffers(rParams.backupHP ? true : false, pixelFormat.palettizedB ? 1<<pixelFormat.bitsPerPixel : 0);
-		
-		CHECK_MEDIA_ERRORS("allocating buffers")
+//		CHECK_MEDIA_ERRORS("allocating buffers")
 		ON_ERROR_RETURN_NULL("allocating buffers")
 		
 		db_logf4(("\tThe image in the file is %ux%u with %u %spalette",m_nWidth,m_nHeight,m_nPaletteSize ? m_nPaletteSize : 0,m_nPaletteSize ? "colour " : ""));
@@ -1445,10 +1411,12 @@ namespace AwTl {
 		
 		bool bOK = AW_TLE_OK == awTlLastErr;
 		
-		CHECK_MEDIA_ERRORS("loading image data")
+//		CHECK_MEDIA_ERRORS("loading image data")
 		
 		if (bOK && awTlLastErr != AW_TLE_OK)
 		{
+			fprintf(stderr, "TexFileLoader::Load()\n");
+#if 0		
 			// an error occurred which was not detected in CreateTexture()
 			if (pTex.voidP)
 			{
@@ -1479,15 +1447,11 @@ namespace AwTl {
 				}
 			}
 			db_logf1(("AwCreateGraphic(): ERROR: %s",AwTlErrorToString()));
+#endif			
 			bOK = false;
 		}
 		
 		OnFinishLoading(bOK);
-		
-		if (bOK && rParams.backupHP)
-		{
-			*rParams.backupHP = CreateBackupTexture();
-		}
 		
 		return pTex;
 	}
@@ -1765,278 +1729,6 @@ namespace AwTl {
 		}
 	}
 	
-	#if DB_LEVEL >= 4
-	static void LogPrimCaps(LPD3DPRIMCAPS _pcP, bool _triB)
-	{
-		#define DEVCAP(mask,can_or_does,explanation) \
-			db_logf4(("\t\t" can_or_does "%s " explanation, _pcP->MEMBER & (mask) ? "" : "not"));
-			
-		#define MEMBER dwMiscCaps
-		DEVCAP(D3DPMISCCAPS_CONFORMANT,"Does ","conform to OpenGL standard")
-		if (_triB)
-		{
-			DEVCAP(D3DPMISCCAPS_CULLCCW,"Does ","support counterclockwise culling through the D3DRENDERSTATE_CULLMODE state")
-			DEVCAP(D3DPMISCCAPS_CULLCW,"Does ","support clockwise triangle culling through the D3DRENDERSTATE_CULLMODE state")
-			db_logf4(("\t\tDoes %s perform triangle culling", _pcP->dwMiscCaps & (D3DPMISCCAPS_CULLNONE) ? "not" : ""));
-		}
-		else
-		{
-			DEVCAP(D3DPMISCCAPS_LINEPATTERNREP,"Can","handle values other than 1 in the wRepeatFactor member of the D3DLINEPATTERN structure")
-		}
-		DEVCAP(D3DPMISCCAPS_MASKPLANES,"Can","perform a bitmask of color planes")
-		DEVCAP(D3DPMISCCAPS_MASKZ,"Can","enable and disable modification of the z-buffer on pixel operations")
-		#undef MEMBER
-		#define MEMBER dwRasterCaps
-		DEVCAP(D3DPRASTERCAPS_ANISOTROPY,"Does ","support anisotropic filtering")
-		DEVCAP(D3DPRASTERCAPS_ANTIALIASEDGES,"Can","antialias lines forming the convex outline of objects")
-		DEVCAP(D3DPRASTERCAPS_ANTIALIASSORTDEPENDENT,"Does","support antialiasing that is dependent on the sort order of the polygons")
-		DEVCAP(D3DPRASTERCAPS_ANTIALIASSORTINDEPENDENT,"Does","support antialiasing that is not dependent on the sort order of the polygons")
-		DEVCAP(D3DPRASTERCAPS_DITHER,"Can","dither to improve color resolution")
-		DEVCAP(D3DPRASTERCAPS_FOGRANGE,"Does ","support range-based fog")
-		DEVCAP(D3DPRASTERCAPS_FOGTABLE,"Does ","calculate the fog value by referring to a lookup table containing fog values that are indexed to the depth of a given pixel")
-		DEVCAP(D3DPRASTERCAPS_FOGVERTEX,"Does ","calculate the fog value during the lighting operation")
-		DEVCAP(D3DPRASTERCAPS_MIPMAPLODBIAS,"Does ","support level-of-detail (LOD) bias adjustments")
-		DEVCAP(D3DPRASTERCAPS_PAT,"Can","perform patterned drawing for the primitive being queried")
-		DEVCAP(D3DPRASTERCAPS_ROP2,"Can","support raster operations other than R2_COPYPEN")
-		DEVCAP(D3DPRASTERCAPS_STIPPLE,"Can","stipple polygons to simulate translucency")
-		DEVCAP(D3DPRASTERCAPS_SUBPIXEL,"Does ","perform subpixel placement of z, color, and texture data, rather than working with the nearest integer pixel coordinate")
-		DEVCAP(D3DPRASTERCAPS_SUBPIXELX,"Is ","subpixel accurate along the x-axis only and is clamped to an integer y-axis scan line")
-		DEVCAP(D3DPRASTERCAPS_XOR,"Can","support XOR operations")
-		DEVCAP(D3DPRASTERCAPS_ZBIAS,"Does ","support z-bias values")
-		DEVCAP(D3DPRASTERCAPS_ZBUFFERLESSHSR,"Can","perform hidden-surface removal without requiring the application to sort polygons, and without requiring the allocation of a z-buffer")
-		DEVCAP(D3DPRASTERCAPS_ZTEST,"Can","perform z-test operations")
-		#undef MEMBER
-		#define MEMBER dwZCmpCaps
-		DEVCAP(D3DPCMPCAPS_ALWAYS,"Can","always pass the z test")
-		DEVCAP(D3DPCMPCAPS_EQUAL,"Can","pass the z test if the new z equals the current z")
-		DEVCAP(D3DPCMPCAPS_GREATER,"Can","pass the z test if the new z is greater than the current z")
-		DEVCAP(D3DPCMPCAPS_GREATEREQUAL,"Can","pass the z test if the new z is greater than or equal to the current z")
-		DEVCAP(D3DPCMPCAPS_LESS,"Can","pass the z test if the new z is less than the current z")
-		DEVCAP(D3DPCMPCAPS_LESSEQUAL,"Can","pass the z test if the new z is less than or equal to the current z")
-		DEVCAP(D3DPCMPCAPS_NEVER,"Can","always fail the z test")
-		DEVCAP(D3DPCMPCAPS_NOTEQUAL,"Can","pass the z test if the new z does not equal the current z")
-		#undef MEMBER
-		#define MEMBER dwSrcBlendCaps
-		DEVCAP(D3DPBLENDCAPS_BOTHINVSRCALPHA,"Can","source blend with source blend factor of (1-As, 1-As, 1-As, 1-As) and destination blend factor of (As, As, As, As); the destination blend selection is overridden")
-		DEVCAP(D3DPBLENDCAPS_BOTHSRCALPHA,"Can","source blend with source blend factor of (As, As, As, As) and destination blend factor of (1-As, 1-As, 1-As, 1-As); the destination blend selection is overridden")
-		DEVCAP(D3DPBLENDCAPS_DESTALPHA,"Can","source blend with blend factor of (Ad, Ad, Ad, Ad)")
-		DEVCAP(D3DPBLENDCAPS_DESTCOLOR,"Can","source blend with blend factor of (Rd, Gd, Bd, Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVDESTALPHA,"Can","source blend with blend factor of (1-Ad, 1-Ad, 1-Ad, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVDESTCOLOR,"Can","source blend with blend factor of (1-Rd, 1-Gd, 1-Bd, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVSRCALPHA,"Can","source blend with blend factor of (1-As, 1-As, 1-As, 1-As)")
-		DEVCAP(D3DPBLENDCAPS_INVSRCCOLOR,"Can","source blend with blend factor of (1-Rd, 1-Gd, 1-Bd, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_ONE,"Can","source blend with blend factor of (1, 1, 1, 1)")
-		DEVCAP(D3DPBLENDCAPS_SRCALPHA,"Can","source blend with blend factor of (As, As, As, As)")
-		DEVCAP(D3DPBLENDCAPS_SRCALPHASAT,"Can","source blend with blend factor of (f, f, f, 1); f = min(As, 1-Ad).")
-		DEVCAP(D3DPBLENDCAPS_SRCCOLOR,"Can","source blend with blend factor of (Rs, Gs, Bs, As)")
-		DEVCAP(D3DPBLENDCAPS_ZERO,"Can","source blend with blend factor of (0, 0, 0, 0)")
-		#undef MEMBER
-		#define MEMBER dwDestBlendCaps
-		DEVCAP(D3DPBLENDCAPS_BOTHINVSRCALPHA,"Can","destination blend with source blend factor of (1-As, 1-As, 1-As, 1-As) and destination blend factor of (As, As, As, As); the destination blend selection is overridden")
-		DEVCAP(D3DPBLENDCAPS_BOTHSRCALPHA,"Can","destination blend with source blend factor of (As, As, As, As) and destination blend factor of (1-As, 1-As, 1-As, 1-As); the destination blend selection is overridden")
-		DEVCAP(D3DPBLENDCAPS_DESTALPHA,"Can","destination blend with blend factor of (Ad, Ad, Ad, Ad)")
-		DEVCAP(D3DPBLENDCAPS_DESTCOLOR,"Can","destination blend with blend factor of (Rd, Gd, Bd, Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVDESTALPHA,"Can","destination blend with blend factor of (1-Ad, 1-Ad, 1-Ad, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVDESTCOLOR,"Can","destination blend with blend factor of (1-Rd, 1-Gd, 1-Bd, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_INVSRCALPHA,"Can","destination blend with blend factor of (1-As, 1-As, 1-As, 1-As)")
-		DEVCAP(D3DPBLENDCAPS_INVSRCCOLOR,"Can","destination blend with blend factor of (1-Rd, 1-Gd, 1-Bd, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_ONE,"Can","destination blend with blend factor of (1, 1, 1, 1)")
-		DEVCAP(D3DPBLENDCAPS_SRCALPHA,"Can","destination blend with blend factor of (As, As, As, As)")
-		DEVCAP(D3DPBLENDCAPS_SRCALPHASAT,"Can","destination blend with blend factor of (f, f, f, 1); f = min(As, 1-Ad)")
-		DEVCAP(D3DPBLENDCAPS_SRCCOLOR,"Can","destination blend with blend factor of (Rs, Gs, Bs, As)")
-		DEVCAP(D3DPBLENDCAPS_ZERO,"Can","destination blend with blend factor of (0, 0, 0, 0)")
-		#undef MEMBER
-		#define MEMBER dwAlphaCmpCaps
-		DEVCAP(D3DPCMPCAPS_ALWAYS,"Can","always pass the alpha test")
-		DEVCAP(D3DPCMPCAPS_EQUAL,"Can","pass the alpha test if the new alpha equals the current alpha")
-		DEVCAP(D3DPCMPCAPS_GREATER,"Can","pass the alpha test if the new alpha is greater than the current alpha")
-		DEVCAP(D3DPCMPCAPS_GREATEREQUAL,"Can","pass the alpha test if the new alpha is greater than or equal to the current alpha")
-		DEVCAP(D3DPCMPCAPS_LESS,"Can","pass the alpha test if the new alpha is less than the current alpha")
-		DEVCAP(D3DPCMPCAPS_LESSEQUAL,"Can","pass the alpha test if the new alpha is less than or equal to the current alpha")
-		DEVCAP(D3DPCMPCAPS_NEVER,"Can","always fail the alpha test")
-		DEVCAP(D3DPCMPCAPS_NOTEQUAL,"Can","pass the alpha test if the new alpha does not equal the current alpha")
-		#undef MEMBER
-		#define MEMBER dwShadeCaps
-		DEVCAP(D3DPSHADECAPS_ALPHAFLATBLEND,"Can","support an alpha component for flat blended transparency")
-		DEVCAP(D3DPSHADECAPS_ALPHAFLATSTIPPLED,"Can","support an alpha component for flat stippled transparency")
-		DEVCAP(D3DPSHADECAPS_ALPHAGOURAUDBLEND,"Can","support an alpha component for Gouraud blended transparency")
-		DEVCAP(D3DPSHADECAPS_ALPHAGOURAUDSTIPPLED,"Can","support an alpha component for Gouraud stippled transparency")
-		DEVCAP(D3DPSHADECAPS_ALPHAPHONGBLEND,"Can","support an alpha component for Phong blended transparency")
-		DEVCAP(D3DPSHADECAPS_ALPHAPHONGSTIPPLED,"Can","support an alpha component for Phong stippled transparency")
-		DEVCAP(D3DPSHADECAPS_COLORFLATMONO,"Can","support colored flat shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_COLORFLATRGB,"Can","support colored flat shading in the D3DCOLOR_RGB color model")
-		DEVCAP(D3DPSHADECAPS_COLORGOURAUDMONO,"Can","support colored flat shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_COLORGOURAUDRGB,"Can","support colored Gouraud shading in the D3DCOLOR_RGB color model")
-		DEVCAP(D3DPSHADECAPS_COLORPHONGMONO,"Can","support colored Phong shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_COLORPHONGRGB,"Can","support colored Phong shading in the D3DCOLOR_RGB color model")
-		DEVCAP(D3DPSHADECAPS_FOGFLAT,"Can","support fog in the flat shading model")
-		DEVCAP(D3DPSHADECAPS_FOGGOURAUD,"Can","support fog in the Gouraud shading model")
-		DEVCAP(D3DPSHADECAPS_FOGPHONG,"Can","support fog in the Phong shading model")
-		DEVCAP(D3DPSHADECAPS_SPECULARFLATMONO,"Can","support specular highlights in flat shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_SPECULARFLATRGB,"Can","support specular highlights in flat shading in the D3DCOLOR_RGB color model")
-		DEVCAP(D3DPSHADECAPS_SPECULARGOURAUDMONO,"Can","support specular highlights in Gouraud shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_SPECULARGOURAUDRGB,"Can","support specular highlights in Gouraud shading in the D3DCOLOR_RGB color model")
-		DEVCAP(D3DPSHADECAPS_SPECULARPHONGMONO,"Can","support specular highlights in Phong shading in the D3DCOLOR_MONO color model")
-		DEVCAP(D3DPSHADECAPS_SPECULARPHONGRGB,"Can","support specular highlights in Phong shading in the D3DCOLOR_RGB color model")
-		#undef MEMBER
-		#define MEMBER dwTextureCaps
-		DEVCAP(D3DPTEXTURECAPS_ALPHA,"Does ","support RGBA textures in the D3DTEX_DECAL and D3DTEX_MODULATE texture filtering modes")
-		DEVCAP(D3DPTEXTURECAPS_BORDER,"Does ","support texture mapping along borders")
-		DEVCAP(D3DPTEXTURECAPS_PERSPECTIVE,"Does ","support perspective correction")
-		DEVCAP(D3DPTEXTURECAPS_POW2,"Does ","require all nonmipmapped textures to have widths and heights specified as powers of two")
-		DEVCAP(D3DPTEXTURECAPS_SQUAREONLY,"Does ","require all textures to be square")
-		DEVCAP(D3DPTEXTURECAPS_TRANSPARENCY,"Does ","support texture transparency")
-		#undef MEMBER
-		#define MEMBER dwTextureFilterCaps
-		DEVCAP(D3DPTFILTERCAPS_LINEAR,"Can","use a weighted average of a 2x2 area of texels surrounding the desired pixel")
-		DEVCAP(D3DPTFILTERCAPS_LINEARMIPLINEAR,"Can","use a weighted average of a 2x2 area of texels, and also interpolate between mipmaps")
-		DEVCAP(D3DPTFILTERCAPS_LINEARMIPNEAREST,"Can","use a weighted average of a 2x2 area of texels, and also use a mipmap")
-		DEVCAP(D3DPTFILTERCAPS_MIPLINEAR,"Can","choose two mipmaps whose texels most closely match the size of the pixel to be textured, and interpolate between them")
-		DEVCAP(D3DPTFILTERCAPS_MIPNEAREST,"Can","use an appropriate mipmap for texel selection")
-		DEVCAP(D3DPTFILTERCAPS_NEAREST,"Can","use the texel with coordinates nearest to the desired pixel value is used")
-		#undef MEMBER
-		#define MEMBER dwTextureBlendCaps
-		DEVCAP(D3DPTBLENDCAPS_ADD,"Can","use the additive texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_COPY,"Can","use copy mode texture-blending")
-		DEVCAP(D3DPTBLENDCAPS_DECAL,"Can","use decal texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_DECALALPHA,"Can","use decal-alpha texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_DECALMASK,"Can","use decal-mask texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_MODULATE,"Can","use modulate texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_MODULATEALPHA,"Can","use modulate-alpha texture-blending mode")
-		DEVCAP(D3DPTBLENDCAPS_MODULATEMASK,"Can","use modulate-mask texture-blending mode")
-		#undef MEMBER
-		#define MEMBER dwTextureAddressCaps
-		DEVCAP(D3DPTADDRESSCAPS_BORDER,"Does ","support setting coordinates outside the range [0.0, 1.0] to the border color")
-		DEVCAP(D3DPTADDRESSCAPS_CLAMP,"Can","clamp textures to addresses")
-		DEVCAP(D3DPTADDRESSCAPS_INDEPENDENTUV,"Can","separate the texture-addressing modes of the U and V coordinates of the texture")
-		DEVCAP(D3DPTADDRESSCAPS_MIRROR,"Can","mirror textures to addresses")
-		DEVCAP(D3DPTADDRESSCAPS_WRAP,"Can","wrap textures to addresses")
-		#undef MEMBER
-		#undef DEVCAP
-		db_logf4(("\t\tMaximum size of the supported stipple is %u x %u",_pcP->dwStippleWidth,_pcP->dwStippleHeight));
-	}
-	static void LogCaps(LPD3DDEVICEDESC _descP)
-	{
-		if (_descP->dwFlags & D3DDD_BCLIPPING)
-		{
-			db_logf4(("\tCan%s perform 3D clipping",_descP->bClipping ? "" : "not"));
-		}
-		else db_log4("\tHas unknown 3D clipping capability");
-		
-		if (_descP->dwFlags & D3DDD_COLORMODEL)
-		{
-			db_logf4(("\tCan%s use mono (ramp) colour model",_descP->dcmColorModel & D3DCOLOR_MONO ? "" : "not"));
-			db_logf4(("\tCan%s use full RGB colour model",_descP->dcmColorModel & D3DCOLOR_RGB ? "" : "not"));
-		}
-		else db_log4("\tHas unknown colour model");
-		
-		if (_descP->dwFlags & D3DDD_DEVCAPS)
-		{
-			#define DEVCAP(mask,can_or_does,explanation) \
-				db_logf4(("\t" can_or_does "%s " explanation,_descP->dwDevCaps & (mask) ? "" : "not"));
-				
-			DEVCAP(D3DDEVCAPS_CANRENDERAFTERFLIP,"Can","queue rendering commands after a page flip")
-			DEVCAP(D3DDEVCAPS_DRAWPRIMTLVERTEX,"Does ","export a DrawPrimitive-aware HAL")
-			DEVCAP(D3DDEVCAPS_EXECUTESYSTEMMEMORY,"Can","use execute buffers from system memory")
-			DEVCAP(D3DDEVCAPS_EXECUTEVIDEOMEMORY,"Can","use execute buffer from video memory")
-			DEVCAP(D3DDEVCAPS_FLOATTLVERTEX,"Does ","accept floating point for post-transform vertex data")
-			DEVCAP(D3DDEVCAPS_SORTDECREASINGZ,"Does ","need Z data sorted for decreasing depth")
-			DEVCAP(D3DDEVCAPS_SORTEXACT,"Does ","need data sorted exactly")
-			DEVCAP(D3DDEVCAPS_SORTINCREASINGZ,"Does ","need data sorted for increasing depth")
-			DEVCAP(D3DDEVCAPS_TEXTURENONLOCALVIDMEM,"Can","retrieve textures from nonlocal video (AGP) memory")
-			DEVCAP(D3DDEVCAPS_TEXTURESYSTEMMEMORY,"Can","retrieve textures from system memory")
-			DEVCAP(D3DDEVCAPS_TEXTUREVIDEOMEMORY,"Can","retrieve textures from device memory")
-			DEVCAP(D3DDEVCAPS_TLVERTEXSYSTEMMEMORY,"Can","use buffers from system memory for transformed and lit vertices")
-			DEVCAP(D3DDEVCAPS_TLVERTEXVIDEOMEMORY,"Can","use buffers from video memory for transformed and lit vertices")
-			
-			#undef DEVCAP
-		}
-		else db_log4("\tHas unknown device capabilities");
-		
-		if (_descP->dwFlags & D3DDD_DEVICERENDERBITDEPTH)
-		{
-			#define DEVCAP(mask,explanation) \
-				db_logf4(("\tCan%s render to "explanation" surface",_descP->dwDeviceRenderBitDepth & (mask) ? "" : "not"));
-				
-			DEVCAP(DDBD_8,"an 8-bit")
-			DEVCAP(DDBD_16,"a 16-bit")
-			DEVCAP(DDBD_24,"a 24-bit")
-			DEVCAP(DDBD_32,"a 32-bit")
-			
-			#undef DEVCAP
-		}
-		else db_log4("\tHas unknown rendering target bitdepth requirements");
-		
-		if (_descP->dwFlags & D3DDD_DEVICEZBUFFERBITDEPTH)
-		{
-			#define DEVCAP(mask,explanation) \
-				db_logf4(("\tCan%s use "explanation" Z-buffer",_descP->dwDeviceZBufferBitDepth & (mask) ? "" : "not"));
-				
-			DEVCAP(DDBD_8,"an 8-bit")
-			DEVCAP(DDBD_16,"a 16-bit")
-			DEVCAP(DDBD_24,"a 24-bit")
-			DEVCAP(DDBD_32,"a 32-bit")
-			
-			#undef DEVCAP
-		}
-		else db_log4("\tHas unknown Z-buffer bitdepth requirements");
-		
-		if (_descP->dwFlags & D3DDD_TRANSFORMCAPS)
-		{
-			db_log4("\tTransform capabilities are known");
-		}
-		else db_log4("\tHas unknown transform capabilities");
-		
-		if (_descP->dwFlags & D3DDD_LIGHTINGCAPS)
-		{
-			db_log4("\tLighting capabilities are known");
-		}
-		else db_log4("\tHas unknown lighting capabilities");
-		
-		if (_descP->dwFlags & D3DDD_LINECAPS)
-		{
-			db_log4("\tLine drawing capabilities follow");
-			LogPrimCaps(&_descP->dpcLineCaps,false);
-		}
-		else db_log4("\tHas unknown line drawing capabilities");
-		
-		if (_descP->dwFlags & D3DDD_TRICAPS)
-		{
-			db_log4("\tTriangle rendering capabilities follow");
-			LogPrimCaps(&_descP->dpcTriCaps,true);
-		}
-		else db_log4("\tHas unknown triangle rendering capabilities");
-		
-		if (_descP->dwFlags & D3DDD_MAXBUFFERSIZE)
-		{
-			unsigned max_exb = _descP->dwMaxBufferSize;
-			if (!max_exb) max_exb = UINT_MAX;
-			db_logf4(("\tMaximum execute buffer size is %u",max_exb));
-		}
-		else db_log4("\tHas unknown maximum execute buffer size");
-		
-		if (_descP->dwFlags & D3DDD_MAXVERTEXCOUNT)
-		{
-			db_logf4(("\tMaximum vertex count is %u",_descP->dwMaxVertexCount));
-		}
-		else db_log4("\tHas unknown maximum vertex count");
-		
-		unsigned max_tw = _descP->dwMaxTextureWidth;
-		unsigned max_th = _descP->dwMaxTextureHeight;
-		unsigned max_sw = _descP->dwMaxStippleWidth;
-		unsigned max_sh = _descP->dwMaxStippleHeight;
-		if (!max_tw) max_tw = UINT_MAX;
-		if (!max_th) max_th = UINT_MAX;
-		if (!max_sw) max_sw = UINT_MAX;
-		if (!max_sh) max_sh = UINT_MAX;
-		
-		db_logf4(("\tMinimum texture size is %u x %u",_descP->dwMinTextureWidth,_descP->dwMinTextureHeight));
-		db_logf4(("\tMaximum texture size is %u x %u",max_tw,max_th));
-		db_logf4(("\tMinimum stipple size is %u x %u",_descP->dwMinStippleWidth,_descP->dwMinStippleHeight));
-		db_logf4(("\tMaximum stipple size is %u x %u",max_sw,max_sh));
-	}
-	#endif
-
 	// Parse the format string and get the parameters
 	
 	static bool ParseParams(CreateTextureParms * pParams, char const * _argFormatS, va_list ap)
@@ -2056,7 +1748,7 @@ namespace AwTl {
 						bad_parmsB = true;
 					else
 					{
-						pParams->fileNameS = va_arg(ap,LPCTSTR);
+						pParams->fileNameS = va_arg(ap,char *);
 						db_logf4(("\tFilename = \"%s\"",pParams->fileNameS));
 					}
 					break;
@@ -2079,7 +1771,7 @@ namespace AwTl {
 					}
 					break;
 				case 'r':
-					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH || UINT_MAX!=pParams->maxReadBytes || pParams->bytesReadP || pParams->backupHP)
+					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH || UINT_MAX!=pParams->maxReadBytes || pParams->bytesReadP)
 						bad_parmsB = true;
 					else
 					{
@@ -2151,13 +1843,8 @@ namespace AwTl {
 					}
 					break;
 				case 'B':
-					if (pParams->backupHP || pParams->restoreH)
+					if (pParams->restoreH)
 						bad_parmsB = true;
-					else
-					{
-						pParams->backupHP = va_arg(ap,AW_BACKUPTEXTUREHANDLE *);
-						db_logf4(("\tPtr to backup handle = %p",pParams->backupHP));
-					}
 					break;
 				case 't':
 					if (pParams->prevTexP.voidP)
@@ -2228,12 +1915,12 @@ namespace AwTl {
 	{
 		if (pParams->fileNameS)
 		{
-			pParams->fileH = CreateFile(pParams->fileNameS,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+			pParams->fileH = CreateFile(pParams->fileNameS,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
 		
 			if (INVALID_HANDLE_VALUE==pParams->fileH)
 			{
 				awTlLastErr = AW_TLE_CANTOPENFILE;
-				awTlLastWinErr = GetLastError();
+			//	awTlLastWinErr = GetLastError();
 				db_logf1(("AwCreateGraphic(): ERROR opening file \"%s\"",pParams->fileNameS));
 				db_log2(AwTlErrorToString());
 				return static_cast<D3DTexture *>(NULL);
@@ -2256,11 +1943,7 @@ namespace AwTl {
 
 #define IS_VALID_MEMBER(sP,mem) (reinterpret_cast<unsigned>(&(sP)->mem) - reinterpret_cast<unsigned>(sP) < static_cast<unsigned>((sP)->dwSize))
 
-#if defined(__WATCOMC__) && (__WATCOMC__ <= 1100) // currently Watcom compiler crashes when the macro is expanded with the db_logf code in it
-#define GET_VALID_MEMBER(sP,mem,deflt) (IS_VALID_MEMBER(sP,mem) ? (sP)->mem : (deflt))
-#else
 #define GET_VALID_MEMBER(sP,mem,deflt) (IS_VALID_MEMBER(sP,mem) ? (sP)->mem : (db_logf4((FUNCTION_NAME ": WARNING: %s->%s is not valid",#sP ,#mem )),(deflt)))
-#endif
 
 #define HANDLE_INITERROR(test,s) \
 	if (!(test)) { \
@@ -2271,9 +1954,8 @@ namespace AwTl {
 		db_logf5(("\t" FUNCTION_NAME " passed check '%s'",#test )); \
 	}
 
-#define FUNCTION_NAME "AwSetD3DDevice()"		
 
-AW_TL_ERC AwSetD3DDevice(D3DDevice * _d3ddeviceP)
+AW_TL_ERC AwSetD3DDevice(void * _d3ddeviceP)
 {
 	using AwTl::driverDesc;
 	
@@ -2281,80 +1963,28 @@ AW_TL_ERC AwSetD3DDevice(D3DDevice * _d3ddeviceP)
 	
 	db_logf4(("AwSetD3DDevice(%p) called",_d3ddeviceP));
 	
-	HANDLE_INITERROR(_d3ddeviceP,"D3DDevice * is NULL")
-	
-	D3DDEVICEDESC hw_desc;
-	D3DDEVICEDESC hel_desc;
-	INITDXSTRUCT(hw_desc);
-	INITDXSTRUCT(hel_desc);
-	
-	awTlLastDxErr = _d3ddeviceP->GetCaps(&hw_desc,&hel_desc);
-	if (DD_OK != awTlLastDxErr)
-	{
-		db_logf2(("AwSetD3DDevice(): ERROR: %s",AwDxErrorToString()));
-		return AW_TLE_DXERROR;
-	}
-	
-	db_log4("Direct3D Device Hardware Capabilities:");
-	db_code4(AwTl::LogCaps(&hw_desc);)
-	db_log4("Direct3D Device Emulation Capabilities:");
-	db_code4(AwTl::LogCaps(&hel_desc);)
-	
-	LPD3DDEVICEDESC descP = (GET_VALID_MEMBER(&hw_desc,dwFlags,0) & D3DDD_COLORMODEL && GET_VALID_MEMBER(&hw_desc,dcmColorModel,0) & (D3DCOLOR_RGB|D3DCOLOR_MONO)) ? &hw_desc : &hel_desc;
-	db_logf4(("Direct3D Device is %s",&hw_desc==descP ? "HAL" : "emulation only"));
-	
-	HANDLE_INITERROR(GET_VALID_MEMBER(descP,dwFlags,0) & D3DDD_DEVCAPS && IS_VALID_MEMBER(descP,dwDevCaps),"LPD3DDEVICEDESC::dwDevCaps is not valid")
-	HANDLE_INITERROR(descP->dwDevCaps & (D3DDEVCAPS_TEXTUREVIDEOMEMORY|D3DDEVCAPS_TEXTURENONLOCALVIDMEM|D3DDEVCAPS_TEXTURESYSTEMMEMORY),"Textures cannot be in ANY type of memory")
-	
-	driverDesc.memFlag = descP->dwDevCaps & D3DDEVCAPS_TEXTURESYSTEMMEMORY ? DDSCAPS_SYSTEMMEMORY : DDSCAPS_VIDEOMEMORY;
-	driverDesc.minWidth = GET_VALID_MEMBER(descP,dwMinTextureWidth,0);
-	driverDesc.minHeight = GET_VALID_MEMBER(descP,dwMinTextureHeight,0);
-	driverDesc.maxWidth = GET_VALID_MEMBER(descP,dwMaxTextureWidth,0);
-	driverDesc.maxHeight = GET_VALID_MEMBER(descP,dwMaxTextureHeight,0);
-	driverDesc.needPow2B = GET_VALID_MEMBER(descP,dpcTriCaps.dwTextureCaps,0) & D3DPTEXTURECAPS_POW2 ? true : false;
-	driverDesc.needSquareB = GET_VALID_MEMBER(descP,dpcTriCaps.dwTextureCaps,0) & D3DPTEXTURECAPS_SQUAREONLY ? true : false;
-	// if max w and h are 0, make them as large as possible
-	if (!driverDesc.maxWidth) driverDesc.maxWidth = UINT_MAX;
-	if (!driverDesc.maxHeight) driverDesc.maxHeight = UINT_MAX;
-	
-	db_log4("AwSetD3DDevice() OK");
-	
-	db_log4("Direct 3D Device texture characteristics follow:");
-	db_logf4(("\tMinimum texture size: %u x %u",driverDesc.minWidth,driverDesc.minHeight));
-	db_logf4(("\tMaximum texture size: %u x %u",driverDesc.maxWidth,driverDesc.maxHeight));
-	db_logf4(("\tTextures %s be sqaure",driverDesc.needSquareB ? "must" : "need not"));
-	db_logf4(("\tTextures %s be a power of two in width and height",driverDesc.needPow2B ? "must" : "need not"));
-	db_logf4(("\tTextures can%s be in non-local video (AGP) memory",descP->dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM ? "" : "not"));
-	db_logf4(("\tTextures can%s be in local video (device) memory",descP->dwDevCaps & D3DDEVCAPS_TEXTUREVIDEOMEMORY ? "" : "not"));
-	db_logf4(("\tTextures can%s be in system memory",descP->dwDevCaps & D3DDEVCAPS_TEXTURESYSTEMMEMORY ? "" : "not"));
-	db_logf4(("\tTextures will be in %s memory",driverDesc.memFlag & DDSCAPS_SYSTEMMEMORY ? "system" : "video"));
+//	HANDLE_INITERROR(_d3ddeviceP,"D3DDevice * is NULL")
 	
 	driverDesc.validB = true;
 	
 	return AW_TLE_OK;
 }
 
-AW_TL_ERC AwSetDDObject(DDObject * _ddP)
+AW_TL_ERC AwSetDDObject(void * _ddP)
 {
 	using AwTl::driverDesc;
 	
-	db_logf4(("AwSetDDObject(%p) called.",_ddP));
-	#ifdef DIRECTDRAW_VERSION
-		db_logf4(("\tCompiled with DirectDraw Version %u.%u",DIRECTDRAW_VERSION/0x100U,DIRECTDRAW_VERSION%0x100U));
-	#else
-		db_log4("\tCompiled with unknown DirectDraw version");
-	#endif
+	fprintf(stderr, "AwSetDDObject(%p) called.",_ddP);
 	
-	
-	HANDLE_INITERROR(_ddP,"DDObject * is NULL")
+//	HANDLE_INITERROR(_ddP,"DDObject * is NULL")
 	driverDesc.ddP = _ddP;
 	
 	return AW_TLE_OK;
 }
 
-AW_TL_ERC AwSetD3DDevice(DDObject * _ddP, D3DDevice * _d3ddeviceP)
+AW_TL_ERC AwSetD3DDevice(void * _ddP, void * _d3ddeviceP)
 {
-	db_logf4(("AwSetD3DDevice(%p,%p) called",_ddP,_d3ddeviceP));
+	fprintf(stderr, "AwSetD3DDevice(%p,%p) called",_ddP,_d3ddeviceP);
 	
 	AW_TL_ERC iResult = AwSetDDObject(_ddP);
 	
@@ -2364,122 +1994,21 @@ AW_TL_ERC AwSetD3DDevice(DDObject * _ddP, D3DDevice * _d3ddeviceP)
 		return AwSetD3DDevice(_d3ddeviceP);
 }
 
-#undef FUNCTION_NAME
-#define FUNCTION_NAME "AwSetPixelFormat()"
-static AW_TL_ERC AwSetPixelFormat(AwTl::PixelFormat * _pfP, LPDDPIXELFORMAT _ddpfP)
+static AW_TL_ERC AwSetPixelFormat(AwTl::PixelFormat * _pfP, void * _ddpfP)
 {
 	using AwTl::SetBitShifts;
 	
+fprintf(stderr, "AwSetPixelFormat(%p, %p)\n", _pfP, _ddpfP);
+
 	_pfP->validB = false;
 	
-	// parameter check
-	HANDLE_INITERROR(_ddpfP,"DDPIXELFORMAT is NULL")
-	HANDLE_INITERROR(IS_VALID_MEMBER(_ddpfP,dwFlags),"DDPIXELFORMAT::dwFlags is an invalid field")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_ALPHA),"DDPIXELFORMAT describes an alpha only surface")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_PALETTEINDEXEDTO8),"DDPIXELFORMAT describes a 1- 2- or 4- bit surface indexed to an 8-bit palette. This is not yet supported")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_ZBUFFER),"DDPIXELFORMAT describes Z buffer")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_ZPIXELS),"DDPIXELFORMAT describes a RGBZ surface")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_YUV),"DDPIXELFORMAT describes a YUV surface. This is not yet supported")
-	HANDLE_INITERROR(!(_ddpfP->dwFlags & DDPF_FOURCC),"DDPIXELFORMAT gives a FourCC code for a non RGB surface. This is not yet supported")
-	
 	_pfP->palettizedB = true;
-	switch (_ddpfP->dwFlags & (DDPF_PALETTEINDEXED8|DDPF_PALETTEINDEXED4|DDPF_PALETTEINDEXED2|DDPF_PALETTEINDEXED1))
-	{
-		case 0:
-			_pfP->palettizedB = false;
-			break;
-		case DDPF_PALETTEINDEXED1:
-			_pfP->bitsPerPixel = 1;
-			break;
-		case DDPF_PALETTEINDEXED2:
-			_pfP->bitsPerPixel = 2;
-			break;
-		case DDPF_PALETTEINDEXED4:
-			_pfP->bitsPerPixel = 4;
-			break;
-		case DDPF_PALETTEINDEXED8:
-			_pfP->bitsPerPixel = 8;
-			break;
-		default:
-			db_log1("AwSetPixelFormat(): ERROR: more than one DDPF_PALETTEINDEXED<n> flags is set");
-			return AW_TLE_BADPARMS;
-	}
-	
-	_pfP->alphaB = _ddpfP->dwFlags & DDPF_ALPHAPIXELS ? true : false;
-	
-	if (_pfP->palettizedB)
-	{
-		HANDLE_INITERROR(!_pfP->alphaB,"alpha channel info is on a palettized format. This is not yet supported")
-		#if DB_LEVEL >= 4
-		if (_ddpfP->dwFlags & DDPF_RGB)
-		{
-			db_log4(FUNCTION_NAME ": WARNING: RGB data supplied for a palettized format is ignored");
-			db_logf4(("\tRGB bitcount is %u",GET_VALID_MEMBER(_ddpfP,dwRGBBitCount,0)));
-			db_logf4(("\tRed Mask is 0x%08x",GET_VALID_MEMBER(_ddpfP,dwRBitMask,0)));
-			db_logf4(("\tGreen Mask is 0x%08x",GET_VALID_MEMBER(_ddpfP,dwGBitMask,0)));
-			db_logf4(("\tBlue Mask is 0x%08x",GET_VALID_MEMBER(_ddpfP,dwBBitMask,0)));
-		}
-		#endif
-	}
-	else
-	{
-		HANDLE_INITERROR(IS_VALID_MEMBER(_ddpfP,dwRGBBitCount),"DDPIXELFORMAT::dwRGBBitCount is an invalid field")
-		switch (_ddpfP->dwRGBBitCount)
-		{
-			case 4:
-			case 8:
-			case 16:
-			case 24:
-			case 32:
-				break;
-			default:
-				db_log1("AwSetPixelFormat(): ERROR: RGB bit count is not 4,8,16,24 or 32");
-				return AW_TLE_BADPARMS;
-		}
-		
-		HANDLE_INITERROR(!_pfP->alphaB || GET_VALID_MEMBER(_ddpfP,dwRGBAlphaBitMask,0),"Pixel format specifies alpha channel info but alpha mask is zero")
-		HANDLE_INITERROR(IS_VALID_MEMBER(_ddpfP,dwRBitMask),"DDPIXELFORMAT::dwRBitMask is an invalid field")
-		HANDLE_INITERROR(IS_VALID_MEMBER(_ddpfP,dwGBitMask),"DDPIXELFORMAT::dwGBitMask is an invalid field")
-		HANDLE_INITERROR(IS_VALID_MEMBER(_ddpfP,dwBBitMask),"DDPIXELFORMAT::dwBBitMask is an invalid field")
-		
-		_pfP->bitsPerPixel = _ddpfP->dwRGBBitCount;
-		SetBitShifts(&_pfP->redLeftShift,&_pfP->redRightShift,_ddpfP->dwRBitMask);
-		SetBitShifts(&_pfP->greenLeftShift,&_pfP->greenRightShift,_ddpfP->dwGBitMask);
-		SetBitShifts(&_pfP->blueLeftShift,&_pfP->blueRightShift,_ddpfP->dwBBitMask);
-	}
-	ZEROFILL(_pfP->ddpf);
-	memcpy(&_pfP->ddpf,_ddpfP,__min(_ddpfP->dwSize,sizeof(DDPIXELFORMAT)));
-	if (!_pfP->alphaB)
-		_pfP->ddpf.dwRGBAlphaBitMask = 0;
-		
-	db_log4("AwSetPixelFormat() OK");
-	
-	#if DB_LEVEL >= 4
-	db_logf4(("Pixel Format is %u-bit %s",_pfP->bitsPerPixel,_pfP->palettizedB ? "palettized" : _pfP->alphaB ? "RGBA" : "RGB"));
-	if (!_pfP->palettizedB)
-	{
-		if (_pfP->alphaB) 
-		{
-			unsigned alpha_l_shft,alpha_r_shft;
-			SetBitShifts(&alpha_l_shft,&alpha_r_shft,_pfP->ddpf.dwRGBAlphaBitMask);
-			db_logf4(("\t%u-%u-%u-%u",8-_pfP->redRightShift,8-_pfP->greenRightShift,8-_pfP->blueRightShift,8-alpha_r_shft));
-			db_logf4(("\tAlpha->[%u..%u]",alpha_l_shft+7-alpha_r_shft,alpha_l_shft));
-		}
-		else
-		{
-			db_logf4(("\t%u-%u-%u",8-_pfP->redRightShift,8-_pfP->greenRightShift,8-_pfP->blueRightShift));
-		}
-		db_logf4(("\tRed->[%u..%u]",_pfP->redLeftShift+7-_pfP->redRightShift,_pfP->redLeftShift));
-		db_logf4(("\tGreen->[%u..%u]",_pfP->greenLeftShift+7-_pfP->greenRightShift,_pfP->greenLeftShift));
-		db_logf4(("\tBlue->[%u..%u]",_pfP->blueLeftShift+7-_pfP->blueRightShift,_pfP->blueLeftShift));
-	}
-	#endif
-	
+
 	_pfP->validB = true;
 	return AW_TLE_OK;
 }
 
-AW_TL_ERC AwSetTextureFormat2(LPDDPIXELFORMAT _ddpfP)
+AW_TL_ERC AwSetTextureFormat2(void* _ddpfP)
 {
 	db_logf4(("AwSetTextureFormat(%p) called",_ddpfP));
 	
@@ -2491,7 +2020,7 @@ AW_TL_ERC AwSetTextureFormat2(LPDDPIXELFORMAT _ddpfP)
 	return AwSetPixelFormat(&pfTextureFormat, _ddpfP);
 }
 
-AW_TL_ERC AwSetAdditionalTextureFormat2(LPDDPIXELFORMAT _ddpfP, unsigned _maxAlphaBits, int _canDoTransp, unsigned _maxColours)
+AW_TL_ERC AwSetAdditionalTextureFormat2(void * _ddpfP, unsigned _maxAlphaBits, int _canDoTransp, unsigned _maxColours)
 {
 	db_logf4(("AwSetAdditionalTextureFormat(%p.%u,%d,%u) called",_ddpfP,_maxAlphaBits,_canDoTransp,_maxColours));
 	
@@ -2512,7 +2041,7 @@ AW_TL_ERC AwSetAdditionalTextureFormat2(LPDDPIXELFORMAT _ddpfP, unsigned _maxAlp
 	return erc;
 }
 
-AW_TL_ERC AwSetSurfaceFormat2(LPDDPIXELFORMAT _ddpfP)
+AW_TL_ERC AwSetSurfaceFormat2(void* _ddpfP)
 {
 	db_logf4(("AwSetSurfaceFormat(%p) called",_ddpfP));
 	
@@ -2525,56 +2054,12 @@ AW_TL_ERC AwSetSurfaceFormat2(LPDDPIXELFORMAT _ddpfP)
 /* PUBLIC: AwGetTextureSize */
 /****************************/
 
-AW_TL_ERC AwGetTextureSize(register unsigned * _widthP, register unsigned * _heightP, unsigned _width, unsigned _height)
+AW_TL_ERC AwGetTextureSize(unsigned * _widthP, unsigned * _heightP, unsigned _width, unsigned _height)
 {
-	db_assert1(_widthP);
-	db_assert1(_heightP);
+	* _widthP = _width;
+	* _heightP = _height;
 	
-	using AwTl::driverDesc;
-	
-	if (!driverDesc.validB)
-	{
-		db_log3("AwGetTextureSize(): ERROR: driver description not valid");
-		return AW_TLE_NOINIT;
-	}
-	
-	if (_width < driverDesc.minWidth) _width = driverDesc.minWidth;
-	if (_height < driverDesc.minHeight) _height = driverDesc.minHeight;
-	
-	if (driverDesc.needPow2B)
-	{
-		*_widthP = 1;
-		while (*_widthP < _width) *_widthP <<= 1;
-		*_heightP = 1;
-		while (*_heightP < _height) *_heightP <<= 1;
-	}
-	else
-	{
-		*_widthP = _width;
-		*_heightP = _height;
-	}
-	
-	if (driverDesc.needSquareB)
-	{
-		if (*_widthP < *_heightP) *_widthP = *_heightP;
-		else *_heightP = *_widthP;
-	}
-	
-	#if 1 // not sure if this is required...
-	*_widthP += 3;
-	*_widthP &= ~3;
-	*_heightP += 3;
-	*_heightP &= ~3;
-	#endif
-	
-	db_logf4(("\tAwGetTextureSize(): d3d texture will be %ux%u",*_widthP,*_heightP));
-	
-	if (*_widthP > driverDesc.maxWidth || *_heightP > driverDesc.maxHeight)
-	{
-		db_log3("AwGetTextureSize(): ERROR: image size too large to be a d3d texture");
-		return AW_TLE_IMAGETOOLARGE;
-	}
-	else return AW_TLE_OK;
+	return AW_TLE_OK;
 }
 
 
@@ -2597,7 +2082,7 @@ D3DTexture * _AWTL_VARARG AwCreateTexture(char const * _argFormatS, ...)
 	return bParmsOK ? LoadFromParams(&parms).textureP : NULL;
 }
 
-DDSurface * _AWTL_VARARG AwCreateSurface(char const * _argFormatS, ...)
+DDSurface * AwCreateSurface(char const * _argFormatS, ...)
 {
 	db_logf4(("AwCreateSurface(\"%s\") called",_argFormatS));
 	
@@ -2614,17 +2099,7 @@ DDSurface * _AWTL_VARARG AwCreateSurface(char const * _argFormatS, ...)
 
 AW_TL_ERC AwDestroyBackupTexture(AW_BACKUPTEXTUREHANDLE _bH)
 {
-	db_logf4(("AwDestroyBackupTexture(0x%08x) called",_bH));
-	if (_bH)
-	{
-		_bH->Release();
-		return AW_TLE_OK;
-	}
-	else
-	{
-		db_log1("AwDestroyBackupTexture(): ERROR: AW_BACKUPTEXTUREHANDLE==NULL");
-		return AW_TLE_BADPARMS;
-	}
+	return AW_TLE_OK;
 }
 
 /*********************************/
@@ -2632,8 +2107,6 @@ AW_TL_ERC AwDestroyBackupTexture(AW_BACKUPTEXTUREHANDLE _bH)
 /*********************************/
 
 AW_TL_ERC awTlLastErr;
-HRESULT awTlLastDxErr;
-DWORD awTlLastWinErr;
 
 /*******************************************/
 /* PUBLIC DEBUG: AwErrorToString functions */
@@ -2642,20 +2115,10 @@ DWORD awTlLastWinErr;
 #ifndef NDEBUG
 char const * AwWinErrorToString(DWORD error)
 {
-	if (NO_ERROR==error) return "No error";
-	static TCHAR buffer[1024];
-	if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,error,MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),buffer,sizeof buffer/sizeof(TCHAR)-1,NULL))
-		wsprintf(buffer,TEXT("FormatMessage() failed; previous Windows error code: 0x%08X"),error);
-	for (TCHAR * bufP = buffer; *bufP; ++bufP)
-	{
-		switch (*bufP)
-		{
-			case '\n':
-			case '\r':
-				*bufP=' ';
-		}
-	}
-	return reinterpret_cast<char *>(buffer);
+	if (NO_ERROR==error)
+		return "No error";
+	
+	return "AwWinErrorToString: No clue!";
 }
 
 char const * AwTlErrorToString(AwTlErc error)
@@ -2666,10 +2129,10 @@ char const * AwTlErrorToString(AwTlErc error)
 		case AW_TLE_OK:
 			return "No error";
 		case AW_TLE_DXERROR:
-			if (DD_OK==awTlLastDxErr)
+//			if (!awTlLastDxErr)
 				return "Unknown DirectX error";
-			else
-				return AwDxErrorToString();
+//			else
+//				return AwDxErrorToString();
 		case AW_TLE_BADPARMS:
 			return "Invalid parameters or functionality not supported";
 		case AW_TLE_NOINIT:
@@ -2680,10 +2143,7 @@ char const * AwTlErrorToString(AwTlErc error)
 		case AW_TLE_CANTREADFILE:
 			defaultS = "Unknown error reading file";
 		WIN_ERR:
-			if (NO_ERROR==awTlLastWinErr)
-				return defaultS;
-			else
-				return AwWinErrorToString();
+			return defaultS;
 		case AW_TLE_EOFMET:
 			return "Unexpected end of file during texture load";
 		case AW_TLE_BADFILEFORMAT:
@@ -2701,273 +2161,9 @@ char const * AwTlErrorToString(AwTlErc error)
 	}
 }
 
-char const * AwDxErrorToString(HRESULT error)
+char const * AwDxErrorToString(int error)
 {
-    switch(error) {
-        case DD_OK:
-            return "No error.\0";
-        case DDERR_ALREADYINITIALIZED:
-            return "This object is already initialized.\0";
-        case DDERR_BLTFASTCANTCLIP:
-            return "Return if a clipper object is attached to the source surface passed into a BltFast call.\0";
-        case DDERR_CANNOTATTACHSURFACE:
-            return "This surface can not be attached to the requested surface.\0";
-        case DDERR_CANNOTDETACHSURFACE:
-            return "This surface can not be detached from the requested surface.\0";
-        case DDERR_CANTCREATEDC:
-            return "Windows can not create any more DCs.\0";
-        case DDERR_CANTDUPLICATE:
-            return "Can't duplicate primary & 3D surfaces, or surfaces that are implicitly created.\0";
-        case DDERR_CLIPPERISUSINGHWND:
-            return "An attempt was made to set a cliplist for a clipper object that is already monitoring an hwnd.\0";
-        case DDERR_COLORKEYNOTSET:
-            return "No src color key specified for this operation.\0";
-        case DDERR_CURRENTLYNOTAVAIL:
-            return "Support is currently not available.\0";
-        case DDERR_DIRECTDRAWALREADYCREATED:
-            return "A DirectDraw object representing this driver has already been created for this process.\0";
-        case DDERR_EXCEPTION:
-            return "An exception was encountered while performing the requested operation.\0";
-        case DDERR_EXCLUSIVEMODEALREADYSET:
-            return "An attempt was made to set the cooperative level when it was already set to exclusive.\0";
-        case DDERR_GENERIC:
-            return "Generic failure.\0";
-        case DDERR_HEIGHTALIGN:
-            return "Height of rectangle provided is not a multiple of reqd alignment.\0";
-        case DDERR_HWNDALREADYSET:
-            return "The CooperativeLevel HWND has already been set. It can not be reset while the process has surfaces or palettes created.\0";
-        case DDERR_HWNDSUBCLASSED:
-            return "HWND used by DirectDraw CooperativeLevel has been subclassed, this prevents DirectDraw from restoring state.\0";
-        case DDERR_IMPLICITLYCREATED:
-            return "This surface can not be restored because it is an implicitly created surface.\0";
-        case DDERR_INCOMPATIBLEPRIMARY:
-            return "Unable to match primary surface creation request with existing primary surface.\0";
-        case DDERR_INVALIDCAPS:
-            return "One or more of the caps bits passed to the callback are incorrect.\0";
-        case DDERR_INVALIDCLIPLIST:
-            return "DirectDraw does not support the provided cliplist.\0";
-        case DDERR_INVALIDDIRECTDRAWGUID:
-            return "The GUID passed to DirectDrawCreate is not a valid DirectDraw driver identifier.\0";
-        case DDERR_INVALIDMODE:
-            return "DirectDraw does not support the requested mode.\0";
-        case DDERR_INVALIDOBJECT:
-            return "DirectDraw received a pointer that was an invalid DIRECTDRAW object.\0";
-        case DDERR_INVALIDPARAMS:
-            return "One or more of the parameters passed to the function are incorrect.\0";
-        case DDERR_INVALIDPIXELFORMAT:
-            return "The pixel format was invalid as specified.\0";
-        case DDERR_INVALIDPOSITION:
-            return "Returned when the position of the overlay on the destination is no longer legal for that destination.\0";
-        case DDERR_INVALIDRECT:
-            return "Rectangle provided was invalid.\0";
-        case DDERR_LOCKEDSURFACES:
-            return "Operation could not be carried out because one or more surfaces are locked.\0";
-        case DDERR_NO3D:
-            return "There is no 3D present.\0";
-        case DDERR_NOALPHAHW:
-            return "Operation could not be carried out because there is no alpha accleration hardware present or available.\0";
-        case DDERR_NOBLTHW:
-            return "No blitter hardware present.\0";
-        case DDERR_NOCLIPLIST:
-            return "No cliplist available.\0";
-        case DDERR_NOCLIPPERATTACHED:
-            return "No clipper object attached to surface object.\0";
-        case DDERR_NOCOLORCONVHW:
-            return "Operation could not be carried out because there is no color conversion hardware present or available.\0";
-        case DDERR_NOCOLORKEY:
-            return "Surface doesn't currently have a color key\0";
-        case DDERR_NOCOLORKEYHW:
-            return "Operation could not be carried out because there is no hardware support of the destination color key.\0";
-        case DDERR_NOCOOPERATIVELEVELSET:
-            return "Create function called without DirectDraw object method SetCooperativeLevel being called.\0";
-        case DDERR_NODC:
-            return "No DC was ever created for this surface.\0";
-        case DDERR_NODDROPSHW:
-            return "No DirectDraw ROP hardware.\0";
-        case DDERR_NODIRECTDRAWHW:
-            return "A hardware-only DirectDraw object creation was attempted but the driver did not support any hardware.\0";
-        case DDERR_NOEMULATION:
-            return "Software emulation not available.\0";
-        case DDERR_NOEXCLUSIVEMODE:
-            return "Operation requires the application to have exclusive mode but the application does not have exclusive mode.\0";
-        case DDERR_NOFLIPHW:
-            return "Flipping visible surfaces is not supported.\0";
-        case DDERR_NOGDI:
-            return "There is no GDI present.\0";
-        case DDERR_NOHWND:
-            return "Clipper notification requires an HWND or no HWND has previously been set as the CooperativeLevel HWND.\0";
-        case DDERR_NOMIRRORHW:
-            return "Operation could not be carried out because there is no hardware present or available.\0";
-        case DDERR_NOOVERLAYDEST:
-            return "Returned when GetOverlayPosition is called on an overlay that UpdateOverlay has never been called on to establish a destination.\0";
-        case DDERR_NOOVERLAYHW:
-            return "Operation could not be carried out because there is no overlay hardware present or available.\0";
-        case DDERR_NOPALETTEATTACHED:
-            return "No palette object attached to this surface.\0";
-        case DDERR_NOPALETTEHW:
-            return "No hardware support for 16 or 256 color palettes.\0";
-        case DDERR_NORASTEROPHW:
-            return "Operation could not be carried out because there is no appropriate raster op hardware present or available.\0";
-        case DDERR_NOROTATIONHW:
-            return "Operation could not be carried out because there is no rotation hardware present or available.\0";
-        case DDERR_NOSTRETCHHW:
-            return "Operation could not be carried out because there is no hardware support for stretching.\0";
-        case DDERR_NOT4BITCOLOR:
-            return "DirectDrawSurface is not in 4 bit color palette and the requested operation requires 4 bit color palette.\0";
-        case DDERR_NOT4BITCOLORINDEX:
-            return "DirectDrawSurface is not in 4 bit color index palette and the requested operation requires 4 bit color index palette.\0";
-        case DDERR_NOT8BITCOLOR:
-            return "DirectDrawSurface is not in 8 bit color mode and the requested operation requires 8 bit color.\0";
-        case DDERR_NOTAOVERLAYSURFACE:
-            return "Returned when an overlay member is called for a non-overlay surface.\0";
-        case DDERR_NOTEXTUREHW:
-            return "Operation could not be carried out because there is no texture mapping hardware present or available.\0";
-        case DDERR_NOTFLIPPABLE:
-            return "An attempt has been made to flip a surface that is not flippable.\0";
-        case DDERR_NOTFOUND:
-            return "Requested item was not found.\0";
-        case DDERR_NOTLOCKED:
-            return "Surface was not locked.  An attempt to unlock a surface that was not locked at all, or by this process, has been attempted.\0";
-        case DDERR_NOTPALETTIZED:
-            return "The surface being used is not a palette-based surface.\0";
-        case DDERR_NOVSYNCHW:
-            return "Operation could not be carried out because there is no hardware support for vertical blank synchronized operations.\0";
-        case DDERR_NOZBUFFERHW:
-            return "Operation could not be carried out because there is no hardware support for zbuffer blitting.\0";
-        case DDERR_NOZOVERLAYHW:
-            return "Overlay surfaces could not be z layered based on their BltOrder because the hardware does not support z layering of overlays.\0";
-        case DDERR_OUTOFCAPS:
-            return "The hardware needed for the requested operation has already been allocated.\0";
-        case DDERR_OUTOFMEMORY:
-            return "DirectDraw does not have enough memory to perform the operation.\0";
-        case DDERR_OUTOFVIDEOMEMORY:
-            return "DirectDraw does not have enough video memory to perform the operation.\0";
-        case DDERR_OVERLAYCANTCLIP:
-            return "The hardware does not support clipped overlays.\0";
-        case DDERR_OVERLAYCOLORKEYONLYONEACTIVE:
-            return "Can only have ony color key active at one time for overlays.\0";
-        case DDERR_OVERLAYNOTVISIBLE:
-            return "Returned when GetOverlayPosition is called on a hidden overlay.\0";
-        case DDERR_PALETTEBUSY:
-            return "Access to this palette is being refused because the palette is already locked by another thread.\0";
-        case DDERR_PRIMARYSURFACEALREADYEXISTS:
-            return "This process already has created a primary surface.\0";
-        case DDERR_REGIONTOOSMALL:
-            return "Region passed to Clipper::GetClipList is too small.\0";
-        case DDERR_SURFACEALREADYATTACHED:
-            return "This surface is already attached to the surface it is being attached to.\0";
-        case DDERR_SURFACEALREADYDEPENDENT:
-            return "This surface is already a dependency of the surface it is being made a dependency of.\0";
-        case DDERR_SURFACEBUSY:
-            return "Access to this surface is being refused because the surface is already locked by another thread.\0";
-        case DDERR_SURFACEISOBSCURED:
-            return "Access to surface refused because the surface is obscured.\0";
-        case DDERR_SURFACELOST:
-            return "Access to this surface is being refused because the surface memory is gone. The DirectDrawSurface object representing this surface should have Restore called on it.\0";
-        case DDERR_SURFACENOTATTACHED:
-            return "The requested surface is not attached.\0";
-        case DDERR_TOOBIGHEIGHT:
-            return "Height requested by DirectDraw is too large.\0";
-        case DDERR_TOOBIGSIZE:
-            return "Size requested by DirectDraw is too large, but the individual height and width are OK.\0";
-        case DDERR_TOOBIGWIDTH:
-            return "Width requested by DirectDraw is too large.\0";
-        case DDERR_UNSUPPORTED:
-            return "Action not supported.\0";
-        case DDERR_UNSUPPORTEDFORMAT:
-            return "FOURCC format requested is unsupported by DirectDraw.\0";
-        case DDERR_UNSUPPORTEDMASK:
-            return "Bitmask in the pixel format requested is unsupported by DirectDraw.\0";
-        case DDERR_VERTICALBLANKINPROGRESS:
-            return "Vertical blank is in progress.\0";
-        case DDERR_WASSTILLDRAWING:
-            return "Informs DirectDraw that the previous Blt which is transfering information to or from this Surface is incomplete.\0";
-        case DDERR_WRONGMODE:
-            return "This surface can not be restored because it was created in a different mode.\0";
-        case DDERR_XALIGN:
-            return "Rectangle provided was not horizontally aligned on required boundary.\0";
-        case D3DERR_BADMAJORVERSION:
-            return "D3DERR_BADMAJORVERSION\0";
-        case D3DERR_BADMINORVERSION:
-            return "D3DERR_BADMINORVERSION\0";
-        case D3DERR_EXECUTE_LOCKED:
-            return "D3DERR_EXECUTE_LOCKED\0";
-        case D3DERR_EXECUTE_NOT_LOCKED:
-            return "D3DERR_EXECUTE_NOT_LOCKED\0";
-        case D3DERR_EXECUTE_CREATE_FAILED:
-            return "D3DERR_EXECUTE_CREATE_FAILED\0";
-        case D3DERR_EXECUTE_DESTROY_FAILED:
-            return "D3DERR_EXECUTE_DESTROY_FAILED\0";
-        case D3DERR_EXECUTE_LOCK_FAILED:
-            return "D3DERR_EXECUTE_LOCK_FAILED\0";
-        case D3DERR_EXECUTE_UNLOCK_FAILED:
-            return "D3DERR_EXECUTE_UNLOCK_FAILED\0";
-        case D3DERR_EXECUTE_FAILED:
-            return "D3DERR_EXECUTE_FAILED\0";
-        case D3DERR_EXECUTE_CLIPPED_FAILED:
-            return "D3DERR_EXECUTE_CLIPPED_FAILED\0";
-        case D3DERR_TEXTURE_NO_SUPPORT:
-            return "D3DERR_TEXTURE_NO_SUPPORT\0";
-        case D3DERR_TEXTURE_NOT_LOCKED:
-            return "D3DERR_TEXTURE_NOT_LOCKED\0";
-        case D3DERR_TEXTURE_LOCKED:
-            return "D3DERR_TEXTURE_LOCKED\0";
-        case D3DERR_TEXTURE_CREATE_FAILED:
-            return "D3DERR_TEXTURE_CREATE_FAILED\0";
-        case D3DERR_TEXTURE_DESTROY_FAILED:
-            return "D3DERR_TEXTURE_DESTROY_FAILED\0";
-        case D3DERR_TEXTURE_LOCK_FAILED:
-            return "D3DERR_TEXTURE_LOCK_FAILED\0";
-        case D3DERR_TEXTURE_UNLOCK_FAILED:
-            return "D3DERR_TEXTURE_UNLOCK_FAILED\0";
-        case D3DERR_TEXTURE_LOAD_FAILED:
-            return "D3DERR_TEXTURE_LOAD_FAILED\0";
-        case D3DERR_MATRIX_CREATE_FAILED:
-            return "D3DERR_MATRIX_CREATE_FAILED\0";
-        case D3DERR_MATRIX_DESTROY_FAILED:
-            return "D3DERR_MATRIX_DESTROY_FAILED\0";
-        case D3DERR_MATRIX_SETDATA_FAILED:
-            return "D3DERR_MATRIX_SETDATA_FAILED\0";
-        case D3DERR_SETVIEWPORTDATA_FAILED:
-            return "D3DERR_SETVIEWPORTDATA_FAILED\0";
-        case D3DERR_MATERIAL_CREATE_FAILED:
-            return "D3DERR_MATERIAL_CREATE_FAILED\0";
-        case D3DERR_MATERIAL_DESTROY_FAILED:
-            return "D3DERR_MATERIAL_DESTROY_FAILED\0";
-        case D3DERR_MATERIAL_SETDATA_FAILED:
-            return "D3DERR_MATERIAL_SETDATA_FAILED\0";
-        case D3DERR_LIGHT_SET_FAILED:
-            return "D3DERR_LIGHT_SET_FAILED\0";
-        #if 0 // retained mode error codes
-        case D3DRMERR_BADOBJECT:
-            return "D3DRMERR_BADOBJECT\0";
-        case D3DRMERR_BADTYPE:
-            return "D3DRMERR_BADTYPE\0";
-        case D3DRMERR_BADALLOC:
-            return "D3DRMERR_BADALLOC\0";
-        case D3DRMERR_FACEUSED:
-            return "D3DRMERR_FACEUSED\0";
-        case D3DRMERR_NOTFOUND:
-            return "D3DRMERR_NOTFOUND\0";
-        case D3DRMERR_NOTDONEYET:
-            return "D3DRMERR_NOTDONEYET\0";
-        case D3DRMERR_FILENOTFOUND:
-            return "The file was not found.\0";
-        case D3DRMERR_BADFILE:
-            return "D3DRMERR_BADFILE\0";
-        case D3DRMERR_BADDEVICE:
-            return "D3DRMERR_BADDEVICE\0";
-        case D3DRMERR_BADVALUE:
-            return "D3DRMERR_BADVALUE\0";
-        case D3DRMERR_BADMAJORVERSION:
-            return "D3DRMERR_BADMAJORVERSION\0";
-        case D3DRMERR_BADMINORVERSION:
-            return "D3DRMERR_BADMINORVERSION\0";
-        case D3DRMERR_UNABLETOEXECUTE:
-            return "D3DRMERR_UNABLETOEXECUTE\0";
-        #endif
-        default:
-            return "Unrecognized error value.\0";
-    }
+	return "Unrecognized error value.\0";
 }
+
 #endif

@@ -47,112 +47,6 @@ extern "C" {
 #define OUR_MUL_INT(a, b)	       ((a) * (b))
 #define OUR_ISR(a, shift)		    ((a) >> (shift))
 
-
-/*
-
- win95\item.c functions
-
-*/
-
-void InitialiseTriangleArrayData(void);
-void* AllocateTriangleArrayData(int tasize);
-
-
-/*
-
- General Triangle Array Handler Null Case / Error
-
-*/
-
-void TriangleArrayNullOrError(TRIANGLEARRAY *tarr);
-
-
-/*
-
- Item Polygon Triangle Array Functions
-
-*/
-
-void Item_Polygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_Polygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
-
-/*
-
- Item Gouraud Polygon Triangle Array Functions
-
-*/
-
-void Item_GouraudPolygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_GouraudPolygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
-/*
-
- Item 2d Textured Polygon Triangle Array Functions
-
-*/
-
-void Item_2dTexturedPolygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_2dTexturedPolygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
-/*
-
- Item Gouraud 2d Textured Polygon Triangle Array Functions
-
-*/
-
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_Gouraud2dTexturedPolygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
-
-/*
-
- Item 3d Textured Polygon Triangle Array Functions
-
-*/
-
-void Item_3dTexturedPolygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_3dTexturedPolygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
-/*
-
- Item Gouraud 3d Textured Polygon Triangle Array Functions
-
-*/
-
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_3(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_4(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_5(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_6(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_7(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_8(TRIANGLEARRAY *qarr);
-void Item_Gouraud3dTexturedPolygon_PrepareTriangleArray_9(TRIANGLEARRAY *qarr);
-
 /*
 
  Platform Specific 64-Bit Operator Functions
@@ -1383,7 +1277,7 @@ static __inline__ void MUL_I_WIDE(int a, int b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
-__asm__("imull	%0			\n\t"
+__asm__("imull	%2			\n\t"
 	"movl	%%eax, 0(%%ebx)		\n\t"
 	"movl	%%edx, 4(%%ebx)		\n\t"
 	:
@@ -1596,7 +1490,7 @@ static __inline__ int MUL_FIXED(int a, int b)
 	}
 */
 /* TODO */
-__asm__("imull	%0			\n\t"
+__asm__("imull	%2			\n\t"
 	"shrdl	$16, %%edx, %%eax	\n\t"
 	: "=a" (retval)
 	: "a" (a), "q" (b)
@@ -1631,7 +1525,7 @@ __asm__("cdq				\n\t"
 	"roll	$16, %%eax		\n\t"
 	"mov	%%ax, %%dx		\n\t"
 	"xor	%%ax, %%ax		\n\t"
-	"idivl	%0			\n\t"
+	"idivl	%2			\n\t"
 	: "=a" (retval)
 	: "a" (a), "q" (b)
 	: "%edx", "cc"
@@ -1677,7 +1571,7 @@ static __inline__ int NarrowDivide(LONGLONGCH *a, int b)
 */
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"movl	4(%%esi), %%edx		\n\t"
-	"idivl	%0			\n\t"
+	"idivl	%2			\n\t"
 	: "=a" (retval)
 	: "S" (a), "q" (b)
 	: "%edx", "cc"
@@ -1706,8 +1600,8 @@ static __inline__ int WideMulNarrowDiv(int a, int b, int c)
 	}
 */
 /* TODO */
-__asm__("imull	%0			\n\t"
-	"idivl	%1			\n\t"
+__asm__("imull	%2			\n\t"
+	"idivl	%3			\n\t"
 	: "=a" (retval)
 	: "a" (a), "q" (b), "q" (c)
 	: "cc"
@@ -1959,15 +1853,11 @@ a = FloatToInt(b); \
 
 #endif
 
-
-/* These functions are in plspecfn.c */
-
 int WideMul2NarrowDiv(int a, int b, int c, int d, int e);
 int _Dot(VECTORCH *vptr1, VECTORCH *vptr2);
 void MakeV(VECTORCH *v1, VECTORCH *v2, VECTORCH *v3);
 void AddV(VECTORCH *v1, VECTORCH *v2);
 void RotVect(VECTORCH *v, MATRIXCH *m);
-void CopyClipPoint(CLIP_POINT *cp1, CLIP_POINT *cp2);
 
 #if SUPPORT_MMX
 

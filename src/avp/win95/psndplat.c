@@ -769,7 +769,7 @@ void PlatEndSoundSys(void)
 	db_log3("PlatEndSoundSys finished.");
 }
 
-int PlatChangeGlobalVolume(volume)
+int PlatChangeGlobalVolume(int volume)
 {
 	int attenuation;
 	HRESULT hres;
@@ -797,7 +797,7 @@ int PlatChangeGlobalVolume(volume)
 	return SOUND_PLATFORMERROR;
 }
  
-int PlatPlaySound(activeIndex)
+int PlatPlaySound(int activeIndex)
 {
 	HRESULT hres;
 	SOUNDINDEX gameIndex;

@@ -1,10 +1,10 @@
 #ifndef _INCLUDED_MEDIA_HPP_
 #define _INCLUDED_MEDIA_HPP_
 
-#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
+//#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
 	#define _MEDIA_WIN_TARGET
-	#include <windows.h>
-#endif // WIN32 || _WIN32 || WINDOWS || _WINDOWS
+//	#include <windows.h>
+//#endif // WIN32 || _WIN32 || WINDOWS || _WINDOWS
 
 
 #include <stdio.h>
@@ -386,7 +386,7 @@ class MediaWinFileMedium : public MediaMedium
 			m_hFile = INVALID_HANDLE_VALUE;
 		}
 		
-		void Open(LPCTSTR pszFileName, DWORD dwDesiredAccess)
+		void Open(char *pszFileName, DWORD dwDesiredAccess)
 		{
 			DWORD dwShareMode;
 			DWORD dwCreationDistribution;

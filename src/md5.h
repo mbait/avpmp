@@ -20,6 +20,7 @@
  * Still in the public domain.
  *
  * md5_buffer added by Steven Fuller
+ * Still in the public domain.
  */
 
 #ifndef MD5_H

@@ -1,3 +1,5 @@
+#include "fixer.h"
+
 #include "media.hpp"
 
 void * MediaMedium::GetWriteBuffer(unsigned * pSize, unsigned /*nDesiredSize*/)
@@ -51,7 +53,7 @@ unsigned MediaWinFileMedium::GetRemainingSize()
 		return 0;
 	}
 	
-	unsigned nSize = GetFileSize(m_hFile,NULL);
+	unsigned nSize = GetFileSize(m_hFile, 0);
 	
 	if (0xffffffff == nSize)
 	{

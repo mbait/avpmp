@@ -17,6 +17,9 @@
  * stuff, which is, after all, a part of Windows. If you want Windows 
  * stuff, but NOT Direct Draw, define DB_NODIRECTDRAW.
  */
+
+#define DB_NOWINDOWS
+#define DB_NODIRECTDRAW
  
 /* ******************************************************************** *
  * 																		*
@@ -26,8 +29,9 @@
 
 /* I N C L U D E S **************************************************** */
 
+#include "fixer.h"
+
 /* Windows includes. Actually internal, but here to allow pre-compilation. */
-#include "advwin32.h"
 #ifndef DB_NOWINDOWS
 	#include <windows.h>
 	#include "advwin32.h"
@@ -63,9 +67,8 @@ int db_option = 0; /* Default is off. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <conio.h>
-#include <direct.h>	/* For getcwd() */
 #include <stdarg.h>	/* For variable arguments. */
+#include <unistd.h>
 
 /* C O N S T A N T S ************************************************** */
 
@@ -90,7 +93,8 @@ int db_option = 0; /* Default is off. */
 #define DB_FORCE_EXCEPTION()	( db_vol_zero = 1 / db_vol_zero )
 
 /* Cause a brakepoint. */
-#define DB_FORCE_BRAKEPOINT()	do {__asm int 3} while(0)
+//#define DB_FORCE_BRAKEPOINT()	do {__asm int 3} while(0)
+#define DB_FORCE_BRAKEPOINT() { }
 
 /* T Y P E S ********************************************************** */
 
@@ -534,6 +538,7 @@ static void db_do_std_prompt(unsigned yOffset)
 	switch(db_display_type)
 	{
 		case DB_DOS:
+#if 0		
 			printf( db_prompt_std );
 			printf("\n");
 			do
@@ -541,6 +546,9 @@ static void db_do_std_prompt(unsigned yOffset)
 				ch = toupper(getch());
 			}
 			while((ch != 'N') && (ch != 'Y') && (ch != 'X'));
+#endif
+			ch = 'N';
+						
 			break;
 #ifndef DB_NODIRECTDRAW
 		case DB_DIRECTDRAW:
@@ -602,7 +610,7 @@ static void db_do_std_prompt(unsigned yOffset)
 	{
 		exit(-10);
 	}
-	else if(ch == 'X')
+	else if (ch == 'X')
 	{
 		if(db_use_brakepoints)
 		{

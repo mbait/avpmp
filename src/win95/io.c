@@ -634,6 +634,7 @@ void InitialiseSystem()
 	  video memory etc exist.
 	*/
 
+#if 0 /* LINUX */
 	if (InitialiseDirectDrawObject()
 	    == FALSE)
 	   /* 
@@ -665,6 +666,7 @@ void InitialiseSystem()
 	system memory...
 */
     TestMemoryAccess();
+#endif
 
     /* Initialise main window, windows procedure etc */
 	rc = InitialiseWindowsSystem(hInstance, nCmdShow, WinInitFull);
@@ -673,11 +675,13 @@ void InitialiseSystem()
     memset((void*)KeyboardInput, No, MAX_NUMBER_OF_INPUT_KEYS);
 	GotAnyKey = No;
 
+#if 0 /* LINUX */
 	/* launch Direct Input */
 	InitialiseDirectInput();
 	InitialiseDirectKeyboard();
 	InitialiseDirectMouse();
 	InitJoysticks();
+#endif
 
     /* Initialise textprint system */
     textprintPosX = 0;

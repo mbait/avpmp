@@ -161,70 +161,76 @@ typedef struct
 	{
 		unsigned char NextWeapon; // Predator & Marine
 		unsigned char AlternateVision;	// Alien
-	};
+	} a;
 		
 	union
 	{
 		unsigned char PreviousWeapon; // Predator & Marine
 		unsigned char Taunt;	  	  // Alien
-	};
+	} b;
 	
 	union
 	{
 		unsigned char FlashbackWeapon; // Predator & Marine
 		unsigned char Alien_MessageHistory; // Alien
-	};
+	} c;
 
 	union
 	{
 		unsigned char Cloak;			// Predator
 		unsigned char ImageIntensifier; // Marine
 		unsigned char Alien_Say;		// Alien
-	};
+	} d;
 
 	union
 	{
 		unsigned char CycleVisionMode;	// Predator
 		unsigned char ThrowFlare;	   	// Marine
 		unsigned char Alien_SpeciesSay;	// Alien
-	};
+	} e;
+	
 	union
 	{
 		unsigned char ZoomIn;			// Predator
 		unsigned char Jetpack;			// Marine
 		unsigned char Alien_ShowScores;	// Alien
-	};
+	} f;
+	
 	union
 	{									
 		unsigned char ZoomOut;			// Predator
 		unsigned char MarineTaunt;		// Marine
-	};
+	} g;
+	
 	union
 	{
 		unsigned char GrapplingHook;    // Predator	
 		unsigned char Marine_MessageHistory; // Marine
-	};
+	} h;
+	
 	union
 	{
 		unsigned char RecallDisc; // Predator
 		unsigned char Marine_Say; // Marine
-	};
+	} i;
+	
 	union
 	{
 		unsigned char PredatorTaunt;	 // Predator
 		unsigned char Marine_SpeciesSay; // Marine
-	};
+	} j;
+	
 	union
 	{
 		unsigned char Predator_MessageHistory; // Predator
 		unsigned char Marine_ShowScores; // Marine
-	};
+	} k;
+
 	unsigned char Predator_Say;
 	unsigned char Predator_SpeciesSay;
 	unsigned char Predator_ShowScores;
 	unsigned char ExpansionSpace7;
 	unsigned char ExpansionSpace8;
-
 } PLAYER_INPUT_CONFIGURATION;
 
 typedef struct

@@ -16,6 +16,11 @@ int InitialiseWindowsSystem()
 	return 0;
 }
 
+int ExitWindowsSystem()
+{
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	return 0;

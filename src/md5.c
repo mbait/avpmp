@@ -20,13 +20,11 @@
  * Still in the public domain.
  * 
  * md5_buffer added by Steven Fuller
+ * Still in the public domain.
  */
 
 #include <string.h>		/* for memcpy() */
-#include <sys/types.h>		/* for stupid systems */
-#include <netinet/in.h>		/* for ntohl() */
 
-//#include "config.h"
 #include "md5.h"
 
 #ifdef WORDS_BIGENDIAN

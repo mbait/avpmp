@@ -42,6 +42,8 @@ enum AwTlErc
 	AW_TL_ERC;
 
 
+#define NO_ERROR	0
+
 /*********/
 /* Flags */
 /*********/
@@ -75,6 +77,43 @@ extern D3DTexture * AwCreateTexture(char const * _argFormatS, ...);
 extern DDSurface * AwCreateSurface(char const * _argFormatS, ...);
 
 extern AW_TL_ERC AwDestroyBackupTexture(AW_BACKUPTEXTUREHANDLE _bH);
+
+
+typedef int (* AW_TL_PFN_CALLBACK) (void *);
+
+/* Structure for receiving specific regions of an image in a surface or texture.
+ * A pointer to an array of thise structures is passed to the AwCreate...
+ * functions if the 'a' format specifier is used. The fields 'left', 'right',
+ * 'top' and 'bottom' specify the rectangle to cut out of the image being loaded
+ * and must be valid. In AwCreateSurface, the 'pSurface' field is used and is a
+ * pointer to the Direct Draw surface created; in AwCreateTexture, the
+ * 'pTexture' field is used and is a pointer to the Direct 3D texture created.
+ * If an error occurs all the pointers in the array will be set to NULL. The
+ * 'width' and 'height' fields will be filled in with the width and height of
+ * the surface or texture that is created. If the rectangle specified is
+ * completely outsided the main image, the width and height will be set to zero,
+ * and the pointer field will be set to NULL, but this does not constitute an
+ * error. If the 't' option is used, the pointer fields are assumed to be valid
+ * textures or surfaces into which to load the new textures or surfaces. If the
+ * pointer is NULL, the structure is ignored. The pointers will remain unchanged
+ * even in the event of an error or a rectangle specified outside the main
+ * image, though the width and height will still be set to zero.
+ */
+struct AwCreateGraphicRegion
+{
+	unsigned left, top, right, bottom; /* rectangle to cut from the original image */
+	unsigned width, height; /* width and height of the resulting surface or texture */
+	union /* DDSurface or D3DTexture pointer depending on the context used */
+	{
+		DDSurface * pSurface; /* Direct Draw Surface object pointer */
+		D3DTexture * pTexture; /* Direct 3D Texture object pointer */
+	};
+};
+
+/* typedef to save typing 'struct' when not using C++ */
+typedef struct AwCreateGraphicRegion AW_CREATEGRAPHICREGION;
+
+extern char const * AwTlErrorToString(AW_TL_ERC _AWTL_DEFAULTPARM(awTlLastErr));
 
 #if 0
 
