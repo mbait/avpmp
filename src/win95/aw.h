@@ -11,7 +11,6 @@ typedef struct DIRECTDRAWSURFACE
 	int w;
 	int h;
 	unsigned char *data;
-	int type;
 } DIRECTDRAWSURFACE;
 
 typedef DIRECTDRAWSURFACE * LPDIRECTDRAWSURFACE;
@@ -24,7 +23,6 @@ typedef struct DIRECT3DTEXTURE
 	int w;
 	int h;
 	unsigned char *data;
-	int type;
 } DIRECT3DTEXTURE;
 
 typedef DIRECT3DTEXTURE * LPDIRECT3DTEXTURE;

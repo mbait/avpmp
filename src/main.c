@@ -70,6 +70,7 @@ int InitialiseWindowsSystem()
 
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 #endif		
 	return 0;
 }
@@ -356,7 +357,7 @@ void ThisFramesRenderingHasBegun()
 
 /* TODO: this should be in D3D_DrawBackdrop */
 #if 1	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 #endif	
 }
 
@@ -435,10 +436,16 @@ int main(int argc, char *argv[])
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
 //	AvP.PlayerType = I_Alien;
-	AvP.PlayerType = I_Marine;
+
+//	AvP.PlayerType = I_Marine;
+//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
-	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP);
+
+
+	AvP.PlayerType = I_Predator;
+	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL);
+
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer
 	 
 // while(AvP_MainMenus()) {
 

@@ -416,8 +416,8 @@ DWORD AwBackupTexture::GetTransparentColour()
 
 void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR)
 {
-	fprintf(stderr, "AwBackupTexture::ChoosePixelFormat(...)\n");
-#if 0
+//	fprintf(stderr, "AwBackupTexture::ChoosePixelFormat(...)\n");
+	
 	using namespace AwTl;
 	
 	pixelFormat.validB = false; // set invalid first
@@ -431,26 +431,17 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 		
 	// transparency?
 	m_bTranspMask = HasTransparentMask(fMyFlags & AW_TLF_TRANSP ? true : false);
+
 		
-	#if 0
-	if (_parmsR.prevTexP.voidP)
-	{
-		// use the previous format
-	}
-	else if (_parmsR.prevTexB)
-	{
-		// use the previous format from one of the regiouns
-	}
-	else
-	#endif
-	
 	if (_parmsR.loadTextureB || fMyFlags & AW_TLF_TEXTURE)
 	{
+		fprintf(stderr, "AwBackupTexture::ChoosePixelFormat(...)\n");
+#if 0		
 		// use a texture format
 		unsigned nColours = GetNumColours();
 		unsigned nMinPalSize = GetMinPaletteSize();
 		
-		PixelFormat const * pFormat = &pfTextureFormat;
+		PixelFormat * pFormat = &pfTextureFormat;
 		
 		for (LIF<AdditionalPixelFormat> itFormat(&listTextureFormats); !itFormat.done(); itFormat.next())
 		{
@@ -467,9 +458,9 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 				pFormat = pThisFormat;
 			}
 		}
-		
+
 		pixelFormat = *pFormat;
-		
+
 		#if DB_LEVEL >= 4
 		if (pixelFormat.palettizedB)
 		{
@@ -480,7 +471,7 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 			if (pixelFormat.alphaB)
 			{
 				unsigned alpha_l_shft,alpha_r_shft;
-				SetBitShifts(&alpha_l_shft,&alpha_r_shft,pixelFormat.ddpf.dwRGBAlphaBitMask);
+				SetBitShifts(&alpha_l_shft,&alpha_r_shft,pixelFormat.dwRGBAlphaBitMask);
 			
 				db_logf4(("\tchosen %u-bit %u%u%u%u texture format",
 					pixelFormat.bitsPerPixel,
@@ -504,19 +495,89 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 	{
 		// use display surface format
 		pixelFormat = pfSurfaceFormat;
-	}
 #endif		
+	}
+	
+/* Just convert the texture to 32bpp */
+		pixelFormat.palettizedB = 0;
+		pixelFormat.alphaB = 0;
+		pixelFormat.validB = 1;
+		pixelFormat.bitsPerPixel = 32;
+		pixelFormat.redLeftShift = 0;
+		pixelFormat.greenLeftShift = 8;
+		pixelFormat.blueLeftShift = 16;
+		pixelFormat.redRightShift = 0;
+		pixelFormat.greenRightShift = 0;
+		pixelFormat.blueRightShift = 0;
+		pixelFormat.dwRGBAlphaBitMask = 0x00000000;
+
 }
+
+extern "C" {
+extern int CreateOGLTexture(D3DTexture *, unsigned char *);
+};
 
 AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & _parmsR)
 {
 	using namespace AwTl;
 	
-	fprintf(stderr, "AwBackupTexture::CreateTexture(...) This is where we could convert the image to RGB/RGBA, and so on\n");
-
-	SurfUnion pRet = static_cast<D3DTexture *>(new D3DTexture);
+//	fprintf(stderr, "AwBackupTexture::CreateTexture(...) This is where we could convert the image to RGB/RGBA, and so on\n");
 	
-	return pRet;
+	D3DTexture *Tex = new D3DTexture;
+	
+			unsigned char *buf = (unsigned char *)malloc(m_nWidth * m_nHeight * 4);
+			
+			Colour * paletteP = m_nPaletteSize ? GetPalette() : NULL;
+			
+			unsigned y = 0;
+			bool reversed_rowsB = AreRowsReversed();
+			if (reversed_rowsB)
+			{
+				y = m_nHeight-1;
+			}
+			
+			for (int i, rowcount = m_nHeight; rowcount; --rowcount, i++)
+			{
+				PtrUnion src_rowP = GetRowPtr(y);
+				db_assert1(src_rowP.voidP);
+				
+				// allow loading of the next row from the file
+				LoadNextRow(src_rowP);
+				
+				// loop for copying data to surfaces
+				{
+					
+					{
+						// are we in the vertical range of this surface?
+						{
+							
+							// convert and copy the section of the row to the direct draw surface
+//							ConvertRow(pLoadInfo->surface_dataP,pLoadInfo->surface_width,src_rowP,pLoadInfo->left,pLoadInfo->width,paletteP db_code1(DB_COMMA m_nPaletteSize));
+
+							PtrUnion my_data = &buf[y*m_nWidth*4];
+							
+							ConvertRow(my_data,m_nWidth,src_rowP,0,m_nWidth,paletteP db_code1(DB_COMMA m_nPaletteSize));
+							
+						}
+					}
+				}
+				
+				// next row
+				if (reversed_rowsB)
+					--y;
+				else
+					++y;
+				
+			}
+
+/* temp junk */
+	Tex->w = m_nWidth;
+	Tex->h = m_nHeight;
+	Tex->data = NULL;
+	CreateOGLTexture(Tex, buf); /* this will set the id */
+	free(buf);
+			
+	return static_cast<SurfUnion>(Tex);
 #if 0
 	
 	// which flags to use?
@@ -1394,9 +1455,8 @@ namespace AwTl {
 //		CHECK_MEDIA_ERRORS("loading file headers")
 		ON_ERROR_RETURN_NULL("loading file headers")
 
-#if 0		
 		ChoosePixelFormat(rParams);
-
+#if 0
 		if (!pixelFormat.validB)
 			db_log3("AwCreateGraphic(): ERROR: pixel format not valid");
 		if (!driverDesc.ddP || !driverDesc.validB && rParams.loadTextureB)
@@ -1406,7 +1466,7 @@ namespace AwTl {
 		
 		ON_ERROR_RETURN_NULL("initializing load")
 #endif
-		fprintf(stderr, "TexFileLoader::Load Pixel Format?! It's not implemented!\n");
+//		fprintf(stderr, "TexFileLoader::Load Pixel Format?! It's not implemented!\n");
 
 /* TODO */
 		AllocateBuffers(/* rParams.backupHP ? true : */ false, /* pixelFormat.palettizedB ? ? 1<<pixelFormat.bitsPerPixel : */ 0);
@@ -1602,25 +1662,6 @@ namespace AwTl {
 	{
 		static MagicFileIdTree mfidt;
 
-#ifdef _MSC_VER
-		// Touch the loaders.
-		{
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwBmpLoader_187);
-			
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwIffLoader_428);
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwIffLoader_429);
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwIffLoader_430);
-			
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwPpmLoader_229);
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwPgmLoader_230);
-			mfidt.hack += reinterpret_cast<unsigned>(&rlcAwPbmLoader_231);
-
-			mfidt.hack += reinterpret_cast<unsigned>(&rccIlbmBmhdChunk_4);
-			mfidt.hack += reinterpret_cast<unsigned>(&rccIlbmCmapChunk_5);
-			mfidt.hack += reinterpret_cast<unsigned>(&rccIlbmBodyChunk_6);
-			mfidt.hack += reinterpret_cast<unsigned>(&rccIlbmGrabChunk_7);
-		}
-#endif
 		g_pMagicFileIdTree = &mfidt;
 		
 		MagicFileIdTree * pLayer = g_pMagicFileIdTree;
@@ -2014,6 +2055,19 @@ fprintf(stderr, "AwSetPixelFormat(%p, %p)\n", _pfP, _ddpfP);
 	_pfP->palettizedB = true;
 
 	_pfP->validB = true;
+	
+_pfP->palettizedB = 0;
+_pfP->alphaB = 0;
+_pfP->validB = 1;
+_pfP->bitsPerPixel = 32;
+_pfP->redLeftShift = 0;
+_pfP->greenLeftShift = 8;
+_pfP->blueLeftShift = 16;
+_pfP->redRightShift = 0;
+_pfP->greenRightShift = 0;
+_pfP->blueRightShift = 0;
+_pfP->dwRGBAlphaBitMask = 0xFF000000;
+
 	return AW_TLE_OK;
 }
 

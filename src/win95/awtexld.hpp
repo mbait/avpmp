@@ -32,12 +32,14 @@ namespace AwTl {
 		unsigned blueLeftShift;
 		unsigned blueRightShift;
 		
+		unsigned dwRGBAlphaBitMask;
 //		DDPIXELFORMAT ddpf;
 	};
 
 	// DO SOMTHING ABOUT THIS
 	extern PixelFormat pixelFormat;
-
+	extern PixelFormat pfSurfaceFormat;
+	
 	class CreateTextureParms;
 	
 	/********************/
@@ -57,9 +59,7 @@ namespace AwTl {
 						 static_cast<unsigned>(_colP->r)>>pixelFormat.redRightShift<<pixelFormat.redLeftShift
 						|static_cast<unsigned>(_colP->g)>>pixelFormat.greenRightShift<<pixelFormat.greenLeftShift
 						|static_cast<unsigned>(_colP->b)>>pixelFormat.blueRightShift<<pixelFormat.blueLeftShift
-/* TODO */
-/*|pixelFormat.ddpf.dwRGBAlphaBitMask*/
-					;
+						|pixelFormat.dwRGBAlphaBitMask;
 				}
 				static inline unsigned DoConv(BYTE const * _colP, Colour const * _paletteP db_code1(DB_COMMA unsigned _paletteSize))
 				{
@@ -224,6 +224,7 @@ namespace AwTl {
 					*_dstRowP.byteP++ = u.b[1];
 					*_dstRowP.byteP = u.b[2];
 				}
+				break;
 			}
 			case 32:
 			{

@@ -441,7 +441,9 @@ void SetFogDistance(int fogDistance)
 
 void CheckWireFrameMode(int shouldBeOn)
 {
-	fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
+//	fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
+	if (shouldBeOn)
+		fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
 }
 
 void WriteEndCodeToExecuteBuffer()
@@ -454,11 +456,6 @@ BOOL UnlockExecuteBufferAndPrepareForUse()
 	fprintf(stderr, "UnlockExecuteBufferAndPrepareForUse()\n");
 	
 	return FALSE;
-}
-
-void SecondFlushD3DZBuffer()
-{
-	fprintf(stderr, "SecondFlushD3DZBuffer()\n");
 }
 
 void ReloadImageIntoD3DImmediateSurface(IMAGEHEADER* iheader)
@@ -486,14 +483,9 @@ void ReleaseD3DTexture(void* D3DTexture)
 	fprintf(stderr, "ReleaseD3DTexture(%p)\n", D3DTexture);
 }
 
-void FlushD3DZBuffer()
-{
-	fprintf(stderr, "FlushD3DZBuffer()\n");
-}
-
 BOOL ExecuteBuffer()
 {
-	fprintf(stderr, "ExecuteBuffer()\n");
+//	fprintf(stderr, "ExecuteBuffer()\n");
 	
 	return FALSE;
 }
@@ -671,17 +663,17 @@ int MouseVelY;
 
 void DirectReadKeyboard()
 {
-	fprintf(stderr, "DirectReadKeyboard()\n");
+//	fprintf(stderr, "DirectReadKeyboard()\n");
 }
 
 void DirectReadMouse()
 {
-	fprintf(stderr, "DirectReadMouse()\n");
+//	fprintf(stderr, "DirectReadMouse()\n");
 }
 
 void ReadJoysticks()
 {
-	fprintf(stderr, "ReadJoysticks()\n");
+//	fprintf(stderr, "ReadJoysticks()\n");
 }
 
 
