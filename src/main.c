@@ -108,7 +108,6 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	
 	if (isgrab == SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
-		SDL_WM_ToggleFullScreen(surface);	
 	}
 	
 	ScreenDescriptorBlock.SDB_Width     = Width;
@@ -174,7 +173,6 @@ int SetOGLVideoMode(int Width, int Height)
 	
 	if (isgrab == SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
-		SDL_WM_ToggleFullScreen(surface);	
 	}
 	
 	glViewport(0, 0, Width, Height);
