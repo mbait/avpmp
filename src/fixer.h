@@ -205,6 +205,23 @@ typedef struct DPMSG_DESTROYPLAYERORGROUP
 } DPMSG_DESTROYPLAYERORGROUP;
 typedef DPMSG_DESTROYPLAYERORGROUP * LPDPMSG_DESTROYPLAYERORGROUP;
 
+#define JOYCAPS_HASR		1
+
+typedef struct JOYINFOEX
+{
+	int dwXpos;
+	int dwYpos;
+	int dwRpos;
+	int dwUpos;
+	int dwVpos;
+	int dwPOV;
+} JOYINFOEX;
+
+typedef struct JOYCAPS
+{
+	int wCaps;
+} JOYCAPS;
+
 #ifdef __cplusplus
 };
 #endif

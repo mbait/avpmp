@@ -58,15 +58,16 @@ extern unsigned char GotAnyKey;
 extern int NormalFrameTime;
 
 SDL_Surface *surface;
-/* SDL_Joystick *joy; */
+
+SDL_Joystick *joy;
+JOYINFOEX JoystickData;
+JOYCAPS JoystickCaps;
 
 /* defaults */
 static int WantFullscreen = 1;
 int WantSound = 1;
 static int WantCDRom = 1;
-#if 0
 static int WantJoystick = 1;
-#endif
 
 #if 0 /* NVIDIA gl.h breaks this */
 #if GL_EXT_secondary_color
@@ -104,6 +105,67 @@ void DirectReadMouse()
 
 void ReadJoysticks()
 {
+	int axes, balls, hats;
+	Uint8 hat;
+	
+	JoystickData.dwXpos = 0;
+	JoystickData.dwYpos = 0;
+	JoystickData.dwRpos = 0;
+	JoystickData.dwUpos = 0;
+	JoystickData.dwVpos = 0;
+	JoystickData.dwPOV = -1;	
+	
+	if (joy == NULL || !GotJoystick) {
+		return;
+	}
+
+	SDL_JoystickUpdate();
+	
+	axes = SDL_JoystickNumAxes(joy);
+	balls = SDL_JoystickNumBalls(joy);
+	hats = SDL_JoystickNumHats(joy);
+	
+	if (axes > 0) {
+		JoystickData.dwXpos = SDL_JoystickGetAxis(joy, 0) + 32768;
+	}
+	if (axes > 1) {
+		JoystickData.dwYpos = SDL_JoystickGetAxis(joy, 1) + 32768;
+	}
+	
+	if (hats > 0) {
+		hat = SDL_JoystickGetHat(joy, 0);
+		
+		switch (hat) {
+			default:
+			case SDL_HAT_CENTERED:
+				JoystickData.dwPOV = -1;
+				break;
+			case SDL_HAT_UP:
+				JoystickData.dwPOV = 0;
+				break;
+			case SDL_HAT_RIGHT:
+				JoystickData.dwPOV = 9000;
+				break;
+			case SDL_HAT_DOWN:
+				JoystickData.dwPOV = 18000;
+				break;
+			case SDL_HAT_LEFT:
+				JoystickData.dwPOV = 27000;
+				break;
+			case SDL_HAT_RIGHTUP:
+				JoystickData.dwPOV = 4500;
+				break;
+			case SDL_HAT_RIGHTDOWN:
+				JoystickData.dwPOV = 13500;
+				break;
+			case SDL_HAT_LEFTUP:
+				JoystickData.dwPOV = 31500;
+				break;
+			case SDL_HAT_LEFTDOWN:
+				JoystickData.dwPOV = 22500;
+				break;
+		}
+	}
 }
 
 /* ** */
@@ -352,18 +414,27 @@ int InitSDL()
 	
 	LoadDeviceAndVideoModePreferences();
 
-#if 0	
 	if (WantJoystick) {
 		SDL_Init(SDL_INIT_JOYSTICK);
 		
 		if (SDL_NumJoysticks() > 0) {
+			/* TODO: make joystick number a configuration parameter */
+			
 			joy = SDL_JoystickOpen(0);
 			if (joy) {
 				GotJoystick = 1;
 			}
+			
+			JoystickCaps.wCaps = 0; /* no rudder... ? */
+			
+			JoystickData.dwXpos = 0;
+			JoystickData.dwYpos = 0;
+			JoystickData.dwRpos = 0;
+			JoystickData.dwUpos = 0;
+			JoystickData.dwVpos = 0;
+			JoystickData.dwPOV = -1;
 		}
 	}
-#endif
 	
 	surface = NULL;
 	
@@ -544,11 +615,10 @@ int InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode)
 
 int ExitWindowsSystem()
 {
-#if 0
 	if (joy) {
 		SDL_JoystickClose(joy);
 	}
-#endif	
+
 	/* SDL_Quit(); */
 	if (surface)
 		SDL_FreeSurface(surface);
@@ -944,12 +1014,6 @@ void CheckForWindowsMessages()
 		MouseVelY = 0;
 	}
 
-/*
-This is half of the necessary joystick code, the rest of the changes
-involve avp/win95/usr_io.c.  I don't own a joystick so I have no idea
-how things should be implemented.
-*/
-#if 0	
 	if (GotJoystick) {
 		int numbuttons;
 		
@@ -970,7 +1034,7 @@ how things should be implemented.
 			}	
 		}
 	}
-#endif	
+
 	if ((KeyboardInput[KEY_LEFTALT]||KeyboardInput[KEY_RIGHTALT]) && DebouncedKeyboardInput[KEY_CR]) {
 		SDL_GrabMode gm;
 
@@ -1069,7 +1133,7 @@ static struct option getopt_long_options[] = {
 { "windowed",	0,	NULL,	'w' },
 { "nosound",	0,	NULL,	's' },
 { "nocdrom",	0,	NULL,	'c' },
-/* { "nojoy",	0,	NULL,	'j' }, */
+{ "nojoy",	0,	NULL,	'j' },
 { "debug",	0,	NULL,	'd' },
 /*
 { "loadrifs",	1,	NULL,	'l' },
@@ -1088,7 +1152,7 @@ static const char *usage_string =
 "      [-w | --windowed]       Run the game in a window\n"
 "      [-s | --nosound]        Do not access the soundcard\n"
 "      [-c | --nocdrom]        Do not access the CD-ROM\n"
-/* "      [-j | --nojoy]          Do not access the joystick\n" */
+"      [-j | --nojoy]          Do not access the joystick\n"
 ;
          
 int main(int argc, char *argv[])
@@ -1116,11 +1180,9 @@ int main(int argc, char *argv[])
 			case 'c':
 				WantCDRom = 0;
 				break;
-			/*
 			case 'j':
 				WantJoystick = 0;
-				break;
-			*/				
+				break;			
 			case 'd': {
 				extern int DebuggingCommandsActive;
 				DebuggingCommandsActive = 1;

@@ -856,6 +856,7 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 
 	switch (AvP.PlayerType)
 	{
+		default:
 		case I_Marine:
 		{
 			primaryInput = &MarineInputPrimaryConfig;
@@ -1351,10 +1352,7 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 	/* KJL 18:27:34 04/29/97 - joystick control */
 	if (GotJoystick)
 	{
-		fprintf(stderr, "ReadPlayerGameInput: GotJoystick\n");
-#if 0
 		#define JOYSTICK_DEAD_ZONE 12000
-		extern int GotJoystick;
 		extern JOYINFOEX JoystickData;
 		extern JOYCAPS JoystickCaps;
 		
@@ -1580,7 +1578,7 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 
 		}
 
-		#if 1
+		#if 0
 		textprint("%d\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n",
 			JoystickData.dwXpos,
 			JoystickData.dwYpos,
@@ -1591,7 +1589,6 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 			JoystickData.dwButtons,
 			JoystickData.dwPOV);
 		#endif
-#endif		
 	}
 
 	/* KJL 16:03:06 05/11/97 - Handle map options */
