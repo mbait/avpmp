@@ -8,7 +8,6 @@
 #include "gameplat.h"
 
 #include "bh_types.h"
-#include "krender.h"
 #include "huddefs.h"
 #include "language.h"
 #include "cheat.h"

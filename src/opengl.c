@@ -13,7 +13,6 @@
 #include "module.h"
 #include "stratdef.h"
 #include "projfont.h"
-#include "krender.h"
 #include "kshape.h"
 #include "prototyp.h"
 #include "frustum.h"

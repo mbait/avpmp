@@ -22,7 +22,6 @@ extern "C" {
 #include "font.h"
 
 #include "kshape.h"
-#include "krender.h"
 #include "chnktexi.h"
 #include "awtexld.h"
 #include "ffstdio.h"

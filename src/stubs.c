@@ -13,7 +13,6 @@
 #include "projfont.h"
 #include "savegame.h"
 #include "pldnet.h"
-#include "krender.h"
 #include "kshape.h"
 #include "d3d_hud.h"
 

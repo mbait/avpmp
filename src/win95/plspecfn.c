@@ -13,7 +13,6 @@
 
 
 #if SupportWindows95
-#include "krender.h" /* KJL 10:48:25 02/05/97 */
 #include "kzsort.h"
 #include "kshape.h"
 #endif

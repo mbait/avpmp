@@ -5,7 +5,6 @@
 
 #include "inline.h"
 #include "module.h"
-#include "krender.h"
 
 #include "chnktexi.h"
 #include "d3d_hud.h"

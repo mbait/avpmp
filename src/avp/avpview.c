@@ -11,7 +11,6 @@
 #include "kshape.h"
 #include "kzsort.h"
 #include "frustum.h"
-#include "krender.h"
 #include "vision.h"
 #include "lighting.h"
 #include "weapons.h"

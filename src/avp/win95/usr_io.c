@@ -21,7 +21,6 @@
 #include "pmove.h"
 #include "usr_io.h"
 #include "hud_map.h"
-#include "krender.h"
 
 #include "iofocus.h"
 

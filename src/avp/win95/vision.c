@@ -21,7 +21,6 @@
 *                                    P R O T O T Y P E S	                                *
 ****************************************************************************************KJL*/
 #include "vision.h"
-#include "krender.h"
 #include "frustum.h"
 #include "avpview.h"
 #include "game_statistics.h"
