@@ -3,6 +3,7 @@
 #ifndef _chunk_hpp
 #define _chunk_hpp 1
 
+#include "fixer.h"
 
 #if engine
 
@@ -77,6 +78,8 @@
 #if cencon
 extern char users_name[];
 #endif
+
+#include "list_tem.hpp"
 
 #ifndef RIFF_OPTIMIZE // define this to get compiler errors where you are calling the old slow functions
 extern List<int> list_chunks_in_file (HANDLE &, const char * chunk_id);

@@ -1,7 +1,9 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "malloc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "fixer.h"
+
 #include "huffman.hpp"
 
 /* KJL 17:12:25 17/09/98 - Huffman compression/decompression routines */
@@ -28,17 +30,17 @@ typedef struct HuffNode // 16-byte node structure
     
     struct HuffNode     *parent; // the THIRD four bytes, parent node
     
-    union
-    {   	                        // the FOURTH four bytes
+//    union
+//   {   	                        // the FOURTH four bytes
         unsigned int       bits;    // the bit pattern of this end node
-        struct
-        {
-            unsigned char  flag;
-            unsigned char  curdepth;
-            unsigned char  maxdepth;
-            unsigned char  unused;  
-        };
-    };
+//        struct
+//       {
+//            unsigned char  flag;
+//            unsigned char  curdepth;
+//            unsigned char  maxdepth;
+//            unsigned char  unused;  
+//        };
+//    };
 
 } HuffNode;
 
@@ -99,7 +101,7 @@ extern HuffmanPackage *HuffmanCompression(unsigned char *sourcePtr, int length)
 	{
     	outpackage->CodelengthCount[n] = Depths[n + 1];
 	}
-    for (n = 0; n < 256; n++)
+    for (int n = 0; n < 256; n++)
 	{
 	   	outpackage->ByteAssignment[n]  = SymbolCensus[n + 1].Symbol;
 	}

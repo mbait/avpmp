@@ -2,7 +2,7 @@
 #define _INCLUDED_ILBM_EXT_HPP_
 
 #include "iff.hpp"
-#include "iff_ILBM.hpp"
+#include "iff_ilbm.hpp"
 
 namespace IFF
 {

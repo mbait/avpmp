@@ -1,4 +1,4 @@
-#include "ILBM_ext.hpp"
+#include "ilbm_ext.hpp"
 
 IFF_IMPLEMENT_DYNCREATE("ILBM","TRAN",IlbmTranChunk)
 IFF_IMPLEMENT_DYNCREATE("ILBM","ALPH",IlbmAlphChunk)

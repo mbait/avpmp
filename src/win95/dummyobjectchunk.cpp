@@ -1,4 +1,4 @@
-#include "DummyObjectChunk.hpp"
+#include "dummyobjectchunk.hpp"
 
 #ifdef cencon
 #define new my_new

@@ -26,13 +26,12 @@
 #include "bh_videoscreen.h"
 #include "bh_plift.h"
 #include "bh_ldoor.h"
-#include "AvP_Menus.h"
+#include "avp_menus.h"
 #include "game_statistics.h"
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 
 #include "savegame.h"
 #include "huffman.hpp"
-#include "smacker.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

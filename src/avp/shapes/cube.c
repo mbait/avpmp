@@ -1,11 +1,8 @@
 #include <stdio.h>
 
 #include "system.h"
-
-#if PSX
-#else //PSX
-
 #include "shape.h"
+
 /*
 
 CUBE_
@@ -164,5 +161,3 @@ int *CUBE_items[]={
 	2*1,1*1,0*1,3*1,
 	Term
 };
-
-#endif //PSX

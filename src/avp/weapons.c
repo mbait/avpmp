@@ -58,7 +58,7 @@
 #include "targeting.h"
 #include "extents.h"
 #include "scream.h"
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 
 #define BITE_HEALTH_RECOVERY	(50)
 #define BITE_ARMOUR_RECOVERY	(30)

@@ -1,10 +1,7 @@
 #ifndef PLATFORM_INCLUDED
 #define PLATFORM_INCLUDED
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h> // int64_t
+#include "fixer.h"
 
 #include "shape.h" // struct imageheader
 
@@ -18,54 +15,14 @@
 extern "C"  {
 #endif
 
-#define PACKED __attribute__((packed))
-
 //#include "fastfile.h"
-
 
 #define platform_pc Yes
 #define Saturn No
 
 #define Hardware2dTextureClipping No
 
-#ifndef min
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
-#ifndef max
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
-#define	TRUE	1
-#define FALSE	0
-
-#define stricmp		strcasecmp
-#define _stricmp	strcasecmp
-
 /* Types */
-
-/* windows junk */
-typedef int GUID;
-typedef int DPID;
-typedef int HINSTANCE;
-typedef int WPARAM;
-typedef int LPARAM;
-
-typedef int BOOL;
-
-typedef struct RECT
-{
-	int left;
-	int top;
-	int right;
-	int bottom;
-} RECT;
-
-typedef RECT RECT_AVP;
-
-typedef int64_t __int64;
-
-/* Watcom C 64-bit values */
 
 typedef struct LONGLONGCH {
 
@@ -74,25 +31,14 @@ typedef struct LONGLONGCH {
 
 } LONGLONGCH;
 
-
-typedef int FILETIME;
-
-typedef struct SYSTEMTIME
-{
-//#warning "SYSTEMTIME format is not correct"
-	int wHour;
-	int wMinute;
-	int wSecond;
-	int wYear;
-	int wMonth;
-	int wDay;
-} SYSTEMTIME;
-
 /*
 
  Sine and Cosine
 
 */
+
+extern int sine[];
+extern int cosine[];
 
 #define GetSin(a) sine[a]
 #define GetCos(a) cosine[a]

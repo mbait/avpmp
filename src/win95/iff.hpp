@@ -1,12 +1,13 @@
 #ifndef _INCLUDED_IFF_HPP_
 #define _INCLUDED_IFF_HPP_
 
+#include "fixer.h"
+
 #if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
 	#define _IFF_WIN_TARGET
 	#include <windows.h>
 #else // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
 	#include <stdio.h>
-	#include <conio.h>
 #endif // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
 
 #include "media.hpp"

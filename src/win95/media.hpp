@@ -6,8 +6,8 @@
 	#include <windows.h>
 #endif // WIN32 || _WIN32 || WINDOWS || _WINDOWS
 
+
 #include <stdio.h>
-#include <conio.h>
 #include <limits.h>
 #include <string.h>
 	
