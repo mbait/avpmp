@@ -434,10 +434,11 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-	AvP.PlayerType = I_Alien;
+//	AvP.PlayerType = I_Alien;
+	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
-//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP);
+	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP);
 	 
 // while(AvP_MainMenus()) {
 
