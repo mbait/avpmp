@@ -13,7 +13,6 @@
 #include "module.h"
 #include "stratdef.h"
 #include "projfont.h"
-#include "savegame.h"
 #include "krender.h"
 #include "kshape.h"
 #include "prototyp.h"
@@ -100,4 +99,8 @@ switch(RenderPolygon.TranslucencyMode)
 	
 	CurrTextureHandle = TextureHandle;
 #endif	
+}
+
+void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
+{
 }

@@ -423,13 +423,6 @@ void DrawScanlinesOverlay(float level)
 	fprintf(stderr, "DrawScanlinesOverlay(%f)\n", level);
 }
 
-int LightIntensityAtPoint(VECTORCH *pointPtr)
-{
-	fprintf(stderr, "LightIntensityAtPoint(%p)\n", pointPtr);
-	
-	return 0;
-}
-
 void RenderString(char *stringPtr, int x, int y, int colour)
 {
 	fprintf(stderr, "RenderString(%s, %d, %d, %d)\n", stringPtr, x, y, colour);
@@ -554,11 +547,6 @@ void D3D_PlayerOnFireOverlay()
 void D3D_PlayerDamagedOverlay(int intensity)
 {
 	fprintf(stderr, "D3D_PlayerDamagedOverlay(%d)\n", intensity);
-}
-
-void D3D_Particle_Output(PARTICLE *particlePtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_Particle_Output(%p, %p)\n", particlePtr, renderVerticesPtr);
 }
 
 void D3D_HUD_Setup()
@@ -867,28 +855,6 @@ void GetNextMultiplayerObservedPlayer()
 void DoMultiplayerSpecificHud()
 {
 	fprintf(stderr, "DoMultiplayerSpecificHud()\n");
-}
-
-BOOL Current_Level_Requires_Mirror_Image()
-{
-	fprintf(stderr, "Current_Level_Requires_Mirror_Image()\n");
-	
-	return FALSE;
-}
-
-void CreatePlayersImageInMirror()
-{
-	fprintf(stderr, "CreatePlayersImageInMirror()\n");
-}
-
-void RenderPlayersImageInMirror()
-{
-	fprintf(stderr, "RenderPlayersImageInMirror()\n");
-}
-
-void DeallocatePlayersMirrorImage()
-{
-	fprintf(stderr, "DeallocatePlayersMirrorImage()\n");
 }
 
 void AddNetMsg_AlienAIKilled(STRATEGYBLOCK *sbPtr,int death_code,int death_time, int GibbFactor,DAMAGE_PROFILE* damage)
