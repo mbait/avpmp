@@ -57,7 +57,10 @@ int QuickStartMultiplayer=1;
 
 typedef struct DPNAME
 {
-	char lpszShortNameA[64];
+	int dwSize;
+	
+	char *lpszShortNameA;
+	char *lpszLongNameA;
 } DPNAME;
 DPNAME AVPDPplayerName;
 
@@ -138,6 +141,73 @@ HRESULT DpExtSend(int lpDP2A, DPID idFrom, DPID idTo, DWORD dwFlags, void *lpDat
 	fprintf(stderr, "DpExtSend(%d, %d, %d, %d, %p, %d)\n", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
 
 	return 1;
+}
+
+/* directplay.c */
+int DirectPlay_ConnectingToLobbiedGame(char* playerName)
+{
+	fprintf(stderr, "DirectPlay_ConnectingToLobbiedGame(%s)\n", playerName);
+	
+	return 0;
+}
+
+int DirectPlay_ConnectingToSession()
+{
+	fprintf(stderr, "DirectPlay_ConnectingToSession()\n");
+	
+	return 0;
+}
+
+BOOL DirectPlay_UpdateSessionList(int *SelectedItem)
+{
+	fprintf(stderr, "DirectPlay_UpdateSessionList(%p)\n", SelectedItem);
+	
+	return 0;
+}
+
+int DirectPlay_JoinGame()
+{
+	fprintf(stderr, "DirectPlay_JoinGame()\n");
+	
+	return 0;
+}
+
+void DirectPlay_EnumConnections()
+{
+	fprintf(stderr, "DirectPlay_EnumConnections()\n");
+}
+
+int DirectPlay_HostGame(char *playerName, char *sessionName,int species,int gamestyle,int level)
+{
+	extern int DetermineAvailableCharacterTypes(int);
+	
+	int maxPlayers=DetermineAvailableCharacterTypes(FALSE);
+	if(maxPlayers<1) maxPlayers=1;
+	if(maxPlayers>8) maxPlayers=8;
+	
+	if(!netGameData.skirmishMode) {
+		fprintf(stderr, "DirectPlay_HostGame(%s, %s, %d, %d, %d)\n", playerName, sessionName, species, gamestyle, level);
+	} else {
+		//fake multiplayer
+		//need to set the id to an non zero value
+		AVPDPNetID=100;
+		
+		memset(&AVPDPplayerName, 0, sizeof(AVPDPplayerName));
+		AVPDPplayerName.dwSize = sizeof(DPNAME);
+		AVPDPplayerName.lpszShortNameA  = playerName;
+		AVPDPplayerName.lpszLongNameA = playerName;
+	}
+	
+	InitAVPNetGameForHost(species,gamestyle,level);
+	
+	return 1;
+}
+
+int DirectPlay_ConnectToSession(int sessionNumber, char *playerName)
+{
+	fprintf(stderr, "DirectPlay_ConnectToSession(%d, %s)\n", sessionNumber, playerName);
+	
+	return 0;
 }
 
 int DirectPlay_Disconnect()

@@ -59,55 +59,6 @@ char *GetVideoModeDescription3()
 }
 
 
-/* directplay.c */
-int DirectPlay_ConnectingToLobbiedGame(char* playerName)
-{
-	fprintf(stderr, "DirectPlay_ConnectingToLobbiedGame(%s)\n", playerName);
-	
-	return 0;
-}
-
-int DirectPlay_ConnectingToSession()
-{
-	fprintf(stderr, "DirectPlay_ConnectingToSession()\n");
-	
-	return 0;
-}
-
-BOOL DirectPlay_UpdateSessionList(int *SelectedItem)
-{
-	fprintf(stderr, "DirectPlay_UpdateSessionList(%p)\n", SelectedItem);
-	
-	return 0;
-}
-
-int DirectPlay_JoinGame()
-{
-	fprintf(stderr, "DirectPlay_JoinGame()\n");
-	
-	return 0;
-}
-
-void DirectPlay_EnumConnections()
-{
-	fprintf(stderr, "DirectPlay_EnumConnections()\n");
-}
-
-int DirectPlay_HostGame(char *playerName, char *sessionName,int species,int gamestyle,int level)
-{
-	fprintf(stderr, "DirectPlay_HostGame(%s, %s, %d, %d, %d)\n", playerName, sessionName, species, gamestyle, level);
-
-	return 0;
-}
-
-int DirectPlay_ConnectToSession(int sessionNumber, char *playerName)
-{
-	fprintf(stderr, "DirectPlay_ConnectToSession(%d, %s)\n", sessionNumber, playerName);
-	
-	return 0;
-}
-
-
 /* cd_player.cpp */
 int CDPlayerVolume;
 
