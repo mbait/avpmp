@@ -26,29 +26,6 @@
 /* Imported function prototypes ************************************/
 
 /* Imported data ***************************************************/
-#ifdef __cplusplus
-	extern "C"
-	{
-#endif
-
-		extern int D3DDriverMode;
-
-		#if 0
-		extern OurBool			DaveDebugOn;
-		extern FDIEXTENSIONTAG	FDIET_Dummy;
-		extern IFEXTENSIONTAG	IFET_Dummy;
-		extern FDIQUAD			FDIQuad_WholeScreen;
-		extern FDIPOS			FDIPos_Origin;
-		extern FDIPOS			FDIPos_ScreenCentre;
-		extern IFOBJECTLOCATION IFObjLoc_Origin;
-		extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-		extern IFCOLOUR			IFColour_Dummy;
- 		extern IFVECTOR			IFVec_Zero;
-		#endif
-#ifdef __cplusplus
-	};
-#endif
-
 
 
 /* Exported globals ************************************************/
@@ -77,9 +54,10 @@ r2pos r2pos :: FixP_Scale
 	);
 }
 
+extern "C" {
+void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a);
+};
 
-// Repository for code that ought to be in D3_FUNC.CPP
-#if 0
 void r2rect :: AlphaFill
 (
 	unsigned char R,
@@ -93,140 +71,8 @@ void r2rect :: AlphaFill
 		bValidPhys()
 	);
 
-	#if 0
-	float RecipW, RecipH;
-
-    // Check for textures that have not loaded properly
-    LOCALASSERT(TextureHandle != (D3DTEXTUREHANDLE) 0);
-	
-	if(ImageHeaderArray[imageNumber].ImageWidth==128)
-	{
-		RecipW = 1.0 /128.0;
-	}
-	else
-	{
-		float width = (float) ImageHeaderArray[imageNumber].ImageWidth;
-		RecipW = (1.0 / width);
-	}
-	if(ImageHeaderArray[imageNumber].ImageHeight==128)
-	{
-		RecipH = 1.0 / 128.0;
-	}
-	else
-	{
-		float height = (float) ImageHeaderArray[imageNumber].ImageHeight;
-		RecipH = (1.0 / height);
-	}
-	#endif
-
-
-	/* OUTPUT quadVerticesPtr TO EXECUTE BUFFER */
-	{
-		D3DCOLOR Colour;
-
-		switch (D3DDriverMode)
-		{
-			case D3DSoftwareRGBDriver:
-			{
-			  	Colour = RGBLIGHT_MAKE(R,G,B);
-				break;
-			}
-
-			case D3DSoftwareRampDriver:
-			{
-				Colour = RGB_MAKE(0,0,B);
-				break;
-			}
-			
-			default:
-			case D3DHardwareRGBDriver:
-			{
-		  		Colour = RGBALIGHT_MAKE(R,G,B,translucency);
-				break;
-			}
-		}
-
-		#if 1
-		{
-			D3DTLVERTEX *vertexPtr = &((LPD3DTLVERTEX)ExecuteBufferDataArea)[NumVertices];
-
-			/* Vertex 0 = Top left */
-			vertexPtr->sx= x0;
-			vertexPtr->sy= y0;
-			vertexPtr->color = Colour;
-			
-			NumVertices++;
-			vertexPtr++;
-
-			/* Vertex 1 = Top right */
-			vertexPtr->sx=( x1 - 1);
-			vertexPtr->sy=( y0 );
-			vertexPtr->color = Colour;
-			
-			NumVertices++;
-			vertexPtr++;
-
-			/* Vertex 2 = Bottom right */
-			vertexPtr->sx=( x1 - 1);
-			vertexPtr->sy=( y1 - 1);
-			vertexPtr->color = Colour;
-			
-			NumVertices++;
-			vertexPtr++;
-
-			/* Vertex 3 = Bottom left */
-			vertexPtr->sx=x0;
-			vertexPtr->sy=( y1 - 1);
-			vertexPtr->color = Colour;
-			
-			NumVertices++;
-		}
-		#else
-		int i = 4;
-		do
-		{
-			D3DTLVERTEX *vertexPtr = &((LPD3DTLVERTEX)ExecuteBufferDataArea)[NumVertices];
-			
-//			textprint("x %d, y %d, u %d, v %d\n",quadVerticesPtr->X,quadVerticesPtr->Y,quadVerticesPtr->U,quadVerticesPtr->V);
-			vertexPtr->sx=quadVerticesPtr->X;
-			vertexPtr->sy=quadVerticesPtr->Y;
-			#if 0
-			vertexPtr->tu = ((float)(quadVerticesPtr->U)) * RecipW;
-			vertexPtr->tv = ((float)(quadVerticesPtr->V)) * RecipH;
-			#endif
-
-			vertexPtr->color = Colour;
-			}
-			quadVerticesPtr++;
-			NumVertices++;
-		}
-	  	while(--i);
-		#endif
-	}
-
-	// set correct texture handle
-    if (0 != CurrTextureHandle)
-	{
-       OP_STATE_RENDER(1, ExecBufInstPtr);
-       STATE_DATA(D3DRENDERSTATE_TEXTUREHANDLE, 0, ExecBufInstPtr);
-	   CurrTextureHandle = 0;
-	}
-
-	/* output triangles to execute buffer */
-	OP_TRIANGLE_LIST(2, ExecBufInstPtr);
-	OUTPUT_TRIANGLE(0,1,3, 4);
-	OUTPUT_TRIANGLE(1,2,3, 4);
-	
-	/* check to see if buffer is getting full */
-	if (NumVertices > (MaxD3DVertices-12)) 
-	{
-	   WriteEndCodeToExecuteBuffer();
-  	   UnlockExecuteBufferAndPrepareForUse();
-	   ExecuteBuffer();
-  	   LockExecuteBuffer();
-	}
+	D3D_Rectangle(x0, y0, x1, y1, R, G, B, translucency);
 }
-#endif
 
 r2pos operator+ ( const r2pos& R2Pos_1, const r2pos& R2Pos_2 )
 {

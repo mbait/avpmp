@@ -17,6 +17,8 @@
 #include "krender.h"
 #include "kshape.h"
 #include "prototyp.h"
+#include "bh_types.h"
+#include "showcmds.h"
 #include "d3d_hud.h"
 #include "hud_layout.h"
 #include "avp_userprofile.h"
@@ -30,6 +32,7 @@ extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 
 extern int SpecialFXImageNumber;
 extern int StaticImageNumber;
+extern int PredatorNumbersImageNumber;
 extern int BurningImageNumber;
 extern int HUDFontsImageNumber;
 
@@ -97,24 +100,103 @@ static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
 	CurrentTranslucencyMode = mode;
 }
 
+#define TA_MAXVERTICES		8
+typedef struct TriangleArray
+{
+	int elements;
+	
+	GLfloat v[TA_MAXVERTICES*4];
+	
+	GLfloat t[TA_MAXVERTICES*4];
+	
+	GLubyte c[TA_MAXVERTICES*4];
+} TriangleArray;
+
+TriangleArray tarr;
+
+static void DrawTriangles_T2F_C4UB_V4F()
+{
+	
+#define OUTPUT_VERTEX(d) \
+{ \
+	glColor4ubv	(&tarr.c[(d) * 4]);	\
+	glTexCoord2fv	(&tarr.t[(d) * 4]);	\
+	glVertex4fv	(&tarr.v[(d) * 4]);	\
+}
+#define OUTPUT_TRIANGLE(a, b, c) \
+{ \
+	OUTPUT_VERTEX((a));	\
+	OUTPUT_VERTEX((b));	\
+	OUTPUT_VERTEX((c));	\
+}
+
+	glBegin(GL_TRIANGLES);
+	switch(tarr.elements) {
+		case 3:
+			OUTPUT_TRIANGLE(0, 2, 1);
+			break;
+#if 0			
+		case 4:
+			OUTPUT_TRIANGLE(0, 1, 2);
+			OUTPUT_TRIANGLE(0, 2, 3);
+			break;
+#endif			
+		case 5:
+			OUTPUT_TRIANGLE(0, 1, 4);
+			OUTPUT_TRIANGLE(1, 3, 4);
+			OUTPUT_TRIANGLE(1, 2, 3);
+			break;
+#if 0			
+		case 6:
+			OUTPUT_TRIANGLE(0, 4, 5);
+			OUTPUT_TRIANGLE(0, 3, 4);
+			OUTPUT_TRIANGLE(0, 2, 3);
+			OUTPUT_TRIANGLE(0, 1, 2);
+			break;
+		case 7:
+			OUTPUT_TRIANGLE(0, 5, 6);
+			OUTPUT_TRIANGLE(0, 4, 5);
+			OUTPUT_TRIANGLE(0, 3, 4);
+			OUTPUT_TRIANGLE(0, 2, 3);
+			OUTPUT_TRIANGLE(0, 1, 2);
+			break;
+#endif			
+		case 8:
+			OUTPUT_TRIANGLE(0, 6, 7);
+		case 7:
+			OUTPUT_TRIANGLE(0, 5, 6);
+		case 6:
+			OUTPUT_TRIANGLE(0, 4, 5);
+			OUTPUT_TRIANGLE(0, 3, 4);
+		case 4:
+			OUTPUT_TRIANGLE(0, 2, 3);
+			OUTPUT_TRIANGLE(0, 1, 2);
+			
+			break;
+		default:
+			fprintf(stderr, "DrawTriangles_T2F_C4UB_V4F: tarr.elements = %d\n", tarr.elements);
+	}
+	glEnd();
+	
+#undef OUTPUT_TRIANGLE	
+#undef OUTPUT_VERTEX
+}
+		
 static void SelectPolygonBeginType(int points)
 {
-/* switch code that uses this to a triangle only drawer */
 	switch(points) {
-		case 1:
-			glBegin(GL_POINTS);
-			break;
-		case 2:
-			glBegin(GL_LINES);
-			break;
 		case 3:
 			glBegin(GL_TRIANGLES);
 			break;
 		case 4:
-			glBegin(GL_QUADS);
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			glBegin(GL_TRIANGLE_FAN);
 			break;
 		default:
-			glBegin(GL_POLYGON);
+			fprintf(stderr, "SelectPolygonBeginType: points = %d\n", points);
 			break;
 	}
 }
@@ -174,12 +256,59 @@ void D3D_DecalSystem_End()
 
 /* ** */
 
+void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a)
+{
+	GLfloat x[4], y[4];
+	
+	if (y1 <= y0)
+		return;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	CheckBoundTextureIsCorrect(0);
+	
+	glColor4ub(r, g, b, a);
+
+	x[0] = x0;
+	x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[0] = y0;
+	y[0] = -(y[0] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+	
+	x[1] = x1 - 1;
+	x[1] =  (x[1] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[1] = y0;
+	y[1] = -(y[1] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+	
+	x[2] = x1 - 1;
+	x[2] =  (x[2] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[2] = y1 - 1;
+	y[2] = -(y[2] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+	
+	x[3] = x0;
+	x[3] =  (x[3] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[3] = y1 - 1;
+	y[3] = -(y[3] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+
+	SelectPolygonBeginType(3); /* triangles */
+	
+	glVertex3f(x[0], y[0], -1.0f);
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[2], y[2], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glEnd();
+}
+
+/* ** */
+
 void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
 {
 	int texoffset;
 	D3DTexture *TextureHandle;
 	int i;
-	GLfloat ZNear, zvalue;
+	GLfloat ZNear;
 	float RecipW, RecipH;
 
 		
@@ -199,14 +328,13 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CheckBoundTextureIsCorrect(TextureHandle->id);
 	
-	// glBegin(GL_POLYGON);
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
+//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
 		int x1, y1;
 		GLfloat s, t;
-		GLfloat rhw = 1.0/(float)vertices->Z;
+		GLfloat rhw = 1.0/(float)vertices->Z, zvalue;
 		
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
@@ -216,7 +344,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-
 #if 0
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
@@ -239,6 +366,7 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 
+#if 0
 		glColor4ub(GammaValues[vertices->R], GammaValues[vertices->G], GammaValues[vertices->B], vertices->A);
 
 	/* they both work. */
@@ -249,9 +377,230 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		glTexCoord2f(s, t);
 		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
 #endif
+
+#endif
 		
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.t[4*i+0] = s;
+		tarr.t[4*i+1] = t;
+		
+		tarr.c[4*i+0] = GammaValues[vertices->R];
+		tarr.c[4*i+1] = GammaValues[vertices->G];
+		tarr.c[4*i+2] = GammaValues[vertices->B];
+		tarr.c[4*i+3] = vertices->A;
 	}
-	glEnd();
+//	glEnd();
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_T2F_C4UB_V4F();
+		
+	CurrTextureHandle = TextureHandle;
+}
+
+void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
+{
+	int texoffset;
+	D3DTexture *TextureHandle;
+	int i;
+	GLfloat ZNear;
+	float RecipW, RecipH;
+
+		
+	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
+	if (texoffset) {
+		TextureHandle = (void *)ImageHeaderArray[texoffset].D3DTexture;
+	} else {
+		TextureHandle = CurrTextureHandle;
+	}
+	
+	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
+
+	RecipW = (1.0f/65536.0f)/128.0f;
+	RecipH = (1.0f/65536.0f)/128.0f;
+	
+	CheckBoundTextureIsCorrect(TextureHandle->id);
+	
+//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];
+		GLfloat x, y, z;
+		int x1, y1;
+		GLfloat s, t;
+		GLfloat rhw = 1.0/(float)vertices->Z;
+		
+		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
+		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
+
+//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
+//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
+			
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+#if 0
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+		
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+#endif
+		x = x1;
+		y = y1;
+						
+		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+
+//		zvalue = vertices->Z+HeadUpDisplayZOffset;
+//		z = 1.0 - 2*ZNear/zvalue;
+		z = 1.0f;
+
+#if 0		
+		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
+
+	/* they both work. */
+#if 0		
+		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
+		glVertex3f(x, y, z);
+#else
+		glTexCoord2f(s, t);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+#endif
+#endif
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.t[4*i+0] = s;
+		tarr.t[4*i+1] = t;
+		
+		tarr.c[4*i+0] = vertices->R;
+		tarr.c[4*i+1] = vertices->G;
+		tarr.c[4*i+2] = vertices->B;
+		tarr.c[4*i+3] = vertices->A;		
+	}
+//	glEnd();
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_T2F_C4UB_V4F();
+	
+	CurrTextureHandle = TextureHandle;
+}
+
+void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
+{
+	int flags;
+	int texoffset;
+	int i;
+	D3DTexture *TextureHandle;
+	
+	float ZNear;
+	float RecipW, RecipH;
+	
+	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	flags = inputPolyPtr->PolyFlags;
+	texoffset = (inputPolyPtr->PolyColour & ClrTxDefn);
+	
+	TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
+	
+	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
+	
+	if (TextureHandle->w == 128) {
+		RecipW = 1.0f / 128.0f;
+	} else {
+		float width = (float) TextureHandle->w;
+		RecipW = 1.0f / width;
+	}
+	
+	if (TextureHandle->h == 128) {
+		RecipH = 1.0f / 128.0f;
+	} else {
+		float height = (float) TextureHandle->h;
+		RecipH = 1.0f / height;
+	}
+	
+//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);                
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];
+		
+		GLfloat x, y, z;
+		int x1, y1;
+		GLfloat s, t;
+		GLfloat rhw = 1.0/(float)vertices->Z;
+		GLfloat zvalue;
+		
+		s = ((float)(vertices->U>>16)+0.5) * RecipW;
+		t = ((float)(vertices->V>>16)+0.5) * RecipH;
+		
+//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
+//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
+			
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+#if 0
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+		
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+#endif
+		x = x1;
+		y = y1;
+						
+		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		z = 1.0 - 2*ZNear/zvalue;
+
+#if 0
+		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
+
+	/* they both work. */
+#if 0		
+		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
+		glVertex3f(x, y, z);
+#else
+		glTexCoord2f(s, t);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+#endif
+#endif		
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.t[4*i+0] = s;
+		tarr.t[4*i+1] = t;
+		
+		tarr.c[4*i+0] = vertices->R;
+		tarr.c[4*i+1] = vertices->G;
+		tarr.c[4*i+2] = vertices->B;
+		tarr.c[4*i+3] = vertices->A;
+	}
+//	glEnd();
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_T2F_C4UB_V4F();
 	
 	CurrTextureHandle = TextureHandle;
 }
@@ -456,7 +805,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		glColor4ub(FastRandom()&255, FastRandom()&255, FastRandom()&255, particleDescPtr->Alpha);
 	}
 
-	//glBegin(GL_POLYGON);
 	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
@@ -531,7 +879,6 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-
 #if 0
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
@@ -564,6 +911,65 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
 	}
 	glEnd();
+}
+
+void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
+{
+	int flags, i;
+	float ZNear;
+	
+	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	flags = inputPolyPtr->PolyFlags;
+	
+	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
+	CheckBoundTextureIsCorrect(0);
+	
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];	
+		int x1, y1;
+		GLfloat x, y, z;
+		float rhw, zvalue;
+		
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+#if 0
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+				
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+#endif
+		
+		x = x1;
+		y = y1;
+		
+		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		z = 1.0 - 2*ZNear/zvalue;
+		
+//		zvalue = vertices->Z+HeadUpDisplayZOffset;
+//		zvalue = ((zvalue-ZNear)/zvalue);
+		
+		rhw = 1.0/(float)vertices->Z;
+		
+		if (flags & iflag_transparent)
+			glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
+		else
+			glColor4ub(vertices->R, vertices->G, vertices->B, 255);
+		
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+	}
+	glEnd();		
 }
 
 void D3D_PlayerOnFireOverlay()
@@ -739,7 +1145,6 @@ void DrawNoiseOverlay(int tr)
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	// CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	CheckBoundTextureIsCorrect(tex->id);
-	// CheckDepthFuncIsCorrect(GL_ALWAYS);
 	glDepthFunc(GL_ALWAYS);
 	
 	u = FastRandom()&255;
@@ -859,12 +1264,72 @@ void D3D_PredatorScreenInversionOverlay()
 	glVertex3f( 1.0f, -1.0f, 1.0f);
 	glVertex3f(-1.0f,  1.0f, 1.0f);
 	
-	glVertex3f( 1.0f, -1.0f, 0.0f);
-	glVertex3f( 1.0f,  1.0f, 0.0f);
-	glVertex3f(-1.0f,  1.0f, 0.0f);
+	glVertex3f( 1.0f, -1.0f, 1.0f);
+	glVertex3f( 1.0f,  1.0f, 1.0f);
+	glVertex3f(-1.0f,  1.0f, 1.0f);
 	
 	glEnd();
 	
+	glDepthFunc(GL_LEQUAL);
+}
+
+void DrawScanlinesOverlay(float level)
+{
+	D3DTexture *tex;
+	GLfloat x[4], y[4], s[4], t[4];
+	float v, size;
+	int c;
+	int a;
+
+	tex = ImageHeaderArray[PredatorNumbersImageNumber].D3DTexture;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
+	//CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
+	CheckBoundTextureIsCorrect(tex->id);
+	glDepthFunc(GL_ALWAYS);
+	
+	c = 255;
+	a = 64.0f+level*64.0f;
+	
+	v = 128.0f;
+	size = 128.0f*(1.0f-level*0.8f);
+	
+	glColor4ub(c, c, c, a);
+
+	x[0] = -1.0f;
+	y[0] = -1.0f;
+	s[0] = (v - size) / 256.0f;
+	t[0] = 1.0f;
+	x[1] =  1.0f;
+	y[1] = -1.0f;
+	s[1] = (v - size) / 256.0f;
+	t[1] = 1.0f;
+	x[2] =  1.0f;
+	y[2] =  1.0f;
+	s[2] = (v + size) / 256.0f;
+	t[2] = 1.0f;
+	x[3] = -1.0f;
+	y[3] =  1.0f;
+	s[3] = (v + size) / 256.0f;
+	t[3] = 1.0f;
+	
+	SelectPolygonBeginType(3); /* triangles */
+		
+	glTexCoord2f(s[0], t[0]);
+	glVertex3f(x[0], y[0], 1.0f);
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], 1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], 1.0f);
+	
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], 1.0f);
+	glTexCoord2f(s[2], t[2]);
+	glVertex3f(x[2], y[2], 1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], 1.0f);
+	
+	glEnd();	
 	glDepthFunc(GL_LEQUAL);
 }
 
@@ -906,7 +1371,7 @@ void D3D_FadeDownScreen(int brightness, int colour)
 	glVertex3f(x[2], y[2], -1.0f);
 	glVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();	
+	glEnd();
 }
 
 void D3D_HUD_Setup()
@@ -923,7 +1388,9 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 	D3DTexture *tex = ImageHeaderArray[imageNumber].D3DTexture;
 	GLfloat x[4], y[4], s[4], t[4];
 	int r, g, b, a;
-	
+
+/* possibly use polygon offset? (predator hud) */
+
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	CheckBoundTextureIsCorrect(tex->id);
 	
@@ -931,14 +1398,14 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 		RecipW = 1.0f / 128.0f;
 	} else {
 		float width = (float) tex->w;
-		RecipW = (1.0f / width);
+		RecipW = 1.0f / width;
 	}
 	
 	if (tex->h == 128) {
 		RecipH = 1.0f / 128.0f;
 	} else {
 		float height = (float) tex->h;
-		RecipH = (1.0f / height);
+		RecipH = 1.0f / height;
 	}
 	
 	b = (colour >> 0)  & 0xFF;
@@ -983,7 +1450,7 @@ void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
 	int noOfDigits=3;
 	int h = MUL_FIXED(HUDScaleFactor,HUD_DIGITAL_NUMBERS_HEIGHT);
 	int w = MUL_FIXED(HUDScaleFactor,HUD_DIGITAL_NUMBERS_WIDTH);
-	
+
 	quadVertices[0].Y = y;
 	quadVertices[1].Y = y;
 	quadVertices[2].Y = y + h;
@@ -1026,4 +1493,75 @@ void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
 		D3D_HUDQuad_Output(HUDFontsImageNumber, quadVertices, colour);
 		
 	} while (--noOfDigits);
+}
+
+void ColourFillBackBuffer(int FillColour)
+{
+	float r, g, b, a;
+	
+	b = ((FillColour >> 0)  & 0xFF) / 255.0f;
+	g = ((FillColour >> 8)  & 0xFF) / 255.0f;
+	r = ((FillColour >> 16) & 0xFF) / 255.0f;
+	a = ((FillColour >> 24) & 0xFF) / 255.0f;
+	
+	glClearColor(r, g, b, a);
+	
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void D3D_DrawBackdrop()
+{
+	extern int NumActiveBlocks;
+	extern DISPLAYBLOCK *ActiveBlockList[];
+	extern MODULE *playerPherModule;
+	
+	PLAYER_STATUS *playerStatusPtr;
+	int numOfObjects = NumActiveBlocks;
+	int needToDrawBackdrop = 0;
+	
+	if (TRIPTASTIC_CHEATMODE||MOTIONBLUR_CHEATMODE)
+		return;
+	
+	if (ShowDebuggingText.Tears) {
+		ColourFillBackBuffer((63<<5));
+		return;
+	}
+	
+	while(numOfObjects--) {
+		DISPLAYBLOCK *objectPtr = ActiveBlockList[numOfObjects];
+		MODULE *modulePtr = objectPtr->ObMyModule;
+		
+		if (modulePtr && (ModuleCurrVisArray[modulePtr->m_index] == 2) && modulePtr->m_flags&MODULEFLAG_SKY) {
+			needToDrawBackdrop = 1;
+			break;
+		}	
+	}
+
+	if (needToDrawBackdrop) {
+		extern BOOL LevelHasStars;
+		extern void RenderSky(void);
+		extern void RenderStarfield(void);
+		
+		ColourFillBackBuffer(0);
+		
+		if (LevelHasStars) {
+			RenderStarfield();
+		} else {
+			RenderSky();
+		}
+		
+		return;
+	}
+	
+	if (!playerPherModule) {
+		ColourFillBackBuffer(0);
+		return;
+	}
+	
+	playerStatusPtr = (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
+	
+	if (!playerStatusPtr->IsAlive || FREEFALL_CHEATMODE) {
+		ColourFillBackBuffer(0);
+		return;
+	}
 }

@@ -277,11 +277,6 @@ void InitForceField()
 	fprintf(stderr, "InitForceField()\n");
 }
 
-void DrawScanlinesOverlay(float level)
-{
-	fprintf(stderr, "DrawScanlinesOverlay(%f)\n", level);
-}
-
 void RenderString(char *stringPtr, int x, int y, int colour)
 {
 	fprintf(stderr, "RenderString(%s, %d, %d, %d)\n", stringPtr, x, y, colour);
@@ -360,21 +355,6 @@ BOOL EndD3DScene()
 	return FALSE;
 }
 
-void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_ZBufferedGouraudPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-}
-
-void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_ZBufferedCloakedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-}
-
-void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_SkyPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-}
-
 void D3D_DrawWaterTest(MODULE *testModulePtr)
 {
 	fprintf(stderr, "D3D_DrawWaterTest(%p)\n", testModulePtr);
@@ -388,11 +368,6 @@ void D3D_DrawParticle_Rain(PARTICLE *particlePtr,VECTORCH *prevPositionPtr)
 void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 {
 	fprintf(stderr, "D3D_DrawCable(%p, %p)\n", centrePtr, orientationPtr);
-}
-
-void D3D_DrawBackdrop()
-{
-	fprintf(stderr, "D3D_DrawBackdrop()\n");
 }
 
 void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
@@ -419,11 +394,6 @@ int ChangePalette (unsigned char* NewPalette)
 void BlitWin95Char(int x, int y, unsigned char toprint)
 {
 	fprintf(stderr, "BlitWin95Char(%d, %d, %d)\n", x, y, toprint);
-}
-
-void ColourFillBackBuffer(int FillColour)
-{
-	fprintf(stderr, "ColourFillBackBuffer(%d)\n", FillColour);
 }
 
 void LockSurfaceAndGetBufferPointer()

@@ -44,6 +44,8 @@ extern int NormalFrameTime;
 
 static SDL_Surface *surface;
 
+/* ** */
+
 void DirectReadKeyboard()
 {
 }
@@ -55,6 +57,8 @@ void DirectReadMouse()
 void ReadJoysticks()
 {
 }
+
+/* ** */
 
 PROCESSORTYPES ReadProcessorType()
 {
@@ -104,6 +108,10 @@ int InitialiseWindowsSystem()
 	
 	glEnable(GL_TEXTURE_2D);
 
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_FILL);
+	glDisable(GL_CULL_FACE);
+	
 /*	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 */	
@@ -483,16 +491,11 @@ void FlipBuffers()
 
 void ThisFramesRenderingHasBegun()
 {
-/*	fprintf(stderr, "ThisFramesRenderingHasBegun()\n"); */
-
-/* TODO: this should be in D3D_DrawBackdrop */
-	glClear(GL_COLOR_BUFFER_BIT);
+/* sets scene defaults */
 }
 
 void ThisFramesRenderingHasFinished()
 {
-/*	fprintf(stderr, "ThisFramesRenderingHasFinished()\n"); */
-
 /* This is where the queued drawing commands' execution takes place */
 
 	LightBlockDeallocation();
@@ -569,13 +572,13 @@ int main(int argc, char *argv[])
 //	AvP.PlayerType = I_Alien;
 //	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
 
-	AvP.PlayerType = I_Marine;
+//	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
-//	AvP.PlayerType = I_Predator;
-//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
+	AvP.PlayerType = I_Predator;
+	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 

@@ -6,14 +6,7 @@
 
 #include "3dc.h"
 #include "platform.h"
-#include "r2base.h"
 #include "indexfnt.hpp"
-
-/* d3d_render.cpp */
-void r2rect::AlphaFill(unsigned char R, unsigned char G, unsigned char B, unsigned char translucency) const
-{
-	fprintf(stderr, "r2rect::AlphaFill(%d, %d, %d, %d)\n", R, G, B, translucency);
-}
 
 /* indexfnt.cpp */
 IndexedFont* IndexedFont :: pIndexedFont[ IndexedFonts_MAX_NUMBER_OF_FONTS ];
