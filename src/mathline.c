@@ -494,7 +494,6 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 
 int WideMulNarrowDiv(int a, int b, int c)
 {
-#if 0 /* TODO: broken? */
 	int retval;
 /*
 	_asm
@@ -505,16 +504,13 @@ int WideMulNarrowDiv(int a, int b, int c)
 		mov retval,eax
 	}
 */
-/* TODO */
-__asm__("imull	%2			\n\t"
-	"idivl	%3			\n\t"
+__asm__("imull	%%ebx			\n\t"
+	"idivl	%%ecx			\n\t"
 	: "=a" (retval)
-	: "a" (a), "q" (b), "q" (c)
-	: "cc"
+	: "a" (a), "b" (b), "c" (c)
+	: "%edx", "cc"
 	);	
 	return retval;
-#endif
-	return (a * b) / c;	
 }
 
 /*

@@ -6,10 +6,8 @@
 #include "gamedef.h"
 
 #include "bh_types.h"
-//#include "comp_shp.h"
 #include "dynblock.h"
 #include "dynamics.h"
-//#include "lighting.h"
 
 #include "pfarlocs.h"
 
@@ -17,7 +15,6 @@
 #include "load_shp.h"
 #include "particle.h"
 
-#include "bh_types.h"
 #include "bh_rubberduck.h"			   
 #include "bh_weap.h"
 #include "sfx.h"
@@ -339,4 +336,3 @@ void CreateRubberDucks(void)
 		while(--i);
 	}
 }
-	

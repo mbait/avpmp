@@ -61,8 +61,6 @@ extern "C++"
 ( \
 		RGBA_MAKE(rr,gg,bb,aa) \
 )
-#include "kshape.h"
-
 
 
 void D3D_DrawHUDFontCharacter(HUDCharDesc *charDescPtr);
@@ -694,17 +692,6 @@ void D3D_BLTGunSightToHUD(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsight
 
 	Draw_HUDImage(&imageDesc);
 }
-
-void LoadBackdropImage(void)
-{
-#if 1
-	extern int BackdropImage;
-	extern char LevelName[];
-	if (!strcmp(LevelName,"pred03"))
-	  	BackdropImage = CL_LoadImageOnce("Envrnmts\\Pred03\\backdrop.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE);
-#endif
-}
-
 
 void Render_HealthAndArmour(unsigned int health, unsigned int armour)
 {

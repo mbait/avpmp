@@ -1,5 +1,4 @@
 #include "3dc.h"
-#include "3dc.h"
 #include "module.h"
 #include "inline.h"
 #include "stratdef.h"

@@ -46,7 +46,6 @@
 #include "avp_menus.h"
 #include "showcmds.h"
 #include "game_statistics.h"
-#include "psndplat.h"
 #include "pldnet.h"
 #include "avp_userprofile.h"
 
@@ -311,11 +310,8 @@ void MaintainHUD(void)
 	}
 	RenderGrapplingHook();
 	
-	#if SOFTWARE_RENDERER
-	FlushSoftwareZBuffer();
-	#else
 	SecondFlushD3DZBuffer();
-	#endif
+
 	//DrawFontTest();
 	if (Observer)
 	{

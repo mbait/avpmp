@@ -52,7 +52,6 @@
 #include "pldnet.h"
 
 extern "C" {
-#include "3dc.h"
 #include "inventry.h"
 
 extern int VideoMode;

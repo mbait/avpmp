@@ -44,8 +44,6 @@
 #include "sfx.h"
 #include "bh_marin.h"
 #include "bh_far.h"
-#include "pldghost.h"
-#include "pheromon.h"
 #include "targeting.h"
 #include "dxlog.h"
 #include "los.h"

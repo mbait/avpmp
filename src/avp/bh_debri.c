@@ -1711,7 +1711,6 @@ void SaveStrategy_HierarchicalDebris(STRATEGYBLOCK* sbPtr)
 /*------------------**
 ** Load/Save Debris **
 **------------------*/
-#include "savegame.h"
 
 typedef struct debris_save_block
 {

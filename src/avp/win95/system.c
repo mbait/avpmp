@@ -778,8 +778,8 @@ void LoadRifFile()
 	#endif
 	copy_rif_data(env_rif,CCF_ENVIRONMENT,PBAR_LEVEL_START+PBAR_LEVEL_INTERVAL*.4,PBAR_LEVEL_INTERVAL*.6);
 	//setup_shading_tables();
-	//LoadBackdropImage();
 }
+
 int Destroy_CurrentEnvironment(void)
 {
 	// RWH destroys all en specific data

@@ -1,2 +1,28 @@
+[DONE] [08/24/01] Finish OpenGL code.
+* Fix sound code.
+* See if RGT will respond.
+* Menus.
+* Proper file loading/saving (ignore case, search certain directories) and
+  config handling (~/.avp/{ge, re, ad, md, pd}/?)
+* Command line options.
+* CD Audio.
+* Try to get demos and regular edition to work.
+* See what FOX/Rebellion has to say (if anything) about redistribution of the
+  demos and if its possible to create an installer for regular/gold edition
+  CDs.
+* Put together a workaround if RGT plan fails.
+* See if the build process can be made easier for those who download the
+  source.
+* Write documentation.
+* Prep for a release.  Get someone who has a saner system to build binaries.
+  Look into loki_setup.
+* "Beta test."  Play through the game at least once starting with a clean
+  install.
+* Release. And the crowd goes wild.
+* Fix any bugs found after previous release.
+* Add networking and everything related (dedicated server, master server,
+  etc.)
+* Release new version. And fix bugs, and release new version, and so on.
+----
 * Debug, verify, and reimplant the inline functions in mathline.c to
   inline.h

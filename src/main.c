@@ -461,8 +461,6 @@ void CheckForWindowsMessages()
 					handle_keypress(KeySymToKey(event.key.keysym.sym), 0, 0);
 					break;
 				case SDL_QUIT:
-//					SDL_Quit();
-//					exit(17); /* TODO tempy! */
 					AvP.MainLoopRunning = 0; /* TODO */
 					break;
 			}
@@ -595,6 +593,9 @@ int main(int argc, char *argv[])
 		
 	LoadKeyConfiguration();
 	
+	CheatMode_Active = CHEATMODE_NONACTIVE;
+	
+	
 	SoundSys_Start();
 	CDDA_Start();
 	
@@ -626,12 +627,13 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
 	
-	AvP.PlayerType = I_Marine;
+//	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-	SetLevelToLoad(AVP_ENVIRONMENT_COLONY);
+//	SetLevelToLoad(AVP_ENVIRONMENT_COLONY);
 	
-//	AvP.PlayerType = I_Predator;
-//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
+	AvP.PlayerType = I_Predator;
+	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
+//	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE_P);
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 //	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);

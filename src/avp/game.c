@@ -60,7 +60,6 @@
 
 #define	VERSION_DisableStartupMenus 	Yes
 #define VERSION_DisableStartupCredits	Yes
-#include "avp_menus.h"
 
 /******************
 Extern Engine Varibles
