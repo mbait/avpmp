@@ -394,6 +394,8 @@ __asm__("imull	%%edx			\n\t"
 int DIV_FIXED(int a, int b)
 {
 	int retval;
+	
+	if (b == 0) return 0; /* TODO: debug this! (start with alien on ferarco) */
 /*
 	_asm
 	{

@@ -442,10 +442,11 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-//	AvP.PlayerType = I_Alien;
+	AvP.PlayerType = I_Alien;
+	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
 
-	AvP.PlayerType = I_Marine;
-	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+//	AvP.PlayerType = I_Marine;
+//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
 
 
@@ -455,7 +456,7 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
-	
+
 // while(AvP_MainMenus()) {
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;

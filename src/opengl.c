@@ -333,6 +333,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		{
 			int r, g, b, a;
 	
+			/* this should be OK. (ColourComponents was RGBA while RGBA_MAKE is BGRA (little endian) */
 			r = (particlePtr->Colour >> 0)  & 0xFF;
 			g = (particlePtr->Colour >> 8)  & 0xFF;
 			b = (particlePtr->Colour >> 16) & 0xFF;
@@ -355,9 +356,9 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	} else {
 		int r, g, b, a;
 		
-		r = (particlePtr->Colour >> 0)  & 0xFF;
+		b = (particlePtr->Colour >> 0)  & 0xFF;
 		g = (particlePtr->Colour >> 8)  & 0xFF;
-		b = (particlePtr->Colour >> 16) & 0xFF;
+		r = (particlePtr->Colour >> 16) & 0xFF;
 		a = (particlePtr->Colour >> 24) & 0xFF;
 		
 		glColor4ub(r, g, b, a);
