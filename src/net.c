@@ -47,11 +47,13 @@ HRESULT DpExtSend(int lpDP2A, DPID idFrom, DPID idTo, DWORD dwFlags, void *lpDat
 /*
 	fprintf(stderr, "DpExtSend(%d, %d, %d, %d, %p, %d)\n", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
 */
+#if 0
 	FILE *fp = fopen("net.log", "ab");
 	fprintf(fp, "\nDpExtSend(%d, %d, %d, %d, %p, %d) ", lpDP2A, idFrom, idTo, dwFlags, lpData, dwDataSize);
 	fprintf(fp, "time = %d\n", timeGetTime());
 	fwrite(lpData, dwDataSize, 1, fp);
 	fclose(fp);
+#endif
 
 	return 1;
 }
