@@ -20,6 +20,10 @@
 #include "avp_userprofile.h"
 #include "pldnet.h"
 #include "cdtrackselection.h"
+#include "gammacontrol.h"
+
+#define MyWidth		1024
+#define MyHeight	768
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -51,13 +55,13 @@ int InitialiseWindowsSystem()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
-	if (SDL_SetVideoMode(640, 480, 0, SDL_OPENGL) == NULL) {
+	if (SDL_SetVideoMode(MyWidth, MyHeight, 0, SDL_OPENGL) == NULL) {
 		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
 	
-	glViewport(0, 0, 640, 480);
+	glViewport(0, 0, MyWidth, MyHeight);
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -348,8 +352,9 @@ void InGameFlipBuffers()
 
 void ThisFramesRenderingHasBegun()
 {
-	fprintf(stderr, "ThisFramesRenderingHasBegun()\n");
+/*	fprintf(stderr, "ThisFramesRenderingHasBegun()\n"); */
 
+/* TODO: this should be in D3D_DrawBackdrop */
 #if 1	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif	
@@ -357,7 +362,11 @@ void ThisFramesRenderingHasBegun()
 
 void ThisFramesRenderingHasFinished()
 {
-	fprintf(stderr, "ThisFramesRenderingHasFinished()\n");
+/*	fprintf(stderr, "ThisFramesRenderingHasFinished()\n"); */
+
+/* This is where the queued drawing commands' execution takes place */
+
+	LightBlockDeallocation();
 }
                 
 int ExitWindowsSystem()
@@ -397,6 +406,8 @@ int main(int argc, char *argv[])
 	InitialiseSystem();
 	InitialiseRenderer();
 	
+	RequestedGammaSetting = 128;
+	
 /*	InitOptionsMenu();  NOT YET */
 	
 //	LoadDefaultPrimaryConfigs(); /* load the configs! yes! */
@@ -422,8 +433,11 @@ int main(int argc, char *argv[])
 	LoadSounds("PLAYER");
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
+	
+	AvP.PlayerType = I_Alien;
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
-	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP);
 	 
 // while(AvP_MainMenus()) {
 
@@ -431,18 +445,20 @@ int main(int argc, char *argv[])
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
 	/* this was in windows SetGameVideoMode: */
-	ScreenDescriptorBlock.SDB_Width     = 640;
-	ScreenDescriptorBlock.SDB_Height    = 480;
-	ScreenDescriptorBlock.SDB_CentreX   = 640/2;
-	ScreenDescriptorBlock.SDB_CentreY   = 480/2;
-	ScreenDescriptorBlock.SDB_ProjX     = 640/2;
-	ScreenDescriptorBlock.SDB_ProjY     = 480/2;
+	ScreenDescriptorBlock.SDB_Width     = MyWidth;
+	ScreenDescriptorBlock.SDB_Height    = MyHeight;
+	ScreenDescriptorBlock.SDB_CentreX   = MyWidth/2;
+	ScreenDescriptorBlock.SDB_CentreY   = MyHeight/2;
+	ScreenDescriptorBlock.SDB_ProjX     = MyWidth/2;
+	ScreenDescriptorBlock.SDB_ProjY     = MyHeight/2;
 	ScreenDescriptorBlock.SDB_ClipLeft  = 0;
-	ScreenDescriptorBlock.SDB_ClipRight = 640;
+	ScreenDescriptorBlock.SDB_ClipRight = MyWidth;
 	ScreenDescriptorBlock.SDB_ClipUp    = 0;
-	ScreenDescriptorBlock.SDB_ClipDown  = 480;
+	ScreenDescriptorBlock.SDB_ClipDown  = MyHeight;
 	
 	// GetCorrectDirectDrawObject();
+	
+	InitialiseGammaSettings(RequestedGammaSetting);
 	
 	start_of_loaded_shapes = load_precompiled_shapes();
 	

@@ -40,10 +40,6 @@ void Draw_Item_2dTexturePolygon(int *itemptr)
 	}
 }
 
-                                    
-/* gammacontrol.cpp */
-int RequestedGammaSetting;
-
 
 /* indexfnt.cpp */
 void INDEXFNT_PFLoadHook(FontIndex I_Font_New, PFFONT *pffont_New)

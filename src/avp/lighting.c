@@ -47,11 +47,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=120*256;
 			lightPtr->BlueScale=0;
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=120;
-			lightPtr->LightColour.b=0;
-			#endif
 
 			break;
 		}
@@ -69,11 +64,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=120*256;
 			lightPtr->BlueScale=0;
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=120;
-			lightPtr->LightColour.b=0;
-			#endif
 
 			break;
 		}
@@ -99,11 +89,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->GreenScale=230*256;
 			lightPtr->BlueScale=200*256;
 			#endif
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=192;
-			lightPtr->LightColour.b=128;
-			#endif
 
 			break;
 		}
@@ -121,11 +106,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=32*256;
 			lightPtr->BlueScale=0; 
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=32;
-			lightPtr->LightColour.b=0;
-			#endif
 			break;
 		}
 		case LFX_ROCKETJET:
@@ -142,11 +122,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=255*256;
 			lightPtr->BlueScale=128*256;
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=255;
-			lightPtr->LightColour.b=128;
-			#endif
 
 			break;
 		}
@@ -164,11 +139,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=200*256;
 			lightPtr->BlueScale=255*256;
-			#if PSX
-			lightPtr->LightColour.r=255;
-			lightPtr->LightColour.g=64;
-			lightPtr->LightColour.b=255;
-			#endif
 
 			break;
 		}
@@ -186,11 +156,6 @@ void AddLightingEffectToObject(DISPLAYBLOCK *objectPtr, enum LIGHTING_EFFECTS_ID
 			lightPtr->RedScale=255*256;
 			lightPtr->GreenScale=64*256;
 			lightPtr->BlueScale=255*256;
-			#if PSX
-			lightPtr->LightColour.r=64;
-			lightPtr->LightColour.g=64;
-			lightPtr->LightColour.b=255;
-			#endif
 
 			break;
 		}
