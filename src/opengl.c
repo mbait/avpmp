@@ -96,8 +96,8 @@ switch(RenderPolygon.TranslucencyMode)
 //		z = vertices->Z*16;
 //		z = -z/65536;
 
-		zvalue = vertices->Z+HeadUpDisplayZOffset;
-		zvalue = 1.0f - ZNear/zvalue;
+		zvalue = 65536 - vertices->Z+HeadUpDisplayZOffset;
+		zvalue = 1.0 - ZNear/zvalue;
 		z = -zvalue;
 		
 //		x *= 16.0;
@@ -106,7 +106,8 @@ switch(RenderPolygon.TranslucencyMode)
 		
 		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
 		glVertex3f(x, y, z);
-		fprintf(stderr, "Vertex %d: (%f, %f, %f) [%d, %d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, vertices->R, vertices->G, vertices->B, vertices->A);
+		fprintf(stderr, "Vertex %d: (%f, %f, %f)\n\t[%d, %d, %d]->[%d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, x1, y1, vertices->R, vertices->G, vertices->B, vertices->A);
+		fprintf(stderr, "znear = %f, zvalue = %f, z = %f\n", ZNear, zvalue, z);
 	}
 	glEnd();
 	

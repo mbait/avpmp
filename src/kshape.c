@@ -4500,19 +4500,6 @@ void TranslatePoint(int *source, int *dest, int *matrix)
 #endif
 #endif
 
-static void TranslatePoint(float *source, float *dest, float *matrix)
-{
-//	fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
-
-/* TODO - implement the inline assembly here? */
-/* Moved to a separate file because I can't figure out the damn syntax! */
-__asm__("call	TranslatePoint_Asm	\n\t"
-	:
-	: "S" (source), "b" (dest), "D" (matrix)
-	);
-}
-
-
 void TranslatePointIntoViewspace(VECTORCH *pointPtr)
 {
 	Source[0] = pointPtr->vx;

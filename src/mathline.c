@@ -162,12 +162,12 @@ void MUL_I_WIDE(int a, int b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
-__asm__("imull	%2			\n\t"
+__asm__("imull	%%edx			\n\t"
 	"movl	%%eax, 0(%%ebx)		\n\t"
 	"movl	%%edx, 4(%%ebx)		\n\t"
 	:
-	: "a" (a), "b" (c), "q" (b)
-	: "%edx", "memory", "cc"
+	: "a" (a), "b" (c), "d" (b)
+	: "memory", "cc"
 	);
 }
 
@@ -208,18 +208,18 @@ __asm__("movl	0(%%ebx), %%eax		\n\t"
 	"movl	4(%%ebx), %%edx		\n\t"
 	"subl	0(%%ecx), %%eax		\n\t"
 	"sbbl	4(%%ecx), %%edx		\n\t"
-	"xorl	%0, %0                  \n\t" /* hopefully it doesn't pick %eax or %edx */
+	"xorl	%%ebx, %%ebx            \n\t"
 	"andl	%%edx, %%edx		\n\t"
 	"jne	0			\n\t" /* llnz */
 	"andl	%%eax, %%eax		\n\t"
 	"je	1			\n"   /* llgs */
 "0:					\n\t" /* llnz */
-	"movl	$1, %0			\n\t"
+	"movl	$1, %%ebx		\n\t"
 	"andl	%%edx, %%edx		\n\t"
 	"jge	1			\n\t" /* llgs */
-	"negl	%0			\n"
+	"negl	%%ebx			\n"
 "1:					\n\t" /* llgs */
-	: "=r" (retval)
+	: "=b" (retval)
 	: "b" (a), "c" (b)
 	: "%eax", "%edx", "memory", "cc"
 	);
@@ -374,12 +374,11 @@ int MUL_FIXED(int a, int b)
 		mov retval,eax
 	}
 */
-/* TODO */
-__asm__("imull	%2			\n\t"
+__asm__("imull	%%edx			\n\t"
 	"shrdl	$16, %%edx, %%eax	\n\t"
 	: "=a" (retval)
-	: "a" (a), "q" (b)
-	: "%edx", "cc"
+	: "a" (a), "d" (b)
+	: "cc"
 	);
 	return retval;
 }
@@ -405,14 +404,13 @@ int DIV_FIXED(int a, int b)
 		mov retval,eax
 	}
 */
-/* TODO */
 __asm__("cdq				\n\t"
 	"roll	$16, %%eax		\n\t"
 	"mov	%%ax, %%dx		\n\t"
 	"xor	%%ax, %%ax		\n\t"
-	"idivl	%2			\n\t"
+	"idivl	%%ebx			\n\t"
 	: "=a" (retval)
-	: "a" (a), "q" (b)
+	: "a" (a), "b" (b)
 	: "%edx", "cc"
 	);
 	return retval;
@@ -624,4 +622,17 @@ __asm__("fld	fti_fptmp		\n\t"
 #else
 	return fptmp;
 #endif	
+}
+
+void TranslatePoint(float *source, float *dest, float *matrix)
+{
+//      fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
+
+/* TODO - implement the inline assembly here? */
+/* Moved it to a separate file because I can't figure out the damn syntax! */
+/* This is currently not inlined for testing */
+__asm__("call   TranslatePoint_Asm      \n\t"
+        :
+        : "S" (source), "b" (dest), "D" (matrix)
+        );
 }

@@ -152,8 +152,8 @@ void SoundBehaveFun (STRATEGYBLOCK * sbptr)
 		}
 	}
 
-	// hack hack hack fixme fixme fix me
-	#pragma message ("Special code to deal with siren.wav!!");	
+//	// hack hack hack fixme fixme fix me
+//	#pragma message ("Special code to deal with siren.wav!!");	
 	
 	if (AvP.DestructTimer != -1)
 	{

@@ -25,6 +25,10 @@ char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load
 
 extern int ScanDrawMode; /* to fix image loading */
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock; /* this should be put in a header file */
+extern unsigned char DebouncedKeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
+extern unsigned char KeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
+extern int DebouncedGotAnyKey;
+extern unsigned char GotAnyKey;
 
 PROCESSORTYPES ReadProcessorType()
 {
@@ -65,16 +69,60 @@ int InitialiseWindowsSystem()
 	return 0;
 }
 
+static int KeySymToKey(int keysym)
+{
+	switch(keysym) {
+		case SDLK_ESCAPE:
+			return KEY_ESCAPE;
+		case SDLK_RETURN:
+			return KEY_CR;
+			
+		case SDLK_LEFT:
+			return KEY_LEFT;
+		case SDLK_RIGHT:
+			return KEY_RIGHT;
+		case SDLK_UP:
+			return KEY_UP;
+		case SDLK_DOWN:
+			return KEY_DOWN;
+
+		default:
+			return -1;
+	}
+}
+
+static void handle_keypress(int keysym, int press)
+{
+	int key = KeySymToKey(keysym);
+	
+	if (key == -1)
+		return;
+
+	if (press && !KeyboardInput[key]) {
+		DebouncedKeyboardInput[key] = 1;
+		DebouncedGotAnyKey = 1;
+	}
+	
+	GotAnyKey = 1;
+	KeyboardInput[key] = press;
+}
+
 void CheckForWindowsMessages()
 {
 	SDL_Event event;
+	
+	GotAnyKey = 0;
+	DebouncedGotAnyKey = 0;
+	memset(DebouncedKeyboardInput, 0, sizeof(DebouncedKeyboardInput));
 	
 	if (SDL_PollEvent(&event)) {
 		do {
 			switch(event.type) {
 				case SDL_KEYDOWN:
+					handle_keypress(event.key.keysym.sym, 1);
 					break;
 				case SDL_KEYUP:
+					handle_keypress(event.key.keysym.sym, 0);
 					break;
 				case SDL_QUIT:
 					SDL_Quit();

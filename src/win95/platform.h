@@ -596,21 +596,6 @@ typedef enum {
 #define gt3poly_vsize   6
 
 
-
-/*
-
- Triangle Array Structure
-
-*/
-
-typedef struct trianglearray {
-
-	int TA_NumTriangles;
-	int *TA_ItemPtr;
-	int *TA_TriangleArray[maxarrtriangles];
-
-} TRIANGLEARRAY;
-
 /*
 	Function prototypes
 */

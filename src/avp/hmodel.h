@@ -62,7 +62,7 @@ typedef struct quat_short
 	short quaty;
 	short quatz;
 	short quatw;
-}QUAT_SHORT;
+} PACKED QUAT_SHORT;
 /*A couple of conversion functions */
 extern void CopyShortQuatToInt(QUAT_SHORT* qs_from,QUAT* q_to);
 extern void CopyIntQuatToShort(QUAT* q_from,QUAT_SHORT* qs_to);
