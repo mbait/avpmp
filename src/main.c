@@ -72,26 +72,7 @@ int WantSound = 1;
 static int WantCDRom = 1;
 static int WantJoystick = 1;
 
-static const char * opengl_library = "/usr/lib/libGL.so.1";
-static const char * opengl_library_tls = "/usr/lib/tls/libGL.so.1";
-
-/* ** */
-
-int CheckToken(const char *str, const char *item)
-{
-	const char *p;
-	int len = strlen(item);
-	
-	p = str;
-	while ((p = strstr(p, item)) != NULL) {
-		char x = *(p + len);
-		if ( (x == 0) || (isspace(x)) )
-			return 1;
-		p += len;
-	}
-	
-	return 0;
-}
+static const char * opengl_library = "/usr/lib/libGL.so.1:/usr/lib/tls/libGL.so.1:/usr/X11R6/lib/libGL.so";
 
 /* ** */
 
@@ -228,9 +209,9 @@ unsigned char *GetScreenShot24(int *width, int *height)
 		
 		ptr = buf;
 		for (i = 0; i < surface->w*surface->h; i++) {
-			ptr[i*3+0] = redtable[ptr[i*3+0]];
-			ptr[i*3+1] = greentable[ptr[i*3+1]];
-			ptr[i*3+2] = bluetable[ptr[i*3+2]];
+			ptr[i*3+0] = redtable[ptr[i*3+0]]>>8;
+			ptr[i*3+1] = greentable[ptr[i*3+1]]>>8;
+			ptr[i*3+2] = bluetable[ptr[i*3+2]]>>8;
 			ptr += 3;
 		}
 	}
@@ -259,6 +240,7 @@ VideoModeStruct VideoModeList[] = {
 {	800,	600,	0	},
 {	1024,	768,	0	},
 {	1152,	864,	0	},
+{	1280,	960,	0,	},
 {	1280,	1024,	0	},
 {	1600,	1200,	0	}
 };
@@ -443,6 +425,36 @@ int InitSDL()
 }
 
 /* ** */
+static void load_opengl_library(const char *lib)
+{
+	char tmppath[PATH_MAX];
+	size_t len, copylen;
+	
+	if (lib == NULL) {
+		fprintf(stderr, "ERROR: no opengl libraries given\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	while (*lib) {
+		len = strcspn(lib, ":");
+				
+		copylen = min(len, PATH_MAX-1);
+				
+		strncpy(tmppath, lib, copylen);
+		tmppath[copylen] = 0;
+		
+		if (SDL_GL_LoadLibrary(tmppath) == 0) {
+			/* success */
+			return;
+		}
+			
+		lib += len;
+		lib += strspn(lib, ":");
+	}
+	
+	fprintf(stderr, "ERROR: unable to initialize opengl library: %s\n", SDL_GetError());
+	exit(EXIT_FAILURE);
+}
 
 int SetSoftVideoMode(int Width, int Height, int Depth)
 {
@@ -455,12 +467,8 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	  let sdl try loading the opengl library, to see if it is even available 
 	  this is definitely not enough, but it's a start...
 	*/
-	if (!surface || !(surface->flags & SDL_OPENGL))
-	if (SDL_GL_LoadLibrary(opengl_library) < 0) {
-		if (!opengl_library_tls || SDL_GL_LoadLibrary(opengl_library_tls) < 0) {
-			fprintf(stderr, "unable to initialize opengl library: %s\n", SDL_GetError());
-			exit(EXIT_FAILURE);
-		}
+	if (!surface || !(surface->flags & SDL_OPENGL)) {
+		load_opengl_library(opengl_library);
 	}
 	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
@@ -537,13 +545,8 @@ int SetOGLVideoMode(int Width, int Height)
 		isgrab = SDL_GRAB_OFF;
 	}
 
-	if (SDL_GL_LoadLibrary(opengl_library) < 0) {
-		if (!opengl_library_tls || SDL_GL_LoadLibrary(opengl_library_tls) < 0) {
-			fprintf(stderr, "unable to initialize opengl library: %s\n", SDL_GetError());
-			exit(EXIT_FAILURE);
-		}
-	}
-		
+	load_opengl_library(opengl_library);
+			
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
@@ -1319,7 +1322,6 @@ int main(int argc, char *argv[])
 				break;
 			case 'g':
 				opengl_library = optarg;
-				opengl_library_tls = NULL;
 				break;
 			default:
 				printf("%s", usage_string);
