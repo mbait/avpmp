@@ -1,4 +1,5 @@
 #ifndef INLINE_INCLUDED
+#define INLINE_INCLUDED
 
 #if SUPPORT_MMX
 #include "mmx_math.h"
@@ -1207,7 +1208,27 @@ a = itmp;}
 
 #else /* other compiler ? */
 
-#error "Unknown compiler"
+/* #error "Unknown compiler" */
+void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c);
+void ADD_LL_PP(LONGLONGCH *c, LONGLONGCH *a);
+void SUB_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c);
+void SUB_LL_MM(LONGLONGCH *c, LONGLONGCH *a);
+void MUL_I_WIDE(int a, int b, LONGLONGCH *c);
+int CMP_LL(LONGLONGCH *a, LONGLONGCH *b);
+void EQUALS_LL(LONGLONGCH *a, LONGLONGCH *b);
+void NEG_LL(LONGLONGCH *a);
+void ASR_LL(LONGLONGCH *a, int shift);
+void IntToLL(LONGLONGCH *a, int *b);
+int MUL_FIXED(int a, int b);
+int DIV_FIXED(int a, int b);
+
+#define DIV_INT(a, b) ((a) / (b))
+
+int NarrowDivide(LONGLONGCH *a, int b);
+int WideMulNarrowDiv(int a, int b, int c);
+void RotateVector_ASM(VECTORCH *v, MATRIXCH *m);
+void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m);
+int f2i(float f);
 
 #endif
 
@@ -1241,6 +1262,5 @@ void CopyClipPoint(CLIP_POINT *cp1, CLIP_POINT *cp2);
 }
 #endif
 
-#define INLINE_INCLUDED
-#endif
 
+#endif

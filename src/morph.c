@@ -1,36 +1,23 @@
 #include "3dc.h"
-
 #include "inline.h"
-
 
 /*
  externs for commonly used global variables and arrays
 */
 
-	extern MORPHDISPLAY MorphDisplay;
-	extern int NormalFrameTime;
-
+extern MORPHDISPLAY MorphDisplay;
+extern int NormalFrameTime;
 
 /*
-
  Global Variables
-
 */
 
-
-
-
-
 /*
-
  Update Morphing Animation Control Block
-
 */
 
 void UpdateMorphing(MORPHCTRL *mcptr)
-
 {
-
 	MORPHHEADER *mhdr = mcptr->ObMorphHeader;
 	int UpdateRate;
 
@@ -130,12 +117,9 @@ void UpdateMorphing(MORPHCTRL *mcptr)
 */
 
 void UpdateMorphingDptr(DISPLAYBLOCK *dptr)
-
 {
-
 	SHAPEHEADER *sptr1;
 	SHAPEHEADER *sptr2;
-
 
 	/* Update object radius and extents */
 
@@ -284,9 +268,7 @@ void UpdateMorphingDptr(DISPLAYBLOCK *dptr)
 */
 
 void GetMorphDisplay(MORPHDISPLAY *md, DISPLAYBLOCK *dptr)
-
 {
-
 	MORPHFRAME *mdata;
 	MORPHCTRL *mc = dptr->ObMorphCtrl;
 	MORPHHEADER *mhdr = mc->ObMorphHeader;
@@ -303,20 +285,13 @@ void GetMorphDisplay(MORPHDISPLAY *md, DISPLAYBLOCK *dptr)
 
 	md->md_sptr1 = GetShapeData(md->md_shape1);
 	md->md_sptr2 = GetShapeData(md->md_shape2);
-
 }
 
 
 void CopyMorphCtrl(MORPHCTRL *src, MORPHCTRL *dst)
-
 {
-
 	dst->ObMorphCurrFrame = src->ObMorphCurrFrame;
 	dst->ObMorphFlags     = src->ObMorphFlags;
 	dst->ObMorphSpeed     = src->ObMorphSpeed;
 	dst->ObMorphHeader    = src->ObMorphHeader;
-
 }
-
-
- 

@@ -243,4 +243,3 @@ void MapBlockInit(DISPLAYBLOCK *dptr)
 
    
 }
-

@@ -70,18 +70,6 @@ To ensure this in arrays of vectors/matrices, the structure
 should contain a dummy padding 32-bit value (recommended).
 */
 
-/* storage class specifier for assembler calls */
-
-#ifdef __WATCOMC__
-#define _asmcall
-#define _asminline
-#elif defined(_MSC_VER)
-#define _asmcall static __inline
-#define _asminline static __inline
-#else
-#error "Unknown compiler"
-#endif
-
 /* forward reference declared in global scope */
 struct vectorch;
 struct matrixch;
@@ -202,7 +190,13 @@ _asmcall signed MMX_VectorDot16(struct vectorch const * v1, struct vectorch cons
 
 #else
 
-#error "Unknown compiler"
+/* #error "Unknown compiler" */
+void MMX_VectorTransform(struct vectorch * vector, struct matrixch const * matrix);
+void MMX_VectorTransformed(struct vectorch * v_result, struct vectorch const * v_parm, struct matrixch const * matrix);
+void MMX_VectorTransformAndAdd(struct vectorch * vector, struct matrixch const * matrix, struct vectorch const * v_add);
+void MMX_VectorTransformedAndAdd(struct vectorch * v_result, struct vectorch const * v_parm, struct matrixch const * matrix, struct vectorch const * v_add);
+int MMX_VectorDot(struct vectorch const * v1, struct vectorch const * v2);
+int MMX_VectorDot16(struct vectorch const * v1, struct vectorch const * v2);
 
 #endif
 
@@ -456,7 +450,9 @@ _asminline signed MMXInline_VectorDot16(struct vectorch const * v1, struct vecto
 
 #else
 
-#error "Unknown compiler"
+/* #error "Unknown compiler" */
+int MMXInline_VectorDot(struct vectorch const * v1, struct vectorch const * v2);
+int MMXInline_VectorDot16(struct vectorch const * v1, struct vectorch const * v2);
 
 #endif
 

@@ -6,18 +6,10 @@
 
 */
 
-#ifndef SupportWindows95
-	#if defined(_WIN32)||defined(WIN32)
-		#define SupportWindows95 1
-	#else
-		#define SupportWindows95 0
-	#endif
+#ifndef SupportWindows95 /* Enable so that PC code is used */
+#define SupportWindows95 1
 #endif
-#if SupportWindows95
-	#include <ddraw.h>
-	#include <d3d.h>
-	#include "aw.h"
-#endif
+
 #include "shpanim.h"
 
 

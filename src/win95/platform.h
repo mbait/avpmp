@@ -1,4 +1,5 @@
 #ifndef PLATFORM_INCLUDED
+#define PLATFORM_INCLUDED
 
 /*
 
@@ -10,41 +11,13 @@
 extern "C"  {
 #endif
 
-/*
-	Minimise header files to
-	speed compiles...
-*/
+#define PACKED __attribute__((packed))
 
-#define WIN32_LEAN_AND_MEAN
-
-/*
-	Standard windows functionality
-*/
-
-#include <windows.h>
-#include <windowsx.h>
-#include <winuser.h>
-#include <mmsystem.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdio.h>
-
-/*
-	DirectX functionality
-*/
-
-#include "ddraw.h"
-#include "d3d.h"
-#include "dsound.h"
-#include "dplay.h"
-#include "dinput.h"
-#include "dplobby.h"
 //#include "fastfile.h"
 
 
 #define platform_pc Yes
-
-#define Saturn			No
+#define Saturn No
 
 #define Hardware2dTextureClipping No
 
@@ -607,10 +580,6 @@ typedef enum {
   loader works (John's code, still under test).
 */
 
-#ifdef __WATCOMC__
-#pragma pack (1)
-#endif
-
 typedef struct bmpheader {
 
 	unsigned short BMP_ID;	/* Contains 'BM' */
@@ -634,11 +603,7 @@ typedef struct bmpheader {
 	int BMP_Colours;		/* Number of colours used, below (N) */
 	int BMP_ImpCols;		/* Number of important colours */
 
-} BMPHEADER;
-
-#ifdef __WATCOMC__
-#pragma pack (4)
-#endif
+} PACKED BMPHEADER;
 
 /*
 	Types of texture files that can be
@@ -785,27 +750,6 @@ void UnlockBackdropSurface(void);
 void ComposeBackdropBackBuffer(void);
 int GetSingleColourForPrimary(int Colour);
 
-/* 
-	DirectX functionality only available in 
-	C++ under Watcom at present
-*/
-#ifdef __cplusplus
-HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd, LPVOID Context);
-BOOL FAR PASCAL EnumDDObjectsCallback(GUID FAR* lpGUID, LPSTR lpDriverDesc,
-                                      LPSTR lpDriverName, LPVOID lpContext);
-#if triplebuffer
-/* 
-	must be WINAPI to support Windows FAR PASCAL
-	calling convention.  Must be HRESULT to support
-	enumeration return value.  NOTE THIS FUNCTION
-	DOESN'T WORK (DOCS WRONG) AND TRIPLE BUFFERING
-	HAS BEEN REMOVED ANYWAY 'COS IT'S USELESS...
-*/
-HRESULT WINAPI InitTripleBuffers(LPDIRECTDRAWSURFACE lpdd, 
-	 LPDDSURFACEDESC lpsd, LPVOID lpc);
-#endif
-#endif
-
 /* Direct 3D Immediate Mode Rasterisation Module */
 BOOL InitialiseDirect3DImmediateMode(void);
 BOOL LockExecuteBuffer(void);
@@ -934,6 +878,5 @@ void ProcessProjectWhileWaitingToBeFlippable();
 };
 #endif
 
-#define PLATFORM_INCLUDED
 
 #endif
