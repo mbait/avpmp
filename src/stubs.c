@@ -577,16 +577,6 @@ void D3D_Decal_Output(DECAL *decalPtr,RENDERVERTEX *renderVerticesPtr)
 	fprintf(stderr, "D3D_Decal_Output(%p, %p)\n", decalPtr, renderVerticesPtr);
 }
 
-void D3D_DecalSystem_Setup()
-{
-	fprintf(stderr, "D3D_DecalSystem_Setup()\n");
-}
-
-void D3D_DecalSystem_End()
-{
-	fprintf(stderr, "D3D_DecalSystem_End()\n");
-}
-
 void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
 {
 	fprintf(stderr, "D3D_BackdropPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);

@@ -40,6 +40,16 @@ void SecondFlushD3DZBuffer()
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
+void D3D_DecalSystem_Setup()
+{
+	glDepthMask(GL_FALSE);
+}
+
+void D3D_DecalSystem_End()
+{
+	glDepthMask(GL_TRUE);
+}
+
 GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 {
 	GLuint h;
@@ -47,8 +57,11 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	glGenTextures(1, &h);
 	
 	glBindTexture(GL_TEXTURE_2D, h);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
@@ -141,11 +154,25 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 /* this currently doesn't work quite right */
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
-		z = (65536.0f)/(vertices->Z);
-		glTexCoord4f(s, t, 0, 1.00);
+		
+		z = 1.0 - 600.0/(vertices->Z);
+		glTexCoord2f(s, t);
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+		
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+		
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+		
 		x = x1;
 		y = y1;
 						
@@ -173,6 +200,7 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CurrTextureHandle = TextureHandle;
 
+/* note: this doesn't seem to be used in the original? */
 return;
 /* This *tries* to emulate SecondaryColorExt */
 /*	if (!SecondaryColorExt || WantSecondaryColorHack) */ {
@@ -219,6 +247,34 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	int texoffset = SpecialFXImageNumber;
 	GLfloat ZNear;
 	int i;
+	float RecipW, RecipH;
+	
+	D3DTexture *TextureHandle;
+	
+	TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
+	
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, TextureHandle->id);
+	
+//	if(ImageHeaderArray[texoffset].ImageWidth==256) {
+	if (TextureHandle->w == 256) {
+		RecipW = 1.0 / 256.0;
+	} else {
+//		float width = (float) ImageHeaderArray[texoffset].ImageWidth;
+		float width = (float) TextureHandle->w;
+		
+		RecipW = (1.0 / width);
+	}
+	
+//	if(ImageHeaderArray[texoffset].ImageHeight==256) {
+	if (TextureHandle->h == 256) {
+		RecipH = 1.0 / 256.0;
+	} else {
+//		float height = (float) ImageHeaderArray[texoffset].ImageHeight;
+		float height = (float) TextureHandle->h;
+		
+		RecipH = (1.0 / height);
+	}
 	
 	if (particleDescPtr->IsLit && !(particlePtr->ParticleID==PARTICLE_ALIEN_BLOOD && CurrentVisionMode==VISION_MODE_PRED_SEEALIENS) )
 	{
@@ -271,6 +327,11 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		
 		int x1, y1;
 		GLfloat x, y, z, zvalue;
+		GLfloat s, t;
+		
+		s = ((float)(vertices->U>>16)+.5) * RecipW;
+		t = ((float)(vertices->V>>16)+.5) * RecipH;
+		glTexCoord2f(s, t);
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
@@ -291,9 +352,14 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
 		
-		zvalue = vertices->Z+HeadUpDisplayZOffset;
-		zvalue = 1.0 - 2*ZNear/zvalue; /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
-//		zvalue = 2.0 * (zvalue - ZNear) / (ZFar - ZNear) - 1.0;
+		zvalue = 0;
+		if (particleDescPtr->IsDrawnInFront) {
+			zvalue = -1.0f;
+		} else if (particleDescPtr->IsDrawnAtBack) {
+			zvalue = 1.0f;
+		} else {
+			zvalue = 1.0 - 2*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
+		}
 		z = zvalue;
 		
 		glVertex3f(x, y, z);

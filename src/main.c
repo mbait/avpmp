@@ -69,8 +69,13 @@ int InitialiseWindowsSystem()
 	glLoadIdentity();
 
 	glEnable(GL_BLEND);
+	
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	
 	glEnable(GL_TEXTURE_2D);
+	
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif		
 	return 0;
 }
@@ -437,16 +442,18 @@ int main(int argc, char *argv[])
 	
 //	AvP.PlayerType = I_Alien;
 
-//	AvP.PlayerType = I_Marine;
-//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+	AvP.PlayerType = I_Marine;
+	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
 
 
-	AvP.PlayerType = I_Predator;
-	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL);
+//	AvP.PlayerType = I_Predator;
+//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer
-	 
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+
+//	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
+	
 // while(AvP_MainMenus()) {
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
