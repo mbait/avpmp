@@ -527,16 +527,6 @@ void D3D_PlayerDamagedOverlay(int intensity)
 	fprintf(stderr, "D3D_PlayerDamagedOverlay(%d)\n", intensity);
 }
 
-void D3D_HUD_Setup()
-{
-	fprintf(stderr, "D3D_HUD_Setup()\n");
-}
-
-void D3D_HUDQuad_Output(int imageNumber,struct VertexTag *quadVerticesPtr, unsigned int colour)
-{
-	fprintf(stderr, "D3D_HUDQuad_Output(%d, %p, %d)\n", imageNumber, quadVerticesPtr, colour);
-}
-
 void D3D_FadeDownScreen(int brightness, int colour)
 {
 	fprintf(stderr, "D3D_FadeDownScreen(%d, %d)\n", brightness, colour);
@@ -560,11 +550,6 @@ void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 void D3D_DrawBackdrop()
 {
 	fprintf(stderr, "D3D_DrawBackdrop()\n");
-}
-
-void D3D_Decal_Output(DECAL *decalPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_Decal_Output(%p, %p)\n", decalPtr, renderVerticesPtr);
 }
 
 void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)

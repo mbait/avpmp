@@ -293,6 +293,127 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 #endif	
 }
 
+void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
+{
+	DECAL_DESC *decalDescPtr = &DecalDescription[decalPtr->DecalID];
+	int texoffset;
+	D3DTexture *TextureHandle;
+	int i;
+	
+	float ZNear;
+	float RecipW, RecipH;
+	int r, g, b, a;
+	
+	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	CheckTranslucencyModeIsCorrect(decalDescPtr->TranslucencyType);
+	
+	if (decalPtr->DecalID == DECAL_FMV) {
+		/* not (yet) implemented */
+		return;
+	} else if (decalPtr->DecalID == DECAL_SHAFTOFLIGHT||decalPtr->DecalID == DECAL_SHAFTOFLIGHT_OUTER) {
+		CheckBoundTextureIsCorrect(0);
+		
+		RecipW = 1.0 / 256.0; /* ignored */
+		RecipH = 1.0 / 256.0;
+	} else {
+		texoffset = SpecialFXImageNumber;
+		
+		TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
+		
+		if (TextureHandle->w == 256) {
+			RecipW = 1.0 / 256.0;
+		} else {
+			float width = (float) TextureHandle->w; 
+			RecipW = 1.0 / width;
+		}
+		
+		if (TextureHandle->h == 256) {
+			RecipH = 1.0 / 256.0;
+		} else {
+			float height = (float) TextureHandle->h;
+			RecipH = 1.0 / height;
+		}
+		
+		CheckBoundTextureIsCorrect(TextureHandle->id);
+	}
+	
+	if (decalDescPtr->IsLit) {
+		int intensity = LightIntensityAtPoint(decalPtr->Vertices);
+		
+		r = MUL_FIXED(intensity,decalDescPtr->RedScale[CurrentVisionMode]);
+		g = MUL_FIXED(intensity,decalDescPtr->GreenScale[CurrentVisionMode]);
+		b = MUL_FIXED(intensity,decalDescPtr->BlueScale[CurrentVisionMode]);
+		a = decalDescPtr->Alpha;
+	} else {
+		r = decalDescPtr->RedScale[CurrentVisionMode];
+		g = decalDescPtr->GreenScale[CurrentVisionMode];
+		b = decalDescPtr->BlueScale[CurrentVisionMode];
+		a = decalDescPtr->Alpha;
+	}
+	
+	if (RAINBOWBLOOD_CHEATMODE) {
+		r = FastRandom()&255;
+		g = FastRandom()&255;
+		b = FastRandom()&255;
+		a = decalDescPtr->Alpha;
+	}
+	
+	glColor4ub(r, g, b, a);
+	
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];
+		
+		GLfloat x, y, z, zvalue;
+		GLfloat s, t, rhw;
+		int x1, y1;
+		
+		rhw = 1.0 / vertices->Z;
+		
+		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+#if 0
+		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
+			x1=Global_VDB_Ptr->VDB_ClipLeft;
+		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
+			x1=Global_VDB_Ptr->VDB_ClipRight;
+		}
+				
+		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
+			y1=Global_VDB_Ptr->VDB_ClipUp;
+		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
+			y1=Global_VDB_Ptr->VDB_ClipDown;
+		}
+#endif
+		
+		x = x1;
+		y = y1;
+		
+		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		s = ((float)(vertices->U>>16)+.5) * RecipW;
+		t = ((float)(vertices->V>>16)+.5) * RecipH;
+
+		zvalue = vertices->Z+HeadUpDisplayZOffset;
+		z = 1.0 - 2*ZNear/zvalue;
+		
+//		zvalue = vertices->Z+HeadUpDisplayZOffset;
+//		zvalue = ((zvalue-ZNear)/zvalue);
+
+#if 0
+		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
+		glVertex3f(x, y, z);
+#else
+		glTexCoord2f(s, t);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+#endif
+	}
+	glEnd();
+	
+}
+
 void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 {
 	PARTICLE_DESC *particleDescPtr = &ParticleDescription[particlePtr->ParticleID];
@@ -502,4 +623,72 @@ void D3D_PredatorScreenInversionOverlay()
 	glEnd();
 	
 	glDepthFunc(GL_LEQUAL);
+}
+
+void D3D_HUD_Setup()
+{
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	
+	glDepthFunc(GL_LEQUAL);
+}
+
+void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsigned int colour)
+{
+	float RecipW, RecipH;
+	int i;
+	D3DTexture *tex = ImageHeaderArray[imageNumber].D3DTexture;
+	GLfloat x[4], y[4], s[4], t[4];
+	int r, g, b, a;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	CheckBoundTextureIsCorrect(tex->id);
+	
+	if (tex->w == 128) {
+		RecipW = 1.0f / 128.0f;
+	} else {
+		float width = (float) tex->w;
+		RecipW = (1.0f / width);
+	}
+	
+	if (tex->h == 128) {
+		RecipH = 1.0f / 128.0f;
+	} else {
+		float height = (float) tex->h;
+		RecipH = (1.0f / height);
+	}
+	
+	b = (colour >> 0)  & 0xFF;
+	g = (colour >> 8)  & 0xFF;
+	r = (colour >> 16) & 0xFF;
+	a = (colour >> 24) & 0xFF;
+		
+	glColor4ub(r, g, b, a);
+	
+	for (i = 0; i < 4; i++) {
+		x[i] = quadVerticesPtr[i].X;
+		x[i] =  (x[i] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y[i] = quadVerticesPtr[i].Y;
+		y[i] = -(y[i] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		s[i] = ((float)quadVerticesPtr[i].U)*RecipW;
+		t[i] = ((float)quadVerticesPtr[i].V)*RecipH;
+	}
+	
+	SelectPolygonBeginType(3); /* triangles */
+	
+	glTexCoord2f(s[0], t[0]);
+	glVertex3f(x[0], y[0], -1.0f);
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], -1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], -1.0f);
+	glTexCoord2f(s[2], t[2]);
+	glVertex3f(x[2], y[2], -1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glEnd();
 }
