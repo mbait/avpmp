@@ -37,14 +37,11 @@ static int SoundActivated = 0;
 
 /*
 openal.c TODO:
-1. AL_PITCH code does not work.
-   OpenAL alf_tpitch is currently broken. (Doesn't work with LOOPING, etc.)
-   Maps like Last Stand use it for (some rather odd) ambient sounds.
+1. AL_PITCH seems to work, but laststand is still a bit weird.
 2. Panning somewhat works now.  Need someone to verify.
 3. There is no EAX/Reverb.  But there's probably not much I can do...
 4. Restarting sound system may or may not work.
 5. Doppler (if it was originally used) isn't currently used.
-   Probably also broken in OpenAL (see 1).
 6. Better Error Handling (device not avail, etc).
 */
 int PlatStartSoundSys()
@@ -397,21 +394,13 @@ int PlatPlaySound(int activeIndex)
 	if (!PlatSoundHasStopped(activeIndex))		
 		PlatStopSound (activeIndex);
 
-#if 0
-	/* TODO: hack until pitching works right */
-	if (GameSounds[si].pitch < -500)
-		return 0;
-#endif
-
 	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_BUFFER,
 		   GameSounds[si].dsBufferP);
 
-#if 1 /* PLEASE REMOVE IFDEF! */
 	if (ActiveSounds[activeIndex].loop)
 		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
 	else
 		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
-#endif
 
 	if (1 || ActiveSounds[activeIndex].pitch != GameSounds[si].pitch) {
 		PlatChangeSoundPitch(activeIndex, ActiveSounds[activeIndex].pitch);
@@ -539,17 +528,15 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 	}
 	
 	alSourcef(ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);
+
+#ifdef OPENAL_DEBUG
 	fprintf(stderr, "OPENAL: freq change = %f\n", frequency);
-#if 0	
-	if (pitch < -500) { /* currently can't play it anyway... */
-		alSourceStop(ActiveSounds[activeIndex].ds3DBufferP);
-		return 0;
-	}
-#endif	
+#endif
+
 	ActiveSounds[activeIndex].pitch = pitch;
 
 #ifdef OPENAL_DEBUG	
-	fprintf(stderr, "OPENAL: PlatChangeSoundPitch(%d, %d) = %f\n", activeIndex, pitch, (double)frequency / (double)GameSounds[ActiveSounds[activeIndex].soundIndex].dsFrequency);
+	fprintf(stderr, "OPENAL: PlatChangeSoundPitch(%d, %d) = %f\n", activeIndex, pitch, (double)frequency);
 #endif
 	return 1;
 }
