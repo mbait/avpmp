@@ -308,63 +308,6 @@ void GenerateDirectDrawSurface()
 int use_mmx_math = 0;
 
 
-/* cd_player.c */
-void CDDA_Start()
-{
-	fprintf(stderr, "CDDA_Start()\n");
-}
-
-void CDDA_End()
-{
-	fprintf(stderr, "CDDA_End()\n");
-}
-
-void CDDA_ChangeVolume(int volume)
-{
-	fprintf(stderr, "CDDA_ChangeVolume(%d)\n", volume);
-}
-
-int CDDA_CheckNumberOfTracks()
-{
-	fprintf(stderr, "CDDA_CheckNumberOfTracks()\n");
-	
-	return 0;
-}
-
-int CDDA_IsOn()
-{
-	fprintf(stderr, "CDDA_IsOn()\n");
-	
-	return 0;
-}
-
-int CDDA_IsPlaying()
-{
-	fprintf(stderr, "CDDA_IsPlaying()\n");
-	
-	return 0;
-}
-
-void CDDA_Play(int CDDATrack)
-{
-	fprintf(stderr, "CDDA_Play(%d)\n", CDDATrack);
-}
-
-void CDDA_PlayLoop(int CDDATrack)
-{
-	fprintf(stderr, "CDDA_PlayLoop(%d)\n", CDDATrack);
-}
-
-void CDDA_Stop()
-{
-	fprintf(stderr, "CDDA_Stop()\n");
-}
-
-void CDDA_SwitchOn()
-{
-	fprintf(stderr, "CDDA_SwitchOn()\n");
-}
-
 
 /* dxlog.c */
 void dx_str_log(char const * str, int line, char const * file)

@@ -1,3 +1,6 @@
+#ifndef __WIN95_CDPLAYER_H__
+#define __WIN95_CDPLAYER_H__
+
 /* KJL 12:40:35 07/05/98 - This is code derived from Patrick's original stuff &
 moved into it's own file. */
 
@@ -108,3 +111,5 @@ extern void PlatCDDAManagementCallBack(WPARAM flags, LONG deviceId);
 
 
 extern int CDPlayerVolume;
+
+#endif
