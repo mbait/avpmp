@@ -22,9 +22,9 @@ extern char MP_SessionName[];
 extern char MP_Config_Description[];
 
 #define MP_CONFIG_DIR "MPConfig"
-#define MP_CONFIG_WILDCARD "MPConfig\\*.cfg"
+#define MP_CONFIG_WILDCARD "MPConfig/*.cfg"
 
-#define SKIRMISH_CONFIG_WILDCARD "MPConfig\\*.skirmish_cfg"
+#define SKIRMISH_CONFIG_WILDCARD "MPConfig/.skirmish_cfg"
 
 static List<char*> ConfigurationFilenameList;
 static List<char*> ConfigurationLocalisedFilenameList;
@@ -199,9 +199,9 @@ const char* GetMultiplayerConfigDescription(int index)
 	FILE* file;
 	char filename[200];
 	if(netGameData.skirmishMode)
-		sprintf(filename,"%s\\%s.skirmish_cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.skirmish_cfg",MP_CONFIG_DIR,name);
 	else
-		sprintf(filename,"%s\\%s.cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.cfg",MP_CONFIG_DIR,name);
 
 	file=fopen(filename,"rb");
 	if(!file)
@@ -239,9 +239,9 @@ void LoadMultiplayerConfiguration(const char* name)
 	FILE* file;
 	char filename[200];
 	if(netGameData.skirmishMode)
-		sprintf(filename,"%s\\%s.skirmish_cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.skirmish_cfg",MP_CONFIG_DIR,name);
 	else
-		sprintf(filename,"%s\\%s.cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.cfg",MP_CONFIG_DIR,name);
 
 	file=fopen(filename,"rb");
 	if(!file) return;
@@ -350,9 +350,9 @@ void SaveMultiplayerConfiguration(const char* name)
 	FILE* file;
 	char filename[200];
 	if(netGameData.skirmishMode)
-		sprintf(filename,"%s\\%s.skirmish_cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.skirmish_cfg",MP_CONFIG_DIR,name);
 	else
-		sprintf(filename,"%s\\%s.cfg",MP_CONFIG_DIR,name);
+		sprintf(filename,"%s/%s.cfg",MP_CONFIG_DIR,name);
 	
 	CreateDirectory(MP_CONFIG_DIR,0);
 	file=fopen(filename,"wb");
@@ -449,16 +449,16 @@ void DeleteMultiplayerConfigurationByIndex(int index)
 
 	char filename[200];
 	if(netGameData.skirmishMode)
-		sprintf(filename,"%s\\%s.skirmish_cfg",MP_CONFIG_DIR,ConfigurationFilenameList[index]);
+		sprintf(filename,"%s/%s.skirmish_cfg",MP_CONFIG_DIR,ConfigurationFilenameList[index]);
 	else
-		sprintf(filename,"%s\\%s.cfg",MP_CONFIG_DIR,ConfigurationFilenameList[index]);
+		sprintf(filename,"%s/%s.cfg",MP_CONFIG_DIR,ConfigurationFilenameList[index]);
 
 	DeleteFile(filename);
 }
 
 
 #define IP_ADDRESS_DIR "IP_Address"
-#define IP_ADDRESS_WILDCARD "IP_Address\\*.IP Address"
+#define IP_ADDRESS_WILDCARD "IP_Address/*.IP Address"
 
 static List<char*> IPAddFilenameList;
 
@@ -563,7 +563,7 @@ void SaveIPAddress(const char* name,const char* address)
 
 	FILE* file;
 	char filename[200];
-	sprintf(filename,"%s\\%s.IP Address",IP_ADDRESS_DIR,name);
+	sprintf(filename,"%s/%s.IP Address",IP_ADDRESS_DIR,name);
 	
 	CreateDirectory(IP_ADDRESS_DIR,0);
 	file=fopen(filename,"wb");
@@ -584,7 +584,7 @@ void LoadIPAddress(const char* name)
 
 	FILE* file;
 	char filename[200];
-	sprintf(filename,"%s\\%s.IP Address",IP_ADDRESS_DIR,name);
+	sprintf(filename,"%s/%s.IP Address",IP_ADDRESS_DIR,name);
 
 	file=fopen(filename,"rb");
 	if(!file) return;

@@ -44,13 +44,18 @@ the CFLAGS line (the one that's uncommented) in the Makefile. Rename all game
 files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org), nasm
 0.98, and the latest OpenAL CVS (http://www.openal.org).
 
+Create the MPConfig and User_Profiles directories if they do not exist. 
+(Note: Windows profiles probably do not work in Linux and vice versa)
+
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
-aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/
+aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/  MPConfig/
+User_Profiles/
 relnev:~/avp/Gold Edition$ ls
 avp_huds/  avp_rifs/  cd tracks.txt  default.cfg  fastfile/  language.txt
+MPConfig/  User_Profiles/
 
 Support for the demo is not quite complete (some sounds are missing and some
 text is incorrect/missing).

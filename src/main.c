@@ -100,7 +100,7 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
 	
-	if (isfull) {
+	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
 			SDL_ShowCursor(0);
@@ -166,7 +166,7 @@ int SetOGLVideoMode(int Width, int Height)
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
 	
-	if (isfull) {
+	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
 			SDL_ShowCursor(0);
@@ -185,7 +185,8 @@ int SetOGLVideoMode(int Width, int Height)
 	glLoadIdentity();
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE);
+//	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -592,7 +593,7 @@ void CheckForWindowsMessages()
 		MouseVelY = 0;
 	}
 	
-	if (KeyboardInput[KEY_LEFTALT] && DebouncedKeyboardInput[KEY_CR]) {
+	if ((KeyboardInput[KEY_LEFTALT]||KeyboardInput[KEY_RIGHTALT]) && DebouncedKeyboardInput[KEY_CR]) {
 		SDL_GrabMode gm;
 		
 		SDL_WM_ToggleFullScreen(surface);
@@ -685,11 +686,12 @@ int main(int argc, char *argv[])
 	SetFastRandom();
 	
 	GetPathFromRegistry();
-
+#if 0
 {
 	extern int DebuggingCommandsActive;
 	DebuggingCommandsActive = 1;
 }
+#endif
 
 #if MARINE_DEMO
 	ffInit("fastfile/mffinfo.txt","fastfile/");

@@ -20,6 +20,11 @@ extern "C"
 #include "pldnet.h"
 #include <time.h>
 
+#include <glob.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 static int LoadUserProfiles(void);
 
 static void EmptyUserProfilesList(void);
@@ -199,7 +204,79 @@ static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *p
 
 static int LoadUserProfiles(void)
 {
-	fprintf(stderr, "STUB: LoadUserProfiles()\n");
+	glob_t globbuf;
+	const char* load_name=USER_PROFILES_WILDCARD_NAME;
+	
+	if (glob(load_name, 0, NULL, &globbuf))
+		return 0;
+	
+	// get any path in the load_name
+	int nPathLen = 0;
+	char * pColon = strrchr(load_name,':');
+	if (pColon) nPathLen = pColon - load_name + 1;
+	char * pBackSlash = strrchr(load_name,'\\');
+	if (pBackSlash)
+	{
+		int nLen = pBackSlash - load_name + 1;
+		if (nLen > nPathLen) nPathLen = nLen;
+	}
+	char * pSlash = strrchr(load_name,'/');
+	if (pSlash)
+	{
+		int nLen = pSlash - load_name + 1;
+		if (nLen > nPathLen) nPathLen = nLen;
+	}
+
+	for (int i = 0; i < globbuf.gl_pathc; i++) {
+		struct stat buf;
+		
+		if (stat(globbuf.gl_pathv[i], &buf) == -1)
+			continue;
+		
+		if (S_ISREG(buf.st_mode) && (access(globbuf.gl_pathv[i], R_OK) == 0))
+		{
+			char * pszFullPath = new char [nPathLen+strlen(globbuf.gl_pathv[i])+1];
+			// strncpy(pszFullPath,load_name,nPathLen);
+			strcpy(pszFullPath /* +nPathLen */, globbuf.gl_pathv[i]);
+			
+			
+			//make sure the file is a rif file
+			HANDLE rif_file;
+			rif_file = CreateFile (pszFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, 
+					FILE_FLAG_RANDOM_ACCESS, 0);
+			if(rif_file==INVALID_HANDLE_VALUE)
+			{
+//				printf("couldn't open %s\n",pszFullPath);
+				delete[] pszFullPath;
+				continue;
+			}
+
+			AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
+			unsigned long bytes_read;
+			
+			if (!ReadFile(rif_file, profilePtr, sizeof(AVP_USER_PROFILE), &bytes_read, 0))
+			{
+	       		CloseHandle (rif_file);
+				delete[] pszFullPath;
+				delete profilePtr;
+				continue;
+			}
+#if 0		
+			FILETIME ftLocal;
+			FileTimeToLocalFileTime(&wfd.ftLastWriteTime,&ftLocal);
+			FileTimeToSystemTime(&ftLocal,&profilePtr->TimeLastUpdated);
+			profilePtr->FileTime = ftLocal;
+#endif			
+			InsertProfileIntoList(profilePtr);
+			CloseHandle (rif_file);
+			delete[] pszFullPath;
+
+		}
+
+	}
+	
+	globfree(&globbuf);
+	
 #if 0
 	const char* load_name=USER_PROFILES_WILDCARD_NAME;
 	// allow a wildcard search

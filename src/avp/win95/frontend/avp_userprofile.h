@@ -144,8 +144,6 @@ typedef struct
 
 
 
-
-/* TODO: dir separator */
 #define USER_PROFILES_PATH "User_Profiles/"
 #define USER_PROFILES_WILDCARD_NAME "User_Profiles/*.prf"
 #define USER_PROFILES_SUFFIX ".prf"

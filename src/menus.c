@@ -137,6 +137,8 @@ int RenderMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID
 
 int RenderMenuText_Clipped(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int topY, int bottomY)
 {	
+	return Hardware_RenderSmallMenuText(textPtr, x, y, alpha, format);
+	
 	fprintf(stderr, "RenderMenuText_Clipped(%s, %d, %d, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format, topY, bottomY);
 
 	return 0;
@@ -282,7 +284,11 @@ void InitialiseMenuGfx()
 	}
 	
 	glEnable(GL_BLEND);
+//	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	
 	glDisable(GL_DEPTH_TEST);
+	
 	glEnable(GL_TEXTURE_2D);
 	
 	glClear(GL_COLOR_BUFFER_BIT);
