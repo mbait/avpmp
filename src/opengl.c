@@ -30,53 +30,27 @@ extern int SpecialFXImageNumber;
 
 static D3DTexture *CurrTextureHandle;
 
-void FlushD3DZBuffer()
-{
-	glClear(GL_DEPTH_BUFFER_BIT);
-}
-
-void SecondFlushD3DZBuffer()
-{
-	glClear(GL_DEPTH_BUFFER_BIT);
-}
-
-void D3D_DecalSystem_Setup()
-{
-	glDepthMask(GL_FALSE);
-}
-
-void D3D_DecalSystem_End()
-{
-	glDepthMask(GL_TRUE);
-}
-
-GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
-{
-	GLuint h;
-	
-	glGenTextures(1, &h);
-	
-	glBindTexture(GL_TEXTURE_2D, h);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-	
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	
-	tex->id = h;
-	
-	return h;
-}
 
 #define TRANSLUCENCY_ONEONE 33
-void CheckTranslucencyModeIsCorrect(int mode) /* TODO: use correct enum */
+
+static int CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
+static GLuint CurrentlyBoundTexture = 0; /* opengl state variable */
+
+static void CheckBoundTextureIsCorrect(GLuint tex)
+{
+	if (tex == CurrentlyBoundTexture)
+		return;
+
+	glBindTexture(GL_TEXTURE_2D, tex);
+	
+	CurrentlyBoundTexture = tex;
+}
+		
+static void CheckTranslucencyModeIsCorrect(int mode) /* TODO: use correct enum */
 {	
+	if (CurrentTranslucencyMode == mode)
+		return;
+
 	switch(RenderPolygon.TranslucencyMode) {
 		case TRANSLUCENCY_OFF:
 			glBlendFunc(GL_ONE, GL_ZERO);
@@ -104,23 +78,92 @@ void CheckTranslucencyModeIsCorrect(int mode) /* TODO: use correct enum */
 			break;	
 		default:
 			fprintf(stderr, "RenderPolygon.TranslucencyMode: invalid %d\n", RenderPolygon.TranslucencyMode);
+			return;
+	}
+	
+	CurrentTranslucencyMode = mode;
+}
+
+static void SelectPolygonBeginType(int points)
+{
+/* switch code that uses this to a triangle only drawer */
+	switch(points) {
+		case 1:
+			glBegin(GL_POINTS);
+			break;
+		case 2:
+			glBegin(GL_LINES);
+			break;
+		case 3:
+			glBegin(GL_TRIANGLES);
+			break;
+		case 4:
+			glBegin(GL_QUADS);
+			break;
+		default:
+			glBegin(GL_POLYGON);
+			break;
 	}
 }
 
+GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
+{
+	GLuint h;
+	
+	glGenTextures(1, &h);
+	
+	glBindTexture(GL_TEXTURE_2D, h);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+	
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	
+	tex->id = h;
+	
+	glBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture); /* restore current */
+	
+	return h;
+}
+
+/* ** */
+
+void FlushD3DZBuffer()
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void SecondFlushD3DZBuffer()
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void D3D_DecalSystem_Setup()
+{
+	glDepthMask(GL_FALSE);
+}
+
+void D3D_DecalSystem_End()
+{
+	glDepthMask(GL_TRUE);
+}
+
+/* ** */
+
 void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
 {
-#if 1
 	int texoffset;
 	D3DTexture *TextureHandle;
 	int i;
 	GLfloat ZNear, zvalue;
-//	GLfloat ZFar;
 	float RecipW, RecipH;
 
-//	glDisable(GL_TEXTURE_2D);
 		
 	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
-//	ZFar = 18000.0f; /* TODO: is this good enough? */
 	
 	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
 	if (texoffset) {
@@ -129,10 +172,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		TextureHandle = CurrTextureHandle;
 	}
 	
-//	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-//	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
-//	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
-
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
 
 /*
@@ -142,7 +181,7 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	RecipW = (1.0f/65536.0f)/128.0f;
 	RecipH = (1.0f/65536.0f)/128.0f;
 	
-	glBindTexture(GL_TEXTURE_2D, TextureHandle->id);
+	CheckBoundTextureIsCorrect(TextureHandle->id);
 	
 	glBegin(GL_POLYGON);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
@@ -150,17 +189,15 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		GLfloat x, y, z;
 		int x1, y1;
 		GLfloat s, t;
-
-/* this currently doesn't work quite right */
+		GLfloat rhw = 1.0/(float)vertices->Z;
+		
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
-		
-		z = 1.0 - 600.0/(vertices->Z);
-		glTexCoord2f(s, t);
-		
+
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-		
+
+#if 0
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -172,36 +209,39 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-		
+#endif
 		x = x1;
 		y = y1;
 						
-//		x =  (x - 319.0)/319.0;
-//		y = -(y - 239.0)/239.0;
 		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
-		
+
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
-		zvalue = 1.0 - 2*ZNear/zvalue; /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
-//		zvalue = 2.0 * (zvalue - ZNear) / (ZFar - ZNear) - 1.0;
-		z = zvalue;
-		
+		z = 1.0 - 2*ZNear/zvalue;
+
 		glColor4ub(GammaValues[vertices->R], GammaValues[vertices->G], GammaValues[vertices->B], vertices->A);
 /*
 		if (SecondaryColorExt)
 			glSecondaryColor3ub(GammaValues[vertices->SpecularR], GammaValues[vertices->SpecularG], GammaValues[vertices->SpecularB]);
 */	
+
+	/* they both work. */
+#if 0		
+		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
 		glVertex3f(x, y, z);
+#else
+		glTexCoord2f(s, t);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+#endif
 		
-//		fprintf(stderr, "Vertex %d: (%f, %f, %f)\n\t[%d, %d, %d]->[%d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, x1, y1, vertices->R, vertices->G, vertices->B, vertices->A);
-//		fprintf(stderr, "GREP: z = %d, znear = %f, zvalue = %f, z = %f\n", vertices->Z, ZNear, zvalue, z);
 	}
 	glEnd();
 	
 	CurrTextureHandle = TextureHandle;
 
-/* note: this doesn't seem to be used in the original? */
-return;
+#if 0
+/* note: the specular color doesn't seem to be enabled in the original d3d code? */
+/* couldn't find the feature in the voodoo 1 specs (the minimum required card) */
 /* This *tries* to emulate SecondaryColorExt */
 /*	if (!SecondaryColorExt || WantSecondaryColorHack) */ {
 		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_ONEONE);
@@ -220,8 +260,6 @@ return;
 			x = x1;
 			y = y1;
 						
-//			x =  (x - 320.0)/320.0;
-//			y = -(y - 240.0)/240.0;
 			x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 			y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;		
 			
@@ -253,8 +291,10 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	
 	TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
 	
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, TextureHandle->id);
+	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
+	
+	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckTranslucencyModeIsCorrect(particleDescPtr->TranslucencyType);
 	
 //	if(ImageHeaderArray[texoffset].ImageWidth==256) {
 	if (TextureHandle->w == 256) {
@@ -316,53 +356,60 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	if (RAINBOWBLOOD_CHEATMODE) {
 		glColor4ub(FastRandom()&255, FastRandom()&255, FastRandom()&255, particleDescPtr->Alpha);
 	}
+
+	//glBegin(GL_POLYGON);
+	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	
-	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
-	
-	CheckTranslucencyModeIsCorrect(particleDescPtr->TranslucencyType);
-	
-	glBegin(GL_POLYGON);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
 		int x1, y1;
-		GLfloat x, y, z, zvalue;
+		GLfloat x, y, z;
 		GLfloat s, t;
+		GLfloat rhw = 1/(float)vertices->Z;
 		
 		s = ((float)(vertices->U>>16)+.5) * RecipW;
 		t = ((float)(vertices->V>>16)+.5) * RecipH;
-		glTexCoord2f(s, t);
+		
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
+		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+
+#if 0
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
 			x1=Global_VDB_Ptr->VDB_ClipRight;
 		}
-		
-		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
+				
 		if (y1<Global_VDB_Ptr->VDB_ClipUp) {
 			y1=Global_VDB_Ptr->VDB_ClipUp;
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
+#endif
+		
 		x = x1;
 		y = y1;
 		
 		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
 		
-		zvalue = 0;
 		if (particleDescPtr->IsDrawnInFront) {
-			zvalue = -1.0f;
+			z = -1.0f;
 		} else if (particleDescPtr->IsDrawnAtBack) {
-			zvalue = 1.0f;
+			z = 1.0f;
 		} else {
-			zvalue = 1.0 - 2*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
+			z = 1.0 - 2*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
 		}
-		z = zvalue;
-		
+
+#if 0		
+		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
 		glVertex3f(x, y, z);
+#else
+		glTexCoord2f(s, t);
+		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+#endif		
 	}
 	glEnd();
 }

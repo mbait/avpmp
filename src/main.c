@@ -74,8 +74,10 @@ int InitialiseWindowsSystem()
 	glDepthFunc(GL_LEQUAL);
 	
 	glEnable(GL_TEXTURE_2D);
-	
+
+/*	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+*/	
 #endif		
 	return 0;
 }
