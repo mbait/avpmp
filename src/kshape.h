@@ -3,12 +3,6 @@
 
 #include "particle.h"
 
-#define SOFTWARE_RENDERER 0
-
-#if SOFTWARE_RENDERER 
-#include "SoftwareRender.hpp"
-#endif
-
 
 typedef struct 
 {

@@ -12,6 +12,10 @@
 #include "vision.h"
 #include "comp_shp.h"
 #include "avp_envinfo.h"
+#include "stratdef.h"
+#include "bh_types.h"
+#include "avp_userprofile.h"
+#include "pldnet.h"
 #include "cdtrackselection.h"
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
@@ -38,6 +42,9 @@ int ExitWindowsSystem()
 
 int main(int argc, char *argv[])
 {
+	int menusActive = 0;
+	int thisLevelHasBeenCompleted = 0;
+	
 	LoadCDTrackList();
 	
 	SetFastRandom();
@@ -56,7 +63,7 @@ int main(int argc, char *argv[])
 	InitialVideoMode();
 
 	/* Env_List can probably be removed */
-//	Env_List[0]->main = &(ELOLevelToLoad); /* overwrite the first entry of crappy env_list with LevelName */
+//	Env_List[0] = &(ELOLevelToLoad); /* overwrite the first entry of crappy env_list with LevelName */
 	Env_List[0]->main = LevelName;
 	
 	InitialiseSystem();
@@ -128,21 +135,134 @@ int main(int argc, char *argv[])
 		
 		switch(AvP.GameMode) {
 		case I_GM_Playing:
+			if ((!menusActive || (AvP.Network!=I_No_Network && !netGameData.skirmishMode)) && !AvP.LevelCompleted) {
+				/* TODO: print some debugging stuff */
+				
+				DoAllShapeAnimations();
+				
+				UpdateGame();
+				
+				AvpShowViews();
+				
+				MaintainHUD();
+				
+				CheckCDAndChooseTrackIfNeeded();
+				
+				if(InGameMenusAreRunning() && ( (AvP.Network!=I_No_Network && netGameData.skirmishMode) || (AvP.Network==I_No_Network)) ) {
+					SoundSys_StopAll();
+				}
+			} else {
+				ReadUserInput();
+				
+				/* UpdateAllFMVTextures(); NOT YET */
+			
+				SoundSys_Management();
+				
+				FlushD3DZBuffer();
+				
+				ThisFramesRenderingHasBegun();
+			}
+
+/*	NOT YET
+			menusActive = AvP_InGameMenus();
+			if (AvP.RestartLevel) menusActive=0;
+*/
+			
+			if (AvP.LevelCompleted) {
+				SoundSys_FadeOutFast();
+				DoCompletedLevelStatisticsScreen();
+				thisLevelHasBeenCompleted = 1;
+			}
+
+			ThisFramesRenderingHasFinished();
+
+/* NOT YET			
+			InGameFlipBuffers();
+*/
+			
+			FrameCounterHandler();
+			{
+				PLAYER_STATUS *playerStatusPtr = (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
+				
+				if (!menusActive && playerStatusPtr->IsAlive && !AvP.LevelCompleted) {
+					DealWithElapsedTime();
+				}
+			}
 			break;
+			
 		case I_GM_Menus:
 			AvP.GameMode = I_GM_Playing;
 			break;
 		case I_GM_Paused:
-			break;
+//			break;
 		default:
 			fprintf(stderr, "AvP.MainLoopRunning: gamemode = %d\n", AvP.GameMode);
 			exit(EXIT_FAILURE);
 		}
+		
+		if (AvP.RestartLevel) {
+			AvP.RestartLevel = 0;
+			AvP.LevelCompleted = 0;
+/* NOT YET
+			FixCheatModesInUserProfile(UserProfilePtr);
+*/			
+			RestartLevel();
+		}
+		
 		break; /* TODO -- remove when loop works */
 	}
+	
+	AvP.LevelCompleted = thisLevelHasBeenCompleted;
+
+/* NOT YET	
+	FixCheatModesInUserProfile(UserProfilePtr);
+*/
+
+/*	NOT YET
+	CloseFMV();
+	ReleaseAllFMVTextures();
+*/
+
+	CONSBIND_WriteKeyBindingsToConfigFile();
+	
+	DeInitialisePlayer();
+	
+	DeallocatePlayersMirrorImage();
+	
+	KillHUD();
+	
+	Destroy_CurrentEnvironment();
+	
+	DeallocateAllImages();
+	
+	EndNPCs();
+	
+	ExitGame();
+	
+	SoundSys_StopAll();
+	
+	SoundSys_ResetFadeLevel();
+	
+	CDDA_Stop();
+	
+	if (AvP.Network != I_No_Network) {
+/* NOT YET
+		EndAVPNetGame();
+*/
+	}
+	
+	ClearMemoryPool();
 		
 // }
 
+	SoundSys_StopAll();
+	SoundSys_RemoveAll();
+	
+	ExitSystem();
+	
+	CDDA_End();
+	ClearMemoryPool();
+	
 	fprintf(stderr, "Now exiting Aliens vs Predator!  At least it didn't crash!\n");
 	
 	return 0;

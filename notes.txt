@@ -7,3 +7,5 @@ Changed filenames:
 avp/win95/system.c (avp_load_rif calls)
 ========
 is AvP.CurrentEnv and StartingEnv used?
+========
+SCREENDESCRIPTORBLOCK.SDB_DiagonalWidth is unused

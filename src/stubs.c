@@ -17,6 +17,9 @@
 #include "kshape.h"
 #include "d3d_hud.h"
 
+
+extern IMAGEHEADER ImageHeaderArray[];
+
 /* winmain.c */
 BOOL KeepMainRifFile = FALSE;
 int HWAccel = 1;
@@ -478,6 +481,11 @@ void ThisFramesRenderingHasBegun()
 	fprintf(stderr, "ThisFramesRenderingHasBegun()\n");
 }
 
+void ThisFramesRenderingHasFinished()
+{
+	fprintf(stderr, "ThisFramesRenderingHasFinished()\n");
+}
+
 void SecondFlushD3DZBuffer()
 {
 	fprintf(stderr, "SecondFlushD3DZBuffer()\n");
@@ -527,9 +535,24 @@ BOOL EndD3DScene()
 	return FALSE;
 }
 
+static void *CurrTextureHandle;
 void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
 {
+	int texoffset;
+	void *TextureHandle;
+	
+	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
+	if (texoffset) {
+		TextureHandle = (void *)ImageHeaderArray[texoffset].D3DHandle;
+	} else {
+		TextureHandle = CurrTextureHandle;
+	}
+	
 	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
+	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
+	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
+	
+	CurrTextureHandle = TextureHandle;
 }
 
 void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
@@ -727,6 +750,11 @@ void CDDA_Start()
 	fprintf(stderr, "CDDA_Start()\n");
 }
 
+void CDDA_End()
+{
+	fprintf(stderr, "CDDA_End()\n");
+}
+
 void CDDA_ChangeVolume(int volume)
 {
 	fprintf(stderr, "CDDA_ChangeVolume(%d)\n", volume);
@@ -895,6 +923,11 @@ void CreatePlayersImageInMirror()
 void RenderPlayersImageInMirror()
 {
 	fprintf(stderr, "RenderPlayersImageInMirror()\n");
+}
+
+void DeallocatePlayersMirrorImage()
+{
+	fprintf(stderr, "DeallocatePlayersMirrorImage()\n");
 }
 
 void AddNetMsg_AlienAIKilled(STRATEGYBLOCK *sbPtr,int death_code,int death_time, int GibbFactor,DAMAGE_PROFILE* damage)

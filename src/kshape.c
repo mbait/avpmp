@@ -32,9 +32,6 @@
 #include "detaillevels.h"
 #include "avp_userprofile.h"
 
-#if SOFTWARE_RENDERER
-#define D3D_ZBufferedGouraudTexturedPolygon_Output Software_ZBufferedGouraudTexturedPolygon_Output
-#endif
 #define ALIENS_LIFEFORCE_GLOW_COLOUR 0x20ff8080
 #define MARINES_LIFEFORCE_GLOW_COLOUR 0x208080ff
 #define PREDATORS_LIFEFORCE_GLOW_COLOUR 0x2080ff80
@@ -4503,10 +4500,16 @@ void TranslatePoint(int *source, int *dest, int *matrix)
 #endif
 #endif
 
-/* TODO */
 static void TranslatePoint(float *source, float *dest, float *matrix)
 {
-	fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
+//	fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");
+
+/* TODO - implement the inline assembly here? */
+/* Moved to a separate file because I can't figure out the damn syntax! */
+__asm__("call	TranslatePoint_Asm	\n\t"
+	:
+	: "S" (source), "b" (dest), "d" (matrix)
+	);
 }
 
 
