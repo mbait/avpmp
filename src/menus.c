@@ -280,6 +280,7 @@ typedef struct AVPIndexedFont
 	int ascii;		/* ascii code for initial character */
 	int height;		/* height per character */
 	
+	int numchars;
 	int FontWidth[256];
 } AVPIndexedFont;
 
@@ -332,9 +333,16 @@ static void LoadMenuFont()
 	unsigned char *srcPtr = image->buf;
 	int c;
 	
+	if ((image->w != 30) || ((image->h % 33) != 0)) {
+		fprintf(stderr, "ERROR: I am going to give up now, because I don't like your font!\n");
+		fprintf(stderr, "Font Size: %d x %d\n", image->w, image->h);
+		exit(EXIT_FAILURE);
+	}
+	
+	IntroFont_Light.numchars = image->h / 33;	
 	IntroFont_Light.FontWidth[32] = 5;
 	
-	for (c=33; c<255; c++) {
+	for (c=33; c<(32+IntroFont_Light.numchars); c++) {
 		int x,y;
 		int y1 = 1+(c-32)*33;
 		
@@ -755,7 +763,7 @@ Determine area used by text , so we can draw it centrally
 				if(wordWidth> area->right-sx) break;
 				
 				while(*textPtr && *textPtr==' ') {
-					*textPtr++;
+					textPtr++;
 				}
 			}
 		}
