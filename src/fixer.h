@@ -41,7 +41,8 @@ extern "C" {
 /* #define _mbclen		strlen */
 size_t _mbclen(const unsigned char *s);
 
-#define RGBA_MAKE(r,g,b,a) (((r) << 24) | ((g) << 16) | ((b) << 8) | (a))
+//#define RGBA_MAKE(r,g,b,a) (((r) << 24) | ((g) << 16) | ((b) << 8) | (a))
+#define RGBA_MAKE(r,g,b,a) ((((unsigned char)a) << 24) | (((unsigned char)b) << 16) | (((unsigned char)g) << 8) | ((unsigned char)r))
 
 #define MAX_PATH	PATH_MAX
 

@@ -52,7 +52,7 @@ class AwIffConvTransp
 			if (*pCol == iTranspCol) return rawTranspCol;
 			unsigned rv = AwIffConvNonTransp::DoConv(pCol,pPalette db_code1(DB_COMMA nPaletteSize));
 			if (rv != rawTranspCol) return rv;
-			
+
 			// make the colour non-transparent (nb: only an occasional case)
 			
 			// OK, Here's the plan:
@@ -100,15 +100,7 @@ class AwIffConvTransp
 					: (1<<pixelFormat.blueRightShift )*3/2 - (pPalette[*pCol].b & (1<<pixelFormat.blueRightShift )-1));
 			
 			// Pick lowest value and do the business
-			
 			Colour colAdj = pPalette[*pCol];
-			
-			#if defined(_MSC_VER) && _MSC_VER >= 1100
-				// VC5.0 gives inane warnings when += type operators
-				// are used on types smaller than int (even with
-				// explicit casting!)
-				#pragma warning(disable:4244)
-			#endif
 			if
 			(
 				   nBlueDiffUp <= nBlueDiffDown
@@ -155,12 +147,6 @@ class AwIffConvTransp
 			{
 				colAdj.g -= static_cast<unsigned char>(1<<pixelFormat.greenRightShift);
 			}
-			#if defined(_MSC_VER) && _MSC_VER == 1100
-				// VC5.0 gives inane warnings when += type operators
-				// are used on types smaller than int (even with
-				// explicit casting!)
-				#pragma warning(default:4244)
-			#endif
 			
 			return Colour::ConvNonTransp::DoConv(&colAdj);
 		}

@@ -432,10 +432,8 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 	// transparency?
 	m_bTranspMask = HasTransparentMask(fMyFlags & AW_TLF_TRANSP ? true : false);
 
-		
 	if (_parmsR.loadTextureB || fMyFlags & AW_TLF_TEXTURE)
 	{
-		fprintf(stderr, "AwBackupTexture::ChoosePixelFormat(...)\n");
 #if 0		
 		// use a texture format
 		unsigned nColours = GetNumColours();
@@ -445,7 +443,7 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 		
 		for (LIF<AdditionalPixelFormat> itFormat(&listTextureFormats); !itFormat.done(); itFormat.next())
 		{
-			AdditionalPixelFormat const * pThisFormat = &itFormat();
+			AdditionalPixelFormat * pThisFormat = &itFormat();
 			// is this format suitable?
 			// ignoring alpha for now
 			if
@@ -495,12 +493,12 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 	{
 		// use display surface format
 		pixelFormat = pfSurfaceFormat;
+
 #endif		
-	}
-	
-/* Just convert the texture to 32bpp */
+		/* Just convert the texture to 32bpp */
 		pixelFormat.palettizedB = 0;
-		pixelFormat.alphaB = 0;
+		
+		pixelFormat.alphaB = 1;
 		pixelFormat.validB = 1;
 		pixelFormat.bitsPerPixel = 32;
 		pixelFormat.redLeftShift = 0;
@@ -509,8 +507,8 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 		pixelFormat.redRightShift = 0;
 		pixelFormat.greenRightShift = 0;
 		pixelFormat.blueRightShift = 0;
-		pixelFormat.dwRGBAlphaBitMask = 0x00000000;
-
+		pixelFormat.dwRGBAlphaBitMask = 0xFF000000;
+	}
 }
 
 extern "C" {
@@ -569,7 +567,7 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 					++y;
 				
 			}
-
+				
 /* temp junk */
 	Tex->w = m_nWidth;
 	Tex->h = m_nHeight;
@@ -1404,7 +1402,7 @@ void AwBackupTexture::ConvertRow(AwTl::PtrUnion pDest, unsigned nDestWidth, AwTl
 		}
 	}
 	else
-	{
+	{	
 		if (m_bTranspMask)
 			GenericConvertRow<Colour::ConvTransp,Colour>::Do(pDest,nDestWidth,pSrc.colourP+nSrcOffset,nSrcWidth);
 		else

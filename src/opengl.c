@@ -33,7 +33,7 @@ static D3DTexture *CurrTextureHandle;
 
 #define TRANSLUCENCY_ONEONE 33
 
-static int CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
+static enum TRANSLUCENCY_TYPE CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
 static GLuint CurrentlyBoundTexture = 0; /* opengl state variable */
 
 static void CheckBoundTextureIsCorrect(GLuint tex)
@@ -46,14 +46,20 @@ static void CheckBoundTextureIsCorrect(GLuint tex)
 	CurrentlyBoundTexture = tex;
 }
 		
-static void CheckTranslucencyModeIsCorrect(int mode) /* TODO: use correct enum */
+static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
 {	
 	if (CurrentTranslucencyMode == mode)
 		return;
 
-	switch(RenderPolygon.TranslucencyMode) {
+	switch(mode) {
 		case TRANSLUCENCY_OFF:
-			glBlendFunc(GL_ONE, GL_ZERO);
+			if (TRIPTASTIC_CHEATMODE||MOTIONBLUR_CHEATMODE) {
+			//	glBlendMode(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+			/* TODO: this may not be properly set... */
+			} else {
+				glDisable(GL_BLEND);
+				glBlendFunc(GL_ONE, GL_ZERO);
+			}
 			break;
 		case TRANSLUCENCY_NORMAL:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -81,6 +87,9 @@ static void CheckTranslucencyModeIsCorrect(int mode) /* TODO: use correct enum *
 			return;
 	}
 	
+	if (mode != TRANSLUCENCY_OFF && CurrentTranslucencyMode == TRANSLUCENCY_OFF)
+		glEnable(GL_BLEND);
+		
 	CurrentTranslucencyMode = mode;
 }
 
@@ -119,7 +128,7 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 	
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
@@ -149,7 +158,7 @@ void D3D_DecalSystem_Setup()
 
 void D3D_DecalSystem_End()
 {
-	glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE);	
 }
 
 /* ** */
@@ -281,21 +290,21 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 
 void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 {
-	PARTICLE_DESC *particleDescPtr = &ParticleDescription[particlePtr->ParticleID];	
+	PARTICLE_DESC *particleDescPtr = &ParticleDescription[particlePtr->ParticleID];
 	int texoffset = SpecialFXImageNumber;
 	GLfloat ZNear;
 	int i;
 	float RecipW, RecipH;
 	
 	D3DTexture *TextureHandle;
-	
+
 	TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
 	
 	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
 	
 	CheckBoundTextureIsCorrect(TextureHandle->id);
 	CheckTranslucencyModeIsCorrect(particleDescPtr->TranslucencyType);
-	
+
 //	if(ImageHeaderArray[texoffset].ImageWidth==256) {
 	if (TextureHandle->w == 256) {
 		RecipW = 1.0 / 256.0;
@@ -324,15 +333,15 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		{
 			int r, g, b, a;
 	
-			r = (particlePtr->Colour >> 24) & 0xFF;
-			g = (particlePtr->Colour >> 16) & 0xFF;
-			b = (particlePtr->Colour >> 8)  & 0xFF;
-			a = (particlePtr->Colour >> 0)  & 0xFF;
+			r = (particlePtr->Colour >> 0)  & 0xFF;
+			g = (particlePtr->Colour >> 8)  & 0xFF;
+			b = (particlePtr->Colour >> 16) & 0xFF;
+			a = (particlePtr->Colour >> 24) & 0xFF;
 	
 			glColor4ub(
 				MUL_FIXED(intensity,r),
 				MUL_FIXED(intensity,g),
-				MUL_FIXED(intensity,g),
+				MUL_FIXED(intensity,b),
 				a
 				);
 		} else {
@@ -346,10 +355,10 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	} else {
 		int r, g, b, a;
 		
-		r = (particlePtr->Colour >> 24) & 0xFF;
-		g = (particlePtr->Colour >> 16) & 0xFF;
-		b = (particlePtr->Colour >> 8)  & 0xFF;
-		a = (particlePtr->Colour >> 0)  & 0xFF;
+		r = (particlePtr->Colour >> 0)  & 0xFF;
+		g = (particlePtr->Colour >> 8)  & 0xFF;
+		b = (particlePtr->Colour >> 16) & 0xFF;
+		a = (particlePtr->Colour >> 24) & 0xFF;
 		
 		glColor4ub(r, g, b, a);
 	}
