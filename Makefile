@@ -1,7 +1,5 @@
 CC = gcc
-CXX = gcc
-#CC = gcc-3.0
-#CXX = gcc-3.0
+CXX = g++
 NASM = nasm
 
 #CFLAGS = -g -Wall -pipe
@@ -13,9 +11,6 @@ CFLAGS += $(shell sdl-config --cflags)
 CXXFLAGS = $(CFLAGS)
 
 LDLIBS = $(shell sdl-config --libs) -lGL -lopenal
-
-# required for gcc-3
-#LDLIBS += -lstdc++
 
 AFLAGS = -g -w+macro-params -w+orphan-labels -w+number-overflow
 
@@ -59,7 +54,7 @@ OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(SUPPORTOBJ) $(AVPWIN95OBJ) $(FRONTENDO
 all: AvP
 
 AvP: $(OBJ) # depend $(OBJ)
-	$(CC) -o AvP $(OBJ) $(LDLIBS)
+	$(CXX) -o AvP $(OBJ) $(LDLIBS)
 
 compile: $(OBJ)
 
