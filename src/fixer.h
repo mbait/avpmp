@@ -9,10 +9,13 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <inttypes.h> // int64_t
+#include <inttypes.h> /* int64_t */
+
+void FixFilename(char *str);
 
 #define PACKED __attribute__((packed))
 
+/* windows junk */
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -38,16 +41,12 @@ extern "C" {
 #define _tcslen		strlen
 #define _tcscpy		strcpy
 
-/* #define _mbclen		strlen */
 size_t _mbclen(const unsigned char *s);
 
 #define RGBA_MAKE(r, g, b, a)   ((((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
 
 #define MAX_PATH	PATH_MAX
 
-void FixFilename(char *str);
-
-/* windows junk */
 typedef int GUID;
 typedef int DPID;
 typedef int HINSTANCE;
@@ -78,17 +77,19 @@ typedef RECT RECT_AVP;
 
 typedef int64_t __int64;
 
-typedef int FILETIME;
+typedef time_t FILETIME;
 
-typedef struct SYSTEMTIME
+/* this SYSTEMTIME is incorrect, but it is also currently unused */
+typedef struct SYSTEMTIME 
 {
-//#warning "TODO: SYSTEMTIME format is not correct"
+	int wYear; /* should be uint16_t, not int32_t */
+	int wMonth;
+	int wDay;
+	/* int wDayOfWeek; */
 	int wHour;
 	int wMinute;
 	int wSecond;
-	int wYear;
-	int wMonth;
-	int wDay;
+	/* int wMilliseconds; */	
 } SYSTEMTIME;
 
 #define	VK_BACK				1
@@ -108,14 +109,14 @@ typedef struct SYSTEMTIME
 #define FILE_FLAG_RANDOM_ACCESS		0x0004
 #define GENERIC_READ			0x0008
 #define OPEN_EXISTING			0x0010
-#define FILE_ATTRIBUTE_READONLY		0x0020
-#define FILE_CURRENT			0x0040
-#define FILE_BEGIN			0x0080	
-#define FILE_END			0x0100
-#define FILE_SHARE_READ			0x0200
-#define FILE_ATTRIBUTE_DIRECTORY	0x0400
-#define FILE_SHARE_WRITE		0x0800
-#define OPEN_ALWAYS			0x1000
+#define FILE_CURRENT			0x0020
+#define FILE_BEGIN			0x0040	
+#define FILE_END			0x0080
+#define FILE_SHARE_READ			0x0100
+#define FILE_SHARE_WRITE		0x0200
+#define OPEN_ALWAYS			0x0400
+#define FILE_ATTRIBUTE_READONLY		0x0800
+#define FILE_ATTRIBUTE_DIRECTORY	0x1000
 #define FILE_ATTRIBUTE_NORMAL		0x2000
 
 

@@ -24,12 +24,11 @@
 #include "psnd.h"
 #include "savegame.h"
 
-#if 0
-#undef BRIGHTNESS_CHANGE_SPEED
-#define BRIGHTNESS_CHANGE_SPEED (RealFrameTime/4)
-#endif
-
-
+/* used to get file time */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+                     
 extern void StartMenuBackgroundBink(void);
 extern int PlayMenuBackgroundBink(void);
 extern void EndMenuBackgroundBink(void);
@@ -346,11 +345,9 @@ extern int AvP_MainMenus(void)
 	EndMenuBackgroundBink();
 	TimeStampedMessage("after EndMenuMusic");
 
-	#if 0
 	#if PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO
-	if (/*!AvP.LevelCompleted &&*/ (AvPMenus.MenusState != MENUSSTATE_STARTGAME)) ShowSplashScreens();
+	if ((AvPMenus.MenusState != MENUSSTATE_STARTGAME)) ShowSplashScreens();
 	TimeStampedMessage("after ShowSplashScreens");
-	#endif
 	#endif
 	ReleaseAllAvPMenuGfx();
 
@@ -665,25 +662,7 @@ extern void AvP_UpdateMenus(void)
 				profilePtr = GetNextUserProfile();
 			
 			RenderMenuText(profilePtr->Name,MENU_CENTREX,MENU_CENTREY-100,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
-			{
-#warning commented out code			
-#if 0			
-				char buffer[100];
-				char buffer2[100];
-				int nLen = 80;
-
-				time_t time_of_day;
-
-			    time_of_day = time( NULL );
-
-				nLen = GetDateFormat(GetThreadLocale(), DATE_LONGDATE, &profilePtr->TimeLastUpdated,NULL,buffer,nLen);
-				nLen = GetTimeFormat(GetThreadLocale(), 0, &profilePtr->TimeLastUpdated,NULL,buffer2,100);
-
-				strcat(buffer2,"  ");
-				strcat(buffer2,buffer);
-				RenderSmallMenuText(buffer2,MENU_CENTREX,MENU_CENTREY-70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
-#endif				
-			}
+			RenderSmallMenuText(ctime(&profilePtr->FileTime),MENU_CENTREX,MENU_CENTREY-70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
 			
 			RenderMenu();
 			RenderHelpString();
@@ -1732,10 +1711,7 @@ static void RenderUserProfileSelectMenu(void)
 		char *textPtr = GetTextString(AvPMenusData[AvPMenus.CurrentMenu].MenuTitle);
 		RenderMenuText(textPtr,MENU_CENTREX,70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
 	}
-#warning commented out code
-#if 0
-	GetLocalTime(&profilePtr->TimeLastUpdated);
-#endif	
+
 	for (i=0; i<=elementPtr->b.MaxSliderValue; i++, profilePtr = GetNextUserProfile())
 	{
 		int y;
@@ -1775,37 +1751,8 @@ static void RenderUserProfileSelectMenu(void)
 			}
 			b=Brightness[i];
 			RenderMenuText_Clipped(textPtr,MENU_CENTREX,MENU_CENTREY+y-60,b,AVPMENUFORMAT_CENTREJUSTIFIED,MENU_CENTREY-60-100,MENU_CENTREY-30+150);
-			{
-#warning commented out code			
-#if 0
-				char buffer[100];
-				char buffer2[100];
-				int nLen = 80;
-				/*sprintf(buffer,"%d:%d:%d  %d/%d/%d",
-					profilePtr->TimeLastUpdated.wHour,
-					profilePtr->TimeLastUpdated.wMinute,
-					profilePtr->TimeLastUpdated.wSecond,
-					profilePtr->TimeLastUpdated.wYear,
-					profilePtr->TimeLastUpdated.wMonth,
-					profilePtr->TimeLastUpdated.wDay);
-				*/
-				time_t time_of_day;
-
-			    time_of_day = time( NULL );
-//			  strftime( buffer, 80, "%c",
-//				     localtime( &time_of_day ) );
-
-				nLen = GetDateFormat(GetThreadLocale(), DATE_LONGDATE, &profilePtr->TimeLastUpdated,
-				NULL,buffer,
-				nLen);
-				nLen = GetTimeFormat(GetThreadLocale(), 0, &profilePtr->TimeLastUpdated,
-				NULL,buffer2,
-				100);
-				strcat(buffer2,"  ");
-				strcat(buffer2,buffer);
-				RenderSmallMenuText(buffer2,MENU_CENTREX,MENU_CENTREY+y-30,b,AVPMENUFORMAT_CENTREJUSTIFIED);
-#endif				
-			}
+			if (i > 0)
+				RenderSmallMenuText(ctime(&profilePtr->FileTime),MENU_CENTREX,MENU_CENTREY+y-30,b,AVPMENUFORMAT_CENTREJUSTIFIED);
 		}
 	}
 
@@ -1935,22 +1882,7 @@ static void RenderLoadGameMenu(void)
 
 			sprintf(buffer, "%s: %d",GetTextString(TEXTSTRING_SAVEGAME_SAVESLEFT),slotPtr->SavesLeft);
 			RenderText(buffer,MENU_CENTREX,y+HUD_FONT_HEIGHT+1,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
-			{
-#warning commented out code			
-#if 0
-				char buffer2[100];
-				int nLen = 80;
-
-				//GetLocalTime(&slotPtr->TimeStamp);
-
-				nLen = GetDateFormat(GetThreadLocale(), DATE_SHORTDATE, &slotPtr->TimeStamp,NULL,buffer,nLen);
-				nLen = GetTimeFormat(GetThreadLocale(), 0, &slotPtr->TimeStamp,NULL,buffer2,100);
-
-				strcat(buffer2,"  ");
-				strcat(buffer2,buffer);
-				RenderText(buffer2,MENU_RIGHTXEDGE-30,y+HUD_FONT_HEIGHT+1,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
-#endif				
-			}
+			RenderText(ctime(&slotPtr->TimeStamp),MENU_RIGHTXEDGE-30,y+HUD_FONT_HEIGHT+1,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
 		}
 		else
 		{
@@ -5581,7 +5513,6 @@ void LoadLevelHeader(SAVE_BLOCK_HEADER* header)
 
 }
 
-
 static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* filename)
 {
 	LEVEL_SAVE_BLOCK block;
@@ -5610,17 +5541,13 @@ static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* fil
 
 	}
 
-#warning commented out code
-#if 0
-	//get the time stamp for the file
-	{
-		FILETIME time,localTime;
-		GetFileTime(file,0,0,&time);
-		FileTimeToLocalFileTime(&time,&localTime);
-		FileTimeToSystemTime(&localTime,&save_slot->TimeStamp);
+{
+	struct stat buf;
 
+	if (stat(filename, &buf) != -1) {
+		save_slot->TimeStamp = buf.st_mtime;
 	}
-#endif
+}
    	
 	//load the level header
 	ReadFile(file,&block,sizeof(block),(LPDWORD)&bytes_read,0);

@@ -24,6 +24,7 @@
 #include "pldnet.h"
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
+#include "version.h"
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -963,6 +964,9 @@ int ExitWindowsSystem()
 
 int main(int argc, char *argv[])
 {	
+/*
+	printf("%s", AvPVersionString);
+*/	
 	if (InitSDL() == -1) {
 		fprintf(stderr, "Could not find a sutable resolution!\n");
 		fprintf(stderr, "At least 512x384 is needed.  Does OpenGL work?\n");
@@ -1048,9 +1052,9 @@ int main(int argc, char *argv[])
 #endif
 
 #if !(ALIEN_DEMO|PREDATOR_DEMO|MARINE_DEMO)	
-while(AvP_MainMenus())
+while (AvP_MainMenus())
 #else
-	SetBriefingTextToBlank();
+if (AvP_MainMenus())
 #endif
 {
 	int menusActive = 0;
@@ -1209,8 +1213,11 @@ while(AvP_MainMenus())
 	}
 	
 	ClearMemoryPool();
-	
-	SetSoftVideoMode(640, 480, 16);	
+
+/* go back to menu mode */
+#if !(ALIEN_DEMO|PREDATOR_DEMO|MARINE_DEMO)
+	SetSoftVideoMode(640, 480, 16);
+#endif	
 }
 
 	SoundSys_StopAll();

@@ -46,7 +46,7 @@ HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags
 			}
  			fd = open(file, O_RDONLY);
  			if (fd == -1) {
- 				perror("CreateFile");
+ 				/* perror("CreateFile"); */
  				return INVALID_HANDLE_VALUE;
  			}
 			break;
@@ -75,37 +75,47 @@ HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int fla
 	return CreateFile(file, write, x, y, flags, flags2, z);
 }
 
-int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *byteswritten, int x)
+int WriteFile(HANDLE file, const void *data, int len, void *byteswritten, int lpOverlapped)
 {
-	unsigned long *bw;
+	unsigned long *bw, i;
 /*	
-	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, x);
+	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, lpOverlapped);
 */
 	bw = (unsigned long *)byteswritten;
+	*bw = 0;
 	
-	*bw = write(file, data, len);
-	
-	return 0;
+	i = write(file, data, len);
+	if (i == -1) {
+		return 0;
+	} else {
+		*bw = i;
+		return 1;
+	}
 }
 
-int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x)
+int ReadFile(HANDLE file, void *data, int len, void *bytesread, int lpOverlapped)
 {
-	unsigned long *br;
+	unsigned long *br, i;
 /*	
-	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, x);
+	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, lpOverlapped);
 */
 	br = (unsigned long *)bytesread;
+	*br = 0;
 	
-	*br = read(file, data, len);
-	
-	return 1; /* TODO: what is the correct return value? */
+	i = read(file, data, len);
+	if (i == -1) {
+		return 0;
+	} else {
+		*br = i;
+		return 1;
+	}
 }
 
-int GetFileSize(HANDLE file, int x)
+int GetFileSize(HANDLE file, int lpFileSizeHigh)
 {
 	struct stat buf;
 /*	
-	fprintf(stderr, "GetFileSize(%d, %d)\n", file, x);
+	fprintf(stderr, "GetFileSize(%d, %d)\n", file, lpFileSizeHigh);
 */	
 	if (fstat(file, &buf) == -1)
 		return -1;
@@ -117,16 +127,23 @@ int CloseHandle(HANDLE file)
 /*
 	fprintf(stderr, "CloseHandle(%d)\n", file);
 */	
-	close(file);
+	if (close(file) == -1) 
+		return 0;
+	else
+		return 1;
 	
 	return 0;
 }
 
 int DeleteFile(const char *file)
 {
+/*
 	fprintf(stderr, "DeleteFile(%s)\n", file);
-	
-	return -1;
+*/	
+	if (unlink(file) == -1)
+		return 0;
+	else
+		return 1;
 }
 
 int DeleteFileA(const char *file)
@@ -138,21 +155,25 @@ int GetDiskFreeSpace(int x, unsigned long *a, unsigned long *b, unsigned long *c
 {
 	fprintf(stderr, "GetDiskFreeSpace(%d, %p, %p, %p, %p)\n", x, a, b, c, d);
 
-	return -1;
+	return 0;
 }
 
-int CreateDirectory(char *dir, int x)
+int CreateDirectory(char *dir, int lpSecurityAttributes)
 {
-	fprintf(stderr, "CreateDirectory(%s, %d)\n", dir, x);
-	
-	return -1;
+/*
+	fprintf(stderr, "CreateDirectory(%s, %d)\n", dir, lpSecurityAttributes);
+*/
+	if (mkdir(dir, S_IRWXU) == -1)
+		return 0;
+	else
+		return 1;
 }
 
 int MoveFile(const char *newfile, const char *oldfile)
 {
 	fprintf(stderr, "MoveFile(%s, %s)\n", newfile, oldfile);
 	
-	return -1;
+	return 0;
 }
 
 int MoveFileA(const char *newfile, const char *oldfile)
@@ -164,14 +185,14 @@ int CopyFile(const char *newfile, const char *oldfile, int x)
 {
 	fprintf(stderr, "CopyFile(%s, %s, %d)\n", newfile, oldfile, x);
 	
-	return -1;
+	return 0;
 }
 
 int GetFileAttributes(const char *file)
 {
 	fprintf(stderr, "GetFileAttributes(%s)\n", file);
 	
-	return -1;
+	return 0;
 }
 
 int GetFileAttributesA(const char *file)
@@ -183,21 +204,20 @@ int SetFilePointer(HANDLE file, int x, int y, int z)
 {
 	fprintf(stderr, "SetFilePointer(%d, %d, %d, %d)\n", file, x, y, z);
 	
-	return -1;
+	return 0;
 }
 
 int SetEndOfFile(HANDLE file)
 {
 	fprintf(stderr, "SetEndOfFile(%d)\n", file);
 	
-	return -1;
+	return 0;
 }
 
 /* time in miliseconds */
-struct timeval tv0;
-
 unsigned int timeGetTime()
 {
+	static struct timeval tv0;
 	struct timeval tv1;
 	int secs, usecs;
 	

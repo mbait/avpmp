@@ -28,7 +28,6 @@ extern "C"
 static int LoadUserProfiles(void);
 
 static void EmptyUserProfilesList(void);
-static int MakeNewUserProfile(void);
 static void InsertProfileIntoList(AVP_USER_PROFILE *profilePtr);
 static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *profileToTestAgainstPtr);
 static void SetDefaultProfileOptions(AVP_USER_PROFILE *profilePtr);
@@ -53,32 +52,20 @@ extern void ExamineSavedUserProfiles(void)
 	// delete any existing profiles
 	EmptyUserProfilesList();
 	
-//	UserProfilesList.add_entry(profilePtr);
-//	SaveUserProfile(profilePtr);
-	if (LoadUserProfiles())
-	{
+	// load any available user profiles
+	LoadUserProfiles();
 	
-	}
-	else /* No user profile found. We'll have to make one */
-	{
-	//	MakeNewUserProfile();
-	}
-
+	// make a fake entry to allow creating new user profiles
 	AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
 	*profilePtr = DefaultUserProfile;
 
-	fprintf(stderr, "STUB: ExamineSavedUserProfiles()\n");
-#if 0
-	GetLocalTime(&profilePtr->TimeLastUpdated);
-	SystemTimeToFileTime(&profilePtr->TimeLastUpdated,&profilePtr->FileTime);
-#endif
+	profilePtr->FileTime = time(NULL);
 
 	strncpy(profilePtr->Name,GetTextString(TEXTSTRING_USERPROFILE_NEW),MAX_SIZE_OF_USERS_NAME);
 	profilePtr->Name[MAX_SIZE_OF_USERS_NAME]=0;
 	SetDefaultProfileOptions(profilePtr);
 
 	InsertProfileIntoList(profilePtr);
-
 }
 
 extern int NumberOfUserProfiles(void)
@@ -135,7 +122,6 @@ extern int SaveUserProfile(AVP_USER_PROFILE *profilePtr)
 	fclose(file);
 
 	return 1;
-
 }
 
 extern void DeleteUserProfile(int number)
@@ -163,10 +149,7 @@ extern void DeleteUserProfile(int number)
 		}
 		delete [] filename;
 	}
-
 }
-
-
 
 static void InsertProfileIntoList(AVP_USER_PROFILE *profilePtr)
 {
@@ -188,18 +171,11 @@ static void InsertProfileIntoList(AVP_USER_PROFILE *profilePtr)
 
 static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *profileToTestAgainstPtr)
 {
-	fprintf(stderr, "STUB: ProfileIsMoreRecent(%p, %p)\n", profilePtr, profileToTestAgainstPtr);
-	return 1;
-#if 0
-	if (CompareFileTime(&profilePtr->FileTime,&profileToTestAgainstPtr->FileTime)==1)
-	{
-		return 1;
-	}
-	else
-	{
+	if (difftime(profilePtr->FileTime, profileToTestAgainstPtr->FileTime) > 0.0) {
+		return 1; /* first file newer than file to test */
+	} else {
 		return 0;
 	}
-#endif	
 }
 
 static int LoadUserProfiles(void)
@@ -227,7 +203,7 @@ static int LoadUserProfiles(void)
 		if (nLen > nPathLen) nPathLen = nLen;
 	}
 
-	for (int i = 0; i < globbuf.gl_pathc; i++) {
+	for (unsigned int i = 0; i < globbuf.gl_pathc; i++) {
 		struct stat buf;
 		
 		if (stat(globbuf.gl_pathv[i], &buf) == -1)
@@ -239,14 +215,11 @@ static int LoadUserProfiles(void)
 			// strncpy(pszFullPath,load_name,nPathLen);
 			strcpy(pszFullPath /* +nPathLen */, globbuf.gl_pathv[i]);
 			
-			
-			//make sure the file is a rif file
 			HANDLE rif_file;
 			rif_file = CreateFile (pszFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, 
 					FILE_FLAG_RANDOM_ACCESS, 0);
 			if(rif_file==INVALID_HANDLE_VALUE)
 			{
-//				printf("couldn't open %s\n",pszFullPath);
 				delete[] pszFullPath;
 				continue;
 			}
@@ -256,120 +229,24 @@ static int LoadUserProfiles(void)
 			
 			if (!ReadFile(rif_file, profilePtr, sizeof(AVP_USER_PROFILE), &bytes_read, 0))
 			{
-	       		CloseHandle (rif_file);
+		       		CloseHandle (rif_file);
 				delete[] pszFullPath;
 				delete profilePtr;
 				continue;
 			}
-#if 0		
-			FILETIME ftLocal;
-			FileTimeToLocalFileTime(&wfd.ftLastWriteTime,&ftLocal);
-			FileTimeToSystemTime(&ftLocal,&profilePtr->TimeLastUpdated);
-			profilePtr->FileTime = ftLocal;
-#endif			
+
+			profilePtr->FileTime = buf.st_mtime;
+			
 			InsertProfileIntoList(profilePtr);
 			CloseHandle (rif_file);
 			delete[] pszFullPath;
-
 		}
-
 	}
 	
 	globfree(&globbuf);
-	
-#if 0
-	const char* load_name=USER_PROFILES_WILDCARD_NAME;
-	// allow a wildcard search
-	WIN32_FIND_DATA wfd;
 
-	HANDLE hFindFile = ::FindFirstFile(load_name,&wfd);
-
-	if (INVALID_HANDLE_VALUE == hFindFile)
-	{
-//		printf("File Not Found: <%s>\n",load_name);
-		return 0;
-	}
-
-	// get any path in the load_name
-	int nPathLen = 0;
-	char * pColon = strrchr(load_name,':');
-	if (pColon) nPathLen = pColon - load_name + 1;
-	char * pBackSlash = strrchr(load_name,'\\');
-	if (pBackSlash)
-	{
-		int nLen = pBackSlash - load_name + 1;
-		if (nLen > nPathLen) nPathLen = nLen;
-	}
-	char * pSlash = strrchr(load_name,'/');
-	if (pSlash)
-	{
-		int nLen = pSlash - load_name + 1;
-		if (nLen > nPathLen) nPathLen = nLen;
-	}
-
-	do
-	{
-		if
-		(
-			!(wfd.dwFileAttributes &
-				(FILE_ATTRIBUTE_DIRECTORY
-				|FILE_ATTRIBUTE_SYSTEM
-				|FILE_ATTRIBUTE_HIDDEN
-				|FILE_ATTRIBUTE_READONLY))
-				// not a directory, hidden or system file
-		)
-		{
-			char * pszFullPath = new char [nPathLen+strlen(wfd.cFileName)+1];
-			strncpy(pszFullPath,load_name,nPathLen);
-			strcpy(pszFullPath+nPathLen,wfd.cFileName);
-			
-			
-			//make sure the file is a rif file
-			HANDLE rif_file;
-			rif_file = CreateFile (pszFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, 
-					FILE_FLAG_RANDOM_ACCESS, 0);
-			if(rif_file==INVALID_HANDLE_VALUE)
-			{
-//				printf("couldn't open %s\n",pszFullPath);
-				delete[] pszFullPath;
-				continue;
-			}
-
-			AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
-			unsigned long bytes_read;
-			
-			if (!ReadFile(rif_file, profilePtr, sizeof(AVP_USER_PROFILE), &bytes_read, 0))
-			{
-	       		CloseHandle (rif_file);
-				delete[] pszFullPath;
-				delete profilePtr;
-				continue;
-			}
-			FILETIME ftLocal;
-			FileTimeToLocalFileTime(&wfd.ftLastWriteTime,&ftLocal);
-			FileTimeToSystemTime(&ftLocal,&profilePtr->TimeLastUpdated);
-			profilePtr->FileTime = ftLocal;
-			InsertProfileIntoList(profilePtr);
-			CloseHandle (rif_file);
-			delete[] pszFullPath;
-
-		}
-
-	}
-	while (::FindNextFile(hFindFile,&wfd));
-
-
-	if (ERROR_NO_MORE_FILES != GetLastError())
-	{
-	   //	printf("Error finding next file\n");
-	}
-
-	::FindClose(hFindFile);
-#endif
 	return 1;
 }
-
-
 
 static void SetDefaultProfileOptions(AVP_USER_PROFILE *profilePtr)
 {
@@ -393,46 +270,7 @@ static void SetDefaultProfileOptions(AVP_USER_PROFILE *profilePtr)
 	IntroOutroMoviesAreActive = 1; 
 	AutoWeaponChangeOn = TRUE;
 	
- 
- 	// Edmond to add in network name
- 	srand(time(NULL));
- 	switch(rand()%11)
- 	{
- 		case 0:
- 			strcpy(MP_PlayerName, "DogMeat");
- 			break;
- 		case 1:
- 			strcpy(MP_PlayerName, "FreshMeat");
- 			break;
- 		case 2:
- 			strcpy(MP_PlayerName, "RancidMeat");
- 			break;
- 		case 3:
- 			strcpy(MP_PlayerName, "HorseMeat");
- 			break;
- 		case 4:
- 			strcpy(MP_PlayerName, "RawMeat");
- 			break;
- 		case 5:
- 			strcpy(MP_PlayerName, "LiveMeat");
- 			break;
- 		case 6:
- 			strcpy(MP_PlayerName, "M-m-m-meat");
- 			break;
- 		case 7:
- 			strcpy(MP_PlayerName, "LlamaMeat");
- 			break;
- 		case 8:
- 			strcpy(MP_PlayerName, "JustMeat");
- 			break;
- 		case 9:
- 			strcpy(MP_PlayerName, "TastyMeat");
- 			break;
- 		case 10:
- 			strcpy(MP_PlayerName, "MonkeyMeat");
- 			break;
- 	}
-	strcpy(MP_PlayerName,"DeadMeat");
+	strcpy(MP_PlayerName, "DeadMeat");
 
 	SetToDefaultDetailLevels();
 	
@@ -448,10 +286,6 @@ static void SetDefaultProfileOptions(AVP_USER_PROFILE *profilePtr)
 
 	SaveSettingsToUserProfile(profilePtr);
 }
-
-
-
-
 			
 extern void GetSettingsFromUserProfile(void)
 {
@@ -476,7 +310,6 @@ extern void GetSettingsFromUserProfile(void)
 
 	SetDetailLevelsFromMenu();
 }
-
 
 extern void SaveSettingsToUserProfile(AVP_USER_PROFILE *profilePtr)
 {

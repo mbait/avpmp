@@ -449,7 +449,7 @@ void PlatStopSound(int activeIndex)
 /*	printf("PlatStopSound(%d)\n", activeIndex); */
 	
 	if (!SoundActivated)
-		return 0;
+		return;
 
 //	if (ActiveSounds[activeIndex].paused)
 //		alSourcePause (ActiveSounds[activeIndex].ds3DBufferP);
@@ -656,7 +656,7 @@ void PlatUpdatePlayer()
 	ALfloat vel[3], or[6], pos[3];
 
 	if (!SoundActivated)
-		return 0;
+		return;
 
 	if (Global_VDB_Ptr) {	
 		extern int NormalFrameTime;
@@ -710,7 +710,7 @@ void PlatEndGameSound(SOUNDINDEX index)
 	int i;
 
 	if (!SoundActivated)
-		return 0;		
+		return;
 
 	if((index<0)||(index>=SID_MAXIMUM)) return; /* no such sound */
 	
@@ -780,7 +780,7 @@ void UpdateSoundFrequencies()
 /*	printf("FREQ UpdateSoundFreqncies()\n"); */
 
 	if (!SoundActivated)
-		return 0;	
+		return;
 	
 	if (!SoundSwitchedOn) /* TODO: maybe I should have used this var.. */
 		return;
