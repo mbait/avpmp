@@ -1,9 +1,11 @@
+#include "fixer.h"
+
 #ifndef DB_LEVEL
 #define DB_LEVEL 4
 #endif
 #include "db.h"
 
-#include "awTexLd.hpp"
+#include "awtexld.hpp"
 
 // BMP Loader
 
@@ -183,9 +185,4 @@ void AwBmpLoader::LoadNextRow(AwTl::PtrUnion pRow)
 	m_pMedium->MovePos(bmp_filepitchpad);
 }
 
-#ifdef _MSC_VER
-	// VC5.0 tries to compile out code that is in a library
-	// and it thinks isn't being used
-	#line 186
-#endif
 AWTEXLD_IMPLEMENT_DYNCREATE("BM",AwBmpLoader)

@@ -19,24 +19,6 @@ extern char * SecondSoundDir;
 	SecondSoundDir = "./sounds";
 }
 
-/* psnd.c */
-#include "psnd.h"
-
-void Sound_Play(SOUNDINDEX soundNumber, char* format, ...)
-{
-	fprintf(stderr, "Sound_Play(%d, %s)\n", soundNumber, format);
-}
-
-void Sound_Stop(int activeSoundNumber)
-{
-	fprintf(stderr, "Sound_Stop(%d)\n", activeSoundNumber);
-}
-
-void Sound_Update3d(int activeSoundNumber, VECTORCH* posn)
-{
-	fprintf(stderr, "Sound_Update3d(%d, %p)\n", activeSoundNumber, posn);
-}
-
 
 /* dd_func.cpp */
 void FlipBuffers()

@@ -1,10 +1,16 @@
-#include "advwin32.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdarg.h>
+
+#include "fixer.h"
+
 #ifndef DB_LEVEL
 #define DB_LEVEL 4
 #endif
 #include "db.h"
 
-#include "awTexLd.hpp"
+#include "awtexld.hpp"
 
 // PNM loaders
 
@@ -87,8 +93,8 @@ void AwPpmLoader::LoadHeaderInfo(MediaMedium * pMedium)
 	db_logf4(("\tPPM_maxval is %u",pm_maxval));
 	if (pm_maxval > 255)
 	{
-		awTlLastErr = AW_TLE_BADFILEFORMAT;
-		db_log3("AwCreateTexture(): PPM_maxval too large");
+//		awTlLastErr = AW_TLE_BADFILEFORMAT;
+		db_log3("AwCreateTexture() [AwPpmLoader::LoadHeaderInfo] : PPM_maxval too large");
 	}
 	
 	m_nPaletteSize = 0;
@@ -147,7 +153,7 @@ void AwPgmLoader::LoadHeaderInfo(MediaMedium * pMedium)
 	if (pm_maxval > 255)
 	{
 		awTlLastErr = AW_TLE_BADFILEFORMAT;
-		db_log3("AwCreateTexture(): PGM_maxval too large");
+		db_log3("AwCreateTexture() [AwPgmLoader::LoadHeaderInfo] : PGM_maxval too large");
 	}
 	
 	m_nPaletteSize = pm_maxval+1;
@@ -226,11 +232,6 @@ void AwPbmLoader::LoadNextRow(AwTl::PtrUnion pRow)
 	}
 }
 
-#ifdef _MSC_VER
-	// VC5.0 tries to compile out code that is in a library
-	// and it thinks isn't being used
-	#line 228
-#endif
 AWTEXLD_IMPLEMENT_DYNCREATE("P6",AwPpmLoader)
 AWTEXLD_IMPLEMENT_DYNCREATE("P5",AwPgmLoader)
 AWTEXLD_IMPLEMENT_DYNCREATE("P4",AwPbmLoader)

@@ -4,6 +4,8 @@
 
 #define DB_LEVEL 1
 
+#include <stdio.h>
+
 #include "3dc.h"
 #include "module.h"
 #include "inline.h"
@@ -546,11 +548,13 @@ void Sound_Play(SOUNDINDEX soundNumber, char *format, ...)
 	GameSounds[soundNumber].activeInstances++;
 	if(externalRef) *externalRef = newIndex;
 
-	if(soundStartPosition && ActiveSounds[newIndex].dsBufferP)
-	{
-		//sound starts part of the way in
-		IDirectSoundBuffer_SetCurrentPosition(ActiveSounds[newIndex].dsBufferP,soundStartPosition);
-	}
+//	if(soundStartPosition && ActiveSounds[newIndex].dsBufferP)
+//	{
+//		//sound starts part of the way in
+//		IDirectSoundBuffer_SetCurrentPosition(ActiveSounds[newIndex].dsBufferP,soundStartPosition);
+//	}
+	if (soundStartPosition)
+		fprintf(stderr, "Sound_Play: sound starts part of the way in (%d)\n", soundStartPosition);
 }
 
 void Sound_Stop(int activeSoundNumber)
@@ -829,11 +833,12 @@ void Save_SoundState(int* soundHandle)
 		block->volume<<=7;
 		block->volume/=VOLUME_PLAT2DSCALE;
 		
-		if(sound->dsBufferP)
-			IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
-		else
+//		if(sound->dsBufferP)
+//			IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
+//		else
 			block->position = 0;
-
+fprintf(stderr, "Save_SoundState: GetCurrentPosition!\n");
+		
 		strcpy((char*)(block+1),name);
 		
 	}	
@@ -918,11 +923,12 @@ void Save_SoundsWithNoReference()
 				block->volume<<=7;
 				block->volume/=VOLUME_PLAT2DSCALE;
 
-				if(sound->dsBufferP)
-					IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
-				else
+//				if(sound->dsBufferP)
+//					IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
+//				else
 					block->position = 0;
-
+				fprintf(stderr, "Save_SoundsWithNoReference: GetCurrentPosition!\n");
+				
 				strcpy((char*)(block+1),name);
 			}
 		}

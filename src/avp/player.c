@@ -33,10 +33,12 @@ so player.c is looking a bit bare at the moment. */
 #if SupportWindows95
 #include "pldnet.h"
 #include "pldghost.h"
-#include "dp_func.h"
+//#include "dp_func.h"
 #endif
 #include "showcmds.h"
 #include "bonusabilities.h"
+
+extern DPID AVPDPNetID;
 
 #define PLAYER_HMODEL 0
 

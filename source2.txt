@@ -93,9 +93,9 @@ avp/paintball.c
 avp/particle.c
 avp/pfarlocs.c
 avp/pheromon.c
-TODO avp/player.c
+avp/player.c
 avp/pmove.c
-TODO avp/psnd.c
+avp/psnd.c
 avp/psndproj.c
 avp/pvisible.c
 avp/savegame.c
@@ -193,9 +193,9 @@ avp/win95/gadgets/trepgadg.cpp
 TODO win95/alt_tab.cpp
 win95/animchnk.cpp
 win95/animobs.cpp
-TODO win95/awbmpld.cpp
+win95/awbmpld.cpp
 win95/awiffld.cpp
-TODO win95/awpnmld.cpp
+win95/awpnmld.cpp
 TODO win95/awtexld.cpp
 win95/bmpnames.cpp
 TODO win95/cd_player.c

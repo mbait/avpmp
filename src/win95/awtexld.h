@@ -67,6 +67,8 @@ enum
 #define ATIncludeSurfaceDb(p, d, s) fprintf(stderr, "ATIncludeSurfaceDb: %s/%d: %s\n", __FILE__, __LINE__, s)
 #define ATIncludeTextureDb(p, d, s) fprintf(stderr, "ATIncludeTextureDb: %s/%d: %s\n", __FILE__, __LINE__, s)
 
+extern AW_TL_ERC awTlLastErr;
+
 extern D3DTexture * AwCreateTexture(char const * _argFormatS, ...);
 extern DDSurface * AwCreateSurface(char const * _argFormatS, ...);
 

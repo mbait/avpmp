@@ -245,7 +245,7 @@ void AwIffLoader::LoadHeaderInfo(MediaMedium * pMedium)
 	if (!m_ifData.Load(pMedium) || !m_ifData.GetContents())
 	{
 //		if (NO_ERROR == (awTlLastWinErr = GetLastError()))
-//			awTlLastErr = AW_TLE_BADFILEDATA;
+			awTlLastErr = AW_TLE_BADFILEDATA;
 //		else
 //			awTlLastErr = AW_TLE_CANTREADFILE;
 			
@@ -378,18 +378,18 @@ void AwIffLoader::OnBeginRestoring(unsigned nMaxPaletteSize)
 					break;
 				default:
 					db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: IFF mask field wrong");
-//					awTlLastErr = AW_TLE_BADFILEDATA;
+					awTlLastErr = AW_TLE_BADFILEDATA;
 			}
 		}
 		else
 		{
-//	 		awTlLastErr = AW_TLE_CANTPALETTIZE; // no suitable chunk found
+	 		awTlLastErr = AW_TLE_CANTPALETTIZE; // no suitable chunk found
 		 	db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: No suitable IFF body chunk found");
 	 	}
 	}
 	else
 	{
-//	 	awTlLastErr = AW_TLE_BADFILEDATA;
+	 	awTlLastErr = AW_TLE_BADFILEDATA;
 	 	db_log3("AwCreateTexture() [AwIffLoader::OnBeginRestoring] : ERROR: IFF file not loaded or contains no image data");
 	}
 }
@@ -465,7 +465,7 @@ void AwIffLoader::ConvertRow(AwTl::PtrUnion pDest, unsigned nDestWidth, AwTl::Pt
 				break;
 			default:
 				db_log3("AwCreateTexture() [AwIffLoader::ConvertRow] : ERROR: IFF mask field wrong");
-//				awTlLastErr = AW_TLE_BADFILEDATA;
+				awTlLastErr = AW_TLE_BADFILEDATA;
 		}
 	}
 }
