@@ -5,8 +5,6 @@
 #include "equipmnt.h"
 #endif
 
-#include "gameflow.h"
-
 #include "pmove.h"
 
 
@@ -269,8 +267,8 @@ typedef struct player_status
 	int CloakingEffectiveness; 
 	
 	// John 28/7/97 Game Flow stuff
-	PLAYERMISSION CurrentMission;
-	unsigned long StateChangeObjectFlags;
+	int UNUSED_Enum_CurrentMission;
+	unsigned long UNUSED_StateChangeObjectFlags;
 
 	/* Encumberance */
 	ENCUMBERANCE_STATE Encumberance;

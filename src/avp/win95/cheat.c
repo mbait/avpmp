@@ -12,7 +12,6 @@
 #include "language.h"
 #include "cheat.h"
 #include "weapons.h"
-#include "gameflow.h"
 #include "equipmnt.h"
 
 /* Extern for global keyboard buffer */
