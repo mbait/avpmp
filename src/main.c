@@ -349,6 +349,32 @@ static void handle_keypress(int key, int press)
 	KeyboardInput[key] = press;
 }
 
+static void handle_buttonpress(int button, int press)
+{
+	int key;
+
+	switch(button) {
+		case 4: /* mouse wheel up */
+			key = KEY_MOUSEWHEELUP;
+			break;
+		case 5: /* mouse wheel down */
+			key = KEY_MOUSEWHEELDOWN;
+			break;
+		default: /* other buttons are handled elsewhere */
+			return;
+	}
+	
+	/* since this currently only handles wheel up/down */
+	if (press == 0)
+		return;
+		
+	if (press && !KeyboardInput[key]) {
+		DebouncedKeyboardInput[key] = 1;
+	}
+	
+	KeyboardInput[key] = press;
+}
+	
 void CheckForWindowsMessages()
 {
 	SDL_Event event;
@@ -358,9 +384,18 @@ void CheckForWindowsMessages()
 	DebouncedGotAnyKey = 0;
 	memset(DebouncedKeyboardInput, 0, sizeof(DebouncedKeyboardInput));
 	
+	KeyboardInput[KEY_MOUSEWHEELUP] = 0;
+	KeyboardInput[KEY_MOUSEWHEELDOWN] = 0;
+	
 	if (SDL_PollEvent(&event)) {
 		do {
 			switch(event.type) {
+				case SDL_MOUSEBUTTONDOWN:
+					handle_buttonpress(event.button.button, 1);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					handle_buttonpress(event.button.button, 0);
+					break;
 				case SDL_KEYDOWN:
 					handle_keypress(KeySymToKey(event.key.keysym.sym), 1);
 					break;
@@ -389,6 +424,7 @@ void CheckForWindowsMessages()
 		handle_keypress(KEY_RMOUSE, 1);
 	else
 		handle_keypress(KEY_RMOUSE, 0);
+	
 	MouseVelX = DIV_FIXED(x, NormalFrameTime);
 	MouseVelY = DIV_FIXED(y, NormalFrameTime);
 	
