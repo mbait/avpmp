@@ -30,15 +30,15 @@ extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 
 extern int SpecialFXImageNumber;
 extern int StaticImageNumber;
+extern int BurningImageNumber;
 extern int HUDFontsImageNumber;
 
+extern int FMVParticleColour;
 extern int HUDScaleFactor;
 extern int CloakingPhase;
 
 static D3DTexture *CurrTextureHandle;
 
-
-#define TRANSLUCENCY_ONEONE 33
 
 static enum TRANSLUCENCY_TYPE CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
 static GLuint CurrentlyBoundTexture = 0; /* opengl state variable */
@@ -86,9 +86,6 @@ static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
 		case TRANSLUCENCY_JUSTSETZ:
 			glBlendFunc(GL_ZERO, GL_ONE);
 			break;
-		case TRANSLUCENCY_ONEONE:
-			glBlendFunc(GL_ONE, GL_ONE);
-			break;	
 		default:
 			fprintf(stderr, "RenderPolygon.TranslucencyMode: invalid %d\n", RenderPolygon.TranslucencyMode);
 			return;
@@ -162,11 +159,17 @@ void SecondFlushD3DZBuffer()
 void D3D_DecalSystem_Setup()
 {
 	glDepthMask(GL_FALSE);
+
+	/* this does stop zfighting with bulletmarks on walls... */
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(-10.0, -10.0);
 }
 
 void D3D_DecalSystem_End()
 {
-	glDepthMask(GL_TRUE);	
+	glDepthMask(GL_TRUE);
+	
+	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 /* ** */
@@ -191,10 +194,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
 
-/*
-	if (SecondaryColorExt)
-		glEnable(GL_COLOR_SUM_EXT);
-*/
 	RecipW = (1.0f/65536.0f)/128.0f;
 	RecipH = (1.0f/65536.0f)/128.0f;
 	
@@ -241,10 +240,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		z = 1.0 - 2*ZNear/zvalue;
 
 		glColor4ub(GammaValues[vertices->R], GammaValues[vertices->G], GammaValues[vertices->B], vertices->A);
-/*
-		if (SecondaryColorExt)
-			glSecondaryColor3ub(GammaValues[vertices->SpecularR], GammaValues[vertices->SpecularG], GammaValues[vertices->SpecularB]);
-*/	
 
 	/* they both work. */
 #if 0		
@@ -259,45 +254,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	glEnd();
 	
 	CurrTextureHandle = TextureHandle;
-
-#if 0
-/* note: the specular color doesn't seem to be enabled in the original d3d code? */
-/* couldn't find the feature in the voodoo 1 specs (the minimum required card) */
-/* This *tries* to emulate SecondaryColorExt */
-/*	if (!SecondaryColorExt || WantSecondaryColorHack) */ {
-		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_ONEONE);
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-		glDepthMask(GL_FALSE);
-		glDisable(GL_TEXTURE_2D);
-		
-		glBegin(GL_POLYGON);
-		for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
-			RENDERVERTEX *vertices = &renderVerticesPtr[i];
-			GLfloat x, y, z;
-			int x1, y1;
-		
-			x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
-			y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-			x = x1;
-			y = y1;
-						
-			x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
-			y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;		
-			
-			zvalue = vertices->Z+HeadUpDisplayZOffset;
-			zvalue = 1.0 - 2*ZNear/zvalue; /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
-			z = zvalue;
-		
-			glColor4b(GammaValues[vertices->SpecularR], GammaValues[vertices->SpecularG], GammaValues[vertices->SpecularB], 255);
-			glVertex3f(x, y, z);
-		}
-		glEnd();
-		
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		glDepthMask(GL_TRUE);
-		glEnable(GL_TEXTURE_2D);
-	}
-#endif	
 }
 
 void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
@@ -610,6 +566,161 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 	glEnd();
 }
 
+void D3D_PlayerOnFireOverlay()
+{
+	int c = 128;
+	int colour = (FMVParticleColour&0xffffff)+(c<<24);
+	GLfloat x[4], y[4], s[4], t[4];
+	float u, v;
+	int r, g, b, a;
+	D3DTexture *tex;
+
+	b = (colour >> 0)  & 0xFF;
+	g = (colour >> 8)  & 0xFF;
+	r = (colour >> 16) & 0xFF;
+	a = (colour >> 24) & 0xFF;
+	
+	tex = ImageHeaderArray[BurningImageNumber].D3DTexture;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	//CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
+	CheckBoundTextureIsCorrect(tex->id);
+	
+	glColor4ub(r, g, b, a);
+	
+	u = (FastRandom()&255)/256.0f;
+	v = (FastRandom()&255)/256.0f;
+	
+	x[0] = -1.0f;
+	y[0] = -1.0f;
+	s[0] = u;
+	t[0] = v;
+	x[1] =  1.0f;
+	y[1] = -1.0f;
+	s[1] = u + 1.0f;
+	t[1] = v;
+	x[2] =  1.0f;
+	y[2] =  1.0f;
+	s[2] = u + 1.0f;
+	t[2] = v + 1.0f;
+	x[3] = -1.0f;
+	y[3] =  1.0f;
+	s[3] = u;
+	t[3] = v + 1.0f;
+	
+	SelectPolygonBeginType(3); /* triangles */
+	
+	glTexCoord2f(s[0], t[0]);
+	glVertex3f(x[0], y[0], -1.0f);
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], -1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], -1.0f);
+	glTexCoord2f(s[2], t[2]);
+	glVertex3f(x[2], y[2], -1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glEnd();
+}
+
+void D3D_PlayerDamagedOverlay(int intensity)
+{
+	D3DTexture *tex;
+	int theta[2];
+	int colour, baseColour;
+	int r, g, b, a;
+	int i;
+	
+	theta[0] = (CloakingPhase/8)&4095;
+	theta[1] = (800-CloakingPhase/8)&4095;
+	
+	tex = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
+	switch(AvP.PlayerType) {
+		default:
+			// LOCALASSERT(0);
+		case I_Marine:
+			baseColour = 0xff0000;
+			break;
+		case I_Alien:
+			baseColour = 0xffff00;
+			break;
+		case I_Predator:
+			baseColour = 0x00ff00;
+			break;
+	}
+	
+	
+	// CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
+	CheckBoundTextureIsCorrect(tex->id);
+	
+	colour = 0xffffff - baseColour + (intensity<<24);
+	
+	b = (colour >> 0)  & 0xFF;
+	g = (colour >> 8)  & 0xFF;
+	r = (colour >> 16) & 0xFF;
+	a = (colour >> 24) & 0xFF;
+	
+	glColor4ub(r, g, b, a);
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_INVCOLOUR);
+	for (i = 0; i < 2; i++) {
+		GLfloat x[4], y[4], s[4], t[4];
+		
+		float sin = (GetSin(theta[i]))/65536.0f/16.0f;
+		float cos = (GetCos(theta[i]))/65536.0f/16.0f;	
+
+		x[0] = -1.0f;
+		y[0] = -1.0f;
+		s[0] = 0.875f + (cos*(-1) - sin*(-1));
+		t[0] = 0.375f + (sin*(-1) + cos*(-1));
+		x[1] =  1.0f;
+		y[1] = -1.0f;
+		s[1] = 0.875f + (cos*(+1) - sin*(-1));
+		t[1] = 0.375f + (sin*(+1) + cos*(-1));
+		x[2] =  1.0f;
+		y[2] =  1.0f;
+		s[2] = 0.875f + (cos*(+1) - sin*(+1));
+		t[2] = 0.375f + (sin*(+1) + cos*(+1));
+		x[3] = -1.0f;
+		y[3] =  1.0f;
+		s[3] = 0.875f + (cos*(-1) - sin*(+1));
+		t[3] = 0.375f + (sin*(-1) + cos*(+1));
+	
+		SelectPolygonBeginType(3); /* triangles */
+	
+		glTexCoord2f(s[0], t[0]);
+		glVertex3f(x[0], y[0], -1.0f);
+		glTexCoord2f(s[1], t[1]);
+		glVertex3f(x[1], y[1], -1.0f);
+		glTexCoord2f(s[3], t[3]);
+		glVertex3f(x[3], y[3], -1.0f);
+	
+		glTexCoord2f(s[1], t[1]);
+		glVertex3f(x[1], y[1], -1.0f);
+		glTexCoord2f(s[2], t[2]);
+		glVertex3f(x[2], y[2], -1.0f);
+		glTexCoord2f(s[3], t[3]);
+		glVertex3f(x[3], y[3], -1.0f);
+	
+		glEnd();
+	
+		colour = baseColour + (intensity<<24);
+		
+		b = (colour >> 0)  & 0xFF;
+		g = (colour >> 8)  & 0xFF;
+		r = (colour >> 16) & 0xFF;
+		a = (colour >> 24) & 0xFF;
+	
+		glColor4ub(r, g, b, a);
+	
+		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	}
+}
+
 void DrawNoiseOverlay(int tr)
 {
 	GLfloat x[4], y[4], s[4], t[4], u, v;
@@ -755,6 +866,47 @@ void D3D_PredatorScreenInversionOverlay()
 	glEnd();
 	
 	glDepthFunc(GL_LEQUAL);
+}
+
+void D3D_FadeDownScreen(int brightness, int colour)
+{
+	int t, r, g, b, a;
+	GLfloat x[4], y[4];
+	
+	t = 255 - (brightness>>8);
+	if (t<0) t = 0;
+	colour = (t<<24)+colour;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
+	CheckBoundTextureIsCorrect(0);
+	
+	b = (colour >> 0)  & 0xFF;
+	g = (colour >> 8)  & 0xFF;
+	r = (colour >> 16) & 0xFF;
+	a = (colour >> 24) & 0xFF;
+	
+	glColor4ub(r, g, b, a);
+	
+	x[0] = -1.0f;
+	y[0] = -1.0f;
+	x[1] =  1.0f;
+	y[1] = -1.0f;
+	x[2] =  1.0f;
+	y[2] =  1.0f;
+	x[3] = -1.0f;
+	y[3] =  1.0f;
+	
+	SelectPolygonBeginType(3); /* triangles */
+	
+	glVertex3f(x[0], y[0], -1.0f);
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[2], y[2], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glEnd();	
 }
 
 void D3D_HUD_Setup()

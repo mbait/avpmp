@@ -375,21 +375,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVertices
 	fprintf(stderr, "D3D_SkyPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 }
 
-void D3D_PlayerOnFireOverlay()
-{
-	fprintf(stderr, "D3D_PlayerOnFireOverlay()\n");
-}
-
-void D3D_PlayerDamagedOverlay(int intensity)
-{
-	fprintf(stderr, "D3D_PlayerDamagedOverlay(%d)\n", intensity);
-}
-
-void D3D_FadeDownScreen(int brightness, int colour)
-{
-	fprintf(stderr, "D3D_FadeDownScreen(%d, %d)\n", brightness, colour);
-}
-
 void D3D_DrawWaterTest(MODULE *testModulePtr)
 {
 	fprintf(stderr, "D3D_DrawWaterTest(%p)\n", testModulePtr);
