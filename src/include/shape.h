@@ -1,5 +1,7 @@
 #ifndef SHAPE_INCLUDED
+#define SHAPE_INCLUDED
 
+#include "aw.h" // AW_BACKUPTEXTUREHANDLE
 /*
 
  Header File for Shape Data
@@ -826,17 +828,12 @@ typedef struct imageheader {
 	
 	TEXTURE *ImagePtr;					/* Pointer to texture in memory */
 
-	#if SupportWindows95
-	
-	LPDIRECTDRAWSURFACE DDSurface;
-
-	LPDIRECT3DTEXTURE D3DTexture;
-
-	D3DTEXTUREHANDLE D3DHandle;
-
+#if SupportWindows95	
+//	LPDIRECTDRAWSURFACE DDSurface;
+//	LPDIRECT3DTEXTURE D3DTexture;
+//	D3DTEXTUREHANDLE D3DHandle;
 	AW_BACKUPTEXTUREHANDLE hBackup;
-	
-	#endif
+#endif
 
 	int ImageNum;							/* # MIP images */
 	char ImageName[ImageNameSize];	/* Filename */
@@ -1096,7 +1093,5 @@ typedef enum {
 
 #endif
 
-#define SHAPE_INCLUDED
 
 #endif
-

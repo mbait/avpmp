@@ -1,4 +1,5 @@
 #ifndef PROTOTYP_INCLUDED
+#define PROTOTYP_INCLUDED
 
 /*
 
@@ -2470,22 +2471,13 @@ void BackFaceCullPointOutcodeFlagging(void);
 
 */
 
-#if SupportWindows95
-void InitialiseSystem(HINSTANCE hInstance, int nCmdShow);
-#else
 void InitialiseSystem(void);
-#endif
-
 void InitialiseRenderer(void);
-
 void ExitSystem(void);
-
 void InitialVideoMode(void);
-
 void ResetFrameCounter(void);
 void FrameCounterHandler(void);
 
-#if SupportWindows95
 void DirectWriteD3DLine(VECTOR2D* LineStart, VECTOR2D* LineEnd, int LineColour);
 void* LoadImageIntoDirectDrawSurface(char *fname, IMAGEHEADER *iheader,
       int ImageLoadMode, BOOL Sysmem);
@@ -2499,19 +2491,6 @@ int GetTextureHandle(IMAGEHEADER *imageHeaderPtr);
 
 void* LoadFontIntoDirectDrawSurface(char *fname, IMAGEHEADER *iheader);
 void ClearScreen(SCREENDESCRIPTORBLOCK* sdb, int Colour);
-#ifdef __cplusplus
-LPDIRECTDRAWSURFACE LoadPPMInD3DMode(char* fname,
-        LPDDSURFACEDESC lpFormat, IMAGEHEADER* iheader,
-        int MemoryType);
-LPDIRECTDRAWSURFACE LoadPPMIntoDDSurface(LPDIRECTDRAWSURFACE lpDDS,
-        DDSURFACEDESC format, int Height, int Width,
-        IMAGEHEADER* iheader, BOOL Quantise, FILE* fp, 
-        int psize, int pcaps, char* fname, int MipNum);
-LPDIRECTDRAWSURFACE LoadPGMInD3DMode(char* fname,
-        LPDDSURFACEDESC lpFormat, IMAGEHEADER* iheader,
-        int MemoryType);
-#endif // for __cplusplus
-#endif // for SupportWindows95
 
 void InitGame(void);
 void StartGame(void);
@@ -2986,6 +2965,6 @@ int Approximate3dMagnitude(VECTORCH *v);
 #endif
 
 
-#define PROTOTYP_INCLUDED
+
 
 #endif

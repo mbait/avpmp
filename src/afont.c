@@ -761,7 +761,7 @@ void BLTString(FONT_DESC str_packet)
 					}
 				}
 			}		
-			while(++strptr != end_char);
+			while(++strptr != (unsigned char *)end_char);
 
 			pos_y += font.fontHeight - 2;
 		}

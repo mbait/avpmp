@@ -74,31 +74,6 @@ should contain a dummy padding 32-bit value (recommended).
 struct vectorch;
 struct matrixch;
 
-/***********************/
-/* F-U-N-C-T-I-O-N     */
-/* P-R-O-T-O-T-Y-P-E-S */
-/* F-O-R   A-L-L       */
-/* P-U-B-L-I-C         */
-/* F-U-N-C-T-I-O-N-S   */
-/***********************/
-
-/* overwrites the input vector with the new vector */
-_asmcall void MMX_VectorTransform(struct vectorch * vector, struct matrixch const * matrix);
-/* fills a new vector with the result of the input vector transformed by the matrix */
-_asmcall void MMX_VectorTransformed(struct vectorch * v_result, struct vectorch const * v_parm, struct matrixch const * matrix);
-/* overwrites the input vector with the new vector, then adds another vector */
-_asmcall void MMX_VectorTransformAndAdd(struct vectorch * vector, struct matrixch const * matrix, struct vectorch const * v_add);
-/* fills a new vector with the result of the input vector transformed by the matrix then added to another vector */
-_asmcall void MMX_VectorTransformedAndAdd(struct vectorch * v_result, struct vectorch const * v_parm, struct matrixch const * matrix, struct vectorch const * v_add);
-/* compute dot product */
-_asmcall signed MMX_VectorDot(struct vectorch const * v1, struct vectorch const * v2);
-/* this one assumes all the input vector elements are in the range [-32768,32767] */
-_asmcall signed MMX_VectorDot16(struct vectorch const * v1, struct vectorch const * v2);
-
-/* inline versions */
-_asminline signed MMXInline_VectorDot(struct vectorch const * v1, struct vectorch const * v2);
-_asminline signed MMXInline_VectorDot16(struct vectorch const * v1, struct vectorch const * v2);
-
 /*****************/
 /* PRIVATE PARTS */
 /*****************/
@@ -209,8 +184,8 @@ extern int use_mmx_math;
 
 /* inline functions - no call */
 
-extern __int64 const mmx_sign_mask;
-extern __int64 const mmx_one_fixed_h;
+extern const __int64 mmx_sign_mask;
+extern const __int64 mmx_one_fixed_h;
 
 #ifdef __WATCOMC__
 

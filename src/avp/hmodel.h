@@ -71,7 +71,7 @@ extern void CopyIntQuatToShort(QUAT* q_from,QUAT_SHORT* qs_to);
 #define KEYFRAME_VECTOR_SHIFT 4
 
 //make sure the keyframe structure packs as much as possible
-#pragma pack(push,1) 
+
 typedef struct keyframe_data {
 	short Offset_x; /*Offset values may need to be scaled*/
 	short Offset_y;	/*In practice scaling should only be needed for 'placed' hierarchies*/
@@ -95,8 +95,7 @@ typedef struct keyframe_data {
 
 	unsigned short Sequence_Length; /* Time between these values and the next ones. */
 	struct keyframe_data *Next_Frame; /*This is no longer Null for the last frame - look at the last_frame setting instead*/
-} KEYFRAME_DATA;
-#pragma pack(pop)
+} PACKED KEYFRAME_DATA;
 
 
 

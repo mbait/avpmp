@@ -1,6 +1,8 @@
 #ifndef PLATFORM_INCLUDED
 #define PLATFORM_INCLUDED
 
+#include <stdint.h> // int64_t
+
 #include "shape.h" // struct imageheader
 
 /*
@@ -42,6 +44,7 @@ typedef struct RECT
 
 typedef RECT RECT_AVP;
 
+typedef int64_t __int64;
 
 /* Watcom C 64-bit values */
 
