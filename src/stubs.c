@@ -296,20 +296,20 @@ void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* outpu
 
 void RenderKeyConfigRectangle(int alpha)
 {
-/*
 	void Hardware_RenderKeyConfigRectangle(int alpha);
 	Hardware_RenderKeyConfigRectangle(alpha);
-*/	
+/*
 	fprintf(stderr, "RenderKeyConfigRectangle(%d)\n", alpha);
+*/	
 }
 
 void RenderHighlightRectangle(int x1,int y1,int x2,int y2, int r, int g, int b)
 {
-/*
 	void Hardware_RenderHighlightRectangle(int x1,int y1,int x2,int y2,int r, int g, int b);
 	Hardware_RenderHighlightRectangle(x1, y1, x2, y2, r, g, b);
-*/
-	fprintf(stderr, "RenderHighlightRectangle(%d, %d, %d, %d, %d, %d, %d)\n", x1, y1, x2, y2, r, g, b);	
+/*
+	fprintf(stderr, "RenderHighlightRectangle(%d, %d, %d, %d, %d, %d, %d)\n", x1, y1, x2, y2, r, g, b);
+*/	
 }
 
 int LengthOfMenuText(char *textPtr)

@@ -574,7 +574,7 @@ void InitNPCs(RIFFHANDLE h)
 #endif
 
 /* i believe this was added for the gold edition */
-#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO)//||REGULAR_EDITION /* TODO */
+#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO||REGULAR_EDITION)
 	if(AvP.PlayerType==I_Marine || Load_HNPC[HNPC_Marine])
 	{
 		//need to load the mdisk hierarchy

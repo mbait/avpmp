@@ -413,11 +413,15 @@ int PlatPlaySound(int activeIndex)
 		alSourcePlay (ActiveSounds[activeIndex].ds3DBufferP);
 		
 		if (ActiveSounds[activeIndex].loop) {
+/*
 			printf("Playing sound %i %s looping in slot %i\n",
 				si, GameSounds[si].wavName, activeIndex);
+*/				
 		} else {
+/*
 			printf("Playing sound %i %s once in slot %i\n",
 				si, GameSounds[si].wavName, activeIndex);
+*/				
 		}
 	}
 
@@ -426,7 +430,7 @@ int PlatPlaySound(int activeIndex)
 
 void PlatStopSound(int activeIndex)
 {
-	printf("PlatStopSound(%d)\n", activeIndex);
+/*	printf("PlatStopSound(%d)\n", activeIndex); */
 	
 //	if (ActiveSounds[activeIndex].paused)
 //		alSourcePause (ActiveSounds[activeIndex].ds3DBufferP);
@@ -490,18 +494,18 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 	}
 	
 	ActiveSounds[activeIndex].pitch = pitch;
-	
+/*	
 	printf("NEWFREQ PlatChangeSoundPitch(%d, %d) = %f\n", activeIndex, pitch, (double)frequency / (double)GameSounds[ActiveSounds[activeIndex].soundIndex].dsFrequency);
-
+*/
 	return 1;
 }
 
 int PlatSoundHasStopped(int activeIndex)
 {
 	ALint val;
-	
+/*
 	printf("PlatSoundHasStopped(%d)\n", activeIndex);
-
+*/
 	alGetSourceiv (ActiveSounds[activeIndex].ds3DBufferP, 
 			AL_SOURCE_STATE, &val);
 
@@ -577,9 +581,9 @@ int PlatDo3dSound(int activeIndex)
 		newVolume = VOLUME_MAX;
 	if (newVolume < VOLUME_MIN)
 		newVolume = VOLUME_MIN;
-	
+/*	
 	printf("PlatDo3dSound: idx = %d, volume = %d, distance = %d\n", activeIndex, newVolume, distance);
-
+*/
 	if (PlatChangeSoundVolume (activeIndex, newVolume) == SOUND_PLATFORMERROR) {
 		return SOUND_PLATFORMERROR;
 	}
@@ -595,8 +599,9 @@ int PlatDo3dSound(int activeIndex)
 		ActiveSounds[activeIndex].PropSetP_pos[2] = (ALfloat)relativePosn.vz / (ALfloat)distance;
 		
 		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP, AL_POSITION, ActiveSounds[activeIndex].PropSetP_pos);
+/*
 printf("Sound : (%f, %f, %f) [%d] [%d,%d]\n", ActiveSounds[activeIndex].PropSetP_pos[0], ActiveSounds[activeIndex].PropSetP_pos[1], ActiveSounds[activeIndex].PropSetP_pos[2], activeIndex, ActiveSounds[activeIndex].threedeedata.inner_range, ActiveSounds[activeIndex].threedeedata.outer_range);
-
+*/
 		ActiveSounds[activeIndex].PropSetP_vel[0] =
 			ActiveSounds[activeIndex].threedeedata.velocity.vx;
 		ActiveSounds[activeIndex].PropSetP_vel[1] =
@@ -652,9 +657,9 @@ void PlatUpdatePlayer()
 		pos[1] = Global_VDB_Ptr->VDB_World.vy; // 10000.0;
 		pos[2] = Global_VDB_Ptr->VDB_World.vz; // 10000.0;
 		
-			
+/*			
 		printf("Player: (%f, %f, %f) (%f, %f, %f %f, %f, %f)\n", pos[0], pos[1], pos[2], or[0], or[1], or[2], or[3], or[4], or[5]);
-
+*/
 		// fixme: add reverb check
 		alListenerfv (AL_ORIENTATION, or);
 	//	alListenerfv (AL_VELOCITY, vel);
@@ -728,7 +733,7 @@ void UpdateSoundFrequencies()
 	extern int TimeScale;
 	int i;
 	
-	printf("FREQ UpdateSoundFreqncies()\n");
+/*	printf("FREQ UpdateSoundFreqncies()\n"); */
 	
 	if (!SoundSwitchedOn)
 		return;
@@ -738,10 +743,10 @@ void UpdateSoundFrequencies()
 		
 		if (gameIndex == SID_NOSOUND)
 			continue;
-		
+/*		
 		if (TimeScale != ONE_FIXED)
  			printf("NEWFREQ UpdateSoundFreqncies %d, f = %d\n", i, MUL_FIXED(GameSounds[gameIndex].dsFrequency,TimeScale));
-		
+*/		
 		/* TODO: huh? */
 		if (ActiveSounds[i].pitch != GameSounds[gameIndex].pitch)
 			PlatChangeSoundPitch(i,ActiveSounds[i].pitch);
@@ -758,9 +763,9 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	ALsizei size, freq, bits;
 	ALenum format;
 	ALvoid *data;
-	
+/*	
 	printf("LoadWavFile(%d, %s) - sound\n", soundNum, wavFileName);
-
+*/
 	alutLoadWAV (wavFileName, &data, &format, &size, &bits, &freq);
 	alGenBuffers (1, &(GameSounds[soundNum].dsBufferP));
 	alBufferData (GameSounds[soundNum].dsBufferP, format, data, size, freq);
@@ -797,15 +802,15 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 	ALuint rsize;
 	int slen;
 		
-printf("ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
+/* printf("ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr); */
 
 	slen = strlen (bufferPtr) + 1;
 	GameSounds[soundIndex].wavName = (char *)AllocateMem (slen);
 	strcpy (GameSounds[soundIndex].wavName, bufferPtr);
 	bufferPtr += slen;
-
+/*
 printf("Loaded %s\n", GameSounds[soundIndex].wavName);
-
+*/
 #if 1 /* TODO: replace with own routine later */	
 	if (acLoadWAV (bufferPtr, &rsize, &udata, &rfmt,
 			&rchan, &rfreq) == NULL) {
@@ -866,7 +871,7 @@ int LoadWavFromFastFile(int soundNum, char * wavFileName)
 	unsigned char *buf;
 	unsigned int len = 0;
 	
-	printf("LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName);
+/*	printf("LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName); */
 
 	if ((fp = ffopen (wavFileName, "rb")) != NULL) {
 		ffseek (fp, 0, SEEK_END);

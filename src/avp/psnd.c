@@ -511,8 +511,10 @@ void Sound_Play(SOUNDINDEX soundNumber, char *format, ...)
 	if(loop) ActiveSounds[newIndex].loop = 1;
 	else ActiveSounds[newIndex].loop = 0;
 
+/*
 printf("Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
 printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].wavName, loop);
+*/
 
 	if(worldPosn) 
 	{
@@ -588,9 +590,9 @@ void Sound_Stop(int activeSoundNumber)
 	/* stop the sound: it may have already stopped, of course, but never mind */
 	
 	PlatStopSound(activeSoundNumber);
-	
+/*	
 printf("Stop: %d %d %s\n", activeSoundNumber, soundNo, GameSounds[soundNo].wavName);
-	
+*/	
 	/* release the active sound slot */
 	buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
 	ActiveSounds[activeSoundNumber] = BlankActiveSound;

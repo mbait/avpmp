@@ -43,6 +43,9 @@ can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
 CFLAGS (the one that's uncommented). Rename all game files lowercase. 
 Be sure to install the latest OpenAL (http://www.openal.org) CVS.
 
+If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
+
+
 relnev:~/avp/AvP Demo 3 - Alien$ ls
 aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/
 relnev:~/avp/Gold Edition$ ls
