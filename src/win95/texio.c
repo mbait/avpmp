@@ -17,7 +17,6 @@
 #else
 
 #include <stdio.h>
-#include <conio.h>
 #include <sys/stat.h>
 
 #include "system.h"

@@ -9,7 +9,6 @@ extern "C"
 #include "gamedef.h"
 
 #include "avp_envinfo.h"
-#include "dxlog.h"
 };
 
 #include "list_tem.hpp"
@@ -32,7 +31,7 @@ void EmptyCDTrackList()
 		while(LevelCDTracks[i].size()) LevelCDTracks[i].delete_first_entry();
 	}
 
-	for(i=0;i<3;i++)
+	for(int i=0;i<3;i++)
 	{
 		while(MultiplayerCDTracks[i].size()) MultiplayerCDTracks[i].delete_first_entry();
 	}
@@ -90,7 +89,7 @@ static void ExtractTracksForLevel(char* & buffer,List<int> & track_list)
 		}
 		else
 		{
-			*buffer++;
+			buffer++;
 		}
 	}
 
@@ -140,7 +139,7 @@ void LoadCDTrackList()
 	}
 	
 	//now the level tracks
-	for(i=0 ;i<AVP_ENVIRONMENT_END_OF_LIST;i++)
+	for(int i=0 ;i<AVP_ENVIRONMENT_END_OF_LIST;i++)
 	{
 		ExtractTracksForLevel(bufferptr,LevelCDTracks[i]);
 	}

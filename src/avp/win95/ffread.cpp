@@ -1,6 +1,7 @@
 #include <string.h>
-#include <malloc.h>
-#include <windows.h>
+#include <stdlib.h>
+#include <ctype.h>
+//#include <windows.h>
 #include <stdio.h>
 
 #include "ffread.hpp"
@@ -27,6 +28,7 @@ void ReportError(char const * mesg1, char const * mesg2)
 	}
 	else
 	{
+#if 0
 		char * lpMsgBuf;
 
 		err = GetLastError();
@@ -49,6 +51,10 @@ void ReportError(char const * mesg1, char const * mesg2)
 		
 		// Free the buffer.
 		LocalFree( lpMsgBuf );
+#endif
+		mesg = new char [strlen(mesg1)+32];
+		strcpy(mesg, mesg1);
+		strcat(mesg, "\n\nReportError: I have no clue!\n");
 	}
 	
 	// Display the string.

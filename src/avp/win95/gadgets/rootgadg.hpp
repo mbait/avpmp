@@ -49,14 +49,15 @@
 
 	private:
 		RootGadget();
-		~RootGadget();
+		
 
 	private:
 		static RootGadget* pSingleton;
 
 		HUDGadget* pHUDGadg;
 			// allowed to be NULL if no head-up-display e.g. when not in a game
-
+	private:
+		~RootGadget();
 	};
 	
 	// Inline methods:

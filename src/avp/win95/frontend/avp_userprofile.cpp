@@ -7,7 +7,7 @@ extern "C"
 #include "module.h"
 #include "stratdef.h"
 
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 #include "language.h"
 #include "GammaControl.h"
 #include "psnd.h"

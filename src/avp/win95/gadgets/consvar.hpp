@@ -62,7 +62,7 @@
 			OurBool Cheat = FALSE
 		);
 
-		~ConsoleVariable();
+		
 
 		virtual int GetValue(void) const = 0;
 		virtual void SetValue(int Val_New) = 0;
@@ -120,6 +120,8 @@
 		SCString* pSCString_Description;
 
 		static List <ConsoleVariable*> List_pConsoleVar;
+	public:
+		~ConsoleVariable();
 	};	// suggested naming: "ConsoleVar"
 
 /* Exported globals *****************************************************/

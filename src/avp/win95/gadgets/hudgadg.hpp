@@ -99,7 +99,7 @@
 
 
 		// Destructor:
-		virtual ~HUDGadget();
+		
 
 	protected:
 		// Constructor is protected since an abstract class
@@ -118,7 +118,9 @@
 	protected:
 		SCString* pSCString_Current;
 	#endif
-
+	
+	public:
+		virtual ~HUDGadget();
 	};
 
 	// Inline methods:

@@ -95,6 +95,7 @@
 		int SpaceWidth_Val;
 
 		LPDIRECTDRAWSURFACE image_ptr;
+
 		AW_BACKUPTEXTUREHANDLE hBackup;
 
 		r2size R2Size_OverallImage;

@@ -6,11 +6,11 @@
 #include "bh_types.h"
 #include "pldnet.h"
 
-#include "AvP_Menus.h"
-#include "AvP_EnvInfo.h"
+#include "avp_menus.h"
+#include "avp_envinfo.h"
 
-#include "hud_Layout.h"
-#include "AvP_UserProfile.h"
+#include "hud_layout.h"
+#include "avp_userprofile.h"
 #include "huffman.hpp"
 
 #include "hudgfx.h"
@@ -19,9 +19,8 @@
 #include "ourasert.h"
 #include "iofocus.h"
 #include <time.h>
-#include "winnls.h"
-#include "GammaControl.h"
-#include "AvP_MP_Config.h"
+#include "gammacontrol.h"
+#include "avp_mp_config.h"
 #include "psnd.h"
 #include "savegame.h"
 

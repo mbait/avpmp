@@ -153,7 +153,7 @@ void ShowMissionMessage ()
 
 // this will only print one string from the top of the screen
 
-static int CharWidthInPixels(char Ch)
+static int CharWidthInPixels(unsigned char Ch)
 {
 	if 
 	(

@@ -6,10 +6,10 @@
 #include "bh_types.h"
 #include "pldnet.h"
 
-#include "AvP_MP_Config.h"
-#include "AvP_Envinfo.h"
+#include "avp_mp_config.h"
+#include "avp_envinfo.h"
 
-#include "AvP_Menus.h"
+#include "avp_menus.h"
 #include "list_tem.hpp"
 
 #define UseLocalAssert Yes

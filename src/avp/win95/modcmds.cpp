@@ -9,6 +9,8 @@
  *******************************************************************/
 
 /* Includes ********************************************************/
+#include <ctype.h>
+
 #include "3dc.h"
 #include "gadget.h"
 
@@ -131,8 +133,7 @@ void ModuleCommands :: ListModules(void)
 							(
 								Msg,
 								"MODULE:%3i NULL NAME",
-								Index,
-								pModule -> name
+								Index
 							);							
 						}
 						

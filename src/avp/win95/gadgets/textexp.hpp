@@ -34,7 +34,7 @@
 	class TextExpansion
 	{
 	public:
-		~TextExpansion();
+		
 
 		void Display(void);
 			// sends info on this expansion to the screen
@@ -81,6 +81,8 @@
 
 		static List<TextExpansion*> List_pTextExp;
 
+	public:
+		~TextExpansion();
 	};  // suggested naming: TextExp
 
 /* Exported globals *****************************************************/

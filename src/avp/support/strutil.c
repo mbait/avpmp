@@ -7,6 +7,7 @@
 	rather than chars
 
 */
+#include <ctype.h>
 
 #include "3dc.h"
 

@@ -723,8 +723,3 @@ void AcyclicFixedSpeedHoming :: SetSpeed_FixP
 }
 
 #endif
-
-
-
-
-

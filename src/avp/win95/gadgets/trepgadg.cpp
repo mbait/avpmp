@@ -23,7 +23,7 @@
 
 #include "iofocus.h"
 
-#include "ConsoleLog.hpp"
+#include "consolelog.hpp"
 
 	#include "rootgadg.hpp"
 	#include "hudgadg.hpp"

@@ -27,7 +27,7 @@ extern "C" {
 #include "chnktexi.h"
 
 
-#include "HUD_layout.h"
+#include "hud_layout.h"
 #include "language.h"
 
 

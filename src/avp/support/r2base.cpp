@@ -249,7 +249,9 @@ extern void R2BASE_ScreenModeChange_Setup(void)
 	}
 }
 
-extern "C" extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
+extern "C" {
+	extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
+};
 
 extern void R2BASE_ScreenModeChange_Cleanup(void)
 {

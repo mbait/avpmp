@@ -47,12 +47,12 @@ int DebuggingCommandsActive=0;
 extern void GimmeCharge(void);
 
 // just change these to prototypes etc.
-extern void QuickLoad()
+extern void QuickLoad(void)
 {
 	//set the load request
 	LoadGameRequest = 0; //(that's slot 0 - not false)
 }
-extern void QuickSave()
+extern void QuickSave(void)
 {
 	//set the save request
 	SaveGameRequest = 0; //(that's slot 0 - not false)
@@ -73,7 +73,7 @@ void ConsoleCommandSave(int slot)
 		SaveGameRequest = slot-1;
 	}
 }
-extern void DisplaySavesLeft();
+extern void DisplaySavesLeft(void);
 
 
 
@@ -83,7 +83,7 @@ extern void ChangeNetGameType_Individual();
 extern void ChangeNetGameType_Coop();
 extern void ChangeNetGameType_LastManStanding();
 extern void ChangeNetGameType_PredatorTag();
-extern void ShowNearestPlayersName();
+extern void ShowNearestPlayersName(void);
 extern void ScreenShot(void);
 extern void CastAlienBot(void);
 extern void CastMarineBot(int weapon);
@@ -209,7 +209,7 @@ static void ChangeToSpecialist_Pistols()
 	ChangeToMarine();
 }
 
-extern void ShowMultiplayerScores()
+extern void ShowMultiplayerScores(void)
 {
 	ShowMultiplayerScoreTimer=5*ONE_FIXED;
 }
@@ -809,9 +809,5 @@ void CreateGameSpecificConsoleCommands(void)
 	);
 
 }	
-
-
-
-						
 
 } // extern "C"

@@ -66,14 +66,14 @@
 				Daemon* p666_New,
 				void* pUser_New
 			);
-			virtual ~CallbackHook();
 			
 		// ought to be private:
 			CallbackHook* pNxtHook;
 			CallbackHook* pPrvHook;
 			Daemon* p666_Val; 
 			void* pUser_Val;
-
+			
+			virtual ~CallbackHook();
 			
 	};
 	#endif // SupportCallbackHooks
@@ -86,8 +86,6 @@
 			(
 				OurBool fActive
 			);
-
-			virtual ~Daemon();
 
 		// Per object stuff:
 		public:
@@ -132,6 +130,8 @@
 		public: // but probably ought to be private:
 			CallbackHook* pFirstHook;
 		#endif
+		public:
+			virtual ~Daemon();
 	};
 	#endif // ifdef __cplusplus
 

@@ -572,9 +572,7 @@ namespace RebMenus
 			{
 			}
 
-			~SelectionList();
-
-			AddSelection
+			void AddSelection
 			(
 				Selectable Sel_ToAdd
 			)
@@ -587,6 +585,8 @@ namespace RebMenus
 		private:
 			int NumInList;
 			Selectable theSel_A[MAX_IN_LIST];
+		public:
+			~SelectionList();
 		};
 	};
 

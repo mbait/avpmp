@@ -51,10 +51,9 @@
 		(
 			ProjChar* pProjCh_ToUse
 		);
-		virtual ~ConsoleSymbol();
+		
 
 		SCString* pSCString_Symbol;
-
 
 	public:
 		SCString* GetpSCString(void) const
@@ -66,6 +65,9 @@
 	private:
 		
 		static List <ConsoleSymbol *> List_pConsoleSym;
+
+	public:
+		virtual ~ConsoleSymbol();
 	};	// suggested naming: "ConsoleSym"
 
 /* Exported globals *****************************************************/

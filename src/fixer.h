@@ -52,6 +52,8 @@ typedef unsigned short WORD;
 typedef unsigned int DWORD;
 typedef long LONG;
 typedef char TCHAR;
+typedef DWORD * LPDWORD;
+typedef char * LPTSTR;
 
 #define TEXT(x) x
 
@@ -90,11 +92,12 @@ typedef struct SYSTEMTIME
 #define FILE_CURRENT		6
 #define FILE_BEGIN		7
 #define FILE_END		8
+#define FILE_SHARE_READ		9
 
 HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z);
 HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z);
 int WriteFile(HANDLE file, const void *data, int len, unsigned long *byteswritten, int x);
-int ReadFile(HANDLE file, void *data, int len, unsigned long *bytesread, int x);
+int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x);
 int GetFileSize(HANDLE file, int x);
 int CloseHandle(HANDLE file);
 int DeleteFile(const char *file);

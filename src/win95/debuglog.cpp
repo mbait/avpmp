@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdlib.h>
-#include <windows.h>
 #include "debuglog.hpp"
 
 LogFile::LogFile(char const * const _fname) : fname(0) , ever_written(0)
@@ -37,7 +36,7 @@ LogFile::~LogFile()
 		FILE * fp = fopen(fname,"a");
 		for (int attempt=0; !fp && attempt<10; ++attempt)
 		{
-			Sleep(100);
+			/* Sleep(100); */
 			fp = fopen(fname,"a");
 		}
 		if (fp)

@@ -76,7 +76,7 @@
 
 		virtual void Execute( ProjChar* pProjCh_In ) = 0;
 
-		virtual ~ConsoleCommand();
+		
 
 		void Display(void) const;
 
@@ -96,7 +96,8 @@
 		SCString* pSCString_Description;
 
 		static List <ConsoleCommand*> List_pConsoleCommand;
-
+	public:
+		virtual ~ConsoleCommand();
 	};
 	
 

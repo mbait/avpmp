@@ -11,7 +11,6 @@
 
 extern "C"
 {
-	extern LPDIRECTSOUND DSObject; 
 	extern int SoundSwitchedOn;
 	// Pat sets this up
 };

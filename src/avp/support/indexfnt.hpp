@@ -409,7 +409,7 @@
 			ProjChar nextProjCh
 		) const = 0;
 		
-		virtual LPDIRECTDRAWSURFACE GetImagePtr(void) const = 0;
+//		virtual LPDIRECTDRAWSURFACE GetImagePtr(void) const = 0;
 
 	protected:
 		IndexedFont_Kerned

@@ -1,4 +1,3 @@
-#include "advwin32.h"
 #ifndef DB_LEVEL
 #define DB_LEVEL 4
 #endif
