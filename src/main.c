@@ -357,9 +357,12 @@ void CheckForWindowsMessages()
         
 void InGameFlipBuffers()
 {
-#if 1
 	SDL_GL_SwapBuffers();
-#endif	
+}
+
+void FlipBuffers()
+{
+	SDL_GL_SwapBuffers();
 }
 
 void ThisFramesRenderingHasBegun()
@@ -383,9 +386,8 @@ void ThisFramesRenderingHasFinished()
                 
 int ExitWindowsSystem()
 {
-#if 1
 	SDL_Quit();
-#endif	
+
 	return 0;
 }
 
@@ -446,16 +448,16 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-	AvP.PlayerType = I_Alien;
-	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
+//	AvP.PlayerType = I_Alien;
+//	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
 
-//	AvP.PlayerType = I_Marine;
+	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 
@@ -497,8 +499,8 @@ int main(int argc, char *argv[])
 /*	ScanImagesForFMVs(); NOT YET */
 	
 	ResetFrameCounter();
-	
-/*	Game_Has_Loaded(); NOT YET */
+
+	Game_Has_Loaded();
 	
 	ResetFrameCounter();
 	

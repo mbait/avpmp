@@ -85,18 +85,6 @@ void CheckCDVolume()
 }
 
 
-/* progress_bar.cpp */
-void Start_Progress_Bar()
-{
-	fprintf(stderr, "Start_Progress_Bar()\n");
-}
-
-void Set_Progress_Bar_Position(int pos)
-{
-	fprintf(stderr, "Set_Progress_Bar_Position(%d)\n", pos);
-}
-
-
 /* smacker.c */
 int FmvColourRed;
 int FmvColourGreen;
@@ -409,11 +397,6 @@ void InitForceField()
 	fprintf(stderr, "InitForceField()\n");
 }
 
-void DrawNoiseOverlay(int t)
-{
-	fprintf(stderr, "DrawNoiseOverlay(%d)\n", t);
-}
-
 void DrawScanlinesOverlay(float level)
 {
 	fprintf(stderr, "DrawScanlinesOverlay(%f)\n", level);
@@ -561,11 +544,6 @@ void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVer
 /* dd_func.cpp */
 long BackBufferPitch;
 int VideoModeColourDepth;
-
-void FlipBuffers()
-{
-	fprintf(stderr, "FlipBuffers()\n");
-}
 
 int ChangePalette (unsigned char* NewPalette)
 {

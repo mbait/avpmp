@@ -27,6 +27,7 @@ extern VIEWDESCRIPTORBLOCK *Global_VDB_Ptr;
 extern unsigned char GammaValues[256];
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern int SpecialFXImageNumber;
+extern int StaticImageNumber;
 
 static D3DTexture *CurrTextureHandle;
 
@@ -601,6 +602,69 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
 	}
 	glEnd();
+}
+
+void DrawNoiseOverlay(int tr)
+{
+	GLfloat x[4], y[4], s[4], t[4], u, v;
+	int r, g, b;
+	D3DTexture *tex;
+	int size;
+	
+	r = 255;
+	g = 255;
+	b = 255;
+	
+	size = 256;
+	
+	tex = ImageHeaderArray[StaticImageNumber].D3DTexture;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	// CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
+	CheckBoundTextureIsCorrect(tex->id);
+	// CheckDepthFuncIsCorrect(GL_ALWAYS);
+	glDepthFunc(GL_ALWAYS);
+	
+	u = FastRandom()&255;
+	v = FastRandom()&255;
+	
+	x[0] = -1.0f;
+	y[0] = -1.0f;
+	s[0] = u / 256.0f;
+	t[0] = v / 256.0f;
+	x[1] =  1.0f;
+	y[1] = -1.0f;
+	s[1] = (u + size) / 256.0f;
+	t[1] = v / 256.0f;
+	x[2] =  1.0f;
+	y[2] =  1.0f;
+	s[2] = (u + size) / 256.0f;
+	t[2] = (v + size) / 256.0f;
+	x[3] = -1.0f;
+	y[3] =  1.0f;
+	s[3] = u / 256.0f;
+	t[3] = (v + size) / 256.0f;
+	
+	SelectPolygonBeginType(3); /* triangles */
+	glColor4ub(r, g, b, tr);
+		
+	glTexCoord2f(s[0], t[0]);
+	glVertex3f(x[0], y[0], 1.0f);
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], 1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], 1.0f);
+	
+	glTexCoord2f(s[1], t[1]);
+	glVertex3f(x[1], y[1], 1.0f);
+	glTexCoord2f(s[2], t[2]);
+	glVertex3f(x[2], y[2], 1.0f);
+	glTexCoord2f(s[3], t[3]);
+	glVertex3f(x[3], y[3], 1.0f);
+	
+	glEnd();
+	
+	glDepthFunc(GL_LEQUAL);
 }
 
 void D3D_PredatorScreenInversionOverlay()
