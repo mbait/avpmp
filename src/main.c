@@ -758,18 +758,19 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
 	
-//	AvP.PlayerType = I_Marine;
+	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_COLONY);
 	
-	AvP.PlayerType = I_Predator;
-	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
+//	AvP.PlayerType = I_Predator;
+//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE_P);
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 //	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);
 	
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_COOP); /* coop/skirmish */
+	SetLevelToLoad(AVP_ENVIRONMENT_JOCKEY_COOP);
 		
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
@@ -810,6 +811,15 @@ while(AvP_MainMenus())
 	
 	ResetFrameCounter();
 	
+	if(AvP.Network!=I_No_Network)
+	{
+		/*Need to choose a starting position for the player , but first we must look
+		through the network messages to find out which generator spots are currently clear*/
+		netGameData.myGameState = NGS_Playing;
+		MinimalNetCollectMessages();
+		TeleportNetPlayerToAStartingPosition(Player->ObStrategyBlock,1);
+	}
+
 /*	IngameKeyboardInput_ClearBuffer(); NOT YET */
 	
 	while(AvP.MainLoopRunning) {
