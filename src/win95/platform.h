@@ -25,12 +25,15 @@ extern "C"  {
 
 #define Hardware2dTextureClipping No
 
+#ifndef min
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
 
-/*
+#ifndef max
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#endif
 
- Types
-
-*/
+/* Types */
 
 typedef int BOOL;
 
@@ -55,6 +58,19 @@ typedef struct LONGLONGCH {
 
 } LONGLONGCH;
 
+
+typedef int FILETIME;
+
+typedef struct SYSTEMTIME
+{
+//#warning "SYSTEMTIME format is not correct"
+	int wHour;
+	int wMinute;
+	int wSecond;
+	int wYear;
+	int wMonth;
+	int wDay;
+} SYSTEMTIME;
 
 /*
 

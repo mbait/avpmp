@@ -1,15 +1,3 @@
-
-#if PSX
-#include <kernel.h>
-#include <sys/types.h>		   	  
-#include <libetc.h>
-#include <libgte.h>		
-#include <libgpu.h>
-#include <stdlib.h>					 
-#include <inline_c.h>
-#include <gtemac.h>
-#endif
-
 #include "3dc.h"
 #include "inline.h"
 

@@ -314,7 +314,9 @@ typedef struct
 {
 	char Name[40];
 	char levelIndex;//local level index
-	GUID Guid;
+//	GUID Guid;
+	int Guid;
+	
 	BOOL AllowedToJoin;
 } SESSION_DESC;
 #define MAX_NO_OF_SESSIONS 10

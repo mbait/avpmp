@@ -70,7 +70,7 @@
 /* I N C L U D E D S ************************************************** */
 #include "advwin32.h"
 #ifndef DB_NOWINDOWS
-	#include <windows.h>
+//	#include <windows.h>
 	#include "advwin32.h"
 #endif
 
@@ -291,6 +291,8 @@ struct db_dd_mode_tag
 
 /* Don't prototype anything or declare globals if NDEBUG is defined. */
 #ifndef NDEBUG
+
+#define __cdecl
 
 /* New formatted debugging fns. */
 extern void __cdecl db_logf_fired(const char *fmtStrP, ...);

@@ -7228,13 +7228,11 @@ void RenderBoomSphere(VECTORCH *position, int radius)
 	}
 
 }
-
-
 #endif
+
 int Alpha[SPHERE_VERTICES];
 void RenderExplosionSurface(VOLUMETRIC_EXPLOSION *explosionPtr)
 {
-	extern D3DTEXTUREHANDLE FMVTextureHandle[];
 	int red,green,blue;
 
 	switch (CurrentVisionMode)
