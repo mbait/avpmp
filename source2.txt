@@ -1,491 +1,246 @@
 afont.c
 frustum.c
-frustum.h
 kshape.c
-kshape.h
 map.c
 maths.c
 md5.c
-md5.h
 mem3dc.c
 mem3dcpp.cpp
 module.c
 morph.c
 mslhand.c
-mslhand.h
 object.c
 shpanim.c
 sphere.c
-sphere.h
 tables.c
 vdb.c
 version.c
-version.h
 
 avp/ai_sight.c
-avp/ai_sight.h
-avp/avpitems.hpp
-avp/avppages.hpp
 avp/avpview.c
-avp/avpview.h
 avp/bh_agun.c
-avp/bh_agun.h
 avp/bh_ais.c
-avp/bh_ais.h
 avp/bh_alien.c
-avp/bh_alien.h
 avp/bh_binsw.c
-avp/bh_binsw.h
 avp/bh_cable.c
-avp/bh_cable.h
 avp/bh_corpse.c
-avp/bh_corpse.h
 avp/bh_deathvol.c
-avp/bh_deathvol.h
 avp/bh_debri.c
-avp/bh_debri.h
 avp/bh_dummy.c
-avp/bh_dummy.h
 avp/bh_fan.c
-avp/bh_fan.h
 avp/bh_far.c
-avp/bh_far.h
 avp/bh_fhug.c
-avp/bh_fhug.h
 avp/bh_gener.c
-avp/bh_gener.h
 avp/bh_ldoor.c
-avp/bh_ldoor.h
 avp/bh_lift.c
-avp/bh_lift.h
 avp/bh_light.c
-avp/bh_light.h
 avp/bh_lnksw.c
-avp/bh_lnksw.h
 avp/bh_ltfx.c
-avp/bh_ltfx.h
 avp/bh_marin.c
-avp/bh_marin.h
 avp/bh_mission.c
-avp/bh_mission.h
 avp/bh_near.c
-avp/bh_near.h
-avp/bh_paq.h
 avp/bh_pargen.c
-avp/bh_pargen.h
 avp/bh_plachier.c
-avp/bh_plachier.h
 avp/bh_plift.c
-avp/bh_plift.h
 avp/bh_pred.c
-avp/bh_pred.h
 avp/bh_queen.c
-avp/bh_queen.h
 avp/bh_rubberduck.c
-avp/bh_rubberduck.h
 avp/bh_selfdest.c
-avp/bh_selfdest.h
 avp/bh_snds.c
-avp/bh_snds.h
 avp/bh_spcl.c
-avp/bh_spcl.h
 avp/bh_swdor.c
-avp/bh_swdor.h
 avp/bh_track.c
-avp/bh_track.h
 avp/bh_types.c
-avp/bh_types.h
 avp/bh_videoscreen.c
-avp/bh_videoscreen.h
 avp/bh_waypt.c
-avp/bh_waypt.h
 avp/bh_weap.c
-avp/bh_weap.h
 avp/bh_xeno.c
-avp/bh_xeno.h
 avp/bonusabilities.c
-avp/bonusabilities.h
 avp/cconvars.cpp
 avp/cdtrackselection.cpp
-avp/cdtrackselection.h
 avp/cheatmodes.c
 avp/comp_map.c
 avp/comp_shp.c
-avp/comp_shp.h
 avp/consolelog.cpp
-avp/consolelog.hpp
-avp/database.h
 avp/davehook.cpp
-avp/davehook.h
 avp/deaths.c
 avp/decal.c
-avp/decal.h
 avp/detaillevels.c
-avp/detaillevels.h
 avp/dynamics.c
-avp/dynamics.h
 avp/dynblock.c
-avp/dynblock.h
-avp/equates.h
 avp/equipmnt.c
-avp/equipmnt.h
 avp/equiputl.cpp
-avp/equiputl.hpp
 avp/extents.c
-avp/extents.h
 avp/game.c
 TODO avp/game_statistics.c
-avp/game_statistics.h
 avp/gamecmds.cpp
-avp/gamedef.h
 avp/gameflow.c
-avp/gameflow.h
 avp/gamevars.cpp
 avp/hmodel.c
-avp/hmodel.h
 avp/hud.c
-avp/hud_map.h
-avp/huddefs.h
 avp/inventry.c
-avp/inventry.h
-avp/langenum.h
 avp/language.c
-avp/language.h
 avp/lighting.c
-avp/lighting.h
 avp/load_shp.c
-avp/load_shp.h
 avp/los.c
-avp/los.h
-avp/ltfx_exp.h
-avp/macro.h
 avp/maps.c
 avp/mempool.c
-avp/mempool.h
-avp/menudefs.h
 avp/messagehistory.c
 avp/missions.cpp
-avp/missions.hpp
 avp/movement.c
 DELE avp/mp_launch.c
 avp/paintball.c
-avp/paintball.h
 avp/particle.c
-avp/particle.h
 avp/pfarlocs.c
-avp/pfarlocs.h
 avp/pheromon.c
-avp/pheromon.h
 TODO avp/player.c
 avp/pmove.c
-avp/pmove.h
-avp/projfont.h
-avp/projmenu.hpp
-avp/projtext.h
 TODO avp/psnd.c
-avp/psnd.h
 avp/psndproj.c
-avp/psndproj.h
 avp/pvisible.c
-avp/pvisible.h
 avp/savegame.c
-avp/savegame.h
 avp/scream.cpp
-avp/scream.h
 avp/secstats.c
-avp/sequnces.h
 avp/sfx.c
-avp/sfx.h
-avp/statpane.h
 avp/stratdef.c
-avp/stratdef.h
 avp/targeting.c
-avp/targeting.h
 avp/track.c
-avp/track.h
 avp/triggers.c
-avp/triggers.h
 avp/weapons.c
-avp/weapons.h
 
 avp/shapes/cube.c
 
-avp/support/command.hpp
 avp/support/consbind.cpp
-avp/support/consbind.hpp
 avp/support/consbtch.cpp
-avp/support/consbtch.hpp
 avp/support/coordstr.cpp
-avp/support/coordstr.hpp
 avp/support/daemon.cpp
-avp/support/daemon.h
-avp/support/dcontext.hpp
-avp/support/expvar.hpp
 TODO avp/support/indexfnt.cpp
-avp/support/indexfnt.hpp
-avp/support/ourbool.h
 avp/support/r2base.cpp
-avp/support/r2base.h
 avp/support/r2pos666.cpp
-avp/support/r2pos666.hpp
-avp/support/rebitems.hpp
-avp/support/rebmenus.hpp
 avp/support/reflist.cpp
-avp/support/reflist.hpp
 avp/support/refobj.cpp
-avp/support/refobj.hpp
 TODO avp/support/rentrntq.cpp
-avp/support/rentrntq.h
 avp/support/scstring.cpp
-avp/support/scstring.hpp
 avp/support/strtab.cpp
-avp/support/strtab.hpp
 avp/support/strutil.c
-avp/support/strutil.h
 TODO avp/support/tallfont.cpp
-avp/support/tallfont.hpp
 avp/support/trig666.cpp
-avp/support/trig666.hpp
 avp/support/wrapstr.cpp
-avp/support/wrapstr.hpp
 
 avp/win95/avpchunk.cpp
-avp/win95/avpchunk.hpp
 DELE avp/win95/avpreg.cpp
-avp/win95/avpreg.hpp
-avp/win95/bmp2.h
 avp/win95/cheat.c
-avp/win95/cheat.h
 avp/win95/chtcodes.cpp
 avp/win95/d3d_hud.cpp
-avp/win95/d3d_hud.h
 TODO avp/win95/d3d_render.cpp
-avp/win95/d3d_render.h
-avp/win95/datatype.h
-avp/win95/dbdefs.h
 TODO avp/win95/ddplat.cpp
 TODO avp/win95/directplay.c
 TODO avp/win95/dp_func.c
-avp/win95/dp_func.h
-avp/win95/dp_sprh.h
 TODO avp/win95/dplayext.c
-avp/win95/dplayext.h
 TODO avp/win95/dx_proj.cpp
-DELE avp/win95/eax.h
 avp/win95/endianio.c
-avp/win95/endianio.h
 avp/win95/ffread.cpp
-avp/win95/ffread.hpp
 avp/win95/ffstdio.cpp
-avp/win95/ffstdio.h
-avp/win95/font.h
-avp/win95/gameplat.h
 DELE avp/win95/gammacontrol.cpp
-avp/win95/gammacontrol.h
 avp/win95/gflwplat.c
-avp/win95/heap_tem.hpp
 avp/win95/hierplace.cpp
-avp/win95/hierplace.hpp
-avp/win95/hud_data.h
-avp/win95/hud_layout.h
-avp/win95/hudgfx.h
 TODO avp/win95/intro.cpp
-avp/win95/intro.hpp
 avp/win95/iofocus.cpp
-avp/win95/iofocus.h
 avp/win95/jsndsup.cpp
-avp/win95/jsndsup.h
 avp/win95/kzsort.c
-avp/win95/kzsort.h
 avp/win95/langplat.c
-avp/win95/menugfx.h
 avp/win95/modcmds.cpp
-avp/win95/modcmds.hpp
 DELE avp/win95/mousecentreing.cpp
-avp/win95/multmenu.h
 avp/win95/npcsetup.cpp
-avp/win95/npcsetup.h
 avp/win95/objsetup.cpp
-avp/win95/objsetup.hpp
 avp/win95/pathchnk.cpp
-avp/win95/pathchnk.hpp
 TODO avp/win95/pcmenus.cpp
-avp/win95/pcmenus.h
 avp/win95/platsup.c
 avp/win95/pldghost.c
-avp/win95/pldghost.h
 TODO avp/win95/pldnet.c
-avp/win95/pldnet.h
 TODO avp/win95/progress_bar.cpp
-avp/win95/progress_bar.h
 avp/win95/projload.cpp
-avp/win95/projload.hpp
 TODO avp/win95/psndplat.c
-avp/win95/psndplat.h
 TODO avp/win95/scrshot.cpp
-avp/win95/scrshot.hpp
 avp/win95/strachnk.cpp
-avp/win95/strachnk.hpp
 avp/win95/system.c
-avp/win95/system.h
 TODO avp/win95/usr_io.c
-avp/win95/usr_io.h
 avp/win95/vision.c
-avp/win95/vision.h
-avp/win95/vmanpset.h
 TODO avp/win95/win_proj.cpp
 TODO avp/win95/winmain.c
 
 avp/win95/frontend/avp_envinfo.c
-avp/win95/frontend/avp_envinfo.h
 avp/win95/frontend/avp_intro.cpp
 TODO avp/win95/frontend/avp_menudata.c
 TODO avp/win95/frontend/avp_menugfx.cpp
-avp/win95/frontend/avp_menugfx.hpp
 TODO avp/win95/frontend/avp_menus.c
-avp/win95/frontend/avp_menus.h
 TODO avp/win95/frontend/avp_mp_config.cpp
-avp/win95/frontend/avp_mp_config.h
 TODO avp/win95/frontend/avp_userprofile.cpp
-avp/win95/frontend/avp_userprofile.h
 
 avp/win95/gadgets/ahudgadg.cpp
-avp/win95/gadgets/ahudgadg.hpp
 avp/win95/gadgets/conscmnd.cpp
-avp/win95/gadgets/conscmnd.hpp
 avp/win95/gadgets/conssym.cpp
-avp/win95/gadgets/conssym.hpp
 avp/win95/gadgets/consvar.cpp
-avp/win95/gadgets/consvar.hpp
 avp/win95/gadgets/gadget.cpp
-avp/win95/gadgets/gadget.h
 avp/win95/gadgets/hudgadg.cpp
-avp/win95/gadgets/hudgadg.hpp
 avp/win95/gadgets/rootgadg.cpp
-avp/win95/gadgets/rootgadg.hpp
 avp/win95/gadgets/t_ingadg.cpp
-avp/win95/gadgets/t_ingadg.hpp
 avp/win95/gadgets/teletype.cpp
-avp/win95/gadgets/teletype.hpp
 avp/win95/gadgets/textexp.cpp
-avp/win95/gadgets/textexp.hpp
 avp/win95/gadgets/textin.cpp
-avp/win95/gadgets/textin.hpp
 avp/win95/gadgets/trepgadg.cpp
-avp/win95/gadgets/trepgadg.hpp
 
-DELE win95/advwin32.h
 TODO win95/alt_tab.cpp
-win95/alt_tab.h
 win95/animchnk.cpp
-win95/animchnk.hpp
 win95/animobs.cpp
-win95/animobs.hpp
-win95/aw.h
 TODO win95/awbmpld.cpp
 TODO win95/awiffld.cpp
 TODO win95/awpnmld.cpp
 TODO win95/awtexld.cpp
-win95/awtexld.h
-win95/awtexld.hpp
 win95/bmpnames.cpp
-win95/bmpnames.hpp
 TODO win95/cd_player.c
-win95/cd_player.h
 win95/chnkload.cpp
-win95/chnkload.h
-win95/chnkload.hpp
 TODO win95/chnktexi.cpp
-win95/chnktexi.h
 win95/chnktype.cpp
-win95/chnktype.hpp
 win95/chunk.cpp
-win95/chunk.hpp
 win95/chunkpal.cpp
-win95/chunkpal.hpp
 TODO win95/d3_func.cpp
-win95/d3_func.h
-win95/d3dmacs.h
 TODO win95/db.c
-win95/db.h
 TODO win95/dd_func.cpp
 win95/debuglog.cpp
-win95/debuglog.h
-win95/debuglog.hpp
 TODO win95/di_func.cpp
 win95/dummyobjectchunk.cpp
-win95/dummyobjectchunk.hpp
 TODO win95/dxlog.c
-win95/dxlog.h
 win95/enumchnk.cpp
-win95/enumchnk.hpp
 win95/enumsch.cpp
-win95/enumsch.hpp
 win95/envchunk.cpp
-win95/envchunk.hpp
 win95/fail.c
-win95/fail.h
 win95/fragchnk.cpp
-win95/fragchnk.hpp
 win95/gsprchnk.cpp
-win95/gsprchnk.hpp
-win95/hash_tem.hpp
 win95/hierchnk.cpp
-win95/hierchnk.hpp
 win95/huffman.cpp
-win95/huffman.hpp
 win95/iff.cpp
-win95/iff.hpp
 win95/iff_ilbm.cpp
-win95/iff_ilbm.hpp
 win95/ilbm_ext.cpp
-win95/ilbm_ext.hpp
-win95/inline.h
 win95/io.c
 win95/list_tem.cpp
-win95/list_tem.hpp
 win95/ltchunk.cpp
-win95/ltchunk.hpp
 win95/media.cpp
-win95/media.hpp
 win95/mishchnk.cpp
-win95/mishchnk.hpp
-win95/mmx_math.h
 win95/obchunk.cpp
-win95/obchunk.hpp
-win95/objedit.h
 win95/oechunk.cpp
-win95/oechunk.h
 win95/our_mem.c
-win95/ourasert.h
-win95/pentime.h
 win95/plat_shp.c
-win95/plat_shp.h
-win95/platform.h
 win95/plspecfn.c
-win95/showcmds.h
-win95/shpanim.h
 win95/shpchunk.cpp
-win95/shpchunk.hpp
-win95/smsopt.h
 win95/sndchunk.cpp
-win95/sndchunk.hpp
 win95/sprchunk.cpp
-win95/sprchunk.hpp
 win95/string.cpp
-win95/string.hpp
 TODO win95/texio.c
 win95/toolchnk.cpp
-win95/toolchnk.hpp
 win95/txioctrl.cpp
-win95/txioctrl.h
 TODO win95/videomodes.cpp
-win95/videomodes.h
 DELE win95/vramtime.c
-win95/vramtime.h
 TODO win95/win_func.cpp
 win95/wpchunk.cpp
-win95/wpchunk.hpp
-win95/zmouse.h
 win95/zsp.cpp
-win95/zsp.hpp

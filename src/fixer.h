@@ -1,6 +1,10 @@
 #ifndef __FIXER_H__
 #define __FIXER_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -111,5 +115,9 @@ int GetFileAttributes(const char *file);
 int GetFileAttributesA(const char *file);
 int SetFilePointer(HANDLE file, int x, int y, int z);
 int SetEndOfFile(HANDLE file);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

@@ -25,6 +25,10 @@
 #ifndef MD5_H
 #define MD5_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef unsigned int UWORD32;
 
 #define md5byte unsigned char
@@ -41,6 +45,10 @@ void MD5Final(unsigned char digest[16], struct MD5Context *context);
 void MD5Transform(UWORD32 buf[4], UWORD32 const in[16]);
 
 /* md5_buffer frontend added for AvP */
-void md5_buffer(const char *buffer, unsigned len, char *digest);
+void md5_buffer(char const *buffer, unsigned int len, char *digest);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* !MD5_H */

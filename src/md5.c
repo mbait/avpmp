@@ -46,7 +46,7 @@ byteSwap(UWORD32 *buf, unsigned words)
 #endif
 
 /* md5_buffer frontend added for AvP */
-void md5_buffer(const char *buffer, unsigned len, char *digest)
+void md5_buffer(char const *buffer, unsigned int len, char *digest)
 {
 	struct MD5Context md5c;
 	
