@@ -693,9 +693,9 @@ namespace RebMenus
 			enum Direction theD,
 			enum Alignment theAlignment_New
 		) : Item(theOnOffApp_New),
+			NumItems(0),
 			theDir(theD),
-			theAlignment_Val(theAlignment_New),
-			NumItems(0)
+			theAlignment_Val(theAlignment_New)
 		{
 			// what value should SelectedItem have when there aren't any items?
 		}

@@ -8,7 +8,6 @@
 #include "gamedef.h"
 #include "bh_types.h"
 #include "triggers.h"
-#include "mslhand.h"
 #include "psnd.h"
 
 #define UseLocalAssert Yes

@@ -81,9 +81,9 @@ FFileDesc::FFileDesc(char const * infoline, char const * path)
 }
 
 FFileDesc::FFileDesc(FFileDesc const & ffd)
-: dir_name(0)
-, file_name(0)
-, dname_len(ffd.dname_len)
+: dname_len(ffd.dname_len)
+, dir_name(0)
+, file_name(0) 
 {
 	if (ffd.dir_name)
 	{

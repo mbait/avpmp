@@ -37,11 +37,17 @@ class MediaMedium
 {
 	protected:
 		// standard constructor
-		MediaMedium() : m_nRefCnt(1),
-			m_fError(0), m_nDefBufSize(1024),
-			m_nWriteBufPos(0), m_nReadBufPos(0),
-			m_nBufLenUsed(0), m_nBufSize(0),
-			m_pReadBuffer(NULL), m_pWriteBuffer(NULL) {}
+		MediaMedium() :
+			m_fError(0),
+			m_nDefBufSize(1024),
+			m_pWriteBuffer(NULL),
+			m_pReadBuffer(NULL),
+			m_nReadBufPos(0),
+			m_nWriteBufPos(0),
+			m_nBufSize(0),
+			m_nBufLenUsed(0),
+			m_nRefCnt(1)
+			{}
 			
 		virtual ~MediaMedium() {}
 	
@@ -413,10 +419,10 @@ class MediaWinFileMedium : public MediaMedium
 				pszFileName,
 				dwDesiredAccess,
 				dwShareMode,
-				NULL,
+				0,
 				dwCreationDistribution,
 				FILE_ATTRIBUTE_NORMAL,
-				NULL
+				0
 			);
 			if (INVALID_HANDLE_VALUE == m_hFile)
 				m_fError |= MME_OPENFAIL;

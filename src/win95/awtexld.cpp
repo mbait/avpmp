@@ -99,8 +99,8 @@ namespace AwTl
 		if (!pUnknown) return 0;
 		pUnknown->AddRef();
 		return static_cast<unsigned>(pUnknown->Release());
+#endif
 		return 0;
-#endif		
 	}
 	#endif
 	

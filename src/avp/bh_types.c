@@ -12,7 +12,6 @@
 #include "comp_shp.h"
 #include "inventry.h"
 #include "triggers.h"
-#include "mslhand.h"
 
 #include "dynblock.h"
 #include "dynamics.h"

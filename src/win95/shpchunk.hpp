@@ -9,11 +9,11 @@
 // shape flags
 
 #define SHAPE_FLAG_PALETTISED		0x0000100
-#define SHAPE_FLAG_USEZSP				0x0000200
-#define SHAPE_FLAG_USEAUGZS			0x0000400
+#define SHAPE_FLAG_USEZSP		0x0000200
+#define SHAPE_FLAG_USEAUGZS		0x0000400
 #define SHAPE_FLAG_USEAUGZSL		0x0000800
-#define SHAPE_FLAG_EXTERNALFILE	0x0001000
-#define SHAPE_FLAG_RECENTRED	0x0002000
+#define SHAPE_FLAG_EXTERNALFILE		0x0001000
+#define SHAPE_FLAG_RECENTRED		0x0002000
 
 
 #define SHAPE_FLAG_UNSTABLEBOUND_ZPOS 0x00004000
@@ -23,7 +23,6 @@
 #define SHAPE_FLAG_UNSTABLEBOUND_XPOS 0x00040000
 #define SHAPE_FLAG_UNSTABLEBOUND_XNEG 0x00080000
 
-#define SHAPE_FLAG_PSX_SUBDIVIDE	  0x80000000	
 
 //flags that need to be removed before being copied into the shapeheaders
 #define ChunkInternalItemFlags 0x00000000
@@ -34,11 +33,6 @@ class Anim_Shape_Frame_Chunk;
 class Console_Shape_Chunk;
 // flags structure
 
-struct shape_flags
-{
-	unsigned int locked : 1;
-// add more flags here as they are needed
-};
 
 enum Console_Type
 {
@@ -224,8 +218,8 @@ private:
 	// constructor from data
 	Shape_Sub_Shape_Header_Chunk (Shape_Sub_Shape_Chunk * parent)
 	: Chunk (parent, "SUBSHPHD"),
-	shape_data (parent->shape_data_store),
-	flags (0), file_id_num (-1)
+	shape_data(parent->shape_data_store),
+	file_id_num(-1), flags(0)
 	{}
 
 };
@@ -621,8 +615,8 @@ private:
 	// constructor from data
 	Shape_Header_Chunk (Shape_Chunk * parent)
 	: Chunk (parent, "SHPHEAD1"),
-	shape_data (parent->shape_data_store),
-	flags (0), file_id_num (-1), version_no (0)
+	shape_data(parent->shape_data_store),
+	flags(0), version_no(0), file_id_num(-1)
 	{}
 
 };
@@ -887,8 +881,9 @@ public:
 
 	// constructor from wherever
 	Shape_Morphing_Frame_Data_Chunk (Shape_Morphing_Data_Chunk * parent)
-	: Chunk (parent, "FRMMORPH"), frame_store (0), num_frames(0)
+	: Chunk (parent, "FRMMORPH"), num_frames(0), frame_store(0)
 	{}
+	
 	// constructor from buffer
 	Shape_Morphing_Frame_Data_Chunk (Shape_Morphing_Data_Chunk * parent,const char *, size_t);
 
@@ -925,7 +920,7 @@ class Shape_Poly_Change_Info_Chunk : public Chunk
 public:
 	
 	Shape_Poly_Change_Info_Chunk (Shape_Chunk * parent, List<poly_change_info> & pci, int orig_num_v)
-	: Chunk (parent, "SHPPCINF"), change_list (pci), original_num_verts (orig_num_v)
+	: Chunk (parent, "SHPPCINF"), original_num_verts (orig_num_v), change_list (pci)
 	{}
 
 	int original_num_verts;

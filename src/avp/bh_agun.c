@@ -17,7 +17,6 @@
 #include "comp_shp.h"
 #include "inventry.h"
 #include "triggers.h"
-#include "mslhand.h"
 
 #define UseLocalAssert Yes
 
@@ -1374,8 +1373,6 @@ void AGun_MaintainGun(STRATEGYBLOCK *sbPtr)
 		agunStatusPointer->ammo-=multiple;
 	}
 	agunStatusPointer->roundsFired+=multiple;
-	
-	multiple;
 	
 	/* End of volley? */
 	if (agunStatusPointer->volleyFired==(AGUN_VOLLEYSIZE<<ONE_FIXED_SHIFT)) {

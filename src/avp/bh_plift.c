@@ -8,7 +8,6 @@
 #include "gamedef.h"
 #include "bh_types.h"
 #include "triggers.h"
-#include "mslhand.h"
 #include "dynblock.h"
 #include "dynamics.h"
 #include "showcmds.h"

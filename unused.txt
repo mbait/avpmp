@@ -1,3 +1,5 @@
+mslhand.c
+mslhand.h
 avp/avpitems.cpp
 avp/avppages.cpp
 avp/bh_paq.c
@@ -11,11 +13,6 @@ avp/support/rebmenus.cpp
 avp/win95/menuplat.cpp
 avp/win95/multmenu.c
 avp/win95/pcpause.c
-include/3dc.h
-include/mem3dc.h
-include/module.h
-include/prototyp.h
-include/shape.h
 win95/chnkimag.cpp
 win95/chnkimag.hpp
 win95/cl_init.cpp

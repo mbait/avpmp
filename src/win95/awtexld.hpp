@@ -8,25 +8,6 @@
 	#define DB_COMMA ,
 #endif
 
-// Nasty hack to touch the classes so MSVC++ doesn't discards them.
-#ifdef _MSC_VER
-	extern class AwTlRegisterLoaderClass_AwBmpLoader_187 rlcAwBmpLoader_187;
-	
-	extern class AwTlRegisterLoaderClass_AwIffLoader_428 rlcAwIffLoader_428;
-	extern class AwTlRegisterLoaderClass_AwIffLoader_429 rlcAwIffLoader_429;
-	extern class AwTlRegisterLoaderClass_AwIffLoader_430 rlcAwIffLoader_430;
-
-	extern class AwTlRegisterLoaderClass_AwPpmLoader_229 rlcAwPpmLoader_229;
-	extern class AwTlRegisterLoaderClass_AwPgmLoader_230 rlcAwPgmLoader_230;
-	extern class AwTlRegisterLoaderClass_AwPbmLoader_231 rlcAwPbmLoader_231;
-
-	extern class RegisterChunkClassIlbmBmhdChunk_4 rccIlbmBmhdChunk_4;
-	extern class RegisterChunkClassIlbmCmapChunk_5 rccIlbmCmapChunk_5;
-	extern class RegisterChunkClassIlbmBodyChunk_6 rccIlbmBodyChunk_6;
-	extern class RegisterChunkClassIlbmGrabChunk_7 rccIlbmGrabChunk_7;
-
-#endif
-
 namespace AwTl {
 
 	#define CANT_HAPPEN db_msgf1(("AwCreateTexture(): (Line %u) CAN'T HAPPEN!",__LINE__));
@@ -208,11 +189,6 @@ namespace AwTl {
 			static void Do (PtrUnion _dstRowP, unsigned _dstWidth, SRCTYPE const * _srcRowP, unsigned _srcWidth, Colour const * _paletteP = NULL db_code1(DB_COMMA unsigned _paletteSize = 0));
 	};
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4701)
-#endif
-
 	template<class CONVERT, class SRCTYPE>
 	void GenericConvertRow<CONVERT, SRCTYPE>::Do (PtrUnion _dstRowP, unsigned _dstWidth, SRCTYPE const * _srcRowP, unsigned _srcWidth, Colour const * _paletteP db_code1(DB_COMMA unsigned _paletteSize))
 	{
@@ -300,10 +276,6 @@ namespace AwTl {
 		}
 	}
 	
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 	// reference counting support
 	class RefCntObj
 	{

@@ -95,9 +95,9 @@ struct _RifHandle : Project_RifHandle
 	_RifHandle()
 		: fc(0)
 		, envd(0)
+		, palparent(0)
 		, max_index(0)
 		, tex_index_nos(0)
-		, palparent(0)
 		{}
 };
 

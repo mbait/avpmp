@@ -39,8 +39,9 @@ public:
 
 	Lockable_Chunk_With_Children (Chunk_With_Children * parent, const char * identifier)
 		: Chunk_With_Children (parent, identifier),
-		updated (FALSE),updated_outside (FALSE),local_lock (FALSE),external_lock(FALSE),
-		output_chunk_for_process (FALSE), deleted (FALSE)
+		output_chunk_for_process(FALSE),
+		updated(FALSE), updated_outside(FALSE), local_lock(FALSE),
+		external_lock(FALSE), deleted(FALSE)
 	{}
 
 

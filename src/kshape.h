@@ -30,7 +30,6 @@ typedef struct
 
 	/* fog component */
 	unsigned char Fog;
-	
 
 } RENDERVERTEX;
 
@@ -87,7 +86,6 @@ enum LIGHTING_MODEL_ID
 };
 
 
-
 extern void InitialiseLightIntensityStamps(void);
 
 extern int FindHeatSourcesInHModel(DISPLAYBLOCK *dispPtr);
@@ -98,7 +96,6 @@ extern void TranslatePointIntoViewspace(VECTORCH *pointPtr);
 
 
 extern void CheckRenderStatesForModule(MODULE *modulePtr);
-
 
 
 extern void RenderDecal(DECAL *decalPtr);

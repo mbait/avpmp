@@ -204,7 +204,7 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 		return;
 	}
 
-	file_size = GetFileSize (rif_file, NULL);	
+	file_size = GetFileSize (rif_file, 0);
 
 	
 	if (!ReadFile(rif_file, id_buffer, 8, &bytes_read, 0)) {

@@ -243,7 +243,7 @@ namespace IFF
 		{
 			public:
 				virtual ~SerialData();
-				SerialData() : m_pPrev(NULL), m_pData(new DataBlock) {};
+				SerialData() : m_pData(new DataBlock), m_pPrev(NULL) {};
 				
 				void Clear();
 				

@@ -13,3 +13,5 @@ Env_List can be removed
 SCREENDESCRIPTORBLOCK.SDB_DiagonalWidth is unused
 ========
 movement.txt and genparam.txt code is unused
+========
+there is some unused junk in comp_shp.c

@@ -388,7 +388,7 @@ File_Chunk::File_Chunk(const char * file_name)
 		return;
 	}
 
-	file_size = GetFileSize (rif_file, NULL);	
+	file_size = GetFileSize (rif_file, 0);
 
 	
 	if (!ReadFile(rif_file, id_buffer, 8, &bytes_read, 0)) {
@@ -1482,7 +1482,7 @@ void File_Chunk::list_objects(List<Object_Chunk *> * pList)
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("RBOBJECT", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("RBOBJECT", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				pList->add_entry((Object_Chunk *)child_ptr);
@@ -1501,7 +1501,7 @@ void File_Chunk::list_shapes(List<Shape_Chunk *> * pList)
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("REBSHAPE", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("REBSHAPE", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				pList->add_entry((Shape_Chunk *)child_ptr);
@@ -1519,7 +1519,7 @@ void File_Chunk::list_dummy_objects(List<Dummy_Object_Chunk *> * pList){
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("DUMMYOBJ", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("DUMMYOBJ", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				pList->add_entry((Dummy_Object_Chunk *)child_ptr);
@@ -1536,7 +1536,7 @@ Environment_Data_Chunk * File_Chunk::get_env_data()
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("REBENVDT", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("REBENVDT", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				e_list.add_entry((Environment_Data_Chunk *)child_ptr);
@@ -1776,7 +1776,7 @@ RIF_File_Chunk::RIF_File_Chunk (Chunk_With_Children * parent, const char * file_
 		return;
 	}
 
-	file_size = GetFileSize (rif_file, NULL);	
+	file_size = GetFileSize (rif_file, 0);	
 
 	if (!ReadFile(rif_file, id_buffer, 8, &bytes_read, 0)) {
 		error_code = CHUNK_FAILED_ON_LOAD;
@@ -1943,7 +1943,7 @@ void RIF_File_Chunk::list_objects(List<Object_Chunk *> * pList)
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("RBOBJECT", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("RBOBJECT", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				pList->add_entry((Object_Chunk *)child_ptr);
@@ -1961,7 +1961,7 @@ void RIF_File_Chunk::list_shapes(List<Shape_Chunk *> * pList)
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("REBSHAPE", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("REBSHAPE", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				pList->add_entry((Shape_Chunk *)child_ptr);
@@ -1978,7 +1978,7 @@ Environment_Data_Chunk * RIF_File_Chunk::get_env_data()
 
 	if (children)	
 		while	(child_ptr != NULL) {
-			if (strncmp ("REBENVDT", child_ptr->identifier, 8) == NULL)
+			if (strncmp ("REBENVDT", child_ptr->identifier, 8) == 0)
 			{
 				assert (!child_ptr->r_u_miscellaneous());
 				e_list.add_entry((Environment_Data_Chunk *)child_ptr);

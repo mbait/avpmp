@@ -15,7 +15,6 @@
 #include "comp_shp.h"
 #include "inventry.h"
 #include "triggers.h"
-#include "mslhand.h"
 
 #define UseLocalAssert Yes
 

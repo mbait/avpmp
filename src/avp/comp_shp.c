@@ -5,8 +5,6 @@
 #include "gamedef.h"
 #include "comp_shp.h"
 
-#include "mslhand.h"
-
 #define UseLocalAssert Yes
 
 #include "ourasert.h"
@@ -68,48 +66,6 @@ SHAPEHEADER ** mainshapelist=0;
 
 /* compiled in shapes that do not exist as yet*/
 
-
-
-#if 0
-SHAPEHEADER PULSE_header;			/*Marine Weapons*/
-SHAPEHEADER AASHOTGUN_header;
-SHAPEHEADER CANNISTERGUN_header;
-SHAPEHEADER FTHROWER_header;
-SHAPEHEADER SMARTGUN_header;
-SHAPEHEADER PIG_header;
-SHAPEHEADER LATW_header;
-SHAPEHEADER PARTICLE_header;
-SHAPEHEADER ROCKET_header;
-
-SHAPEHEADER* MarineCompiledShapes[] = {
-	&BOB_header,
-    &BOB_header,
-    &BOB_header,			/*MarinePlayer*/
-    &BOB_header,            /*PredatorPlayer*/
-	&BOB_header,			/*AlienPlayer*/
-	&BOB_header, /* was &ALIEN_header, but the textures are no longer there. The old alien should be fully purged. << keywords: BUG FIXME OPTIMIZEME OPTIMISEME ERROR MISTAKE HACK >> */
-    &BOB_header,
-    &BOB_header,
-    &BOB_header,
-    &BOBCROUCH_header,		/* player crouch shape */
-    &BOBLIE_header,			/* player lying down shape */
-	&BOB_header,			/* Flamethrower shot - frame 1 */
-	&BOB_header,			/* Flamethrower shot - frame 2 */
-	&BOB_header,
-    &BOB_header,			/*Marine Weapons*/
-	&AASHOTGUN_header,
-	&CANNISTERGUN_header,
-	&FTHROWER_header,
-	&SMARTGUN_header,
-	&PIG_header,
-	&LATW_header,
-	&PARTICLE_header,
-	&ROCKET_header,
-	&BOB_header,			/* alien generator */
-};
-#else
-// changed by John to get rid of all compiled in shapes
-
 SHAPEHEADER* MarineCompiledShapes[] = {
 	&CUBE_header,
 	&CUBE_header,
@@ -135,7 +91,6 @@ SHAPEHEADER* MarineCompiledShapes[] = {
 	&CUBE_header,
 	&CUBE_header,			/* alien generator */
 };
-#endif
 
 
 #define STARTOF_PRECOMPILEDSHAPES 0
@@ -176,6 +131,4 @@ int load_precompiled_shapes(void)
 	done = 1;
 	
 	return i;
-} 
-
-
+}

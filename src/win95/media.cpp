@@ -81,7 +81,7 @@ void const * MediaWinFileMedium::GetReadBuffer(unsigned * pSize, unsigned nDesir
 	
 	DWORD nBytesRead = 0;
 	
-	if (!ReadFile(m_hFile, m_pBuffer, nDesiredSize, &nBytesRead, NULL))
+	if (!ReadFile(m_hFile, m_pBuffer, nDesiredSize, &nBytesRead, 0))
 		m_fError |= MME_IOERROR;
 	else if (!nBytesRead)
 		m_fError |= MME_EOFMET;
@@ -102,7 +102,7 @@ void MediaWinFileMedium::CloseWriteBuffer(unsigned nPosOffset)
 		
 	DWORD nBytesWritten = 0;
 	
-	if (!WriteFile(m_hFile, m_pBuffer, nPosOffset, &nBytesWritten, NULL))
+	if (!WriteFile(m_hFile, m_pBuffer, nPosOffset, &nBytesWritten, 0))
 		m_fError |= MME_IOERROR;
 	else if (nBytesWritten < nPosOffset)
 		m_fError |= MME_EOFMET;
@@ -119,7 +119,7 @@ void MediaWinFileMedium::CloseReadBuffer(unsigned nPosOffset)
 		return;
 	}
 		
-	if (nPosOffset != m_nReadBufLen && 0xffffffff == SetFilePointer(m_hFile,nPosOffset - m_nReadBufLen,NULL,FILE_CURRENT))
+	if (nPosOffset != m_nReadBufLen && 0xffffffff == SetFilePointer(m_hFile,nPosOffset - m_nReadBufLen,0,FILE_CURRENT))
 		m_fError |= MME_UNAVAIL;
 		
 	m_nReadBufLen = 0;
@@ -137,7 +137,7 @@ void MediaWinFileMedium::DoWriteBlock(void const * pData, unsigned nSize)
 	
 	DWORD nBytesWritten = 0;
 	
-	if (!WriteFile(m_hFile, pData, nSize, &nBytesWritten, NULL))
+	if (!WriteFile(m_hFile, pData, nSize, &nBytesWritten, 0))
 		m_fError |= MME_IOERROR;
 	else if (nBytesWritten < nSize)
 		m_fError |= MME_EOFMET;
@@ -153,7 +153,7 @@ void MediaWinFileMedium::DoReadBlock(void * pData, unsigned nSize)
 	
 	DWORD nBytesRead = 0;
 	
-	if (!ReadFile(m_hFile, pData, nSize, &nBytesRead, NULL))
+	if (!ReadFile(m_hFile, pData, nSize, &nBytesRead, 0))
 		m_fError |= MME_IOERROR;
 	else if (nBytesRead < nSize)
 		m_fError |= MME_EOFMET;
@@ -161,7 +161,7 @@ void MediaWinFileMedium::DoReadBlock(void * pData, unsigned nSize)
 
 unsigned MediaWinFileMedium::DoGetPos()
 {
-	unsigned nFilePos = SetFilePointer(m_hFile,0,NULL,FILE_CURRENT);
+	unsigned nFilePos = SetFilePointer(m_hFile,0,0,FILE_CURRENT);
 	
 	if (0xffffffff == nFilePos)
 	{
@@ -174,7 +174,7 @@ unsigned MediaWinFileMedium::DoGetPos()
 
 void MediaWinFileMedium::DoSetPos(unsigned nPos)
 {
-	if (0xffffffff == SetFilePointer(m_hFile,nPos,NULL,FILE_BEGIN))
+	if (0xffffffff == SetFilePointer(m_hFile,nPos,0,FILE_BEGIN))
 		m_fError |= MME_UNAVAIL;
 }
 

@@ -1,20 +1,11 @@
+#ifndef __AVP_COMP_SHP_H__
+#define __AVP_COMP_SHP_H__
 
 extern SHAPEHEADER** mainshapelist;
 
 extern int start_of_loaded_shapes;
 
 extern SHAPEHEADER CUBE_header;
-extern SHAPEHEADER PRISM_header;
-extern SHAPEHEADER BOB_header;
-extern SHAPEHEADER ALIEN_header;
-extern SHAPEHEADER BLOODSPLASH_header;
-extern SHAPEHEADER BULLETRICOCHET_header;
-extern SHAPEHEADER EXPLOSION_header;
-extern SHAPEHEADER BOBCROUCH_header;
-extern SHAPEHEADER BOBLIE_header;
-extern SHAPEHEADER FLAME1_header;
-extern SHAPEHEADER FLAME2_header;
-extern SHAPEHEADER LGRENADE_header;
 
 typedef enum marineshapesenum
 {
@@ -45,5 +36,6 @@ typedef enum marineshapesenum
 
 } MARINE_SHAPES_ENUM;
 
-
 extern int load_precompiled_shapes(void);
+
+#endif

@@ -117,8 +117,8 @@ List<LoadedNPC> loaded_npcs;
 LoadedNPC::LoadedNPC(RIF_Child_Chunk const * rcc)
 : rifname(0)
 , filename(0)
-, npc_rif(INVALID_RIFFHANDLE)
 , img_group(-1)
+, npc_rif(INVALID_RIFFHANDLE)
 {
 	if (rcc->filename && *rcc->filename)
 	{
@@ -147,8 +147,8 @@ LoadedNPC::LoadedNPC(RIF_Child_Chunk const * rcc)
 LoadedNPC::LoadedNPC(char const * name)
 : rifname(0)
 , filename(0)
-, npc_rif(INVALID_RIFFHANDLE)
 , img_group(-1)
+, npc_rif(INVALID_RIFFHANDLE)
 {
 	if (name && *name)
 	{
@@ -170,16 +170,16 @@ LoadedNPC::LoadedNPC(char const * name)
 LoadedNPC::LoadedNPC()
 : rifname(0)
 , filename(0)
-, npc_rif(INVALID_RIFFHANDLE)
 , img_group(-1)
+, npc_rif(INVALID_RIFFHANDLE)
 {
 }
 
 LoadedNPC::LoadedNPC(LoadedNPC const & npc2)
 : rifname(npc2.rifname ? new char[strlen(npc2.rifname)+1] : 0)
 , filename(npc2.filename ? new char[strlen(npc2.filename)+1] : 0)
-, npc_rif(npc2.npc_rif)
 , img_group(npc2.img_group)
+, npc_rif(npc2.npc_rif)
 {
 	if (rifname) strcpy(rifname,npc2.rifname);
 	if (filename) strcpy(filename,npc2.filename);

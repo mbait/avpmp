@@ -342,13 +342,13 @@ ConsoleVariable :: ConsoleVariable
 	(
 		pProjCh_ToUse
 	),
+	MinVal(MinVal_New),
+	MaxVal(MaxVal_New),
 	pSCString_Description
 	(
 		new SCString( pProjCh_Description_ToUse )
 			// constructor for the SCString adds the required reference
-	),
-	MinVal(MinVal_New),
-	MaxVal(MaxVal_New)
+	)
 {
 	/* PRECONDITION */
 	{
@@ -487,15 +487,15 @@ ConsoleVariable_Simple_Int :: ConsoleVariable_Simple_Int
 	int MinVal_New,
 	int MaxVal_New,
 	OurBool Cheat
-) : theValue( Value_ToUse ),
-	ConsoleVariable
+) :	ConsoleVariable
 	(
 		pProjCh_ToUse,
 		pProjCh_Description_ToUse,
 		MinVal_New,
 		MaxVal_New,
 		Cheat
-	)
+	),
+	theValue( Value_ToUse )
 {
 	/* PRECONDITION */
 	{
@@ -610,15 +610,15 @@ ConsoleVariable_Simple_FixP :: ConsoleVariable_Simple_FixP
 	int MinVal_New,
 	int MaxVal_New,
 	OurBool Cheat
-) : theValue( Value_ToUse ),
-	ConsoleVariable
+) :	ConsoleVariable
 	(
 		pProjCh_ToUse,
 		pProjCh_Description_ToUse,
 		MinVal_New,
 		MaxVal_New,
 		Cheat
-	)
+	),
+	theValue( Value_ToUse )
 {
 	/* PRECONDITION */
 	{

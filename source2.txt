@@ -8,7 +8,6 @@ mem3dc.c
 mem3dcpp.cpp
 module.c
 morph.c
-mslhand.c
 object.c
 shpanim.c
 sphere.c

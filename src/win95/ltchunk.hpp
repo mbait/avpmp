@@ -161,7 +161,7 @@ class Placed_Object_Light_Chunk : public Chunk
 {
 public :	
 	Placed_Object_Light_Chunk (Chunk_With_Children * parent, Placed_Object_Light_Data & new_light)
-	: Chunk (parent, "PLOBJLIT"), light (new_light),num_extra_data(0),extra_data(0) {}
+	: Chunk (parent, "PLOBJLIT"), light(new_light), extra_data(0), num_extra_data(0) {}
 
 	Placed_Object_Light_Chunk (Chunk_With_Children * parent, const char *, size_t const);
 	

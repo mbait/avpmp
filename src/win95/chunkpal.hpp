@@ -105,8 +105,8 @@ public:
 		, reserved1(0)
 		, reserved2(0)
 		, startpos(0)
-		, pixel_data(0)
 		, name(0)
+		, pixel_data(0)
 		{}
 	
 	// copy constructor
@@ -754,8 +754,8 @@ class RIF_Child_Chunk;
 class BMP_Flags
 {
 public:
-	BMP_Flags(void) : filename(0), enum_id(0), version_num(0), flags((BMPN_Flags)0){}
-	BMP_Flags(const char * const fname) : enum_id(0), version_num(0), flags((BMPN_Flags)0), filename(0)
+	BMP_Flags(void) : filename(0), flags((BMPN_Flags)0), version_num(0), enum_id(0) {}
+	BMP_Flags(const char * const fname) : filename(0), flags((BMPN_Flags)0), version_num(0), enum_id(0)
 	{
 		if (fname)
 		{

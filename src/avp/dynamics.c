@@ -515,7 +515,6 @@ extern void ObjectDynamics(void)
 		DYNAMICSBLOCK *dynPtr = Player->ObStrategyBlock->DynPtr;
 		MODULE *newModule = (ModuleFromPosition(&(dynPtr->Position), playerPherModule));
 		
-		extern unsigned char KeyboardInput[];
 		if (!newModule)
 		{
 			/* hmm, player isn't in a module */
@@ -1305,11 +1304,6 @@ static void VectorHomingForSurfaceAlign(VECTORCH *currentPtr, VECTORCH *targetPt
 	return;
 }
 
-
-
-
-
-
 extern void DynamicallyRotateObject(DYNAMICSBLOCK *dynPtr)
 {
 	extern int NormalFrameTime;
@@ -1331,6 +1325,8 @@ extern void DynamicallyRotateObject(DYNAMICSBLOCK *dynPtr)
   	MatrixMultiply(&dynPtr->OrientMat,&mat,&dynPtr->OrientMat);
  	MatrixToEuler(&dynPtr->OrientMat, &dynPtr->OrientEuler);
 }
+
+static int InterferenceAt(int lambda, DYNAMICSBLOCK *dynPtr);
 
 /* Move an object. At this stage, we have a list of the polygons in the
 environment with which the object the may collide. */									   
@@ -3482,9 +3478,6 @@ static int AxisToIgnore(VECTORCH *normal)
 	}
 }
 
-
-
-   
 static void TestForValidMovement(STRATEGYBLOCK *sbPtr)
 {
 	#if 1
@@ -5765,6 +5758,8 @@ static int RelocatedDueToFallout(DYNAMICSBLOCK *dynPtr)
 	#endif
 #endif
 
+static signed int DistanceMovedBeforeParticleHitsPolygon(PARTICLE *particlePtr, struct ColPolyTag *polyPtr, int distanceToMove);
+
 #if 1
 
 /*KJL****************
@@ -6388,7 +6383,6 @@ VECTORCH *GetNearestModuleTeleportPoint(MODULE* thisModulePtr, VECTORCH* positio
 	{
 		VECTORCH p = *positionPtr;
 		int d;		
-		char buffer[100];
 
 		p.vx -= thisModulePtr->m_aimodule->m_world.vx + epList->position.vx;
 		p.vy -= thisModulePtr->m_aimodule->m_world.vy + epList->position.vy;
@@ -6415,30 +6409,3 @@ VECTORCH *GetNearestModuleTeleportPoint(MODULE* thisModulePtr, VECTORCH* positio
 		return &(thisEp->position);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

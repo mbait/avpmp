@@ -87,8 +87,7 @@ public:
 	SimpleExportVariable
 	(
 		T& aT
-	) : theT(aT),
-		ExportVariable<T>()
+	) : ExportVariable<T>(), theT(aT)
 	{
 	}
 
@@ -115,12 +114,8 @@ public:
 		T& aT,
 		T minVal_New,
 		T maxVal_New
-	) : theT(aT),
-		BoundedExportVariable<T>
-		(
-			minVal_New,
-			maxVal_New
-		)
+	) : BoundedExportVariable<T>(minVal_New, maxVal_New), 
+		theT(aT)	
 	{
 	}
 
