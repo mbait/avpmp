@@ -4,9 +4,6 @@ Aliens vs Predator Linux  http://icculus.org/avp/
 This is an unofficial Linux port of the Fox Interactive / Rebellion
 Developments game, Aliens Versus Predator.
 
-The port is currently under development; it is not yet "suitable for
-end users."  Hopefully this status will change in the not-so-distant future.
-
 
 
 
@@ -76,8 +73,9 @@ If you get "Aborted" after starting a new game the second time or so,
 try recompiling with gcc-3.0.2.  This problem should be fixed now; if not,
 let me know.
 
-If you have Debian, the Debian SDL package, and an NVIDIA card, you will
-have to uncomment a LDLIBS line in the Makefile.
+The OpenGL library is loaded dynamically.  This means that if there is
+a problem initializing OpenGL, it will not occur until you start
+a new game.
 
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
@@ -129,7 +127,7 @@ More information about the game and the series can be found at
 http://www.avpnews.com.
 
 
-Last, but surely not least:
+Last, but definitely not least:
 Thanks go out to Chuck Mason for testing and the OpenAL code, Dan Olson for
 trying the code out with the Regular version, Zachary 'zakk' Slater for
 providing tons of feedback, Tim Beckmann for sending patches, and Ryan C. 
