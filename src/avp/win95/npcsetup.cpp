@@ -13,10 +13,12 @@
 #include "avp_menus.h"
 
 
+/* TODO: dir separator */
+
 #if ALIEN_DEMO
-#define DIRECTORY_FOR_RIFS "alienavp_huds\\"
+#define DIRECTORY_FOR_RIFS "alienavp_huds/"
 #else
-#define DIRECTORY_FOR_RIFS "avp_huds\\"
+#define DIRECTORY_FOR_RIFS "avp_huds/"
 #endif
 #define FIRST_FREE_IMAGE_GROUP 3 // 0 for char,1 for weapon rif ,2 for env
 

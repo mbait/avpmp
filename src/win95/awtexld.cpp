@@ -381,7 +381,7 @@ namespace AwTl
 AwTl::SurfUnion AwBackupTexture::Restore(AwTl::CreateTextureParms const & rParams)
 {
 	using namespace AwTl;
-	
+
 	ChoosePixelFormat(rParams);
 	
 	if (!pixelFormat.validB)
@@ -510,11 +510,14 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 
 AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & _parmsR)
 {
-	fprintf(stderr, "AwBackupTexture::CreateTexture(...)\n");
-
-	return static_cast<D3DTexture *>(NULL);
-#if 0
 	using namespace AwTl;
+	
+	fprintf(stderr, "AwBackupTexture::CreateTexture(...) This is where we could convert the image to RGB/RGBA, and so on\n");
+
+	SurfUnion pRet = static_cast<D3DTexture *>(new D3DTexture);
+	
+	return pRet;
+#if 0
 	
 	// which flags to use?
 	unsigned fMyFlags =
@@ -1390,7 +1393,8 @@ namespace AwTl {
 		
 //		CHECK_MEDIA_ERRORS("loading file headers")
 		ON_ERROR_RETURN_NULL("loading file headers")
-		
+
+#if 0		
 		ChoosePixelFormat(rParams);
 
 		if (!pixelFormat.validB)
@@ -1401,7 +1405,12 @@ namespace AwTl {
 		awTlLastErr = pixelFormat.validB && driverDesc.ddP && (driverDesc.validB || !rParams.loadTextureB) ? AW_TLE_OK : AW_TLE_NOINIT;
 		
 		ON_ERROR_RETURN_NULL("initializing load")
-		
+#endif
+		fprintf(stderr, "TexFileLoader::Load Pixel Format?! It's not implemented!\n");
+
+/* TODO */
+		AllocateBuffers(/* rParams.backupHP ? true : */ false, /* pixelFormat.palettizedB ? ? 1<<pixelFormat.bitsPerPixel : */ 0);
+				
 //		CHECK_MEDIA_ERRORS("allocating buffers")
 		ON_ERROR_RETURN_NULL("allocating buffers")
 		
@@ -2079,6 +2088,7 @@ D3DTexture * _AWTL_VARARG AwCreateTexture(char const * _argFormatS, ...)
 	parms.loadTextureB = true;
 	bool bParmsOK = ParseParams(&parms, _argFormatS, ap);
 	va_end(ap);
+
 	return bParmsOK ? LoadFromParams(&parms).textureP : NULL;
 }
 

@@ -19,8 +19,7 @@
 
 /* winmain.c */
 BOOL KeepMainRifFile = FALSE;
-char LevelName[] = {"predbit6\0QuiteALongNameActually"};
-int HWAccel = 0;
+int HWAccel = 1;
 
 
 /* win_func.cpp */
@@ -67,6 +66,11 @@ char* GetCustomMultiplayerLevelName(int index, int gameType)
 	return NULL;
 }
 
+void BuildMultiplayerLevelNameArray()
+{
+	fprintf(stderr, "BuildMultiplayerLevelNameArray()\n");
+}
+
 BOOL BuildLoadIPAddressMenu()
 {
 	fprintf(stderr, "BuildLoadIPAddressMenu()\n");
@@ -97,9 +101,9 @@ void Start_Progress_Bar()
 	fprintf(stderr, "Start_Progress_Bar()\n");
 }
 
-void Set_Progress_Bar_Position()
+void Set_Progress_Bar_Position(int pos)
 {
-	fprintf(stderr, "Set_Progress_Bar_Position()\n");
+	fprintf(stderr, "Set_Progress_Bar_Position(%d)\n", pos);
 }
 
 
@@ -391,6 +395,14 @@ int NumberOfUserProfiles()
 	return 0;
 }
 
+/* d3_func.cpp */
+int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
+{
+	fprintf(stderr, "GetTextureHandle(%p)\n", imageHeaderPtr);
+	
+	return 1;
+}
+
 /* d3d_render.cpp -- some of these got mixed in with d3_func.cpp! */
 int NumberOfLandscapePolygons;
 int FMVParticleColour;
@@ -494,13 +506,6 @@ void ReleaseDirect3D()
 void ReleaseD3DTexture(void* D3DTexture)
 {
 	fprintf(stderr, "ReleaseD3DTexture(%p)\n", D3DTexture);
-}
-
-int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
-{
-	fprintf(stderr, "GetTextureHandle(%p)\n", imageHeaderPtr);
-	
-	return 0;
 }
 
 void FlushD3DZBuffer()
@@ -713,10 +718,15 @@ void ReadJoysticks()
 
 
 /* dx_proj.cpp */
-int use_mmx_math = 1;
+int use_mmx_math = 0;
 
 
 /* cd_player.c */
+void CDDA_Start()
+{
+	fprintf(stderr, "CDDA_Start()\n");
+}
+
 void CDDA_ChangeVolume(int volume)
 {
 	fprintf(stderr, "CDDA_ChangeVolume(%d)\n", volume);
@@ -1027,135 +1037,3 @@ void AddNetMsg_SpotOtherSound(enum soundindex SoundIndex,VECTORCH *position,int 
 	fprintf(stderr, "AddNetMsg_SpotOtherSound(%d, %p, %d)\n", SoundIndex, position, explosion);
 }
 
-
-/* win32 api */
-size_t _mbclen(const unsigned char *s)
-{
-	return strlen((const char *)s);
-}
-
-HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z)
-{
-	fprintf(stderr, "CreateFile(%s, %d, %d, %d, %d, %d, %d)\n", file, write, x, y, flags, flags2, z);
-	
-	return -1;
-}
-
-HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z)
-{
-	return CreateFileA(file, write, x, y, flags, flags2, z);
-}
-
-int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *byteswritten, int x)
-{
-	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, x);
-
-	return -1;
-}
-
-int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x)
-{
-	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, x);
-
-	return -1;
-}
-
-int GetFileSize(HANDLE file, int x)
-{
-	fprintf(stderr, "GetFileSize(%d, %d)\n", file, x);
-	
-	return -1;
-}
-
-int CloseHandle(HANDLE file)
-{
-	fprintf(stderr, "CloseHandle(%d)\n", file);
-	
-	return -1;
-}
-
-int DeleteFile(const char *file)
-{
-	fprintf(stderr, "DeleteFile(%s)\n", file);
-	
-	return -1;
-}
-
-int DeleteFileA(const char *file)
-{
-	return DeleteFile(file);
-}
-
-int GetDiskFreeSpace(int x, unsigned long *a, unsigned long *b, unsigned long *c, unsigned long *d)
-{
-	fprintf(stderr, "GetDiskFreeSpace(%d, %p, %p, %p, %p)\n", x, a, b, c, d);
-
-	return -1;
-}
-
-int CreateDirectory(char *dir, int x)
-{
-	fprintf(stderr, "CreateDirectory(%s, %d)\n", dir, x);
-	
-	return -1;
-}
-
-int MoveFile(const char *newfile, const char *oldfile)
-{
-	fprintf(stderr, "MoveFile(%s, %s)\n", newfile, oldfile);
-	
-	return -1;
-}
-
-int MoveFileA(const char *newfile, const char *oldfile)
-{
-	return MoveFile(newfile, oldfile);
-}
-
-int CopyFile(const char *newfile, const char *oldfile, int x)
-{
-	fprintf(stderr, "CopyFile(%s, %s, %d)\n", newfile, oldfile, x);
-	
-	return -1;
-}
-
-int GetFileAttributes(const char *file)
-{
-	fprintf(stderr, "GetFileAttributes(%s)\n", file);
-	
-	return -1;
-}
-
-int GetFileAttributesA(const char *file)
-{
-	return GetFileAttributes(file);
-}
-
-int SetFilePointer(HANDLE file, int x, int y, int z)
-{
-	fprintf(stderr, "SetFilePointer(%d, %d, %d, %d)\n", file, x, y, z);
-	
-	return -1;
-}
-
-int SetEndOfFile(HANDLE file)
-{
-	fprintf(stderr, "SetEndOfFile(%d)\n", file);
-	
-	return -1;
-}
-
-/* time in miliseconds */
-int timeGetTime()
-{
-	fprintf(stderr, "timeGetTime()\n");
-	
-	return 0;
-}
-
-int GetTickCount()
-{
-	fprintf(stderr, "GetTickCount()\n");
-	
-	return 0;
-}

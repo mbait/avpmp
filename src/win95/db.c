@@ -79,7 +79,7 @@ int db_option = 0; /* Default is off. */
 #define PROP_WIDTH 0
 
 /* Logfile name */
-#define LOGFILE_NAME "LOGFILE.TXT"
+#define LOGFILE_NAME "logfile.txt"
 
 /* Set this to 1 if the logfile name is an absolute path. Otherwise the
  * logfile will go in the directory that is current when db_log_init() 
@@ -405,7 +405,8 @@ void db_log_init(void)
 	sprintf( LogFileNameP, "%s", db_log_file_name ); 
 	#else
 	/* Append the log file name to the current working directory. */
-	sprintf( LogFileNameP, "%s\\%s", getcwd( LogFileNameP, 240 ),
+/* TODO - path seperator */
+	sprintf( LogFileNameP, "%s/%s", getcwd( LogFileNameP, 240 ),
 		db_log_file_name );
 	#endif
 	

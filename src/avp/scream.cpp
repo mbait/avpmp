@@ -56,12 +56,13 @@ static CharacterSoundEffects QueenSounds={0,0,0,SID_NOSOUND};
 //static SOUNDINDEX global_last_sound;
 
 
+/* TODO: dir separator */
 #if ALIEN_DEMO
-#define ScreamFilePath "alienfastfile\\"
+#define ScreamFilePath "alienfastfile/"
 #elif LOAD_SCREAMS_FROM_FASTFILES
-#define ScreamFilePath "fastfile\\"
+#define ScreamFilePath "fastfile/"
 #else
-#define ScreamFilePath "sound\\"
+#define ScreamFilePath "sound/"
 #endif
 
 #if 0
@@ -99,7 +100,8 @@ void LoadScreamSounds()
 	
 	voice_types=(ScreamVoiceType*) PoolAllocateMem(num_voice_types * sizeof(ScreamVoiceType));
 	
-	char wavpath[200]="npc\\marinevoice\\";
+	/* TODO: dir separator */
+	char wavpath[200]="npc/marinevoice/";
 	char* wavname=&wavpath[strlen(wavpath)];
 	for(int i=0;i<num_voice_types;i++)	
 	{
@@ -345,22 +347,23 @@ void UnloadScreamSounds()
 }
 
 
+/* TODO: dir separator */
 void LoadMarineScreamSounds()
 {
-	MarineSounds.LoadSounds("marsound.dat","npc\\marinevoice\\");
+	MarineSounds.LoadSounds("marsound.dat","npc/marinevoice/");
 }
 void LoadAlienScreamSounds()
 {
-	AlienSounds.LoadSounds("aliensound.dat","npc\\alienvoice\\");
+	AlienSounds.LoadSounds("aliensound.dat","npc/alienvoice/");
 }
 void LoadPredatorScreamSounds()
 {
-	PredatorSounds.LoadSounds("predsound.dat","npc\\predatorvoice\\");
+	PredatorSounds.LoadSounds("predsound.dat","npc/predatorvoice/");
 }
 
 void LoadQueenScreamSounds()
 {
-	QueenSounds.LoadSounds("queensound.dat","npc\\queenvoice\\");
+	QueenSounds.LoadSounds("queensound.dat","npc/queenvoice/");
 }
 
 

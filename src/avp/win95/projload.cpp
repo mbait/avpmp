@@ -368,7 +368,9 @@ void LoadedPlacedHierarchy::load_rif()
 {
 	if(placed_rif!=INVALID_RIFFHANDLE) return;
 	char file_path[100];
-	sprintf(file_path,"avp_huds\\%s.rif",file_name);
+
+/* TODO: dir seperator */
+	sprintf(file_path,"avp_huds/%s.rif",file_name);
 	
 	placed_rif=avp_load_rif_non_env(file_path);
 	if(placed_rif!=INVALID_RIFFHANDLE)
@@ -504,7 +506,8 @@ Global_Hierarchy_Store::Global_Hierarchy_Store (RIFFHANDLE h)
 			sound_array[index].volume=isc->max_volume;
 			if(dir_chunk)
 			{
-				sprintf(wavname,"%s\\%s",dir_chunk->directory,isc->wav_name);
+			/* TODO: dir separator */
+				sprintf(wavname,"%s/%s",dir_chunk->directory,isc->wav_name);
 				sound_array[index].sound_loaded=GetSound(wavname);
 			}
 			else
@@ -3082,10 +3085,7 @@ void DeallocateModules()
 
 	//and get rid of the strategy lists
 	deallocate_behaviour_list();
-
-
 }
-
 
 void avp_undo_rif_load(RIFFHANDLE h)
 {
@@ -3096,34 +3096,40 @@ void avp_undo_rif_load(RIFFHANDLE h)
 RIFFHANDLE avp_load_rif (const char * fname)
 {
 	//see if there is a local copy of the rif file
-	FILE* rifFile=fopen(fname,"rb");
-	if(!rifFile && AvpCDPath)
+	FILE* rifFile = fopen(fname,"rb");
+
+/* TODO: Let's find a better method */
+	if (!rifFile && AvpCDPath)
 	{
 		//try and load rif file from cd instead
 		char RifName[200];
-		sprintf(RifName,"%s%s",AvpCDPath,fname);
+		sprintf(RifName, "%s%s", AvpCDPath, fname);
 		return load_rif(RifName);
 
 	}
-	fclose(rifFile);
+	if (rifFile)
+		fclose(rifFile);
 	return load_rif(fname); 
-
 }
+
 RIFFHANDLE avp_load_rif_non_env (const char * fname)
 {
 	//see if there is a local copy of the rif file
-	FILE* rifFile=fopen(fname,"rb");
-	if(!rifFile && AvpCDPath)
+	FILE* rifFile = fopen(fname, "rb");
+	
+/* TODO: Let's find a better method */	
+	if (!rifFile && AvpCDPath)
 	{
 		//try and load rif file from cd instead
 		char RifName[200];
-		sprintf(RifName,"%s%s",AvpCDPath,fname);
+		sprintf(RifName, "%s%s", AvpCDPath, fname);
 		return load_rif_non_env(RifName);
 
 	}
-	fclose(rifFile);
+	if (rifFile)
+		fclose(rifFile);
+	
 	return load_rif_non_env(fname); 
-
 }
 
 
@@ -3136,7 +3142,8 @@ void LoadModuleData()
 {
  	GLOBALASSERT(env_rif);
 
- 	HANDLE file = CreateFile ("avp_rifs\\module.bbb", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 
+/* TODO: dir separator */
+ 	HANDLE file = CreateFile ("avp_rifs/module.bbb", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 
  					FILE_FLAG_RANDOM_ACCESS, 0);
 	unsigned long byteswritten;
 	WriteFile(file,&Global_VDB_Ptr->VDB_World,sizeof(VECTORCH),&byteswritten,0);
@@ -3144,7 +3151,8 @@ void LoadModuleData()
  	
  	CloseHandle(file);
 
- 	file = CreateFile ("avp_rifs\\module.aaa", GENERIC_READ, 0, 0, OPEN_EXISTING, 
+/* TODO: dir separator */
+ 	file = CreateFile ("avp_rifs/module.aaa", GENERIC_READ, 0, 0, OPEN_EXISTING, 
  					FILE_FLAG_RANDOM_ACCESS, 0);
 
 	if(file==INVALID_HANDLE_VALUE) return;
@@ -3168,7 +3176,7 @@ void LoadModuleData()
 		char* name1=&name[0];
 		while(name[i])
 		{
-			if(name[i]=='\\' || name[i]==':')
+			if(name[i]=='\\' || name[i]==':' /* || name[i]=='/' */)
 			{
 				name1=&name[i+1];
 			}

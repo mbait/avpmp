@@ -45,6 +45,8 @@ size_t _mbclen(const unsigned char *s);
 
 #define MAX_PATH	PATH_MAX
 
+void FixFilename(char *str);
+
 /* windows junk */
 typedef int GUID;
 typedef int DPID;
@@ -90,20 +92,21 @@ typedef struct SYSTEMTIME
 } SYSTEMTIME;
 
 #define INVALID_HANDLE_VALUE		-1
-#define GENERIC_WRITE			1
-#define CREATE_ALWAYS			2
-#define FILE_FLAG_RANDOM_ACCESS		3
-#define GENERIC_READ			4
-#define OPEN_EXISTING			5
-#define FILE_ATTRIBUTE_READONLY		6
-#define FILE_CURRENT			7
-#define FILE_BEGIN			8	
-#define FILE_END			9
-#define FILE_SHARE_READ			10
-#define FILE_ATTRIBUTE_DIRECTORY	11
-#define FILE_SHARE_WRITE		12
-#define OPEN_ALWAYS			13
-#define FILE_ATTRIBUTE_NORMAL		14
+#define GENERIC_WRITE			0x0001
+#define CREATE_ALWAYS			0x0002
+#define FILE_FLAG_RANDOM_ACCESS		0x0004
+#define GENERIC_READ			0x0008
+#define OPEN_EXISTING			0x0010
+#define FILE_ATTRIBUTE_READONLY		0x0020
+#define FILE_CURRENT			0x0040
+#define FILE_BEGIN			0x0080	
+#define FILE_END			0x0100
+#define FILE_SHARE_READ			0x0200
+#define FILE_ATTRIBUTE_DIRECTORY	0x0400
+#define FILE_SHARE_WRITE		0x0800
+#define OPEN_ALWAYS			0x1000
+#define FILE_ATTRIBUTE_NORMAL		0x2000
+
 
 HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z);
 HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z);

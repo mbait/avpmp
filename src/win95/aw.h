@@ -6,7 +6,12 @@ typedef struct AwBackupTexture * AW_BACKUPTEXTUREHANDLE;
 
 typedef struct DIRECTDRAWSURFACE
 {
-	int x;
+	int id;
+	
+	int w;
+	int h;
+	unsigned char *data;
+	int type;
 } DIRECTDRAWSURFACE;
 
 typedef DIRECTDRAWSURFACE * LPDIRECTDRAWSURFACE;
@@ -14,7 +19,12 @@ typedef DIRECTDRAWSURFACE DDSurface;
 
 typedef struct DIRECT3DTEXTURE
 {
-	int x;
+	int id;
+	
+	int w;
+	int h;
+	unsigned char *data;
+	int type;
 } DIRECT3DTEXTURE;
 
 typedef DIRECT3DTEXTURE * LPDIRECT3DTEXTURE;

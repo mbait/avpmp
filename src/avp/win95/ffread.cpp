@@ -179,9 +179,11 @@ FFHeaderI::FFHeaderI(char const *_filename,BOOL _should_be_kept)
 {
 	if (_filename)
 	{
-		filename = new char [strlen(_filename)+1];
+		filename = new char [strlen(_filename) + 1];
 		strcpy(filename,_filename);
 		
+		FixFilename(filename);
+				
 		Read();
 	}
 }
@@ -282,7 +284,7 @@ FFError FFHeaderI::Read(char const *_filename)
 	
 	if (INVALID_HANDLE_VALUE==h)
 	{
-		ReportError(_filename);
+		ReportError(filename);
 		return FF_COULDNOTOPENFILE;
 	}
 	
