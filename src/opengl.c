@@ -2388,16 +2388,55 @@ void ColourFillBackBuffer(int FillColour)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void ColourFillBackBufferQuad(int FillColour, int LeftX, int TopY, int RightX, int BotY)
+void ColourFillBackBufferQuad(int FillColour, int x0, int y0, int x1, int y1)
 {
+	GLfloat x[4], y[4];
 	int r, g, b, a;
+
+	if (y1 <= y0)
+		return;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_OFF);
+	CheckBoundTextureIsCorrect(NULL);
 	
 	b = ((FillColour >> 0)  & 0xFF);
 	g = ((FillColour >> 8)  & 0xFF);
 	r = ((FillColour >> 16) & 0xFF);
 	a = ((FillColour >> 24) & 0xFF);	
+
+	glColor4ub(r, g, b, a);
+
+	x[0] = x0;
+	x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[0] = y0;
+	y[0] = -(y[0] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
 	
-	D3D_Rectangle(LeftX, TopY, RightX, BotY, r, g, b, a);
+	x[1] = x1 - 1;
+	x[1] =  (x[1] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[1] = y0;
+	y[1] = -(y[1] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+	
+	x[2] = x1 - 1;
+	x[2] =  (x[2] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[2] = y1 - 1;
+	y[2] = -(y[2] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+	
+	x[3] = x0;
+	x[3] =  (x[3] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+	y[3] = y1 - 1;
+	y[3] = -(y[3] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+
+	SelectPolygonBeginType(3); /* triangles */
+	
+	glVertex3f(x[0], y[0], -1.0f);
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glVertex3f(x[1], y[1], -1.0f);
+	glVertex3f(x[2], y[2], -1.0f);
+	glVertex3f(x[3], y[3], -1.0f);
+	
+	glEnd();
 }
 
 void D3D_DrawBackdrop()
@@ -2455,6 +2494,40 @@ void D3D_DrawBackdrop()
 		ColourFillBackBuffer(0);
 		return;
 	}
+}
+
+void BltImage(RECT *dest, DDSurface *image, RECT *src)
+{
+	int width1, width;
+	int height1, height;
+
+	width = dest->right - dest->left + 1;
+	width1 = src->right - src->left + 1;
+	height = dest->bottom - dest->top + 1;
+	height1 = src->bottom - src->top + 1;
+	
+	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_PIXEL_MODE_BIT);
+	glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+	
+	glDisable(GL_BLEND);
+		
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, image->w);
+	glPixelZoom((double)width/(double)width1, (double)height/(double)height1);
+	
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	glOrtho(0.0, ScreenDescriptorBlock.SDB_Width, 0.0, ScreenDescriptorBlock.SDB_Height, -1.0, 1.0);
+	glRasterPos2i(dest->left, ScreenDescriptorBlock.SDB_Height-dest->bottom);
+	
+	glDrawPixels(width1, height1, GL_RGBA, GL_UNSIGNED_BYTE, image->buf);
+		
+	glPopMatrix();
+	
+	glPopClientAttrib();
+	glPopAttrib();;
 }
 
 /* ** */

@@ -28,6 +28,8 @@ extern int FadingGameInAfterLoading;
 extern void RenderBriefingText(int centreY, int brightness);
 
 extern void InGameFlipBuffers();
+
+extern void BltImage(RECT *dest, DDSurface *image, RECT *src);
 };
 
 static int CurrentPosition=0;
@@ -47,13 +49,10 @@ RECT LoadingBarEmpty_SrcRect;
 RECT LoadingBarFull_DestRect;
 RECT LoadingBarFull_SrcRect;
 
-
-
 void Start_Progress_Bar()
 {
 	AAFontImageNumber = CL_LoadImageOnce("Common\\aa_font.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE);
 
-#if 0 /* TODO: disabled for port */	
 	/* load other graphics */
 	{
 		char buffer[100];
@@ -153,7 +152,6 @@ void Start_Progress_Bar()
 							0
 						);
 	}
-#endif	
 	
 	//draw initial progress bar
 
@@ -170,9 +168,8 @@ void Start_Progress_Bar()
 	for (int i=0; i<2; i++)
 	{
 		ColourFillBackBuffer(0);
-#if 0 /* TODO: disabled for port */
-		if (LoadingBarEmpty) lpDDSBack->Blt(&LoadingBarEmpty_DestRect,LoadingBarEmpty,&LoadingBarEmpty_SrcRect,DDBLT_WAIT,0);
-#endif
+		if (LoadingBarEmpty) BltImage(&LoadingBarEmpty_DestRect,LoadingBarEmpty,&LoadingBarEmpty_SrcRect);
+		
 		FlushD3DZBuffer();
 
 	 	ThisFramesRenderingHasBegun();
@@ -185,7 +182,6 @@ void Start_Progress_Bar()
 		InGameFlipBuffers();
 	}
 
-#if 0 /* TODO: disabled for port */
 	if(image)
 	{
 		ReleaseDDSurface(image);
@@ -194,7 +190,7 @@ void Start_Progress_Bar()
 	{
 		ReleaseDDSurface(LoadingBarEmpty);
 	}
-#endif	
+
 	CurrentPosition=0;
 
 
@@ -217,9 +213,8 @@ void Set_Progress_Bar_Position(int pos)
 		LoadingBarFull_DestRect.top=(ScreenDescriptorBlock.SDB_Height *11)/12;
 		LoadingBarFull_DestRect.bottom=ScreenDescriptorBlock.SDB_Height-1;
 		
-#if 0 /* TODO: disabled for port */
-		if (LoadingBarFull) lpDDSBack->Blt(&LoadingBarFull_DestRect,LoadingBarFull,&LoadingBarFull_SrcRect,DDBLT_WAIT,0);
-#endif
+		if (LoadingBarFull) BltImage(&LoadingBarFull_DestRect,LoadingBarFull,&LoadingBarFull_SrcRect);
+
 /*		FlipBuffers();	*/
 		InGameFlipBuffers();
 
@@ -268,8 +263,6 @@ void Game_Has_Loaded(void)
 		CheckForWindowsMessages();
 		ReadUserInput();
 	
-//		InGameFlipBuffers();
-
 		ColourFillBackBufferQuad
 		(
 			0,
@@ -292,9 +285,8 @@ void Game_Has_Loaded(void)
 			LoadingBarFull_DestRect.top=(ScreenDescriptorBlock.SDB_Height *11)/12+h;
 			LoadingBarFull_DestRect.bottom=ScreenDescriptorBlock.SDB_Height-1-h;
 
-#if 0 /* TODO: disabled for port */			
-			if (LoadingBarFull) lpDDSBack->Blt(&LoadingBarFull_DestRect,LoadingBarFull,&LoadingBarFull_SrcRect,DDBLT_WAIT,0);
-#endif
+			if (LoadingBarFull) BltImage(&LoadingBarFull_DestRect,LoadingBarFull,&LoadingBarFull_SrcRect);
+
 			f-=NormalFrameTime;
 			if (f<0) f=0;
 		}
@@ -333,13 +325,10 @@ void Game_Has_Loaded(void)
 	
 	FadingGameInAfterLoading=ONE_FIXED;
 
-#if 0 /* TODO: disabled for port */	
 	if (LoadingBarFull)
 	{
 		ReleaseDDSurface(LoadingBarFull);
 	}
-#endif	
 }
-
 
 };

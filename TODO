@@ -3,7 +3,7 @@
 [DONE] [11/10/01] Save/Load Game support.
 [DONE] [11/25/01] CD Audio.
 [DONE] [12/05/01] Menus.
-* Progress bar.
+[DONE] [12/05/01] Progress bar.
 * Make vidmodes work.
 * Debug "pure virtual method called"
 * Proper file loading/saving (ignore case, search certain directories) and
