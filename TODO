@@ -6,11 +6,12 @@
   config handling (~/.avp/{ge, re, ad, md, pd}/?)
 * Command line options.
 * CD Audio.
+* Joystick support.
 * Try to get demos and regular edition to work.
 * See what FOX/Rebellion has to say (if anything) about redistribution of the
   demos and if its possible to create an installer for regular/gold edition
   CDs.
-* Put together a workaround if RGT plan fails.
+* Put together a workaround if RGT plan fails. Might just leave as-is.
 * See if the build process can be made easier for those who download the
   source.
 * Write documentation.

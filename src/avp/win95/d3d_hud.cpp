@@ -292,8 +292,13 @@ void LoadCommonTextures(void)
 		extern char LevelName[];
 		if (!strcmp(LevelName,"invasion_a"))
 		{
+#if !ALIEN_DEMO
 		   	ChromeImageNumber = CL_LoadImageOnce("Envrnmts\\Invasion\\water2.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE|LIO_TRANSPARENT);
 			WaterShaftImageNumber = CL_LoadImageOnce("Envrnmts\\Invasion\\water-shaft.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE|LIO_TRANSPARENT);
+#else /* alien demo has these in common */
+		   	ChromeImageNumber = CL_LoadImageOnce("Common\\water2.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE|LIO_TRANSPARENT);
+			WaterShaftImageNumber = CL_LoadImageOnce("Common\\water-shaft.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE|LIO_TRANSPARENT);
+#endif			
 		}
 		else if (!strcmp(LevelName,"genshd1"))
 		{

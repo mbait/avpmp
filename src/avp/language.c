@@ -71,10 +71,8 @@ void InitTextStrings(void)
 	for (i=1; i<MAX_NO_OF_TEXTSTRINGS; i++)
 	{	
 		/* scan for a quote mark */
-		if (*textPtr == 0) /* TODO: probably a broken hack (added for predator demo)... */
-			break;
-
-		while (*textPtr++ != '"');
+		while (*textPtr++ != '"') 
+			if (*textPtr == '@') return; /* '@' should be EOF */
 
 		/* now pointing to a text string after quote mark*/
 		TextStringPtr[i] = textPtr;
@@ -94,6 +92,7 @@ void InitTextStrings(void)
 		#endif
 	}
 }
+
 void KillTextStrings(void)
 {
 	UnloadTextFile(LanguageFilename[AvP.Language],TextBufferPtr);

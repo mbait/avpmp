@@ -13,6 +13,8 @@ end users."  Hopefully this status will change in the not-so-distant future.
 
 
 
+
+
 Obviously this README is totally incomplete, and will probably remain so for
 quite a while, so I'll just try to list a few important notes.
 
@@ -26,6 +28,26 @@ The original copyright statement for the source code:
 Take that as you will.
 You can find the original source code and other related tools at: 
 http://www.avpnews.com/mods/tools/
+
+
+Yes, the code does currently do something.  No, it's not ready for a release.
+No, it is not vaporware.  I hope to at least complete the single portion of
+the game before making an official release.
+
+
+If you are really itching to try this out, either install the Gold Ed. in
+windows/vmware (read below to find out why), or download the AvP Alien demo.
+If you are wanting to run the Alien demo (the installer is an .exe but you
+can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
+CFLAGS (the one that's uncommented). Rename all game files lowercase.
+
+relnev:~/avp/AvP Demo 3 - Alien$ ls
+aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/
+relnev:~/avp/Gold Edition$ ls
+avp_huds/  avp_rifs/  cd tracks.txt  default.cfg  fastfile/  language.txt
+
+Support for the demo is not quite complete (some sounds are missing and some
+text is incorrect/missing).
 
 
 The source code that was released only works with Aliens vs Predator Gold. 
@@ -72,3 +94,6 @@ Last, but surely not least:
 Thanks go out to Chuck Mason for testing and the OpenAL code, Dan Olson for
 trying the code out with the Regular version, and Ryan C. Gordon for hosting
 this project.
+
+---
+Steven Fuller <relnev@icculus.org>

@@ -2679,14 +2679,13 @@ void D3D_DrawWaterTest(MODULE *testModulePtr)
 }
 
 
-/* TODO: doubled this from 256 to 512 because of overflows in DrawMoltenMetal_Clipped */
-VECTORCH MeshVertex[512];
+VECTORCH MeshVertex[256];
 #define TEXTURE_WATER 0
 
-VECTORCH MeshWorldVertex[512];
-unsigned int MeshVertexColour[512];
-unsigned int MeshVertexSpecular[512];
-char MeshVertexOutcode[512];
+VECTORCH MeshWorldVertex[256];
+unsigned int MeshVertexColour[256];
+unsigned int MeshVertexSpecular[256];
+char MeshVertexOutcode[256];
 
 void D3D_DrawWaterPatch(int xOrigin, int yOrigin, int zOrigin)
 {
@@ -3782,7 +3781,7 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 	int i, x, y, z;
 	int start;
 	
-	CheckTriangleBuffer( /*256*/ 273, 0, 450, 0, (D3DTexture *)-1, -1, -1);
+	CheckTriangleBuffer(256, 0, 450, 0, (D3DTexture *)-1, -1, -1);
 	
 	start = varrc;
 	for (i=0; i<256; i++) {
@@ -3792,36 +3791,22 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 		
 		if (point->vz < 1) point->vz = 1;
 
-		x = (point->vx*(Global_VDB_Ptr->VDB_ProjX+1))/point->vz+Global_VDB_Ptr->VDB_CentreX;
-		y = (point->vy*(Global_VDB_Ptr->VDB_ProjY+1))/point->vz+Global_VDB_Ptr->VDB_CentreY;
-
-		if (x<Global_VDB_Ptr->VDB_ClipLeft) {
-			x=Global_VDB_Ptr->VDB_ClipLeft;
-		} else if (x>Global_VDB_Ptr->VDB_ClipRight) {
-			x=Global_VDB_Ptr->VDB_ClipRight;	
-		}			
-
-		if (y<Global_VDB_Ptr->VDB_ClipUp) {
-			y=Global_VDB_Ptr->VDB_ClipUp;
-		} else if (y>Global_VDB_Ptr->VDB_ClipDown) {
-			y=Global_VDB_Ptr->VDB_ClipDown;	
-		}
-			
+		xf =  ((float)point->vx*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)point->vz*(float)ScreenDescriptorBlock.SDB_CentreX);
+		yf = -((float)point->vy*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)point->vz*(float)ScreenDescriptorBlock.SDB_CentreY);
+		
+		z = point->vz + HeadUpDisplayZOffset;
+		rhw = 1.0f / (float)point->vz;
+		zf = 1.0f - 2.0f*ZNear/(float)z;
+		
 		sf = pointWS->vx*WaterUScale+(1.0f/256.0f);
 		tf = pointWS->vy*WaterVScale+(1.0f/256.0f);
-	
-		z = point->vz + HeadUpDisplayZOffset;
-		rhw = 1.0f / (float)point->vz;		  	
-		
+
 		b = (MeshVertexColour[i] >> 0)  & 0xFF;
 		g = (MeshVertexColour[i] >> 8)  & 0xFF;
 		r = (MeshVertexColour[i] >> 16) & 0xFF;
 		a = (MeshVertexColour[i] >> 24) & 0xFF;
 			
-		xf =  ((float)x - (float)ScreenDescriptorBlock.SDB_CentreX - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreX - 0.5f);
-		yf = -((float)y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
-		zf = 1.0f - 2.0f*ZNear/(float)z;
-
+		
 		varrp->v[0] = xf/rhw;
 		varrp->v[1] = yf/rhw;
 		varrp->v[2] = zf/rhw;
@@ -3865,17 +3850,32 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 
 void D3D_DrawMoltenMetalMesh_Clipped(void)
 {
-	/* clipping unnecessary. */
 	D3D_DrawMoltenMetalMesh_Unclipped();
+	return;
 #if 0
-	int i, x, y, z;
+	int i, x, y, z, c, start;
 
 	float ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);	
 
 	VECTORCH *point = MeshVertex;
 	VECTORCH *pointWS = MeshWorldVertex;
 
-	CheckTriangleBuffer(256, 0, 450, 0, (D3DTexture *)-1, -1, -1);
+	/* how many triangles drawn the first time, (450-c the second time) */
+	c = 0;
+	for (x=0; x<15; x++) {
+		for(y=0; y<15; y++) {
+			int p1 = 0+x+(16*y);
+			int p2 = 1+x+(16*y);
+			int p3 = 16+x+(16*y);
+			int p4 = 17+x+(16*y);
+			
+			if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3]&&MeshVertexOutcode[p4])
+				c += 2;
+		}
+	}
+	
+	CheckTriangleBuffer(256, 0, c, 0, (D3DTexture *)-1, -1, -1);
+	start = varrc;
 	
 		for (i=0; i<256; i++)
 		{
@@ -3915,27 +3915,28 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 			yf = -((float)y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
 			zf = 1.0f - 2.0f*ZNear/(float)z;
 
-			tarr[i].v[0] = xf/rhw;
-			tarr[i].v[1] = yf/rhw;
-			tarr[i].v[2] = zf/rhw;
-			tarr[i].v[3] = 1.0f/rhw;
+			varrp->v[0] = xf/rhw;
+			varrp->v[1] = yf/rhw;
+			varrp->v[2] = zf/rhw;
+			varrp->v[3] = 1.0f/rhw;
 			
-			tarr[i].t[0] = sf;
-			tarr[i].t[1] = tf;
+			varrp->t[0] = sf;
+			varrp->t[1] = tf;
 			
-			tarr[i].c[0] = r;
-			tarr[i].c[1] = g;
-			tarr[i].c[2] = b;
-			tarr[i].c[3] = a;
-
+			varrp->c[0] = r;
+			varrp->c[1] = g;
+			varrp->c[2] = b;
+			varrp->c[3] = a;
+			
+			varrp++;
+			varrc++;
+			
 			point++;
 			pointWS++;
 		}
 
 	/* CONSTRUCT POLYS */
 	{
-		int tc = 0;
-		
 		for (x=0; x<15; x++)
 		{
 			for(y=0; y<15; y++)
@@ -3945,8 +3946,6 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 				int p3 = 16+x+(16*y);
 				int p4 = 17+x+(16*y);
 				
-				if (p3 > 255)
-					continue;
 #if 0
 				#if 0
 				if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3])
@@ -3970,15 +3969,15 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 				#endif
 #endif
 				if (MeshVertexOutcode[p1]&&MeshVertexOutcode[p2]&&MeshVertexOutcode[p3]&&MeshVertexOutcode[p4]) {
-#if 0				
-					tris[tc+0].a = p1;
-					tris[tc+0].b = p2;
-					tris[tc+0].c = p3;
-					tris[tc+1].a = p2;
-					tris[tc+1].b = p4;
-					tris[tc+1].c = p3;
-#endif					
-					tc += 2;
+					tarrp[0].a = start+p1;
+					tarrp[0].b = start+p2;
+					tarrp[0].c = start+p3;
+					tarrp[1].a = start+p2;
+					tarrp[1].b = start+p4;
+					tarrp[1].c = start+p3;
+
+					tarrp += 2;
+					tarrc += 2;
 				}
 			}
 		}
@@ -4000,9 +3999,6 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 				p[2] = 17+x+(16*y);
 				p[3] = 16+x+(16*y);
 
-				if (p[3] > 255)
-					continue;
-					
 				if (!(MeshVertexOutcode[p[0]]&&MeshVertexOutcode[p[1]]&&MeshVertexOutcode[p[2]]&&MeshVertexOutcode[p[3]]))
 				{
 					for (i=0; i<4; i++) 
@@ -4035,11 +4031,8 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 						if(RenderPolygon.NumberOfVertices<3) continue;
 						GouraudTexturedPolygon_ClipWithPositiveX();
 						if(RenderPolygon.NumberOfVertices<3) continue;
-
-					   	if (CurrTextureHandle == NULL)
-						   	D3D_ZBufferedGouraudPolygon_Output(&fakeHeader,RenderPolygon.Vertices);
-						else
-							D3D_ZBufferedGouraudTexturedPolygon_Output(&fakeHeader,RenderPolygon.Vertices);
+						
+						/* draw polygon */
 					}
 				}
 			}
