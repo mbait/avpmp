@@ -2506,10 +2506,12 @@ void BltImage(RECT *dest, DDSurface *image, RECT *src)
 	height = dest->bottom - dest->top + 1;
 	height1 = src->bottom - src->top + 1;
 	
-	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_PIXEL_MODE_BIT);
+	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_PIXEL_MODE_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT);
 	glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 	
 	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_TEXTURE_2D);
 		
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, image->w);

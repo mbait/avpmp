@@ -506,8 +506,8 @@ int SetOGLVideoMode(int Width, int Height)
 #if GL_EXT_secondary_color
 	pglSecondaryColorPointerEXT = NULL;
 	
-	if (CheckToken(ext, "GL_EXT_seconary_color")) {
-		printf("Found GL_EXT_seconary_color... ");
+	if (CheckToken(ext, "GL_EXT_secondary_color")) {
+		printf("Found GL_EXT_secondary_color... ");
 		
 		pglSecondaryColorPointerEXT = SDL_GL_GetProcAddress("glSecondaryColorPointerEXT");
 		if (pglSecondaryColorPointerEXT == NULL) {
@@ -516,7 +516,7 @@ int SetOGLVideoMode(int Width, int Height)
 			printf("and it's good!\n");
 		}
 	} else {
-		printf("GL_EXT_seconary_color not found...\n");
+		printf("GL_EXT_secondary_color not found...\n");
 	}
 #endif
 
