@@ -507,7 +507,7 @@ Global_Hierarchy_Store::Global_Hierarchy_Store (RIFFHANDLE h)
 			if(dir_chunk)
 			{
 			/* TODO: dir separator */
-				sprintf(wavname,"%s/%s",dir_chunk->directory,isc->wav_name);
+				sprintf(wavname,"%s\\%s",dir_chunk->directory,isc->wav_name);
 				sound_array[index].sound_loaded=GetSound(wavname);
 			}
 			else

@@ -6,7 +6,7 @@ CXXFLAGS = $(CFLAGS)
 LDLIBS = -lm
 
 CFLAGS += `sdl-config --cflags`
-LDLIBS += -L/usr/X11R6/lib -lX11 -lXext -lGL `sdl-config --libs`
+LDLIBS += -L/usr/X11R6/lib -lX11 -lXext -lGL `sdl-config --libs` -lopenal -lm
 
 AFLAGS = -g -Iinclude/ -w+macro-params -w+orphan-labels -w+number-overflow
 

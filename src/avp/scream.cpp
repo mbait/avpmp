@@ -350,20 +350,20 @@ void UnloadScreamSounds()
 /* TODO: dir separator */
 void LoadMarineScreamSounds()
 {
-	MarineSounds.LoadSounds("marsound.dat","npc/marinevoice/");
+	MarineSounds.LoadSounds("marsound.dat","npc\\marinevoice\\");
 }
 void LoadAlienScreamSounds()
 {
-	AlienSounds.LoadSounds("aliensound.dat","npc/alienvoice/");
+	AlienSounds.LoadSounds("aliensound.dat","npc\\alienvoice\\");
 }
 void LoadPredatorScreamSounds()
 {
-	PredatorSounds.LoadSounds("predsound.dat","npc/predatorvoice/");
+	PredatorSounds.LoadSounds("predsound.dat","npc\\predatorvoice\\");
 }
 
 void LoadQueenScreamSounds()
 {
-	QueenSounds.LoadSounds("queensound.dat","npc/queenvoice/");
+	QueenSounds.LoadSounds("queensound.dat","npc\\queenvoice\\");
 }
 
 

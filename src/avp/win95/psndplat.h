@@ -28,6 +28,7 @@ typedef struct soundsampledata
 	int pitch;					
 
 //	LPDIRECTSOUNDBUFFER dsBufferP;
+	int dsBufferP;
 	void *buffer;
 	
 	unsigned int flags;
@@ -63,7 +64,11 @@ typedef struct activesoundsample
 //	LPDIRECTSOUNDBUFFER dsBufferP;
 //	LPDIRECTSOUND3DBUFFER ds3DBufferP;
 //	LPKSPROPERTYSET	PropSetP;
-
+	int dsBufferP;
+	int ds3DBufferP;
+	float PropSetP_pos[3];
+	float PropSetP_vel[3];
+	
 	void *buffer;
 	void *buffer3d;
 	void *propset;	

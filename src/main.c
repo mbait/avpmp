@@ -90,7 +90,7 @@ int InitialiseWindowsSystem()
 	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
 
 	/* -w will disable to first fullscreen, -f will turn it on */
-	SDL_WM_ToggleFullScreen(surface);
+//	SDL_WM_ToggleFullScreen(surface);
 	SDL_WM_GrabInput(SDL_GRAB_ON);
 	SDL_ShowCursor(0);	
 	                
@@ -569,14 +569,14 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-//	AvP.PlayerType = I_Alien;
-//	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
+	AvP.PlayerType = I_Alien;
+	SetLevelToLoad(AVP_ENVIRONMENT_FERARCO); /* starting alien level */
 
 //	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
-	AvP.PlayerType = I_Predator;
-	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
+//	AvP.PlayerType = I_Predator;
+//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 

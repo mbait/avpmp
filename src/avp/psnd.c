@@ -581,7 +581,11 @@ void Sound_Stop(int activeSoundNumber)
 	PlatStopSound(activeSoundNumber);
 
 	/* release the active sound slot */
-	ActiveSounds[activeSoundNumber] = BlankActiveSound;
+	{	/* CEM - FIXME: hack */
+		int buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
+		ActiveSounds[activeSoundNumber] = BlankActiveSound;
+		ActiveSounds[activeSoundNumber].ds3DBufferP = buf;
+	}
 }
 
 void Sound_ChangeVolume(int activeSoundNumber, int volume)
