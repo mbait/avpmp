@@ -186,15 +186,15 @@ void PlatStopSound(int activeIndex)
 
 int PlatChangeSoundVolume(int activeIndex, int volume)
 {
-	float nv = 127.0f / (float) volume;
+//	float nv = 127.0f / (float) volume;
 	
-	fprintf(stderr, "PlatChangeSoundVolume(%d, %d) - %f\n", activeIndex, volume, nv);
+	fprintf(stderr, "PlatChangeSoundVolume(%d, %d)\n", activeIndex, volume);
 	
-	if (nv > 1.0)
-		nv = 1.0;
+//	if (nv > 1.0)
+//		nv = 1.0;
 		
-	alSourcef (ActiveSounds[activeIndex].ds3DBufferP, 
-		   AL_MAX_GAIN, nv);
+//	alSourcef (ActiveSounds[activeIndex].ds3DBufferP, 
+//		   AL_MAX_GAIN, nv);
 		   
 	return 1;
 }
@@ -211,15 +211,15 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 	if (pitch == PITCH_DEFAULTPLAT)
 		frequency = 0;
 	else {
-		SOUNDINDEX gsi = ActiveSounds[activeIndex].soundIndex;
-		frequency = ToneToFrequency (GameSounds[gsi].dsFrequency,
-			GameSounds[gameSoundIndex].pitch, pitch);
+//		SOUNDINDEX gsi = ActiveSounds[activeIndex].soundIndex;
+//		frequency = ToneToFrequency (GameSounds[gsi].dsFrequency,
+//			GameSounds[gameSoundIndex].pitch, pitch);
 		frequency = (128.0f / ((float)pitch + 127.0));
 	}
 	
 	ActiveSounds[activeIndex].pitch = pitch;
 	
-//	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);	
+	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);	
 
 	return 1;
 }
@@ -318,8 +318,9 @@ int PlatDo3dSound(int activeIndex)
 			relativePosn.vz;
 		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP,
 			    AL_POSITION, ActiveSounds[activeIndex].PropSetP_pos);
-	
-#if 1
+
+/* The c++ code had this stuff marked out b/c there was no "Doppler" shifting */	
+#if 0
 		ActiveSounds[activeIndex].PropSetP_vel[0] =
 			ActiveSounds[activeIndex].threedeedata.velocity.vx;
 		ActiveSounds[activeIndex].PropSetP_vel[1] =
@@ -396,6 +397,23 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	return 0;
 }
 
+unsigned char *Force8to16 (unsigned char *buf, int *len)
+{
+	unsigned char *nbuf;
+	unsigned int i;
+	
+	nbuf = (unsigned char *) AllocateMem (*len * 2);
+	
+	for (i = 0; i < *len; i++) {
+		short int x = ((buf[i] << 8) | buf[i]) ^ 0x8000;
+		nbuf[i*2+0] = (x & 0x00ff);
+		nbuf[i*2+1] = (x >> 8) & 0xff;
+	}
+	
+	*len *= 2;
+	return nbuf;
+}
+
 // In libopenal
 extern void *acLoadWAV (void *data, ALuint *size, void **udata, 
 			ALushort *fmt, ALushort *chan, ALushort *freq);
@@ -403,6 +421,7 @@ extern void *acLoadWAV (void *data, ALuint *size, void **udata,
 unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 {
 	ALint len, seclen = 0;
+	unsigned char *nb;
 	void *udata;
 	ALushort rfmt, rchan, rfreq, rsize;
 		
@@ -421,18 +440,16 @@ fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 		fprintf (stderr, "Unable to convert data\n");
 		return (unsigned char *)0;
 	}
-
-printf("rfmt = %d, rchan = %d, rfreq = %d, len = %d\n", rfmt, rchan, rfreq, len);
 	
 	if ((rfmt == AUDIO_U8)) {
-		if (rchan == 2) {
-			rfmt = AL_FORMAT_STEREO8;
-			seclen = len / (rfreq * 1 * 2);
-		} else if (rchan == 1) {
-			rfmt = AL_FORMAT_MONO8;
-			seclen = len / rfreq;
-		}
-	} else if ((rfmt == AUDIO_S16LSB) || (rfmt == AUDIO_S16MSB)) {
+		nb = Force8to16 (udata, &len);
+		rfmt = AUDIO_S16LSB;
+		
+		free (udata);
+		udata = nb;
+	} 
+	
+	if ((rfmt == AUDIO_S16LSB) || (rfmt == AUDIO_S16MSB)) {
 		if (rchan == 2) {
 			rfmt = AL_FORMAT_STEREO16;
 			seclen = len / (rfreq * 2 * 2);
@@ -448,19 +465,7 @@ printf("rfmt = %d, rchan = %d, rfreq = %d, len = %d\n", rfmt, rchan, rfreq, len)
 	alGenBuffers (1, &(GameSounds[soundIndex].dsBufferP));
 	alBufferData (GameSounds[soundIndex].dsBufferP,
 		      rfmt, udata, rsize, rfreq);
-
-{
-	ALint t, val;
-	alGenSources(1, &t);
-	alSourcei(t, AL_BUFFER, GameSounds[soundIndex].dsBufferP);
-	alSourcePlay(t);
-                do {
-                        sleep(1);
-
-                        alGetSourceiv(t, AL_SOURCE_STATE, &val);
-                } while (val == AL_PLAYING);
-}
-			
+	
 	GameSounds[soundIndex].loaded = 1;
 	GameSounds[soundIndex].flags = SAMPLE_IN_HW;
 	GameSounds[soundIndex].length = (seclen != 0) ? seclen : 1;
@@ -533,11 +538,16 @@ void PlatUpdatePlayer()
 			vel[2] = 0.0;
 		}
 		
-#if 1
+/* again, no doppler crap. */
+#if 0
 		{
 			pos[0] = Global_VDB_Ptr->VDB_World.vx;
 			pos[1] = Global_VDB_Ptr->VDB_World.vy;
 			pos[2] = Global_VDB_Ptr->VDB_World.vz;
+		}
+#else
+		{
+			pos[0] = pos[1] = pos[2] = 0.0;
 		}
 #endif
 	}
