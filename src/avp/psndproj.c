@@ -855,6 +855,7 @@ int FindAndLoadWavFile(int soundNum,char* wavFileName)
 	static char sound_name[200];
 	sprintf (sound_name, "%s%s", FirstSoundDir,wavFileName);
 
+printf("FindAndLoadWavFile: %d, %s\n", soundNum, wavFileName);
 #if LOAD_SOUND_FROM_FAST_FILE
 	//first look in fast file
 	{
@@ -903,7 +904,8 @@ int FindAndLoadWavFile(int soundNum,char* wavFileName)
 /* Patrick 5/6/97 -------------------------------------------------------------
   Sound data loaders 
   ----------------------------------------------------------------------------*/
-#if USE_REBSND_LOADERS
+//#if USE_REBSND_LOADERS
+#if 1
 extern unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr);
 void *LoadRebSndFile(char *filename)
 {
@@ -961,12 +963,12 @@ void LoadSounds(char *soundDirectory)
 	{
 		char filename[64];
 		#if ALIEN_DEMO
-		strcpy(filename, ".\\alienfastfile");//CommonSoundDirectory);
+		strcpy(filename, "./alienfastfile");//CommonSoundDirectory);
 		#else
-		strcpy(filename, ".\\fastfile");//CommonSoundDirectory);
+		strcpy(filename, "./fastfile");//CommonSoundDirectory);
 		#endif
 //		strcat(filename, soundDirectory);
-		strcat(filename, "\\");
+		strcat(filename, "/");
 //		strcat(filename, soundDirectory);
 //		strcat(filename, ".RebSnd");
 		strcat(filename, "common.ffl");

@@ -112,9 +112,9 @@ int PlatPlaySound(int activeIndex)
 	if (!PlatSoundHasStopped(activeIndex))		
 		PlatStopSound (activeIndex);
 		
-	if (ActiveSounds[activeIndex].loop)
-		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
-	else
+//	if (ActiveSounds[activeIndex].loop)
+//		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
+//	else
 		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
 
 	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_BUFFER,
@@ -219,7 +219,7 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 	
 	ActiveSounds[activeIndex].pitch = pitch;
 	
-	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);	
+//	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);	
 
 	return 1;
 }
@@ -247,7 +247,8 @@ int PlatDo3dSound(int activeIndex)
 	int distance;
 	VECTORCH relativePosn;
 	int newPan, newVolume;
-	
+
+return;	
 	fprintf(stderr, "PlatDo3dSound(%d)\n", activeIndex);
 
 	relativePosn.vx = ActiveSounds[activeIndex].threedeedata.position.vx - 
@@ -435,11 +436,13 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 	}
 	
-	if (acLoadWAV (bufferPtr, (ALuint *) &len, &udata, &rfmt,
+	if (acLoadWAV (bufferPtr, (ALuint *) &rsize, &udata, &rfmt,
 			&rchan, &rfreq) == NULL) {
 		fprintf (stderr, "Unable to convert data\n");
 		return (unsigned char *)0;
 	}
+	
+	len = rsize;
 	
 	if ((rfmt == AUDIO_U8)) {
 		nb = Force8to16 (udata, &len);
@@ -460,11 +463,9 @@ fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 	} else
 		return (unsigned char *)0;
 	
-	rsize = len;
-	
 	alGenBuffers (1, &(GameSounds[soundIndex].dsBufferP));
 	alBufferData (GameSounds[soundIndex].dsBufferP,
-		      rfmt, udata, rsize, rfreq);
+		      rfmt, udata, len, rfreq);
 	
 	GameSounds[soundIndex].loaded = 1;
 	GameSounds[soundIndex].flags = SAMPLE_IN_HW;
@@ -474,7 +475,10 @@ fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 	
 	free (udata);
 
-	return (bufferPtr + rsize);
+	/* read RIFF chunk length and jump past it */
+	return bufferPtr + 8 + 
+		((bufferPtr[4] <<  0) | (bufferPtr[5] << 8) |
+		 (bufferPtr[6] << 16) | (bufferPtr[7] << 24));
 }
 
 int LoadWavFromFastFile(int soundNum, char * wavFileName)
@@ -505,6 +509,7 @@ void PlatUpdatePlayer()
 	ALfloat vel[3], or[6], pos[3];
 	fprintf(stderr, "PlatUpdatePlayer()\n");
 
+return;
 	if (Global_VDB_Ptr) {	
 		extern int NormalFrameTime;
 		extern int DopplerShiftIsOn;

@@ -23,8 +23,8 @@
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
 
-#define MyWidth		1024
-#define MyHeight	768
+#define MyWidth		512
+#define MyHeight	384
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -91,8 +91,8 @@ int InitialiseWindowsSystem()
 
 	/* -w will disable to first fullscreen, -f will turn it on */
 //	SDL_WM_ToggleFullScreen(surface);
-	SDL_WM_GrabInput(SDL_GRAB_ON);
-	SDL_ShowCursor(0);	
+//	SDL_WM_GrabInput(SDL_GRAB_ON);
+//	SDL_ShowCursor(0);	
 	                
 	glViewport(0, 0, MyWidth, MyHeight);
 	
@@ -569,16 +569,16 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-	AvP.PlayerType = I_Alien;
-	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
+//	AvP.PlayerType = I_Alien;
+//	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 
-//	AvP.PlayerType = I_Marine;
+	AvP.PlayerType = I_Marine;
 //	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 
