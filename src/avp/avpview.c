@@ -620,11 +620,7 @@ void ReflectObject(DISPLAYBLOCK *dPtr)
 void CheckIfMirroringIsRequired(void);
 void AvpShowViews(void)
 {
-	#if SOFTWARE_RENDERER
-	FlushSoftwareZBuffer();
-	#else
 	FlushD3DZBuffer();
-	#endif
 
 	UpdateAllFMVTextures();	
 
@@ -636,11 +632,6 @@ void AvpShowViews(void)
 //	GlobalAmbience=655;
 //	textprint("Global Ambience: %d\n",GlobalAmbience);
 
-	#if PSX
-	// For PSX, GlobalAmbience is used in the render files
-	GlobalAmbience = Global_VDB_Ptr->VDB_Ambience >> 8;
-	#endif
-	
 	/* Prepare the View Descriptor Block for use in ShowView() */
 
 	PrepareVDBForShowView(Global_VDB_Ptr);
@@ -697,9 +688,6 @@ void AvpShowViews(void)
 	 	/* KJL 12:13:26 02/05/97 - divert rendering for AvP */
 		KRenderItems(Global_VDB_Ptr);
 	}
-	#if 0 
-	RenderDungeon();
-	#endif
 
 	PlatformSpecificShowViewExit(Global_VDB_Ptr, &ScreenDescriptorBlock);
 

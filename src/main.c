@@ -348,11 +348,53 @@ static int KeySymToKey(int keysym)
 	}
 }
 
-static void handle_keypress(int key, int press)
+static void handle_keypress(int key, int unicode, int press)
 {	
+	void RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_CHAR(char Ch);
+	void RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(int wParam);
+
 	if (key == -1)
 		return;
 
+	if (press) {
+		switch(key) {
+			case KEY_BACKSPACE:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_BACK);
+				break;
+			case KEY_END:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_END);
+				break;
+			case KEY_HOME:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_HOME);
+				break;
+			case KEY_LEFT:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_LEFT);
+				break;
+			case KEY_UP:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_UP);
+				break;
+			case KEY_RIGHT:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_RIGHT);
+				break;
+			case KEY_DOWN:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_DOWN);
+				break;
+			case KEY_INS:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_INSERT);
+				break;
+			case KEY_DEL:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_DELETE);
+				break;
+			case KEY_TAB:
+				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_TAB);
+				break;
+			default:
+				if (unicode && !(unicode & 0xFF80))
+					RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_CHAR(unicode);
+				break;
+		}
+	}
+	
 	if (press && !KeyboardInput[key]) {
 		DebouncedKeyboardInput[key] = 1;
 		DebouncedGotAnyKey = 1;
@@ -387,7 +429,7 @@ static void handle_buttonpress(int button, int press)
 	
 	KeyboardInput[key] = press;
 }
-	
+
 void CheckForWindowsMessages()
 {
 	SDL_Event event;
@@ -413,10 +455,10 @@ void CheckForWindowsMessages()
 				case SDL_MOUSEBUTTONUP:
 					break;
 				case SDL_KEYDOWN:
-					handle_keypress(KeySymToKey(event.key.keysym.sym), 1);
+					handle_keypress(KeySymToKey(event.key.keysym.sym), event.key.keysym.unicode, 1);
 					break;
 				case SDL_KEYUP:
-					handle_keypress(KeySymToKey(event.key.keysym.sym), 0);
+					handle_keypress(KeySymToKey(event.key.keysym.sym), 0, 0);
 					break;
 				case SDL_QUIT:
 //					SDL_Quit();
@@ -431,17 +473,17 @@ void CheckForWindowsMessages()
 	
 	if (wantmouse) {
 		if (buttons & SDL_BUTTON(1))
-			handle_keypress(KEY_LMOUSE, 1);
+			handle_keypress(KEY_LMOUSE, 0, 1);
 		else
-			handle_keypress(KEY_LMOUSE, 0);
+			handle_keypress(KEY_LMOUSE, 0, 0);
 		if (buttons & SDL_BUTTON(2))
-			handle_keypress(KEY_MMOUSE, 1);
+			handle_keypress(KEY_MMOUSE, 0, 1);
 		else
-			handle_keypress(KEY_MMOUSE, 0);
+			handle_keypress(KEY_MMOUSE, 0, 0);
 		if (buttons & SDL_BUTTON(3))
-			handle_keypress(KEY_RMOUSE, 1);
+			handle_keypress(KEY_RMOUSE, 0, 1);
 		else
-			handle_keypress(KEY_RMOUSE, 0);
+			handle_keypress(KEY_RMOUSE, 0, 0);
 	
 		MouseVelX = DIV_FIXED(x, NormalFrameTime);
 		MouseVelY = DIV_FIXED(y, NormalFrameTime);
@@ -512,6 +554,11 @@ int main(int argc, char *argv[])
 	
 	GetPathFromRegistry();
 
+{
+	extern int DebuggingCommandsActive;
+	DebuggingCommandsActive = 1;
+}
+
 #if MARINE_DEMO
 	ffInit("fastfile/mffinfo.txt","fastfile/");
 #elif ALIEN_DEMO
@@ -560,9 +607,7 @@ int main(int argc, char *argv[])
 	LoadSounds("PLAYER");
 
 {
-	extern int DebuggingCommandsActive;
 //	AvP.Network = I_Host; /* for exploring */
-	DebuggingCommandsActive = 1;
 }
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
@@ -581,12 +626,12 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 	
 	AvP.PlayerType = I_Marine;
-//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 //	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);
 	
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_COOP); /* coop/skirmish */

@@ -377,7 +377,7 @@ void DAVEHOOK_Maintain(void)
 	#if SupportWindows95
 	if ( bFirstFrame )
 	{
-//		RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing();
+		RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing();
 		// this is a hack to ensure that none of the keypresses used
 		// in the menu get through to the first frame of the game and 
 		// for example, switch to typing mode (for CR presses)
@@ -387,7 +387,7 @@ void DAVEHOOK_Maintain(void)
 	else
 	{
 		// Flush the WinProc messages:
-//		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
+		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
 	}
 	#endif // SupportWindows95
 }
@@ -407,10 +407,10 @@ void DAVEHOOK_ScreenModeChange_Cleanup(void)
 
 	// Run program-generated batch file:
 	#if !(PREDATOR_DEMO|MARINE_DEMO||ALIEN_DEMO||DEATHMATCH_DEMO)
-	BatchFileProcessing :: Run("CONFIG.CFG");
+	BatchFileProcessing :: Run("config.cfg");
 
 	// Run user-generated batch file:
-	BatchFileProcessing :: Run("STARTUP.CFG");
+	BatchFileProcessing :: Run("startup.cfg");
 	#endif
 }
 

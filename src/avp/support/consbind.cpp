@@ -940,7 +940,7 @@ int KeyBinding :: bEcho = No;
 void CONSBIND_WriteKeyBindingsToConfigFile(void)
 {
 	#if !(PREDATOR_DEMO|MARINE_DEMO||ALIEN_DEMO||DEATHMATCH_DEMO)
-	KeyBinding :: WriteToConfigFile("CONFIG.CFG");
+	KeyBinding :: WriteToConfigFile("config.cfg");
 	#endif
 }
 

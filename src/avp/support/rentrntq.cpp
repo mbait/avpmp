@@ -14,6 +14,8 @@
 #include "3dc.h"
 #include "gadget.h"
 
+#include "fixer.h"
+
 #if SupportWindows95
 
 #include "rentrntq.h"
@@ -33,68 +35,11 @@
 /* Constants *******************************************************/
 	#define MAX_Q_MESSAGES (256)
 
-#if 0
-	#if 1
-	#define METACHAR_CHANGEFOCUS	'~'
-	#else
-	#define METACHAR_CHANGEFOCUS	'\r'
-	#endif
-
-	#define METAKEY_CHANGEFOCUS_VK	(0xdf)
-		/*
-			DHM 14/1/98:
-			------------
-
-			I have been asked to make this key the
-			
-				"you know, the tilde key, the one in the top left of everyone's
-				keyboards, like Quake does"
-
-			However, I have yet to find a keyboard for which the tilde key is in the
-			top left.
-
-			I obtained the value (0xdf) by experiment on my keyboard.  According to 
-			the Petzold book:
-
-				"Although all keys cause keystroke messages, the table does not
-				include any symbol keys (such as the key with the / and ? symbols).
-				These keys have virtual key codes of 128 and above, and they are often
-				defined differently for international keyboards. You can determine the
-				values of these virtual key codes using the KEYLOOK program that is shown
-				later in this chapter, but normally you should not process keystroke
-				messages for these keys."
-
-			What about DirectInput?
- 
-		*/
-#endif
-
 /* Macros **********************************************************/
 
 /* Imported function prototypes ************************************/
 
 /* Imported data ***************************************************/
-#ifdef __cplusplus
-	extern "C"
-	{
-#endif
-		#if 0
-		extern OurBool			DaveDebugOn;
-		extern FDIEXTENSIONTAG	FDIET_Dummy;
-		extern IFEXTENSIONTAG	IFET_Dummy;
-		extern FDIQUAD			FDIQuad_WholeScreen;
-		extern FDIPOS			FDIPos_Origin;
-		extern FDIPOS			FDIPos_ScreenCentre;
-		extern IFOBJECTLOCATION IFObjLoc_Origin;
-		extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-		extern IFCOLOUR			IFColour_Dummy;
- 		extern IFVECTOR			IFVec_Zero;
-		#endif
-#ifdef __cplusplus
-	};
-#endif
-
-
 
 /* Exported globals ************************************************/
 
@@ -127,6 +72,11 @@
 	static struct Q_Entry OurQ[MAX_Q_MESSAGES];
 	static unsigned int NumQMessages = 0;
 
+extern "C" {
+	void RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_CHAR(char Ch);
+	void RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(WPARAM wParam);
+};
+	
 /* Exported function definitions ***********************************/
 /* Functions callable within the Windows procedure */
 void RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_CHAR
@@ -269,7 +219,9 @@ void RE_ENTRANT_QUEUE_WinMain_FlushMessages(void)
 
 					}
 					break;
-					
+				
+					default:
+						break;	
 				}
 			}
 		}

@@ -294,22 +294,6 @@ static void MakeRotatingLight(void)
 {
 	MakeLightElement(&Player->ObWorld,LIGHTELEMENT_ROTATING);
 }
-VECTORCH boing = {12345,12345,12345};
-VECTORCH boing2 = {23451,34512,45123};
-
-static void Trash_Frame_Rate(void)
-{
-	int i=0;
-
-	for (i=0; i<10000000; i++)
-	{
-	 //	Normalise(&boing);
-		boing.vx += boing2.vx+FastRandom();
-		boing.vy += boing2.vy;
-		boing.vz += boing2.vz;
-	}
-}
-
 
 static void RestartMultiplayer(void)
 {
@@ -547,14 +531,7 @@ void CreateGameSpecificConsoleCommands(void)
 		"RESTARTS A NETWORK GAME FROM SCRATCH",
 		RestartMultiplayer
 	);
-	#if 0
-	ConsoleCommand::Make
-	(
-		"NEWPLANET",
-		"",
-		NewPlanet
-	);
-	#endif
+
 	ConsoleCommand::Make
 	(
 		"PAINTBALL",
@@ -681,19 +658,13 @@ void CreateGameSpecificConsoleCommands(void)
 	#if 1
 	ConsoleCommand::Make
 	(
-		"TRASH_FRAME_RATE",
-		"",
-		Trash_Frame_Rate
-	);
-	
-	ConsoleCommand::Make
-	(
 		"COMPLETE_LEVEL",
 		"",
 		CompleteLevel
 	);
 	#endif
 	#endif
+
 	/* KJL 15:52:41 29/03/98 - version info */
 	ConsoleCommand::Make
 	(

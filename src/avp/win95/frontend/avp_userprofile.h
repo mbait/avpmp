@@ -145,9 +145,9 @@ typedef struct
 
 
 
-
-#define USER_PROFILES_PATH "User_Profiles\\"
-#define USER_PROFILES_WILDCARD_NAME "User_Profiles\\*.prf"
+/* TODO: dir separator */
+#define USER_PROFILES_PATH "User_Profiles/"
+#define USER_PROFILES_WILDCARD_NAME "User_Profiles/*.prf"
 #define USER_PROFILES_SUFFIX ".prf"
 
 
@@ -173,8 +173,6 @@ extern int CheatMode_Active;
 extern int CheatMode_Species;
 extern int CheatMode_Environment;
 
-
-extern int EdmondsTest();
 
 #ifdef __cplusplus									 
 }; // extern "C"

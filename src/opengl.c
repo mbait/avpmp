@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
 
@@ -17,6 +16,7 @@
 #include "krender.h"
 #include "kshape.h"
 #include "prototyp.h"
+#include "lighting.h"
 #include "bh_types.h"
 #include "showcmds.h"
 #include "d3d_hud.h"
@@ -24,6 +24,7 @@
 #include "avp_userprofile.h"
 #include "aw.h"
 
+int LightIntensityAtPoint(VECTORCH *pointPtr);
 
 extern IMAGEHEADER ImageHeaderArray[];
 extern VIEWDESCRIPTORBLOCK *Global_VDB_Ptr;
@@ -163,8 +164,7 @@ typedef struct TriangleArray
 TriangleArray tarr;
 
 static void DrawTriangles_T2F_C4UB_V4F()
-{
-	
+{	
 #define OUTPUT_VERTEX(d) \
 { \
 	glColor4ubv	(&tarr.c[(d) * 4]);	\
@@ -209,8 +209,7 @@ static void DrawTriangles_T2F_C4UB_V4F()
 }
 
 static void DrawTriangles_T2F_V4F()
-{
-	
+{	
 #define OUTPUT_VERTEX(d) \
 { \
 	glTexCoord2fv	(&tarr.t[(d) * 4]);	\
@@ -254,8 +253,7 @@ static void DrawTriangles_T2F_V4F()
 }
 
 static void DrawTriangles_C4UB_V4F()
-{
-	
+{	
 #define OUTPUT_VERTEX(d) \
 { \
 	glColor4ubv	(&tarr.c[(d) * 4]);	\
@@ -622,9 +620,7 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 	}
 
 	tarr.elements = RenderPolygon.NumberOfVertices;
-	DrawTriangles_T2F_C4UB_V4F();
-	
-	
+	DrawTriangles_T2F_C4UB_V4F();	
 }
 
 void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
@@ -788,7 +784,6 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 	
 	glColor4ub(r, g, b, a);
 	
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -825,19 +820,17 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 		
-//		zvalue = vertices->Z+HeadUpDisplayZOffset;
-//		zvalue = ((zvalue-ZNear)/zvalue);
-
-#if 0
-		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
-		glVertex3f(x, y, z);
-#else
-		glTexCoord2f(s, t);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.t[4*i+0] = s;
+		tarr.t[4*i+1] = t;
 	}
-	glEnd();
 	
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_T2F_V4F();
 }
 
 void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
@@ -982,7 +975,6 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 	CheckBoundTextureIsCorrect(NULL); /* disable texturing */
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_OFF);
 	
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -992,7 +984,7 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 1
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -1004,7 +996,6 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
 		
 		x = x1;
 		y = y1;
@@ -1015,15 +1006,21 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 		
-//		zvalue = vertices->Z+HeadUpDisplayZOffset;
-//		zvalue = ((zvalue-ZNear)/zvalue);
-		
 		rhw = 1.0/(float)vertices->Z;
 		
-		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.c[4*i+0] = vertices->R;
+		tarr.c[4*i+1] = vertices->G;
+		tarr.c[4*i+2] = vertices->B;
+		tarr.c[4*i+3] = vertices->A;
 	}
-	glEnd();
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_C4UB_V4F();
 }
 
 void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
@@ -1038,7 +1035,6 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
 	CheckBoundTextureIsCorrect(NULL);
 	
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];	
 		int x1, y1;
@@ -1047,7 +1043,7 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 1
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -1059,7 +1055,6 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
 		
 		x = x1;
 		y = y1;
@@ -1069,20 +1064,25 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
-		
-//		zvalue = vertices->Z+HeadUpDisplayZOffset;
-//		zvalue = ((zvalue-ZNear)/zvalue);
-		
+				
 		rhw = 1.0/(float)vertices->Z;
 		
-		if (flags & iflag_transparent)
-			glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
-		else
-			glColor4ub(vertices->R, vertices->G, vertices->B, 255);
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
 		
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
+		tarr.c[4*i+0] = vertices->R;
+		tarr.c[4*i+1] = vertices->G;
+		tarr.c[4*i+2] = vertices->B;
+		if (flags & iflag_transparent)
+			tarr.c[4*i+3] = vertices->A;
+		else
+			tarr.c[4*i+3] = 255;
 	}
-	glEnd();		
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_C4UB_V4F();
 }
 
 void D3D_PlayerOnFireOverlay()

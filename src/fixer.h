@@ -91,6 +91,17 @@ typedef struct SYSTEMTIME
 	int wDay;
 } SYSTEMTIME;
 
+#define	VK_BACK				1
+#define VK_END				2
+#define VK_HOME				3
+#define VK_LEFT				4
+#define VK_UP				5
+#define VK_RIGHT			6
+#define VK_DOWN				7
+#define VK_INSERT			8
+#define VK_DELETE			9
+#define VK_TAB				10
+
 #define INVALID_HANDLE_VALUE		-1
 #define GENERIC_WRITE			0x0001
 #define CREATE_ALWAYS			0x0002
