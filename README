@@ -40,9 +40,9 @@ If you are really itching to try this out, either install the Gold Ed. in
 windows/vmware (read below to find out why), or download the AvP Alien demo.
 If you are wanting to run the Alien demo (the installer is an .exe but you
 can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
-CFLAGS (the one that's uncommented). Rename all game files lowercase. 
-Be sure to install nasm (0.98) and the latest OpenAL (http://www.openal.org)
-CVS.
+the CFLAGS line (the one that's uncommented) in the Makefile. Rename all game 
+files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org), nasm
+0.98, and the latest OpenAL CVS (http://www.openal.org).
 
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 

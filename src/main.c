@@ -185,6 +185,7 @@ int SetOGLVideoMode(int Width, int Height)
 	glLoadIdentity();
 
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -195,6 +196,8 @@ int SetOGLVideoMode(int Width, int Height)
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_CULL_FACE);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	
@@ -739,11 +742,6 @@ int main(int argc, char *argv[])
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	
-#if 0
-{
-//	AvP.Network = I_Host; /* for exploring */
-}
-
 #if ALIEN_DEMO
 	AvP.PlayerType = I_Alien;
 	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
@@ -774,11 +772,12 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
 
+#if !(ALIEN_DEMO|PREDATOR_DEMO|MARINE_DEMO)	
+while(AvP_MainMenus())
+#else
+	SetBriefingTextToBlank();
 #endif
-
-	
-	
-while(AvP_MainMenus()) {
+{
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;

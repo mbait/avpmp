@@ -67,7 +67,7 @@ tester:
 	echo $(OBJ)
 
 clean:
-	-rm -rf depend $(OBJ)
+	-rm -rf depend $(OBJ) AvP
 
 distclean: clean
 	-rm -rf `find . -name "*~"`

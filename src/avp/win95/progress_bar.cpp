@@ -174,9 +174,9 @@ void Start_Progress_Bar()
 		FlushD3DZBuffer();
 
 	 	ThisFramesRenderingHasBegun();
-
+#if !ALIEN_DEMO /* TODO: disabled for alien demo */
 		RenderBriefingText(ScreenDescriptorBlock.SDB_Height/2, ONE_FIXED);
-
+#endif
 		ThisFramesRenderingHasFinished();
 
 		FlipBuffers();	
