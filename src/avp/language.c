@@ -71,6 +71,9 @@ void InitTextStrings(void)
 	for (i=1; i<MAX_NO_OF_TEXTSTRINGS; i++)
 	{	
 		/* scan for a quote mark */
+		if (*textPtr == 0) /* TODO: probably a broken hack (added for predator demo)... */
+			break;
+
 		while (*textPtr++ != '"');
 
 		/* now pointing to a text string after quote mark*/
@@ -84,6 +87,7 @@ void InitTextStrings(void)
 
 		/* change quote mark to zero terminator */
 		*textPtr = 0;
+		textPtr++;
 
 		#if SupportWindows95
 		AddToTable( TextStringPtr[i] );

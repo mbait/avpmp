@@ -34,6 +34,10 @@ demos.  Plus, I am told that the Regular edition does seem to work by
 renaming a file or two.
 
 
+Unless someone feels strongly about it, I probably will decide not to support
+save games (save games were added in the gold edition).
+
+
 At least with the Gold edition, a number of files are encoded on the CD. So
 you would need to install the game in Windows (VMware works also) in order
 to get this to work.  Currently wine does not work because it fails the CD

@@ -1536,6 +1536,8 @@ void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour)
 {
 	struct VertexTag quadVertices[4];
 
+if (stringPtr == NULL) return;
+
 	quadVertices[0].Y = y-1;
 	quadVertices[1].Y = y-1;
 	quadVertices[2].Y = y + HUD_FONT_HEIGHT + 1;
@@ -1581,6 +1583,7 @@ void D3D_RenderHUDString_Clipped(char *stringPtr,int x,int y,int colour)
 	struct VertexTag quadVertices[4];
 
 // 	LOCALASSERT(y<=0);
+if (stringPtr == NULL) return;
 
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
 
@@ -1628,6 +1631,8 @@ void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour
 	int x, length = 0;
 	char *ptr = stringPtr;
 	struct VertexTag quadVertices[4];
+
+if (stringPtr == NULL) return;
 	
 	while(*ptr)
 	{
@@ -1679,6 +1684,8 @@ void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour
 
 void RenderString(char *stringPtr, int x, int y, int colour)
 {
+if (stringPtr == NULL) return;
+
 	D3D_RenderHUDString(stringPtr,x,y,colour);
 }
 
@@ -1686,6 +1693,8 @@ void RenderStringCentred(char *stringPtr, int centreX, int y, int colour)
 {
 	int length = 0;
 	char *ptr = stringPtr;
+	
+if (stringPtr == NULL) return;
 
 	while(*ptr)
 	{
@@ -1699,6 +1708,8 @@ void RenderStringVertically(char *stringPtr, int centreX, int bottomY, int colou
 	struct VertexTag quadVertices[4];
 	int y = bottomY;
 
+if (stringPtr == NULL) return;
+ 
 	quadVertices[0].X = centreX - (HUD_FONT_HEIGHT/2) - 1;
 	quadVertices[1].X = quadVertices[0].X;
 	quadVertices[2].X = quadVertices[0].X+2+HUD_FONT_HEIGHT*1;

@@ -558,7 +558,9 @@ void InitNPCs(RIFFHANDLE h)
 			}
 		}
 	}
-	#if 1
+
+/* predator disk not included in demos */
+#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO)
 	if(AvP.PlayerType==I_Predator || Load_HNPC[HNPC_Predator])
 	{
 		//need to load the disk hierarchy
@@ -569,7 +571,10 @@ void InitNPCs(RIFFHANDLE h)
 		}
 
 	}
+#endif
 
+/* i believe this was added for the gold edition */
+#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO)//||REGULAR_EDITION /* TODO */
 	if(AvP.PlayerType==I_Marine || Load_HNPC[HNPC_Marine])
 	{
 		//need to load the mdisk hierarchy
@@ -580,7 +585,7 @@ void InitNPCs(RIFFHANDLE h)
 		}
 
 	}
-	#endif
+#endif
 	
 	
 	// see what we already have, unloading what we don't need, and ensuring we don't load a npc twice

@@ -573,7 +573,17 @@ int main(int argc, char *argv[])
 }
 
 	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
-	
+
+#if ALIEN_DEMO
+	AvP.PlayerType = I_Alien;
+	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
+#elif PREDATOR_DEMO
+	AvP.PlayerType = I_Predator;
+	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_P);
+#elif MARINE_DEMO
+	AvP.PlayerType = I_Marine;
+	SetLevelToLoad(AVP_ENVIRONMENT_INVASION);
+#else		
 //	AvP.PlayerType = I_Alien;
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 	
@@ -586,6 +596,7 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
+#endif
 
 // while(AvP_MainMenus()) {
 
