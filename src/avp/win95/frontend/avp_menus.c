@@ -2043,8 +2043,8 @@ static void ActUponUsersInput(void)
 						{
 							extern char AAFontWidths[256];
 							//using small font
-							if(AvPMenus.WidthLeftForText<AAFontWidths[(int)c]) break;
-							AvPMenus.WidthLeftForText-=AAFontWidths[(int)c];
+							if(AvPMenus.WidthLeftForText<AAFontWidths[(unsigned char)c]) break;
+							AvPMenus.WidthLeftForText-=AAFontWidths[(unsigned char)c];
 						}
 
 						elementPtr->c.TextPtr[AvPMenus.PositionInTextField++] = c;
@@ -5305,7 +5305,7 @@ void RenderBriefingText(int centreY, int brightness)
 
 			while(*ptr)
 			{
-				length+=AAFontWidths[(int)(*ptr++)];
+				length+=AAFontWidths[(unsigned char)(*ptr++)];
 			}
 		}
 		

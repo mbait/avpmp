@@ -1643,7 +1643,7 @@ if (stringPtr == NULL) return;
 				colour
 			);
 		}
-		x += AAFontWidths[(int)c];
+		x += AAFontWidths[(unsigned char)c];
 	}
 }
 
@@ -1691,7 +1691,7 @@ if (stringPtr == NULL) return;
 				colour
 			);
 		}
-		x += AAFontWidths[(int)c];
+		x += AAFontWidths[(unsigned char)c];
 	}
 }
 
@@ -1705,7 +1705,7 @@ if (stringPtr == NULL) return;
 	
 	while(*ptr)
 	{
-		length+=AAFontWidths[(int)*ptr++];
+		length+=AAFontWidths[(unsigned char)*ptr++];
 	}
 	length = MUL_FIXED(HUDScaleFactor,length);
 
@@ -1747,7 +1747,7 @@ if (stringPtr == NULL) return;
 				colour
 			);
 		}
-		x += MUL_FIXED(HUDScaleFactor,AAFontWidths[(int)c]);
+		x += MUL_FIXED(HUDScaleFactor,AAFontWidths[(unsigned char)c]);
 	}
 }
 
@@ -1763,7 +1763,7 @@ void RenderStringCentred(char *stringPtr, int centreX, int y, int colour)
 
 	while(*ptr)
 	{
-		length+=AAFontWidths[(int)*ptr++];
+		length+=AAFontWidths[(unsigned char)*ptr++];
 	}
 	D3D_RenderHUDString(stringPtr,centreX-length/2,y,colour);
 }
@@ -1808,7 +1808,7 @@ void RenderStringVertically(char *stringPtr, int centreX, int bottomY, int colou
 				colour
 			);
 		}
-	   	y -= AAFontWidths[(int)c];
+	   	y -= AAFontWidths[(unsigned char)c];
 	}
 }
 
