@@ -21,7 +21,7 @@ AVP = ai_sight.c avpview.c bh_agun.c bh_ais.c bh_alien.c bh_binsw.c bh_cable.c b
 SHAPES = cube.c
 SUPPORT = consbind.cpp consbtch.cpp coordstr.cpp daemon.cpp indexfnt.cpp r2base.cpp r2pos666.cpp reflist.cpp refobj.cpp rentrntq.cpp scstring.cpp strtab.cpp strutil.c trig666.cpp wrapstr.cpp
 AVPWIN95 = avpchunk.cpp cheat.c chtcodes.cpp d3d_hud.cpp ddplat.cpp endianio.c ffread.cpp ffstdio.cpp gammacontrol.cpp hierplace.cpp iofocus.cpp jsndsup.cpp kzsort.c langplat.c modcmds.cpp npcsetup.cpp objsetup.cpp pathchnk.cpp platsup.c pldghost.c pldnet.c progress_bar.cpp projload.cpp scrshot.cpp strachnk.cpp system.c usr_io.c vision.c
-FRONTEND = avp_envinfo.c avp_intro.cpp avp_menudata.c
+FRONTEND = avp_envinfo.c avp_intro.cpp avp_menudata.c avp_menus.c avp_mp_config.cpp avp_userprofile.cpp
 GADGETS = ahudgadg.cpp conscmnd.cpp conssym.cpp consvar.cpp gadget.cpp hudgadg.cpp rootgadg.cpp t_ingadg.cpp teletype.cpp textexp.cpp textin.cpp trepgadg.cpp
 WIN95 = animchnk.cpp animobs.cpp awtexld.cpp awbmpld.cpp awiffld.cpp awpnmld.cpp bmpnames.cpp chnkload.cpp chnktexi.cpp chnktype.cpp chunk.cpp chunkpal.cpp db.c debuglog.cpp dummyobjectchunk.cpp enumchnk.cpp enumsch.cpp envchunk.cpp fail.c fragchnk.cpp gsprchnk.cpp hierchnk.cpp huffman.cpp iff.cpp iff_ilbm.cpp ilbm_ext.cpp io.c list_tem.cpp ltchunk.cpp media.cpp mishchnk.cpp obchunk.cpp oechunk.cpp our_mem.c plat_shp.c plspecfn.c shpchunk.cpp sndchunk.cpp sprchunk.cpp string.cpp texio.c toolchnk.cpp txioctrl.cpp wpchunk.cpp zsp.cpp
 

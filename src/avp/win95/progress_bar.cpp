@@ -234,9 +234,8 @@ void Set_Progress_Bar_Position(int pos)
 			{
 				//time to check our messages 
 				LastSendTime=time;
-#if 0 /* TODO: disabled for port */
+
 				MinimalNetCollectMessages();
-#endif				
 				//send messages , mainly  needed so that the host will send the game description
 				//allowing people to join while the host is loading
 				NetSendMessages();
@@ -267,7 +266,6 @@ void Game_Has_Loaded(void)
 	
 //		FlipBuffers();
 
-#if 0 /* TODO: disabled for port */
 		ColourFillBackBufferQuad
 		(
 			0,
@@ -276,7 +274,7 @@ void Game_Has_Loaded(void)
 			ScreenDescriptorBlock.SDB_Width-1,
 			ScreenDescriptorBlock.SDB_Height-1
 		);
-#endif
+
 		if (f)
 		{
 			LoadingBarFull_SrcRect.left=0;
@@ -314,9 +312,8 @@ void Game_Has_Loaded(void)
 		/* If in a network game then we may as well check the network messages while waiting*/
 		if(AvP.Network != I_No_Network)
 		{
-#if 0 /* TODO: disabled for port */
 			MinimalNetCollectMessages();
-#endif			
+
 			//send messages , mainly  needed so that the host will send the game description
 			//allowing people to join while the host is loading
 			NetSendMessages();
@@ -324,9 +321,8 @@ void Game_Has_Loaded(void)
 		}
 		
 	}
-#if 0 /* TODO: disabled for port */
 	while(!DebouncedGotAnyKey);
-#endif
+
 	while (0);
 	
 	FadingGameInAfterLoading=ONE_FIXED;

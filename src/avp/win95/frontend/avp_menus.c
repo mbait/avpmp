@@ -410,21 +410,21 @@ void HandlePreGameFMVs(void)
 	if (AvPMenus.MenusState == MENUSSTATE_STARTGAME && LoadGameRequest == SAVELOAD_REQUEST_NONE)
 	{
 		extern char LevelName[];
-		if (!stricmp("derelict",&LevelName))
+		if (!stricmp("derelict", LevelName))
 		{
 			ClearScreenToBlack();
 			FlipBuffers();
 			ClearScreenToBlack();
 			PlayBinkedFMV("FMVs/marineintro.bik");
 		}
-		else if (!stricmp("temple",&LevelName))
+		else if (!stricmp("temple", LevelName))
 		{
 			ClearScreenToBlack();
 			FlipBuffers();
 			ClearScreenToBlack();
 			PlayBinkedFMV("FMVs/alienintro.bik");
 		}
-		else if (!stricmp("fall",&LevelName))
+		else if (!stricmp("fall", LevelName))
 		{
 			ClearScreenToBlack();
 			FlipBuffers();
@@ -666,6 +666,8 @@ extern void AvP_UpdateMenus(void)
 			
 			RenderMenuText(profilePtr->Name,MENU_CENTREX,MENU_CENTREY-100,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
 			{
+#warning commented out code			
+#if 0			
 				char buffer[100];
 				char buffer2[100];
 				int nLen = 80;
@@ -680,6 +682,7 @@ extern void AvP_UpdateMenus(void)
 				strcat(buffer2,"  ");
 				strcat(buffer2,buffer);
 				RenderSmallMenuText(buffer2,MENU_CENTREX,MENU_CENTREY-70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
+#endif				
 			}
 			
 			RenderMenu();
@@ -837,7 +840,7 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 		{
 			AvPMenus.UserEnteringText = 1;
 			KeyboardEntryQueue_Clear();
-			AvPMenus.MenuElements->TextPtr = UserProfilePtr->Name;
+			AvPMenus.MenuElements->c.TextPtr = UserProfilePtr->Name;
 			UserProfilePtr->Name[0] = 0;
 			AvPMenus.WidthLeftForText = 0; //will be calculated properly when menus are drawn
 			break;
@@ -859,24 +862,24 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 		{
 			MarineEpisodeToPlay=0;
 			EpisodeSelectScrollOffset=0;
-			AvPMenus.MenuElements->MaxSliderValue = NumberOfAvailableLevels(I_Marine);
-			*AvPMenus.MenuElements->SliderValuePtr = LevelMostLikelyToPlay(I_Marine);
+			AvPMenus.MenuElements->b.MaxSliderValue = NumberOfAvailableLevels(I_Marine);
+			*AvPMenus.MenuElements->c.SliderValuePtr = LevelMostLikelyToPlay(I_Marine);
 			break;
 		}
 		case AVPMENU_PREDATORLEVELS:
 		{
 			PredatorEpisodeToPlay=0;
 			EpisodeSelectScrollOffset=0;
-			AvPMenus.MenuElements->MaxSliderValue = NumberOfAvailableLevels(I_Predator);
-			*AvPMenus.MenuElements->SliderValuePtr = LevelMostLikelyToPlay(I_Predator);
+			AvPMenus.MenuElements->b.MaxSliderValue = NumberOfAvailableLevels(I_Predator);
+			*AvPMenus.MenuElements->c.SliderValuePtr = LevelMostLikelyToPlay(I_Predator);
 			break;
 		}
 		case AVPMENU_ALIENLEVELS:
 		{
 			AlienEpisodeToPlay=0;
 			EpisodeSelectScrollOffset=0;
-			AvPMenus.MenuElements->MaxSliderValue = NumberOfAvailableLevels(I_Alien);
-			*AvPMenus.MenuElements->SliderValuePtr = LevelMostLikelyToPlay(I_Alien);
+			AvPMenus.MenuElements->b.MaxSliderValue = NumberOfAvailableLevels(I_Alien);
+			*AvPMenus.MenuElements->c.SliderValuePtr = LevelMostLikelyToPlay(I_Alien);
 			break;
 		}
 		case AVPMENU_MULTIPLAYERSELECTSESSION:
@@ -1312,7 +1315,7 @@ has features which make it too awkward to add to the general system */
 static void RenderEpisodeSelectMenu(void)
 {
 	AVPMENU_ELEMENT *elementPtr = &AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement];
-	int currentEpisode = *(elementPtr->SliderValuePtr);
+	int currentEpisode = *(elementPtr->c.SliderValuePtr);
 	int centrePosition = (currentEpisode)*65536+EpisodeSelectScrollOffset;
 	enum AVPMENUGFX_ID graphicID;
 	I_PLAYER_TYPE playerID;
@@ -1351,7 +1354,7 @@ static void RenderEpisodeSelectMenu(void)
 		char *textPtr = GetTextString(AvPMenusData[AvPMenus.CurrentMenu].MenuTitle);
 		RenderMenuText(textPtr,MENU_CENTREX,70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
 	}
-	for (i=0; i<=elementPtr->MaxSliderValue; i++)
+	for (i=0; i<=elementPtr->b.MaxSliderValue; i++)
 	{
 		int y;
 
@@ -1359,7 +1362,7 @@ static void RenderEpisodeSelectMenu(void)
 
 		if (y>=-150 && y<=150)
 		{
-			char *textPtr = GetTextString(elementPtr->TextDescription+i);
+			char *textPtr = GetTextString(elementPtr->a.TextDescription+i);
 			int b;
 			int targetBrightness;
 			
@@ -1427,7 +1430,7 @@ static void RenderEpisodeSelectMenu(void)
 				}
 				else
 				{
-					if (i == elementPtr->MaxSliderValue)
+					if (i == elementPtr->b.MaxSliderValue)
 					{
 						RenderSmallMenuText
 						(
@@ -1721,7 +1724,7 @@ static void RenderScrollyMenu()
 static void RenderUserProfileSelectMenu(void)
 {
 	AVPMENU_ELEMENT *elementPtr = &AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement];
-	int currentEpisode = *(elementPtr->SliderValuePtr);
+	int currentEpisode = *(elementPtr->c.SliderValuePtr);
 	int centrePosition = (currentEpisode)*65536+EpisodeSelectScrollOffset;
 	int i;
 	AVP_USER_PROFILE *profilePtr = GetFirstUserProfile();
@@ -1729,8 +1732,11 @@ static void RenderUserProfileSelectMenu(void)
 		char *textPtr = GetTextString(AvPMenusData[AvPMenus.CurrentMenu].MenuTitle);
 		RenderMenuText(textPtr,MENU_CENTREX,70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
 	}
+#warning commented out code
+#if 0
 	GetLocalTime(&profilePtr->TimeLastUpdated);
-	for (i=0; i<=elementPtr->MaxSliderValue; i++, profilePtr = GetNextUserProfile())
+#endif	
+	for (i=0; i<=elementPtr->b.MaxSliderValue; i++, profilePtr = GetNextUserProfile())
 	{
 		int y;
 
@@ -1770,6 +1776,8 @@ static void RenderUserProfileSelectMenu(void)
 			b=Brightness[i];
 			RenderMenuText_Clipped(textPtr,MENU_CENTREX,MENU_CENTREY+y-60,b,AVPMENUFORMAT_CENTREJUSTIFIED,MENU_CENTREY-60-100,MENU_CENTREY-30+150);
 			{
+#warning commented out code			
+#if 0
 				char buffer[100];
 				char buffer2[100];
 				int nLen = 80;
@@ -1796,6 +1804,7 @@ static void RenderUserProfileSelectMenu(void)
 				strcat(buffer2,"  ");
 				strcat(buffer2,buffer);
 				RenderSmallMenuText(buffer2,MENU_CENTREX,MENU_CENTREY+y-30,b,AVPMENUFORMAT_CENTREJUSTIFIED);
+#endif				
 			}
 		}
 	}
@@ -1926,8 +1935,9 @@ static void RenderLoadGameMenu(void)
 
 			sprintf(buffer, "%s: %d",GetTextString(TEXTSTRING_SAVEGAME_SAVESLEFT),slotPtr->SavesLeft);
 			RenderText(buffer,MENU_CENTREX,y+HUD_FONT_HEIGHT+1,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
-
 			{
+#warning commented out code			
+#if 0
 				char buffer2[100];
 				int nLen = 80;
 
@@ -1939,6 +1949,7 @@ static void RenderLoadGameMenu(void)
 				strcat(buffer2,"  ");
 				strcat(buffer2,buffer);
 				RenderText(buffer2,MENU_RIGHTXEDGE-30,y+HUD_FONT_HEIGHT+1,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
+#endif				
 			}
 		}
 		else
@@ -2024,7 +2035,7 @@ static void ActUponUsersInput(void)
 
 		if (DebouncedKeyboardInput[KEY_ESCAPE] || DebouncedKeyboardInput[KEY_CR])
 		{
-			elementPtr->TextPtr[AvPMenus.PositionInTextField] = 0;
+			elementPtr->c.TextPtr[AvPMenus.PositionInTextField] = 0;
 			AvPMenus.UserEnteringText = 0;
 
 			// KJL 10:09:35 09/02/00 - when the user has entered their name,
@@ -2036,7 +2047,7 @@ static void ActUponUsersInput(void)
 			{
 				if(AvPMenus.PositionInTextField==0)
 				{
-					strcpy(elementPtr->TextPtr,"DeadMeat");
+					strcpy(elementPtr->c.TextPtr,"DeadMeat");
 				}
 				AvPMenus.CurrentlySelectedElement++;
 			}
@@ -2045,7 +2056,7 @@ static void ActUponUsersInput(void)
 		{
 			if (AvPMenus.PositionInTextField>0)
 			{
-				elementPtr->TextPtr[--AvPMenus.PositionInTextField] = 0;
+				elementPtr->c.TextPtr[--AvPMenus.PositionInTextField] = 0;
 			}
 		}
 		else if(BackspaceTimer>ONE_FIXED/2)
@@ -2056,7 +2067,7 @@ static void ActUponUsersInput(void)
 				BackspaceTimer-=ONE_FIXED/20;
 				if (AvPMenus.PositionInTextField>0)
 				{
-					elementPtr->TextPtr[--AvPMenus.PositionInTextField] = 0;
+					elementPtr->c.TextPtr[--AvPMenus.PositionInTextField] = 0;
 				}
 			}
 		}
@@ -2065,17 +2076,17 @@ static void ActUponUsersInput(void)
 			//allow Ctrl+V to paste from the clipboard (really just for pasting in ip addresses)
 			if((KeyboardInput[KEY_LEFTCTRL] || KeyboardInput[KEY_RIGHTCTRL]) && KeyboardInput[KEY_V])
 			{
-				PasteFromClipboard(elementPtr->TextPtr,elementPtr->MaxTextLength);
-				AvPMenus.PositionInTextField = strlen(elementPtr->TextPtr);
+				PasteFromClipboard(elementPtr->c.TextPtr,elementPtr->b.MaxTextLength);
+				AvPMenus.PositionInTextField = strlen(elementPtr->c.TextPtr);
 			}
-			else if (AvPMenus.PositionInTextField<elementPtr->MaxTextLength)
+			else if (AvPMenus.PositionInTextField<elementPtr->b.MaxTextLength)
 			{
 				char c=0;
 				KeyboardEntryQueue_StartProcessing();
 				
-				while(c=KeyboardEntryQueue_ProcessCharacter())
+				while((c=KeyboardEntryQueue_ProcessCharacter()))
 				{
-					if (AvPMenus.PositionInTextField<elementPtr->MaxTextLength)
+					if (AvPMenus.PositionInTextField<elementPtr->b.MaxTextLength)
 					{
 						//see if there is room for this character
 						if(AvPMenus.FontToUse==AVPMENU_FONT_BIG && elementPtr->ElementID !=AVPMENU_ELEMENT_TEXTFIELD_SMALLWRAPPED)
@@ -2097,8 +2108,8 @@ static void ActUponUsersInput(void)
 							AvPMenus.WidthLeftForText-=AAFontWidths[c];
 						}
 
-						elementPtr->TextPtr[AvPMenus.PositionInTextField++] = c;
-						elementPtr->TextPtr[AvPMenus.PositionInTextField] = 0;
+						elementPtr->c.TextPtr[AvPMenus.PositionInTextField++] = c;
+						elementPtr->c.TextPtr[AvPMenus.PositionInTextField] = 0;
 					}
 				}
 
@@ -2118,7 +2129,7 @@ static void ActUponUsersInput(void)
 		}
 		else if (DebouncedKeyboardInput[KEY_BACKSPACE] || DebouncedKeyboardInput[KEY_LEFT])
 		{
-			(*elementPtr->NumberPtr)/=10;
+			(*elementPtr->c.NumberPtr)/=10;
 		}
 		else
 		{
@@ -2127,16 +2138,16 @@ static void ActUponUsersInput(void)
 			KeyboardEntryQueue_StartProcessing();
 			while(c=KeyboardEntryQueue_ProcessCharacter())
 			{
-				if (AvPMenus.PositionInTextField<elementPtr->MaxTextLength)
+				if (AvPMenus.PositionInTextField<elementPtr->b.MaxTextLength)
 				{
 					if(c>='0' && c<='9')
 					{
-						(*elementPtr->NumberPtr)*=10;
-						(*elementPtr->NumberPtr)+=c-'0';
+						(*elementPtr->c.NumberPtr)*=10;
+						(*elementPtr->c.NumberPtr)+=c-'0';
 
-						if((*elementPtr->NumberPtr)>elementPtr->MaxValue)
+						if((*elementPtr->c.NumberPtr)>elementPtr->b.MaxValue)
 						{
-							(*elementPtr->NumberPtr)=elementPtr->MaxValue;	
+							(*elementPtr->c.NumberPtr)=elementPtr->b.MaxValue;
 						}
 					}
 				}
@@ -2235,7 +2246,9 @@ static void ActUponUsersInput(void)
 					MP_Config_Description[0]=0;
 					break;
 				}
-
+				
+				default:
+					break;
 			}
 
 
@@ -2396,7 +2409,7 @@ static void ActUponUsersInput(void)
 				{
 					//take note of the current configuration
 					MultiplayerConfigurationIndex=AvPMenus.CurrentlySelectedElement;
-					MultiplayerConfigurationName=AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement].TextPtr;
+					MultiplayerConfigurationName=AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement].c.TextPtr;
 					//setup the delete configuration menu
 					SetupNewMenu(AVPMENU_MULTIPLAYER_DELETECONFIG);
 					break;
@@ -2445,7 +2458,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 					SaveUserProfile(UserProfilePtr);
 				}
 			
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -2457,7 +2470,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				{
 					SaveMultiplayerConfiguration(MP_Config_Name);
 				}
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -2465,8 +2478,8 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			AvPMenus.UserEnteringText = 1;
 			KeyboardEntryQueue_Clear();
-			AvPMenus.PositionInTextField = strlen(elementPtr->TextPtr);
-			elementPtr->TextPtr[AvPMenus.PositionInTextField] = 0;
+			AvPMenus.PositionInTextField = strlen(elementPtr->c.TextPtr);
+			elementPtr->c.TextPtr[AvPMenus.PositionInTextField] = 0;
 			AvPMenus.WidthLeftForText = 0; //will be calculated properly when menus are drawn
 			break;
 		}
@@ -2474,7 +2487,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			AvPMenus.UserEnteringText = 1;
 			KeyboardEntryQueue_Clear();
-			AvPMenus.PositionInTextField = strlen(elementPtr->TextPtr);
+			AvPMenus.PositionInTextField = strlen(elementPtr->c.TextPtr);
 			AvPMenus.WidthLeftForText = 0; //will be calculated properly when menus are drawn
 			break;
 		}
@@ -2483,24 +2496,24 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if(interactionID == AVPMENU_ELEMENT_INTERACTION_DECREASE)
 			{
-				(*elementPtr->NumberPtr)--;
-				if(*elementPtr->NumberPtr<0)
+				(*elementPtr->c.NumberPtr)--;
+				if(*elementPtr->c.NumberPtr<0)
 				{
-					*elementPtr->NumberPtr=0;
+					*elementPtr->c.NumberPtr=0;
 				}
 			}
 			else if(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE)
 			{
-				(*elementPtr->NumberPtr)++;
-				if(*elementPtr->NumberPtr>elementPtr->MaxValue)
+				(*elementPtr->c.NumberPtr)++;
+				if(*elementPtr->c.NumberPtr>elementPtr->b.MaxValue)
 				{
-					*elementPtr->NumberPtr=elementPtr->MaxValue;
+					*elementPtr->c.NumberPtr=elementPtr->b.MaxValue;
 				}
 				
 			}
 			else
 			{
-				*elementPtr->NumberPtr=0;
+				*elementPtr->c.NumberPtr=0;
 				AvPMenus.UserEnteringNumber = 1;
 				KeyboardEntryQueue_Clear();
 			}
@@ -2519,16 +2532,16 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				if (*elementPtr->SliderValuePtr<elementPtr->MaxSliderValue)
+				if (*elementPtr->c.SliderValuePtr<elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr+=1;
+					*elementPtr->c.SliderValuePtr+=1;
 				}
 			}
 			else
 			{
-				if (*elementPtr->SliderValuePtr>0)
+				if (*elementPtr->c.SliderValuePtr>0)
 				{
-					*elementPtr->SliderValuePtr-=1;
+					*elementPtr->c.SliderValuePtr-=1;
 				}
 			}
 			break;
@@ -2539,18 +2552,18 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				*elementPtr->SliderValuePtr+=1;
-				if (*elementPtr->SliderValuePtr>elementPtr->MaxSliderValue)
+				*elementPtr->c.SliderValuePtr+=1;
+				if (*elementPtr->c.SliderValuePtr>elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr=0;
+					*elementPtr->c.SliderValuePtr=0;
 				}
 			}
 			else
 			{
-				*elementPtr->SliderValuePtr-=1;
-				if (*elementPtr->SliderValuePtr<0)
+				*elementPtr->c.SliderValuePtr-=1;
+				if (*elementPtr->c.SliderValuePtr<0)
 				{
-					*elementPtr->SliderValuePtr=elementPtr->MaxSliderValue;
+					*elementPtr->c.SliderValuePtr=elementPtr->b.MaxSliderValue;
 				}
 			}
 			break;
@@ -2560,21 +2573,21 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				*elementPtr->SliderValuePtr+=1;
-				if (*elementPtr->SliderValuePtr>elementPtr->MaxSliderValue)
+				*elementPtr->c.SliderValuePtr+=1;
+				if (*elementPtr->c.SliderValuePtr>elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr=0;
+					*elementPtr->c.SliderValuePtr=0;
 				}
-				GetNextAllowedSpecies(elementPtr->SliderValuePtr,TRUE);
+				GetNextAllowedSpecies(elementPtr->c.SliderValuePtr,TRUE);
 			}
 			else
 			{
-				*elementPtr->SliderValuePtr-=1;
-				if (*elementPtr->SliderValuePtr<0)
+				*elementPtr->c.SliderValuePtr-=1;
+				if (*elementPtr->c.SliderValuePtr<0)
 				{
-					*elementPtr->SliderValuePtr=elementPtr->MaxSliderValue;
+					*elementPtr->c.SliderValuePtr=elementPtr->b.MaxSliderValue;
 				}
-				GetNextAllowedSpecies(elementPtr->SliderValuePtr,FALSE);
+				GetNextAllowedSpecies(elementPtr->c.SliderValuePtr,FALSE);
 			}
 			break;
 		}
@@ -2583,21 +2596,21 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				*elementPtr->SliderValuePtr+=1;
-				if (*elementPtr->SliderValuePtr>elementPtr->MaxSliderValue)
+				*elementPtr->c.SliderValuePtr+=1;
+				if (*elementPtr->c.SliderValuePtr>elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr=0;
+					*elementPtr->c.SliderValuePtr=0;
 				}
-				CheatMode_GetNextAllowedSpecies(elementPtr->SliderValuePtr,TRUE);
+				CheatMode_GetNextAllowedSpecies(elementPtr->c.SliderValuePtr,TRUE);
 			}
 			else
 			{
-				*elementPtr->SliderValuePtr-=1;
-				if (*elementPtr->SliderValuePtr<0)
+				*elementPtr->c.SliderValuePtr-=1;
+				if (*elementPtr->c.SliderValuePtr<0)
 				{
-					*elementPtr->SliderValuePtr=elementPtr->MaxSliderValue;
+					*elementPtr->c.SliderValuePtr=elementPtr->b.MaxSliderValue;
 				}
-				CheatMode_GetNextAllowedSpecies(elementPtr->SliderValuePtr,FALSE);
+				CheatMode_GetNextAllowedSpecies(elementPtr->c.SliderValuePtr,FALSE);
 			}
 			break;
 		}
@@ -2606,21 +2619,21 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				*elementPtr->SliderValuePtr+=1;
-				if (*elementPtr->SliderValuePtr>elementPtr->MaxSliderValue)
+				*elementPtr->c.SliderValuePtr+=1;
+				if (*elementPtr->c.SliderValuePtr>elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr=0;
+					*elementPtr->c.SliderValuePtr=0;
 				}
-				CheatMode_GetNextAllowedMode(elementPtr->SliderValuePtr,TRUE);
+				CheatMode_GetNextAllowedMode(elementPtr->c.SliderValuePtr,TRUE);
 			}
 			else
 			{
-				*elementPtr->SliderValuePtr-=1;
-				if (*elementPtr->SliderValuePtr<0)
+				*elementPtr->c.SliderValuePtr-=1;
+				if (*elementPtr->c.SliderValuePtr<0)
 				{
-					*elementPtr->SliderValuePtr=elementPtr->MaxSliderValue;
+					*elementPtr->c.SliderValuePtr=elementPtr->b.MaxSliderValue;
 				}
-				CheatMode_GetNextAllowedMode(elementPtr->SliderValuePtr,FALSE);
+				CheatMode_GetNextAllowedMode(elementPtr->c.SliderValuePtr,FALSE);
 			}
 			break;
 		}
@@ -2629,21 +2642,21 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if ((interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			  ||(interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE))
 			{
-				*elementPtr->SliderValuePtr+=1;
-				if (*elementPtr->SliderValuePtr>elementPtr->MaxSliderValue)
+				*elementPtr->c.SliderValuePtr+=1;
+				if (*elementPtr->c.SliderValuePtr>elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr=0;
+					*elementPtr->c.SliderValuePtr=0;
 				}
-				CheatMode_GetNextAllowedEnvironment(elementPtr->SliderValuePtr,TRUE);
+				CheatMode_GetNextAllowedEnvironment(elementPtr->c.SliderValuePtr,TRUE);
 			}
 			else
 			{
-				*elementPtr->SliderValuePtr-=1;
-				if (*elementPtr->SliderValuePtr<0)
+				*elementPtr->c.SliderValuePtr-=1;
+				if (*elementPtr->c.SliderValuePtr<0)
 				{
-					*elementPtr->SliderValuePtr=elementPtr->MaxSliderValue;
+					*elementPtr->c.SliderValuePtr=elementPtr->b.MaxSliderValue;
 				}
-				CheatMode_GetNextAllowedEnvironment(elementPtr->SliderValuePtr,FALSE);
+				CheatMode_GetNextAllowedEnvironment(elementPtr->c.SliderValuePtr,FALSE);
 			}
 			break;
 		}
@@ -2694,17 +2707,17 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			}
 			else if (interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE)
 			{
-				if (*elementPtr->SliderValuePtr<elementPtr->MaxSliderValue)
+				if (*elementPtr->c.SliderValuePtr<elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr+=1;
+					*elementPtr->c.SliderValuePtr+=1;
 					EpisodeSelectScrollOffset-=ONE_FIXED;
 				}
 			}
 			else
 			{
-				if (*elementPtr->SliderValuePtr>0)
+				if (*elementPtr->c.SliderValuePtr>0)
 				{
-					*elementPtr->SliderValuePtr-=1;
+					*elementPtr->c.SliderValuePtr-=1;
 					EpisodeSelectScrollOffset+=ONE_FIXED;
 				}
 			}
@@ -2750,7 +2763,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		case AVPMENU_ELEMENT_ALIENEPISODE:
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT
-			  &&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
+			  &&MaximumSelectableLevel>=*elementPtr->c.SliderValuePtr)
 			{
 				AvP.PlayerType = I_Alien;
 				SetLevelToLoadForAlien(AlienEpisodeToPlay);
@@ -2772,7 +2785,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		case AVPMENU_ELEMENT_MARINEEPISODE:
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT
-				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
+				&&MaximumSelectableLevel>=*elementPtr->c.SliderValuePtr)
 			{
 				AvP.PlayerType = I_Marine;
 				SetLevelToLoadForMarine(MarineEpisodeToPlay);
@@ -2793,7 +2806,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		case AVPMENU_ELEMENT_PREDATOREPISODE:
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT
-				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
+				&&MaximumSelectableLevel>=*elementPtr->c.SliderValuePtr)
 			{
 				AvP.PlayerType = I_Predator;
 				SetLevelToLoadForPredator(PredatorEpisodeToPlay);
@@ -2817,17 +2830,17 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			the current episode, not start playing the current episode */
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE)
 			{
-				if (*elementPtr->SliderValuePtr<elementPtr->MaxSliderValue)
+				if (*elementPtr->c.SliderValuePtr<elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr+=1;
+					*elementPtr->c.SliderValuePtr+=1;
 					EpisodeSelectScrollOffset-=ONE_FIXED;
 				}
 			}
 			else
 			{
-				if (*elementPtr->SliderValuePtr>0)
+				if (*elementPtr->c.SliderValuePtr>0)
 				{
-					*elementPtr->SliderValuePtr-=1;
+					*elementPtr->c.SliderValuePtr-=1;
 					EpisodeSelectScrollOffset+=ONE_FIXED;
 				}
 			}
@@ -2844,17 +2857,17 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_INCREASE)
 			{
-				if (*elementPtr->SliderValuePtr<elementPtr->MaxSliderValue)
+				if (*elementPtr->c.SliderValuePtr<elementPtr->b.MaxSliderValue)
 				{
-					*elementPtr->SliderValuePtr+=1;
+					*elementPtr->c.SliderValuePtr+=1;
 					EpisodeSelectScrollOffset-=ONE_FIXED;
 				}
 			}
 			else
 			{
-				if (*elementPtr->SliderValuePtr>0)
+				if (*elementPtr->c.SliderValuePtr>0)
 				{
-					*elementPtr->SliderValuePtr-=1;
+					*elementPtr->c.SliderValuePtr-=1;
 					EpisodeSelectScrollOffset+=ONE_FIXED;
 				}
 			}
@@ -2973,7 +2986,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 					if(braket_pos) *braket_pos=0;
 
 					if(DirectPlay_ConnectToSession(s,MP_PlayerName))
-						SetupNewMenu(elementPtr->MenuToGoTo);
+						SetupNewMenu(elementPtr->b.MenuToGoTo);
 				}
 			}
 			break;
@@ -2986,7 +2999,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				SaveUserProfile(UserProfilePtr);
 
 				InitAVPNetGameForJoin();
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -2996,7 +3009,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
 				LoadMultiplayerConfigurationByIndex(AvPMenus.CurrentlySelectedElement);
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -3005,8 +3018,8 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
-				LoadIPAddress(elementPtr->TextPtr);
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				LoadIPAddress(elementPtr->c.TextPtr);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -3015,19 +3028,22 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
- 				netGameData.connectionType=elementPtr->Value;
+ 				netGameData.connectionType=elementPtr->c.Value;
 				if(netGameData.connectionType == CONN_Mplayer)
 				{
 					//exit the game and launch the mplayer stuff
+				fprintf(stderr, "STUB: InteractWithMenuElement (launching mplayer...)\n");
+				#if 0
 					LaunchingMplayer=TRUE;
 					LaunchMplayer();
+				#endif					
 					AvP.MainLoopRunning = 0;
 					AvPMenus.MenusState = MENUSSTATE_OUTSIDEMENUS; 
 					break;
 				}											   
 				else
 				{
- 					SetupNewMenu(elementPtr->MenuToGoTo);
+ 					SetupNewMenu(elementPtr->b.MenuToGoTo);
 				}
 						
 			}
@@ -3052,7 +3068,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
 				SaveDeviceAndVideoModePreferences();
-				SetupNewMenu(elementPtr->MenuToGoTo);
+				SetupNewMenu(elementPtr->b.MenuToGoTo);
 			}
 			break;
 		}
@@ -3133,6 +3149,9 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 						JoystickControlMethods = PlayerJoystickControlMethods;
 						break;
 					}
+					
+					default:
+						break;
 				}
 								
 				
@@ -3183,7 +3202,9 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 						PlayerJoystickControlMethods = DefaultJoystickControlMethods;
 						break;
 					}
-
+					
+					default:
+						break;
 				}
 			}
 			break;
@@ -3312,7 +3333,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_DELETEMPCONFIG:
 		case AVPMENU_ELEMENT_SAVESETTINGS:
 		{
-			char *textPtr = GetTextString(elementPtr->TextDescription);
+			char *textPtr = GetTextString(elementPtr->a.TextDescription);
 			RenderText(textPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 			break;
 		}
@@ -3321,7 +3342,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_STARTMARINEGAME:
 		case AVPMENU_ELEMENT_STARTPREDATORGAME:
 		{
-			char *textPtr = GetTextString(elementPtr->TextDescription);
+			char *textPtr = GetTextString(elementPtr->a.TextDescription);
 			RenderText(textPtr,MENU_LEFTXEDGE,MENU_BOTTOMYEDGE,elementPtr->Brightness,AVPMENUFORMAT_LEFTJUSTIFIED);
 			break;
 		}
@@ -3330,7 +3351,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_ALIENEPISODE:
 		case AVPMENU_ELEMENT_PREDATOREPISODE:
 		{
-			char *textPtr = GetTextString(elementPtr->TextDescription+*(elementPtr->SliderValuePtr));
+			char *textPtr = GetTextString(elementPtr->a.TextDescription+*(elementPtr->SliderValuePtr));
 			RenderText(textPtr,MENU_LEFTXEDGE,MENU_TOPYEDGE,elementPtr->Brightness,AVPMENUFORMAT_LEFTJUSTIFIED);
 			break;
 		}
@@ -3350,25 +3371,25 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 			   elementPtr->ElementID == AVPMENU_ELEMENT_DUMMYTEXTSLIDER_POINTER)	
 			{
 				//we have a pointer to the strings rather than the first string index
-				if(elementPtr->TextSliderStringPointer)
+				if(elementPtr->d.TextSliderStringPointer)
 				{
-					textPtr = elementPtr->TextSliderStringPointer[*(elementPtr->SliderValuePtr)];
+					textPtr = elementPtr->d.TextSliderStringPointer[*(elementPtr->c.SliderValuePtr)];
 				}
 			}
 			else
 			{
 				//we have the index of the first string
-				textPtr = GetTextString(elementPtr->FirstTextSliderString+*(elementPtr->SliderValuePtr));
+				textPtr = GetTextString(elementPtr->d.FirstTextSliderString+*(elementPtr->c.SliderValuePtr));
 			}
 			
-			if(elementPtr->TextDescription!=TEXTSTRING_BLANK)
+			if(elementPtr->a.TextDescription!=TEXTSTRING_BLANK)
 			{
 		
 				if(AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS)
 				{
 					RenderText
 					(
-						GetTextString(elementPtr->TextDescription),
+						GetTextString(elementPtr->a.TextDescription),
 						MENU_CENTREX-MENU_ELEMENT_SPACING,
 						y,
 						elementPtr->Brightness,
@@ -3392,7 +3413,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 					{
 						RenderText
 						(
-							GetTextString(elementPtr->TextDescription),
+							GetTextString(elementPtr->a.TextDescription),
 							ScreenDescriptorBlock.SDB_Width-MENU_ELEMENT_SPACING*2-length,
 							y,
 							elementPtr->Brightness,
@@ -3412,7 +3433,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 
 						RenderText
 						(
-							GetTextString(elementPtr->TextDescription),
+							GetTextString(elementPtr->a.TextDescription),
 							MENU_CENTREX-MENU_ELEMENT_SPACING,
 							y,																		 
 							elementPtr->Brightness,
@@ -3445,12 +3466,12 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_DUMMYTEXTFIELD:
 		case AVPMENU_ELEMENT_TEXTFIELD:
 		{
-			if (elementPtr->TextDescription==TEXTSTRING_BLANK)
+			if (elementPtr->a.TextDescription==TEXTSTRING_BLANK)
 			{
 				if (AvPMenus.UserEnteringText && e==AvPMenus.CurrentlySelectedElement)
 				{
 					int b = GetSin(CloakingPhase&4095);
-					int x = RenderText(elementPtr->TextPtr,MENU_CENTREX,y,elementPtr->Brightness/2,AVPMENUFORMAT_CENTREJUSTIFIED);
+					int x = RenderText(elementPtr->c.TextPtr,MENU_CENTREX,y,elementPtr->Brightness/2,AVPMENUFORMAT_CENTREJUSTIFIED);
 					x = RenderText("I",x,y,MUL_FIXED(b,b),AVPMENUFORMAT_CENTREJUSTIFIED);
 
 					//work out how much space was left over
@@ -3461,17 +3482,17 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					RenderText(elementPtr->TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
+					RenderText(elementPtr->c.TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 				}
 			}
 			else
 			{
-				RenderText(GetTextString(elementPtr->TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
+				RenderText(GetTextString(elementPtr->a.TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
 			
 				if (AvPMenus.UserEnteringText && e==AvPMenus.CurrentlySelectedElement)
 				{
 					int b = GetSin(CloakingPhase&4095);
-					int x = RenderText(elementPtr->TextPtr,MENU_CENTREX+MENU_ELEMENT_SPACING,y,elementPtr->Brightness/2,AVPMENUFORMAT_LEFTJUSTIFIED);
+					int x = RenderText(elementPtr->c.TextPtr,MENU_CENTREX+MENU_ELEMENT_SPACING,y,elementPtr->Brightness/2,AVPMENUFORMAT_LEFTJUSTIFIED);
 					x = RenderText("I",x,y,MUL_FIXED(b,b),AVPMENUFORMAT_LEFTJUSTIFIED);
 					
 					//work out how much space was left over
@@ -3482,7 +3503,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					RenderText(elementPtr->TextPtr,MENU_CENTREX+MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_LEFTJUSTIFIED);
+					RenderText(elementPtr->c.TextPtr,MENU_CENTREX+MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_LEFTJUSTIFIED);
 				}
 			}
 			break;
@@ -3490,7 +3511,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 
 		case AVPMENU_ELEMENT_TEXTFIELD_SMALLWRAPPED:
 		{
-			if (elementPtr->TextDescription==TEXTSTRING_BLANK)
+			if (elementPtr->a.TextDescription==TEXTSTRING_BLANK)
 			{
 				RECT area;
 				area.left=MENU_LEFTXEDGE;
@@ -3502,7 +3523,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				{
 					int output_x,output_y;
 					int b = GetSin(CloakingPhase&4095);
-					RenderSmallFontString_Wrapped(elementPtr->TextPtr,&area,elementPtr->Brightness/2,&output_x,&output_y);
+					RenderSmallFontString_Wrapped(elementPtr->c.TextPtr,&area,elementPtr->Brightness/2,&output_x,&output_y);
 					output_x = RenderSmallMenuText("I",output_x,output_y,MUL_FIXED(b,b),AVPMENUFORMAT_LEFTJUSTIFIED);
 					
 					//work out how much space was left over
@@ -3524,7 +3545,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					RenderSmallFontString_Wrapped(elementPtr->TextPtr,&area,elementPtr->Brightness,0,0);
+					RenderSmallFontString_Wrapped(elementPtr->c.TextPtr,&area,elementPtr->Brightness,0,0);
 				}
 			}
 			else
@@ -3535,13 +3556,13 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				area.top=y;
 				area.bottom=y+4*HUD_FONT_HEIGHT;
 				
-				RenderText(GetTextString(elementPtr->TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y+HUD_FONT_HEIGHT,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
+				RenderText(GetTextString(elementPtr->a.TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y+HUD_FONT_HEIGHT,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
 			
 				if (AvPMenus.UserEnteringText && e==AvPMenus.CurrentlySelectedElement)
 				{
 					int output_x,output_y;
 					int b = GetSin(CloakingPhase&4095);
-					RenderSmallFontString_Wrapped(elementPtr->TextPtr,&area,elementPtr->Brightness/2,&output_x,&output_y);
+					RenderSmallFontString_Wrapped(elementPtr->c.TextPtr,&area,elementPtr->Brightness/2,&output_x,&output_y);
 					output_x = RenderSmallMenuText("I",output_x,output_y,MUL_FIXED(b,b),AVPMENUFORMAT_LEFTJUSTIFIED);
 					
 					//work out how much space was left over
@@ -3563,7 +3584,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					RenderSmallFontString_Wrapped(elementPtr->TextPtr,&area,elementPtr->Brightness,0,0);
+					RenderSmallFontString_Wrapped(elementPtr->c.TextPtr,&area,elementPtr->Brightness,0,0);
 				}
 			}
 			break;
@@ -3574,14 +3595,14 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		{
 			{
 				static char NumberString[50];
-				if(*elementPtr->NumberPtr!=0 || elementPtr->NumberFieldZeroString==TEXTSTRING_BLANK)
+				if(*elementPtr->c.NumberPtr!=0 || elementPtr->NumberFieldZeroString==TEXTSTRING_BLANK)
 				{
-					sprintf(NumberString,"%d",*elementPtr->NumberPtr);
-					if(elementPtr->NumberFieldUnitsString!=TEXTSTRING_BLANK)
+					sprintf(NumberString,"%d",*elementPtr->c.NumberPtr);
+					if(elementPtr->d.NumberFieldUnitsString!=TEXTSTRING_BLANK)
 					{
 						//add the text for the unit type	
 						strcat(NumberString," ");
-						strcat(NumberString,GetTextString(elementPtr->NumberFieldUnitsString));
+						strcat(NumberString,GetTextString(elementPtr->d.NumberFieldUnitsString));
 					}
 				}
 				else
@@ -3590,7 +3611,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 					sprintf(NumberString,"%s",GetTextString(elementPtr->NumberFieldZeroString));
 				}
 				
-				if (elementPtr->TextDescription==TEXTSTRING_BLANK)
+				if (elementPtr->a.TextDescription==TEXTSTRING_BLANK)
 				{
 					if (AvPMenus.UserEnteringNumber && e==AvPMenus.CurrentlySelectedElement)
 					{
@@ -3605,7 +3626,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					RenderText(GetTextString(elementPtr->TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
+					RenderText(GetTextString(elementPtr->a.TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
 			
 					if (AvPMenus.UserEnteringNumber && e==AvPMenus.CurrentlySelectedElement)
 					{
@@ -3624,22 +3645,22 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		
 		case AVPMENU_ELEMENT_GOTOMENU_GFX:
 		{
-			DrawAvPMenuGfx(elementPtr->GfxID,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
+			DrawAvPMenuGfx(elementPtr->a.GfxID,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 			break;
 		}
 		case AVPMENU_ELEMENT_LISTCHOICE:
 		{
-			RenderText(elementPtr->TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
+			RenderText(elementPtr->c.TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 			break;
 		}
 		case AVPMENU_ELEMENT_LOADMPCONFIG:
 		{
-			RenderText(elementPtr->TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
+			RenderText(elementPtr->c.TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 			break;
 		}
 		case AVPMENU_ELEMENT_LOADIPADDRESS:
 		{
-			RenderText(elementPtr->TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
+			RenderText(elementPtr->c.TextPtr,MENU_CENTREX,y,elementPtr->Brightness,AVPMENUFORMAT_CENTREJUSTIFIED);
 			break;
 		}
 		
@@ -3650,8 +3671,8 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_SLIDER:
 		{
 			int x = MENU_CENTREX+MENU_ELEMENT_SPACING+3;
-			x+=(201*(*elementPtr->SliderValuePtr))/elementPtr->MaxSliderValue;
-			RenderText(GetTextString(elementPtr->TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
+			x+=(201*(*elementPtr->c.SliderValuePtr))/elementPtr->b.MaxSliderValue;
+			RenderText(GetTextString(elementPtr->a.TextDescription),MENU_CENTREX-MENU_ELEMENT_SPACING,y,elementPtr->Brightness,AVPMENUFORMAT_RIGHTJUSTIFIED);
 			if(AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS)
 			{
 				D3D_DrawSliderBar(MENU_CENTREX+MENU_ELEMENT_SPACING,y+1,elementPtr->Brightness);
@@ -3670,7 +3691,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		{
 /*			RenderText
 			(
-				GetTextString(elementPtr->TextDescription),
+				GetTextString(elementPtr->a.TextDescription),
 				MENU_CENTREX-MENU_ELEMENT_SPACING,
 				y,
 				elementPtr->Brightness,
@@ -3814,7 +3835,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 
 			RenderText
 			(
-				GetTextString(elementPtr->TextDescription),
+				GetTextString(elementPtr->a.TextDescription),
 				MENU_LEFTXEDGE,
 				y,
 				elementPtr->Brightness,
@@ -3879,7 +3900,7 @@ static int HeightOfMenuElement(AVPMENU_ELEMENT *elementPtr)
 		
 		case AVPMENU_ELEMENT_GOTOMENU_GFX:
 		{
-			h += HeightOfMenuGfx(elementPtr->GfxID);
+			h += HeightOfMenuGfx(elementPtr->a.GfxID);
 			break;
 		}
 #if 0
@@ -4493,6 +4514,8 @@ void DisplayVideoModeUnavailableScreen(void)
 
 void CheckForCredits(void)
 {
+	fprintf(stderr, "CheckForCredits()\n");
+#if 0
 	FILE *fp = fopen("credits.txt","rb");
 	
 	if (!fp)
@@ -4507,7 +4530,9 @@ void CheckForCredits(void)
 	{
 		fclose(fp);
 	}
+#endif	
 }
+
 void DoCredits(void)
 {
 	int position = 300*2048;
@@ -4942,6 +4967,10 @@ extern void DrawMainMenusBackdrop(void)
 
 int WhiteOfBrightness(int brightness)
 {
+	fprintf(stderr, "WhiteOfBrightness(%d)\n", brightness);
+	
+	return 0;
+#if 0
 	extern DDPIXELFORMAT DisplayPixelFormat;
 	int a;
 
@@ -4950,10 +4979,13 @@ int WhiteOfBrightness(int brightness)
 	a |= MUL_FIXED(DisplayPixelFormat.dwBBitMask,brightness) & DisplayPixelFormat.dwBBitMask;
 
 	return a;
+#endif	
 }
 
 void RenderPixel(int x,int y,int r,int g,int b)
 {
+	fprintf(stderr, "RenderPixel(%d, %d, %d, %d, %d)\n", x, y, r, g, b);
+#if 0
 	extern DDPIXELFORMAT DisplayPixelFormat;
 	extern unsigned char *ScreenBuffer;
 	extern long BackBufferPitch;
@@ -4966,7 +4998,7 @@ void RenderPixel(int x,int y,int r,int g,int b)
 	
 	
 	*(unsigned short*) (ScreenBuffer + (x)*2 + (y)*BackBufferPitch)  = colour;
-	
+#endif	
 }
 #if 0
 void BezierCurve(void)
@@ -5025,7 +5057,7 @@ static void UpdateMultiplayerConfigurationMenu()
 		GLOBALASSERT(elementPtr->ElementID!=AVPMENU_ELEMENT_ENDOFMENU);
 		elementPtr++;
 
-	}while(elementPtr->TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT);
+	}while(elementPtr->a.TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT);
 
 	
 	if(netGameData.skirmishMode)
@@ -5036,16 +5068,16 @@ static void UpdateMultiplayerConfigurationMenu()
 	
 	if(netGameData.gameType!=NGT_Coop)
 	{
-		elementPtr->MaxSliderValue = NumMultiplayerLevels-1;
-		elementPtr->TextSliderStringPointer = MultiplayerLevelNames;
+		elementPtr->b.MaxSliderValue = NumMultiplayerLevels-1;
+		elementPtr->d.TextSliderStringPointer = MultiplayerLevelNames;
 
 		//make sure the level number is within bounds
 		netGameData.levelNumber%=NumMultiplayerLevels;
 	}
 	else
 	{
-		elementPtr->MaxSliderValue = NumCoopLevels-1;
-		elementPtr->TextSliderStringPointer = CoopLevelNames;
+		elementPtr->b.MaxSliderValue = NumCoopLevels-1;
+		elementPtr->d.TextSliderStringPointer = CoopLevelNames;
 
 		//make sure the level number is within bounds
 		netGameData.levelNumber%=NumCoopLevels;
@@ -5055,7 +5087,7 @@ static void UpdateMultiplayerConfigurationMenu()
 	//see if selected element is the gamestyle element
 	elementPtr = &AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement];
 
-	if(elementPtr->TextDescription==TEXTSTRING_MULTIPLAYER_GAMESTYLE)
+	if(elementPtr->a.TextDescription==TEXTSTRING_MULTIPLAYER_GAMESTYLE)
 	{
 		//change the helpstring according to the game style
 		switch(netGameData.gameType)
@@ -5093,9 +5125,9 @@ static void UpdateMultiplayerConfigurationMenu()
 
 static void TestValidityOfCheatMenu(void)
 {
-	CheatMode_GetNextAllowedMode(AvPMenus.MenuElements[0].SliderValuePtr,TRUE);
-	CheatMode_GetNextAllowedSpecies(AvPMenus.MenuElements[1].SliderValuePtr,TRUE);
-	CheatMode_GetNextAllowedEnvironment(AvPMenus.MenuElements[2].SliderValuePtr,TRUE);
+	CheatMode_GetNextAllowedMode(AvPMenus.MenuElements[0].c.SliderValuePtr,TRUE);
+	CheatMode_GetNextAllowedSpecies(AvPMenus.MenuElements[1].c.SliderValuePtr,TRUE);
+	CheatMode_GetNextAllowedEnvironment(AvPMenus.MenuElements[2].c.SliderValuePtr,TRUE);
 }
 
 static unsigned char *BriefingTextString[5];
@@ -5579,6 +5611,8 @@ static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* fil
 
 	}
 
+#warning commented out code
+#if 0
 	//get the time stamp for the file
 	{
 		FILETIME time,localTime;
@@ -5587,7 +5621,7 @@ static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* fil
 		FileTimeToSystemTime(&localTime,&save_slot->TimeStamp);
 
 	}
-
+#endif
    	
 	//load the level header
 	ReadFile(file,&block,sizeof(block),(LPDWORD)&bytes_read,0);
@@ -5660,6 +5694,8 @@ static void CheckForLoadGame()
 
 static void PasteFromClipboard(char* Text,int MaxTextLength)
 {
+	fprintf(stderr, "PasteFromClipboard(%p, %d)\n", Text, MaxTextLength);	
+#if 0
 	HANDLE hGlobal;
 	if(!Text)
 	{
@@ -5682,29 +5718,5 @@ static void PasteFromClipboard(char* Text,int MaxTextLength)
 		}
 		CloseClipboard();
 	}
+#endif	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

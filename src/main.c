@@ -517,9 +517,6 @@ void CheckForWindowsMessages()
 			SDL_ShowCursor(0);
 	}
 	
-	if (DebouncedKeyboardInput[KEY_ESCAPE])
-		AvP.MainLoopRunning = 0;
-
 	/* ctrl-z for iconify window? */
 }
         
@@ -568,15 +565,12 @@ int main(int argc, char *argv[])
 	InitialVideoMode();
 
 	/* Env_List can probably be removed */
-//	Env_List[0] = &(ELOLevelToLoad); /* overwrite the first entry of crappy env_list with LevelName */
 	Env_List[0]->main = LevelName;
 	
 	InitialiseSystem();
 	InitialiseRenderer();
 	
 	RequestedGammaSetting = 128;
-	
-/*	InitOptionsMenu();  NOT YET */
 	
 //	LoadDefaultPrimaryConfigs(); /* load the configs! yes! */
 	MarineInputPrimaryConfig = DefaultMarineInputPrimaryConfig;
@@ -606,11 +600,12 @@ int main(int argc, char *argv[])
 	AvP.LevelCompleted = 0;
 	LoadSounds("PLAYER");
 
+	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
+	
+#if 0
 {
 //	AvP.Network = I_Host; /* for exploring */
 }
-
-	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 
 #if ALIEN_DEMO
 	AvP.PlayerType = I_Alien;
@@ -642,7 +637,9 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
 
-// while(AvP_MainMenus()) {
+#endif
+
+while(AvP_MainMenus()) {
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
@@ -720,10 +717,8 @@ int main(int argc, char *argv[])
 				ThisFramesRenderingHasBegun();
 			}
 
-/*	NOT YET
 			menusActive = AvP_InGameMenus();
 			if (AvP.RestartLevel) menusActive=0;
-*/
 			
 			if (AvP.LevelCompleted) {
 				SoundSys_FadeOutFast();
@@ -758,18 +753,16 @@ int main(int argc, char *argv[])
 		if (AvP.RestartLevel) {
 			AvP.RestartLevel = 0;
 			AvP.LevelCompleted = 0;
-/* NOT YET
+
 			FixCheatModesInUserProfile(UserProfilePtr);
-*/			
+
 			RestartLevel();
 		}
 	}
 	
 	AvP.LevelCompleted = thisLevelHasBeenCompleted;
 
-/* NOT YET	
 	FixCheatModesInUserProfile(UserProfilePtr);
-*/
 
 /*	NOT YET
 	CloseFMV();
@@ -799,14 +792,12 @@ int main(int argc, char *argv[])
 	CDDA_Stop();
 	
 	if (AvP.Network != I_No_Network) {
-/* NOT YET
 		EndAVPNetGame();
-*/
 	}
 	
 	ClearMemoryPool();
 		
-// }
+}
 
 	SoundSys_StopAll();
 	SoundSys_RemoveAll();

@@ -20,33 +20,91 @@
 /* winmain.c */
 BOOL KeepMainRifFile = FALSE;
 int HWAccel = 1;
+int VideoModeNotAvailable=0;
 
 
-/* avp_mp_config.cpp */
-char* GetCustomMultiplayerLevelName(int index, int gameType)
+/* videomodes.cpp */
+void LoadDeviceAndVideoModePreferences()
 {
-	fprintf(stderr, "GetCustomMultiplayerLevelName(%d, %d)\n", index, gameType);
+	fprintf(stderr, "LoadDeviceAndVideoModePreferences()\n");
+}
+
+void SaveDeviceAndVideoModePreferences()
+{
+	fprintf(stderr, "SaveDeviceAndVideoModePreferences()\n");
+}
+
+void PreviousVideoMode2()
+{
+	fprintf(stderr, "PreviousVideoMode2()\n");
+}
+
+void NextVideoMode2()
+{
+	fprintf(stderr, "NextVideoMode2()\n");
+}
+
+char *GetVideoModeDescription2()
+{
+	fprintf(stderr, "GetVideoModeDescription2()\n");
 	
-	return NULL;
+	return "";
 }
 
-void BuildMultiplayerLevelNameArray()
+char *GetVideoModeDescription3()
 {
-	fprintf(stderr, "BuildMultiplayerLevelNameArray()\n");
-}
-
-BOOL BuildLoadIPAddressMenu()
-{
-	fprintf(stderr, "BuildLoadIPAddressMenu()\n");
+	fprintf(stderr, "GetVideoModeDescription3()\n");
 	
-	return FALSE;
+	return "";
 }
 
 
-/* avp_intro.cpp */
-void DrawMainMenusBackdrop()
+/* directplay.c */
+int DirectPlay_ConnectingToLobbiedGame(char* playerName)
 {
-	fprintf(stderr, "DrawMainMenusBackdrop()\n");
+	fprintf(stderr, "DirectPlay_ConnectingToLobbiedGame(%s)\n", playerName);
+	
+	return 0;
+}
+
+int DirectPlay_ConnectingToSession()
+{
+	fprintf(stderr, "DirectPlay_ConnectingToSession()\n");
+	
+	return 0;
+}
+
+BOOL DirectPlay_UpdateSessionList(int *SelectedItem)
+{
+	fprintf(stderr, "DirectPlay_UpdateSessionList(%p)\n", SelectedItem);
+	
+	return 0;
+}
+
+int DirectPlay_JoinGame()
+{
+	fprintf(stderr, "DirectPlay_JoinGame()\n");
+	
+	return 0;
+}
+
+void DirectPlay_EnumConnections()
+{
+	fprintf(stderr, "DirectPlay_EnumConnections()\n");
+}
+
+int DirectPlay_HostGame(char *playerName, char *sessionName,int species,int gamestyle,int level)
+{
+	fprintf(stderr, "DirectPlay_HostGame(%s, %s, %d, %d, %d)\n", playerName, sessionName, species, gamestyle, level);
+
+	return 0;
+}
+
+int DirectPlay_ConnectToSession(int sessionNumber, char *playerName)
+{
+	fprintf(stderr, "DirectPlay_ConnectToSession(%d, %s)\n", sessionNumber, playerName);
+	
+	return 0;
 }
 
 
@@ -58,6 +116,29 @@ void CheckCDVolume()
 	fprintf(stderr, "CheckCDVolume()\n");
 }
 
+/* bink.c */
+void PlayBinkedFMV(char *filenamePtr)
+{
+	fprintf(stderr, "PlayBinkedFMV(%s)\n", filenamePtr);
+}
+
+void StartMenuBackgroundBink()
+{
+	fprintf(stderr, "StartMenuBackgroundBink()\n");
+}
+
+int PlayMenuBackgroundBink()
+{
+	fprintf(stderr, "PlayMenuBackgroundBink()\n");
+	
+	return 0;
+}
+
+void EndMenuBackgroundBink()
+{
+	fprintf(stderr, "EndMenuBackgroundBink()\n");
+}
+
 
 /* smacker.c */
 int FmvColourRed;
@@ -65,6 +146,7 @@ int FmvColourGreen;
 int FmvColourBlue;
 int IntroOutroMoviesAreActive = 1;
 int MoviesAreActive;
+int SmackerSoundVolume;
 
 void GetFMVInformation(int *messageNumberPtr, int *frameNumberPtr)
 {
@@ -91,6 +173,11 @@ void UpdateAllFMVTextures()
 	fprintf(stderr, "UpdateAllFMVTextures()\n");
 }
 
+void EndMenuMusic()
+{
+	fprintf(stderr, "EndMenuMusic()\n");
+}
+
 
 /* alt_tab.cpp */
 void ATIncludeSurface(void * pSurface, void * hBackup)
@@ -113,6 +200,21 @@ void ATRemoveTexture(void * pTexture)
 /* char AAFontWidths[256]; */
 AVPMENUGFX AvPMenuGfxStorage[MAX_NO_OF_AVPMENUGFXS]; /* TODO: this is initialized in avp_menugfx.cpp */
 
+void InitialiseMenuGfx()
+{
+	fprintf(stderr, "InitialiseMenuGfx()\n");
+}
+
+void LoadAllAvPMenuGfx()
+{
+	fprintf(stderr, "LoadAllAvPMenuGfx()\n");
+}
+
+void ReleaseAllAvPMenuGfx()
+{
+	fprintf(stderr, "ReleaseAllAvPMenuGfx()\n");
+}
+
 void FadedScreen(int alpha)
 {
 	fprintf(stderr, "FadedScreen(%d)\n", alpha);
@@ -121,6 +223,16 @@ void FadedScreen(int alpha)
 void ClearScreenToBlack()
 {
 	fprintf(stderr, "ClearScreenToBlack()\n");
+}
+
+void LoadAllSplashScreenGfx()
+{
+	fprintf(stderr, "LoadAllSplashScreenGfx()\n");
+}
+
+void LoadAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID)
+{
+	fprintf(stderr, "LoadAvPMenuGfx(%d)\n", menuGfxID);
 }
 
 void DrawAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID, int topleftX, int topleftY, int alpha,enum AVPMENUFORMAT_ID format)
@@ -138,6 +250,11 @@ void DrawAvPMenuGfx_Faded(enum AVPMENUGFX_ID menuGfxID, int topleftX, int toplef
 	fprintf(stderr, "DrawAvPMenuGfx_Faded(%d, %d, %d, %d, %d)\n", menuGfxID, topleftX, topleftY, alpha, format);
 }
 
+void DrawAvPMenuGfx_Clipped(enum AVPMENUGFX_ID menuGfxID, int topleftX, int topleftY, int alpha,enum AVPMENUFORMAT_ID format, int topY, int bottomY)
+{
+	fprintf(stderr, "DrawAvPMenuGfx_Clipped(%d, %d, %d, %d, %d, %d, %d)\n", menuGfxID, topleftX, topleftY, alpha, format, topY, bottomY);
+}
+
 int RenderMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format)
 {
 	fprintf(stderr, "RenderMenuText(%s, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format);
@@ -145,61 +262,70 @@ int RenderMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID
 	return 0;
 }
 
-void LoadAllSplashScreenGfx()
+int RenderMenuText_Clipped(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int topY, int bottomY)
 {
-	fprintf(stderr, "LoadAllSplashScreenGfx()\n");
+	fprintf(stderr, "RenderMenuText_Clipped(%s, %d, %d, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format, topY, bottomY);
+
+	return 0;
 }
 
-void LoadAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID)
+int RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format)
 {
-	fprintf(stderr, "LoadAvPMenuGfx(%d)\n", menuGfxID);
+/*
+	return Hardware_RenderSmallMenuText(textPtr, x, y, alpha, format);
+*/
+	fprintf(stderr, "RenderSmallMenuText(%s, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format);
+
+	return 0;
 }
 
-
-/* avp_menus.cpp */
-AVP_USER_PROFILE *UserProfilePtr;
-CONTROL_METHODS PlayerControlMethods;
-int NumberOfSessionsFound;
-JOYSTICK_CONTROL_METHODS PlayerJoystickControlMethods;
-SESSION_DESC SessionData[MAX_NO_OF_SESSIONS];
-SAVE_SLOT_HEADER SaveGameSlot[NUMBER_OF_SAVE_SLOTS];
-
-void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr)
+int RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int red, int green, int blue)
 {
-	fprintf(stderr, "GetFilenameForSaveSlot(%d, %p)\n", i, filenamePtr);
-}
-
-void RenderBriefingText(int centreY, int brightness)
-{
-	fprintf(stderr, "RenderBriefingText(%d, %d)\n", centreY, brightness);
-}
-
-void LoadLevelHeader(SAVE_BLOCK_HEADER* header)
-{
-	fprintf(stderr, "LoadLevelHeader(%p)\n", header);
-}
-
-void AvP_TriggerInGameMenus()
-{
-	fprintf(stderr, "AvP_TriggerInGameMenus()\n");
-}
-
-void ScanSaveSlots()
-{
-	fprintf(stderr, "ScanSaveSlots()\n");
-}
-
-void SaveLevelHeader()
-{
-	fprintf(stderr, "SaveLevelHeader()\n");
-}
-
-int InGameMenusAreRunning()
-{
-	fprintf(stderr, "InGameMenusAreRunning()\n");
+/*
+	return Hardware_RenderSmallMenuText_Coloured(textPtr, x, y, alpha, format, red, green, blue);
+*/
+	fprintf(stderr, "RenderSmallMenuText_Coloured(%s, %d, %d, %d, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format, red, green, blue);
 	
 	return 0;
 }
+
+void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
+{
+	fprintf(stderr, "RenderSmallFontString_Wrapped(%s, %p, %d, %p, %p)\n", textPtr, area, alpha, output_x, output_y);
+}
+
+void RenderKeyConfigRectangle(int alpha)
+{
+/*
+	void Hardware_RenderKeyConfigRectangle(int alpha);
+	Hardware_RenderKeyConfigRectangle(alpha);
+*/	
+	fprintf(stderr, "RenderKeyConfigRectangle(%d)\n", alpha);
+}
+
+void RenderHighlightRectangle(int x1,int y1,int x2,int y2, int r, int g, int b)
+{
+/*
+	void Hardware_RenderHighlightRectangle(int x1,int y1,int x2,int y2,int r, int g, int b);
+	Hardware_RenderHighlightRectangle(x1, y1, x2, y2, r, g, b);
+*/
+	fprintf(stderr, "RenderHighlightRectangle(%d, %d, %d, %d, %d, %d, %d)\n", x1, y1, x2, y2, r, g, b);	
+}
+
+int LengthOfMenuText(char *textPtr)
+{
+	fprintf(stderr, "LengthOfMenuText(%s)\n", textPtr);
+	
+	return 0;
+}
+
+int HeightOfMenuGfx(enum AVPMENUGFX_ID menuGfxID)
+{
+	fprintf(stderr, "HeightOfMenuGfx(%d)\n", menuGfxID);
+	
+	return 0;
+}
+
 
 
 /* avpreg.cpp */
@@ -216,16 +342,6 @@ extern char * SecondSoundDir;
 	SecondSoundDir = "./sounds";
 }
 
-
-/* avp_userprofile.c */
-int SmackerSoundVolume;
-
-int NumberOfUserProfiles()
-{
-	fprintf(stderr, "NumberOfUserProfiles()\n");
-	
-	return 0;
-}
 
 /* d3_func.cpp */
 int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
@@ -299,6 +415,12 @@ BOOL EndD3DScene()
 	return FALSE;
 }
 
+/* ddplat.cpp */
+void MinimizeAllDDGraphics()
+{
+	fprintf(stderr, "MinimizeAllDDGraphics()\n");
+}
+
         
 /* dd_func.cpp */
 long BackBufferPitch;
@@ -346,6 +468,18 @@ BOOL ChangeDirectDrawObject()
 	fprintf(stderr, "ChangeDirectDrawObject()\n");
 	
 	return FALSE;
+}
+
+int SelectDirectDrawObject(void *pGUID)
+{
+	fprintf(stderr, "SelectDirectDrawObject(%p)\n", pGUID);
+
+	return 0;
+}
+
+void GenerateDirectDrawSurface()
+{
+	fprintf(stderr, "GenerateDirectDrawSurface()\n");
 }
 
 

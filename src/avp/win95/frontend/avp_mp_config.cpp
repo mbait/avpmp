@@ -36,6 +36,8 @@ AVPMENU_ELEMENT* AvPMenu_Multiplayer_LoadConfig=0;
 
 BOOL BuildLoadMPConfigMenu()
 {
+	int i;
+	
 	//delete the old list of filenames
 	while(ConfigurationFilenameList.size())
 	{
@@ -54,6 +56,9 @@ BOOL BuildLoadMPConfigMenu()
 	{
 		load_name=SKIRMISH_CONFIG_WILDCARD;
 	}
+	
+	fprintf(stderr, "STUB: BuildLoadMPConfigMenu()\n");
+#if 0
 	// allow a wildcard search
 	WIN32_FIND_DATA wfd;
 
@@ -126,7 +131,7 @@ BOOL BuildLoadMPConfigMenu()
 	}
 	
 	::FindClose(hFindFile);
-	
+#endif	
 
 	//delete the old menu
 	if(AvPMenu_Multiplayer_LoadConfig) delete AvPMenu_Multiplayer_LoadConfig;
@@ -138,12 +143,12 @@ BOOL BuildLoadMPConfigMenu()
 	//create a new menu from the list of filenames
 	AvPMenu_Multiplayer_LoadConfig=new AVPMENU_ELEMENT[ConfigurationFilenameList.size()+1];
 
-	for(int i=0;i<ConfigurationFilenameList.size();i++)
+	for(i=0;i<ConfigurationFilenameList.size();i++)
 	{
 		AvPMenu_Multiplayer_LoadConfig[i].ElementID=AVPMENU_ELEMENT_LOADMPCONFIG;	
-		AvPMenu_Multiplayer_LoadConfig[i].TextDescription=TEXTSTRING_BLANK;	
-		AvPMenu_Multiplayer_LoadConfig[i].MenuToGoTo=AVPMENU_MULTIPLAYER_CONFIG;	
-		AvPMenu_Multiplayer_LoadConfig[i].TextPtr=ConfigurationLocalisedFilenameList[i];	
+		AvPMenu_Multiplayer_LoadConfig[i].a.TextDescription=TEXTSTRING_BLANK;	
+		AvPMenu_Multiplayer_LoadConfig[i].b.MenuToGoTo=AVPMENU_MULTIPLAYER_CONFIG;	
+		AvPMenu_Multiplayer_LoadConfig[i].c.TextPtr=ConfigurationLocalisedFilenameList[i];	
 		AvPMenu_Multiplayer_LoadConfig[i].HelpString=TEXTSTRING_LOADMULTIPLAYERCONFIG_HELP; 
 	}
 
@@ -461,6 +466,8 @@ AVPMENU_ELEMENT* AvPMenu_Multiplayer_LoadIPAddress=0;
 
 BOOL BuildLoadIPAddressMenu()
 {
+	int i;
+	
 	//delete the old list of filenames
 	while(IPAddFilenameList.size())
 	{
@@ -469,7 +476,9 @@ BOOL BuildLoadIPAddressMenu()
 	}
 
 	//do a search for all the addresses in the address directory
-	
+
+	fprintf(stderr, "STUB: BuildLoadIPAddressMenu()\n");
+#if 0	
 	const char* load_name=IP_ADDRESS_WILDCARD;
 	// allow a wildcard search
 	WIN32_FIND_DATA wfd;
@@ -521,7 +530,7 @@ BOOL BuildLoadIPAddressMenu()
 	
 	
 	::FindClose(hFindFile);
-	
+#endif	
 
 	//delete the old menu
 	if(AvPMenu_Multiplayer_LoadIPAddress) delete [] AvPMenu_Multiplayer_LoadIPAddress;
@@ -530,12 +539,12 @@ BOOL BuildLoadIPAddressMenu()
 	//create a new menu from the list of filenames
 	AvPMenu_Multiplayer_LoadIPAddress=new AVPMENU_ELEMENT[IPAddFilenameList.size()+1];
 
-	for(int i=0;i<IPAddFilenameList.size();i++)
+	for(i=0;i<IPAddFilenameList.size();i++)
 	{
 		AvPMenu_Multiplayer_LoadIPAddress[i].ElementID=AVPMENU_ELEMENT_LOADIPADDRESS;	
-		AvPMenu_Multiplayer_LoadIPAddress[i].TextDescription=TEXTSTRING_BLANK;	
-		AvPMenu_Multiplayer_LoadIPAddress[i].MenuToGoTo=AVPMENU_MULTIPLAYERSELECTSESSION;	
-		AvPMenu_Multiplayer_LoadIPAddress[i].TextPtr=IPAddFilenameList[i];	
+		AvPMenu_Multiplayer_LoadIPAddress[i].a.TextDescription=TEXTSTRING_BLANK;	
+		AvPMenu_Multiplayer_LoadIPAddress[i].b.MenuToGoTo=AVPMENU_MULTIPLAYERSELECTSESSION;	
+		AvPMenu_Multiplayer_LoadIPAddress[i].c.TextPtr=IPAddFilenameList[i];	
 		AvPMenu_Multiplayer_LoadIPAddress[i].HelpString=TEXTSTRING_MULTIPLAYER_LOADADDRESS_HELP;	
 	}
 
@@ -610,6 +619,9 @@ void BuildMultiplayerLevelNameArray()
 
 	//first do a search for custom level rifs
 	// allow a wildcard search
+
+	fprintf(stderr, "STUB: BuildMultiplayerLevelNameArray()\n");
+#if 0
 	WIN32_FIND_DATA wfd;
 	const char* load_name="avp_rifs\\custom\\*.rif";
 
@@ -648,6 +660,7 @@ void BuildMultiplayerLevelNameArray()
 	
 		::FindClose(hFindFile);
 	}
+#endif
 
 	NumCustomLevels = CustomLevelNameList.size();
 
@@ -717,36 +730,36 @@ void BuildMultiplayerLevelNameArray()
 
 	elementPtr = AvPMenu_Multiplayer_Config;
 	//search for the level name element
-	while(elementPtr->TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
+	while(elementPtr->a.TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
 	{
 		GLOBALASSERT(elementPtr->ElementID!=AVPMENU_ELEMENT_ENDOFMENU);
 		elementPtr++;
 
 	}
-	elementPtr->MaxSliderValue = NumMultiplayerLevels-1;
-	elementPtr->TextSliderStringPointer = MultiplayerLevelNames;
+	elementPtr->b.MaxSliderValue = NumMultiplayerLevels-1;
+	elementPtr->d.TextSliderStringPointer = MultiplayerLevelNames;
 	
 	elementPtr = AvPMenu_Multiplayer_Config_Join;
 	//search for the level name element
-	while(elementPtr->TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
+	while(elementPtr->a.TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
 	{
 		GLOBALASSERT(elementPtr->ElementID!=AVPMENU_ELEMENT_ENDOFMENU);
 		elementPtr++;
 
 	}
-	elementPtr->MaxSliderValue = NumMultiplayerLevels-1;
-	elementPtr->TextSliderStringPointer = MultiplayerLevelNames;
+	elementPtr->b.MaxSliderValue = NumMultiplayerLevels-1;
+	elementPtr->d.TextSliderStringPointer = MultiplayerLevelNames;
 
 	elementPtr = AvPMenu_Skirmish_Config;
 	//search for the level name element
-	while(elementPtr->TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
+	while(elementPtr->a.TextDescription!=TEXTSTRING_MULTIPLAYER_ENVIRONMENT)
 	{
 		GLOBALASSERT(elementPtr->ElementID!=AVPMENU_ELEMENT_ENDOFMENU);
 		elementPtr++;
 
 	}
-	elementPtr->MaxSliderValue = NumMultiplayerLevels-1;
-	elementPtr->TextSliderStringPointer = MultiplayerLevelNames;
+	elementPtr->b.MaxSliderValue = NumMultiplayerLevels-1;
+	elementPtr->d.TextSliderStringPointer = MultiplayerLevelNames;
 
 }
 

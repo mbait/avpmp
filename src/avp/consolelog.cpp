@@ -31,13 +31,16 @@
 #include "bh_agun.h"
 #include "weapons.h"
 
-LogFile ConsoleLogFile("ConsoleLog.txt");
+#if 0
+static LogFile ConsoleLogFile("ConsoleLog.txt");
+#endif
 
 extern "C"
 {
 	int LogConsoleTextToFile;
 extern void OutputBugReportToConsoleLogfile(char *messagePtr)
 {
+#if 0
 	extern MODULE *playerPherModule;
 	extern struct Target PlayersTarget;
 
@@ -78,23 +81,17 @@ extern void OutputBugReportToConsoleLogfile(char *messagePtr)
  	ConsoleLogFile.lprintf("Player's Module Coords: %d %d %d\n",playerPherModule->m_world.vx,playerPherModule->m_world.vy,playerPherModule->m_world.vz);
 	ConsoleLogFile.lprintf("Player's Target: %d %d %d\n",PlayersTarget.Position.vx,PlayersTarget.Position.vy,PlayersTarget.Position.vz);
 	ConsoleLogFile.lprintf("\n");
+#endif
 }
-
-};
 
 extern void OutputToConsoleLogfile(char *messagePtr)
 {
+#if 0
 	if(LogConsoleTextToFile)
 	{
 		ConsoleLogFile.lprintf("%s\n", (char const*)messagePtr);
 	}
+#endif	
 }
 
-
-
-
-
-
-
-
-				
+};

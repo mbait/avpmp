@@ -1782,6 +1782,571 @@ if (stringPtr == NULL) return;
 	}
 }
 
+int Hardware_RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format) 
+{
+	switch(format)
+	{
+		default:
+			fprintf(stderr, "Hardware_RenderSmallMenuText: UNKNOWN TEXT FORMAT\n");
+			exit(EXIT_FAILURE);
+//		GLOBALASSERT("UNKNOWN TEXT FORMAT"==0);
+		case AVPMENUFORMAT_LEFTJUSTIFIED:
+		{
+			// supplied x is correct
+			break;
+		}
+		case AVPMENUFORMAT_RIGHTJUSTIFIED:
+		{
+			int length = 0;
+			signed char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length;
+			break;
+		}
+		case AVPMENUFORMAT_CENTREJUSTIFIED:
+		{
+			int length = 0;
+			signed char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length/2;
+			break;
+		}	
+	}
+
+//	LOCALASSERT(x>0);
+
+	{
+		unsigned int colour = alpha>>8;
+		if (colour>255) colour = 255;
+		colour = (colour<<24)+0xffffff;
+		D3D_RenderHUDString(textPtr,x,y,colour);
+	}
+	return x;
+}
+
+int Hardware_RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int red, int green, int blue)
+{
+	switch(format)
+	{
+		default:
+//		GLOBALASSERT("UNKNOWN TEXT FORMAT"==0);
+			fprintf(stderr, "Hardware_RenderSmallMenuText_Coloured: UNKNOWN TEXT FORMAT\n");
+			exit(EXIT_FAILURE);
+		case AVPMENUFORMAT_LEFTJUSTIFIED:
+		{
+			// supplied x is correct
+			break;
+		}
+		case AVPMENUFORMAT_RIGHTJUSTIFIED:
+		{
+			int length = 0;
+			signed char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length;
+			break;
+		}
+		case AVPMENUFORMAT_CENTREJUSTIFIED:
+		{
+			int length = 0;
+			signed char *ptr = textPtr;
+
+			while(*ptr)
+			{
+				length+=AAFontWidths[*ptr++];
+			}
+
+			x -= length/2;
+			break;
+		}	
+	}
+
+//	LOCALASSERT(x>0);
+
+	{
+		unsigned int colour = alpha>>8;
+		if (colour>255) colour = 255;
+		colour = (colour<<24);
+		colour += MUL_FIXED(red,255)<<16;
+		colour += MUL_FIXED(green,255)<<8;
+		colour += MUL_FIXED(blue,255);
+		D3D_RenderHUDString(textPtr,x,y,colour);
+	}
+	return x;
+}
+
+void Hardware_RenderKeyConfigRectangle(int alpha)
+{
+	extern void D3D_DrawRectangle(int x, int y, int w, int h, int alpha);
+	D3D_DrawRectangle(10,ScreenDescriptorBlock.SDB_Height/2+25-115,ScreenDescriptorBlock.SDB_Width-20,250,alpha);
+}
+
+void Hardware_RenderHighlightRectangle(int x1,int y1,int x2,int y2,int r, int g, int b)
+{
+	D3D_Rectangle(x1, y1, x2, y2, r, g, b, 255);
+}
+
+void D3D_DrawSliderBar(int x, int y, int alpha)
+{
+	struct VertexTag quadVertices[4];
+	int sliderHeight = 11;
+	unsigned int colour = alpha>>8;
+
+	if (colour>255) colour = 255;
+	colour = (colour<<24)+0xffffff;
+
+	quadVertices[0].Y = y;
+	quadVertices[1].Y = y;
+	quadVertices[2].Y = y + sliderHeight;
+	quadVertices[3].Y = y + sliderHeight;
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	{
+		int topLeftU = 1;
+		int topLeftV = 68;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 2;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 2;
+		quadVertices[2].V = topLeftV + sliderHeight;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + sliderHeight;
+		
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + 2;
+		quadVertices[2].X = x + 2;
+			
+		D3D_HUDQuad_Output
+		(
+			HUDFontsImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	{
+		int topLeftU = 7;
+		int topLeftV = 68;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 2;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 2;
+		quadVertices[2].V = topLeftV + sliderHeight;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + sliderHeight;
+		
+		quadVertices[0].X = x+213+2;
+		quadVertices[3].X = x+213+2;
+		quadVertices[1].X = x+2 +213+2;
+		quadVertices[2].X = x+2 +213+2;
+			
+		D3D_HUDQuad_Output
+		(
+			HUDFontsImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	quadVertices[2].Y = y + 2;
+	quadVertices[3].Y = y + 2;
+
+	{
+		int topLeftU = 5;
+		int topLeftV = 77;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU;
+		quadVertices[2].V = topLeftV + 2;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 2;
+		
+		quadVertices[0].X = x + 2;
+		quadVertices[3].X = x + 2;
+		quadVertices[1].X = x + 215;
+		quadVertices[2].X = x + 215;
+			
+		D3D_HUDQuad_Output
+		(
+			HUDFontsImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	quadVertices[0].Y = y + 9;
+	quadVertices[1].Y = y + 9;
+	quadVertices[2].Y = y + 11;
+	quadVertices[3].Y = y + 11;
+
+	{
+		int topLeftU = 5;
+		int topLeftV = 77;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU;
+		quadVertices[2].V = topLeftV + 2;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 2;
+		
+		quadVertices[0].X = x + 2;
+		quadVertices[3].X = x + 2;
+		quadVertices[1].X = x + 215;
+		quadVertices[2].X = x + 215;
+			
+		D3D_HUDQuad_Output
+		(
+			HUDFontsImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+}
+
+void D3D_DrawSlider(int x, int y, int alpha)
+{
+	struct VertexTag quadVertices[4];
+	int sliderHeight = 5;
+	unsigned int colour = alpha>>8;
+
+	if (colour>255) colour = 255;
+	colour = (colour<<24)+0xffffff;
+
+	quadVertices[0].Y = y;
+	quadVertices[1].Y = y;
+	quadVertices[2].Y = y + sliderHeight;
+	quadVertices[3].Y = y + sliderHeight;
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	{
+		int topLeftU = 11;
+		int topLeftV = 74;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 9;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 9;
+		quadVertices[2].V = topLeftV + sliderHeight;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + sliderHeight;
+		
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + 9;
+		quadVertices[2].X = x + 9;
+			
+		D3D_HUDQuad_Output
+		(
+			HUDFontsImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+}
+
+void D3D_DrawRectangle(int x, int y, int w, int h, int alpha)
+{
+	struct VertexTag quadVertices[4];
+	unsigned int colour = alpha>>8;
+
+	if (colour>255) colour = 255;
+	colour = (colour<<24)+0xffffff;
+
+	quadVertices[0].Y = y;
+	quadVertices[1].Y = y;
+	quadVertices[2].Y = y + 6;
+	quadVertices[3].Y = y + 6;
+	
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	/* top left corner */
+	{
+		int topLeftU = 1;
+		int topLeftV = 238;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + 6;
+		quadVertices[2].X = x + 6;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	/* top */
+	{
+		int topLeftU = 9;
+		int topLeftV = 238;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x+6;
+		quadVertices[3].X = x+6;
+		quadVertices[1].X = x+6 + w-12;
+		quadVertices[2].X = x+6 + w-12;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	/* top right corner */
+	{
+		int topLeftU = 11;
+		int topLeftV = 238;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x + w - 6;
+		quadVertices[3].X = x + w - 6;
+		quadVertices[1].X = x + w;
+		quadVertices[2].X = x + w;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	quadVertices[0].Y = y + 6;
+	quadVertices[1].Y = y + 6;
+	quadVertices[2].Y = y + h - 6;
+	quadVertices[3].Y = y + h - 6;
+	/* right */
+	{
+		int topLeftU = 1;
+		int topLeftV = 246;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV;
+		
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	/* left */
+	{
+		int topLeftU = 1;
+		int topLeftV = 246;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV;
+		
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + 6;
+		quadVertices[2].X = x + 6;
+
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	quadVertices[0].Y = y + h - 6;
+	quadVertices[1].Y = y + h - 6;
+	quadVertices[2].Y = y + h;
+	quadVertices[3].Y = y + h;
+	/* bottom left corner */
+	{
+		int topLeftU = 1;
+		int topLeftV = 248;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + 6;
+		quadVertices[2].X = x + 6;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	/* bottom */
+	{
+		int topLeftU = 9;
+		int topLeftV = 238;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x+6;
+		quadVertices[3].X = x+6;
+		quadVertices[1].X = x+6 + w-12;
+		quadVertices[2].X = x+6 + w-12;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+	/* bottom right corner */
+	{
+		int topLeftU = 11;
+		int topLeftV = 248;
+
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + 6;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + 6;
+		quadVertices[2].V = topLeftV + 6;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + 6;
+		
+		quadVertices[0].X = x + w - 6;
+		quadVertices[3].X = x + w - 6;
+		quadVertices[1].X = x + w;
+		quadVertices[2].X = x + w;
+			
+		D3D_HUDQuad_Output
+		(
+			AAFontImageNumber,
+			quadVertices,
+			colour
+		);
+	}
+}
+
+void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale)
+{
+	extern unsigned char GammaValues[256];
+	GLfloat x[4], y[4];
+	int i;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_OFF);
+	CheckBoundTextureIsCorrect(NULL);
+	
+	SelectPolygonBeginType(3); /* triangles */
+	
+	for (i = 0; i < 255; ) {
+		unsigned int c;
+		
+		c = GammaValues[i];
+		glColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		
+		x[0] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
+		x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y[0] = yTop;
+		y[0] = -(y[0] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		x[1] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
+		x[1] =  (x[1] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y[1] = yBottom;
+		y[1] = -(y[1] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		i++;
+		c = GammaValues[i];
+		glColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		x[2] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
+		x[2] =  (x[2] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y[2] = yBottom;
+		y[2] = -(y[2] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		x[3] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
+		x[3] =  (x[3] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
+		y[3] = yTop;
+		y[3] = -(y[3] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		
+		
+		glVertex3f(x[0], y[0], -1.0f);
+		glVertex3f(x[1], y[1], -1.0f);
+		glVertex3f(x[3], y[3], -1.0f);
+	
+		glVertex3f(x[1], y[1], -1.0f);
+		glVertex3f(x[2], y[2], -1.0f);
+		glVertex3f(x[3], y[3], -1.0f);
+	}
+	
+	glEnd();
+}
+
 void ColourFillBackBuffer(int FillColour)
 {
 	float r, g, b, a;
@@ -1794,6 +2359,18 @@ void ColourFillBackBuffer(int FillColour)
 	glClearColor(r, g, b, a);
 	
 	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void ColourFillBackBufferQuad(int FillColour, int LeftX, int TopY, int RightX, int BotY)
+{
+	int r, g, b, a;
+	
+	b = ((FillColour >> 0)  & 0xFF);
+	g = ((FillColour >> 8)  & 0xFF);
+	r = ((FillColour >> 16) & 0xFF);
+	a = ((FillColour >> 24) & 0xFF);	
+	
+	D3D_Rectangle(LeftX, TopY, RightX, BotY, r, g, b, a);
 }
 
 void D3D_DrawBackdrop()

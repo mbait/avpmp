@@ -7,14 +7,11 @@
 #ifndef ConsoleLog_h_included
 #define ConsoleLog_h_included
 
-extern void OutputToConsoleLogfile(char *messagePtr);
-
-
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+	extern void OutputToConsoleLogfile(char *messagePtr);
 	extern void OutputBugReportToConsoleLogfile(char *messagePtr);
 #ifdef __cplusplus
 };

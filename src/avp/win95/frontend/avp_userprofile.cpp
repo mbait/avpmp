@@ -9,7 +9,7 @@ extern "C"
 
 #include "avp_userprofile.h"
 #include "language.h"
-#include "GammaControl.h"
+#include "gammacontrol.h"
 #include "psnd.h"
 #include "cd_player.h"
 
@@ -17,9 +17,8 @@ extern "C"
 #include "ourasert.h"
 
  // Edmond
- #include "pldnet.h"
- #include "dp_func.h"
- #include <time.h>
+#include "pldnet.h"
+#include <time.h>
 
 static int LoadUserProfiles(void);
 
@@ -63,8 +62,11 @@ extern void ExamineSavedUserProfiles(void)
 	AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
 	*profilePtr = DefaultUserProfile;
 
+	fprintf(stderr, "STUB: ExamineSavedUserProfiles()\n");
+#if 0
 	GetLocalTime(&profilePtr->TimeLastUpdated);
 	SystemTimeToFileTime(&profilePtr->TimeLastUpdated,&profilePtr->FileTime);
+#endif
 
 	strncpy(profilePtr->Name,GetTextString(TEXTSTRING_USERPROFILE_NEW),MAX_SIZE_OF_USERS_NAME);
 	profilePtr->Name[MAX_SIZE_OF_USERS_NAME]=0;
@@ -178,8 +180,12 @@ static void InsertProfileIntoList(AVP_USER_PROFILE *profilePtr)
 	}
 	UserProfilesList.add_entry(profilePtr);
 }
+
 static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *profileToTestAgainstPtr)
 {
+	fprintf(stderr, "STUB: ProfileIsMoreRecent(%p, %p)\n", profilePtr, profileToTestAgainstPtr);
+	return 1;
+#if 0
 	if (CompareFileTime(&profilePtr->FileTime,&profileToTestAgainstPtr->FileTime)==1)
 	{
 		return 1;
@@ -188,10 +194,13 @@ static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *p
 	{
 		return 0;
 	}
+#endif	
 }
+
 static int LoadUserProfiles(void)
 {
-
+	fprintf(stderr, "STUB: LoadUserProfiles()\n");
+#if 0
 	const char* load_name=USER_PROFILES_WILDCARD_NAME;
 	// allow a wildcard search
 	WIN32_FIND_DATA wfd;
@@ -279,7 +288,7 @@ static int LoadUserProfiles(void)
 	}
 
 	::FindClose(hFindFile);
-
+#endif
 	return 1;
 }
 
