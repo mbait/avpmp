@@ -4514,7 +4514,6 @@ void DisplayVideoModeUnavailableScreen(void)
 
 void CheckForCredits(void)
 {
-	fprintf(stderr, "CheckForCredits()\n");
 #if 0
 	FILE *fp = fopen("credits.txt","rb");
 	

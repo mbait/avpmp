@@ -10,6 +10,7 @@
 
 /* Includes ********************************************************/
 #include "3dc.h"
+#include "daemon.h"
 #include "trepgadg.hpp"
 #include "teletype.hpp"
 #include "coordstr.hpp"
@@ -485,13 +486,13 @@ void TextReportGadget :: ClearQueue(void)
 {
 	// clears the queue of buffered messages; could be handy if you've
 	// started a listing of 300 module names
-
-	int NumKilled = RefList_SCString_ToAppear . NumEntries();
-
+	
 	RefList_SCString_ToAppear . EmptyYourself();
 
 	#if 0
 	{
+		int NumKilled = RefList_SCString_ToAppear . NumEntries();
+		
 		SCString* pSCString_Temp1 = new SCString("CLEARED MESSAGE DISPLAY QUEUE; NUM LINES=");
 			// LOCALISEME()
 		SCString* pSCString_Temp2 = new SCString(NumKilled);

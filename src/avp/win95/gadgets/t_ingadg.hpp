@@ -7,10 +7,6 @@
 #ifndef _t_ingadg_hpp
 #define _t_ingadg_hpp 1
 
-	#if ( defined( __WATCOMC__ ) || defined( _MSC_VER ) )
-		#pragma once
-	#endif
-
 	#ifndef _gadget
 	#include "gadget.h"
 	#endif
@@ -24,10 +20,6 @@
 		#include "scstring.hpp"
 		#endif
 	#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* Version settings *****************************************************/
 
@@ -149,9 +141,5 @@
 
 /* End of the header ****************************************************/
 
-
-#ifdef __cplusplus
-	};
-#endif
 
 #endif
