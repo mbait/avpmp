@@ -40,7 +40,6 @@ static int TypeOfNPCGenerated;
 
 /* prototypes for this file */
 static void ResetGeneratorTimer(GENERATOR_BLOCK *genBlock);
-static void InitGeneratorTimer(GENERATOR_BLOCK *genBlock);
 static void ResetHiveStateTime(void);
 int NumNPCsFromThisGenerator(STRATEGYBLOCK* gen_sbptr);
 
@@ -831,7 +830,7 @@ int NumNPCsFromThisGenerator(STRATEGYBLOCK* gen_sbptr)
 				}
 				break;
 									
-			//default - do nothing
+			default: // - do nothing
 		}
 		
 	}

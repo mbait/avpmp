@@ -1748,8 +1748,6 @@ void HandleParticleSystem(void)
 			}
 			case PARTICLE_FLARESMOKE:
 			{
-				extern sine[],cosine[];
-
 //				particlePtr->Position.vy -= MUL_FIXED(1000+(FastRandom()&511),NormalFrameTime);
 				particlePtr->Position.vy += MUL_FIXED(particlePtr->Velocity.vy,NormalFrameTime);
 				
@@ -1816,8 +1814,6 @@ void HandleParticleSystem(void)
 			}
 			case PARTICLE_STEAM:
 			{
-				extern sine[],cosine[];
-
 //				particlePtr->Position.vy -= MUL_FIXED(1000+(FastRandom()&511),NormalFrameTime);
 				particlePtr->Position.vy += MUL_FIXED(particlePtr->Velocity.vy,NormalFrameTime);
 				
@@ -1883,8 +1879,6 @@ void HandleParticleSystem(void)
 			case PARTICLE_BLACKSMOKE:
 			case PARTICLE_IMPACTSMOKE:
 			{
-				extern sine[],cosine[];
-
 //				particlePtr->Position.vy -= MUL_FIXED(1000+(FastRandom()&511),NormalFrameTime);
 				particlePtr->Position.vy += MUL_FIXED(particlePtr->Velocity.vy,NormalFrameTime);
 				
@@ -1947,8 +1941,6 @@ void HandleParticleSystem(void)
 			}
 			case PARTICLE_GUNMUZZLE_SMOKE:
 			{
-				extern sine[],cosine[];
-
 //				particlePtr->Position.vy -= MUL_FIXED(1000+(FastRandom()&511),NormalFrameTime);
 				particlePtr->Position.vy += MUL_FIXED(particlePtr->Velocity.vy,NormalFrameTime);
 				#if 1
@@ -3780,10 +3772,8 @@ void HandleRainShaft(MODULE *modulePtr, int bottomY, int topY, int numberOfRaind
 	
 }
 
-#include <math.h>
 void HandleRipples(void)
 {
-	extern int sine[];
 	int i;
 
 	for(i=0; i<MAX_NO_OF_RIPPLES; i++)
@@ -4023,7 +4013,6 @@ void DrawMuzzleFlash(VECTORCH *positionPtr,VECTORCH *directionPtr, enum MUZZLE_F
 			MATRIXCH rotmat;
 			MakeMatrixFromDirection(directionPtr,&muzzleMatrix);
 			{
-				extern int cosine[], sine[];
 		   		int angle = 4096/12;
 		 	  	int cos = GetCos(angle);
 		 	  	int sin = GetSin(angle);
@@ -5421,6 +5410,8 @@ void TimeScaleThingy()
 				case I_BehaviourMolotov :
 					DesiredTimeScale=MUL_FIXED(DesiredTimeScale,ONE_FIXED*.7);
 					break;
+					
+				default:
 			}
 		}
 	}

@@ -1,3 +1,1 @@
-* ScreenDescriptorBlock: init this somewhere before StartGame, seems to be
-  initialized in the menu code
 

@@ -5,7 +5,11 @@ win95/awtexld.hpp line 79:
 ========
 Changed filenames:
 avp/win95/system.c (avp_load_rif calls)
+and other places that forgot to be documented
 ========
 is AvP.CurrentEnv and StartingEnv used?
+Env_List can be removed
 ========
 SCREENDESCRIPTORBLOCK.SDB_DiagonalWidth is unused
+========
+movement.txt and genparam.txt code is unused

@@ -36,23 +36,13 @@
 #define UseLocalAssert Yes
 #include "ourasert.h"
 
-/* KJL 09:47:33 03/19/97 - vision stuff for marine and predator.
-Currently PC only because it will probably be implemented in a completely
-different way on the consoles, so I won't worry the PSX guys for now.
-*/
-#if SupportWindows95
-
 #include "vision.h"
 
 #include "cheat.h"	
 #include "pldnet.h"								 
 
-#endif
-
-#if SupportWindows95 || Saturn
 #include "kshape.h"
 #include "krender.h"
-#endif
 
 /* KJL 16:00:13 11/22/96 - One of my evil experiments....   */
 #define PENTIUM_PROFILING_ON 0
@@ -76,13 +66,7 @@ different way on the consoles, so I won't worry the PSX guys for now.
 Extern Engine Varibles
 ******************/
 
-extern void (*UpdateScreen[]) (void);
 extern int VideoMode;
-
-#if PSX
-#else
-extern void (*SetVideoMode[]) (void);
-#endif
 
 extern int FrameRate;
 extern int NormalFrameTime;
@@ -242,24 +226,11 @@ void StartGame(void)
 	InitialiseSfxBlocks();
 	InitialiseLightElementSystem();
 
-	#if PSX
-	{
-	extern int RedOut;
-	RedOut=0;
-	}
-	#endif
 	AvP.DestructTimer=-1;
 
 	// DHM 18/11/97: I've put hooks for screen mode changes here for the moment:
 	DAVEHOOK_ScreenModeChange_Setup();
 	DAVEHOOK_ScreenModeChange_Cleanup();
-
-	/* KJL 11:46:42 30/03/98 - I thought it'd be nice to display the version details
-	when you start a game */
-	#if PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO
-	#else
-//	GiveVersionDetails();
-	#endif
 
 	#if MIRRORING_ON
 	if(Current_Level_Requires_Mirror_Image())
@@ -455,10 +426,6 @@ void UpdateGame(void)
 	HandleCheatModes();
 	#endif
 	
-	#if PSX
-	HandleCheatModes();
-	#endif
-
 	/*------------Patrick 1/6/97---------------
 	New sound system 
 	-------------------------------------------*/

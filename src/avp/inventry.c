@@ -155,7 +155,7 @@ void MaintainPlayersInventory(void)
 						break;
 					}
 
-
+					default:
 				}
 			}
 		} else if((collidedWith) && (collidedWith->I_SBtype == I_BehaviourNetGhost)) {

@@ -3826,7 +3826,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 				textprint("Queen climbing out of airlock\n");
 			break;
 			
-
+			default:
 		}	
 	}
 	textprint("Queen Bias - Object %d  Player %d\n",queenStatusPointer->QueenObjectBias,queenStatusPointer->QueenPlayerBias);

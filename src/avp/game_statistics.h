@@ -53,8 +53,9 @@ typedef struct
 	int Decapitated[STATS_VICTIM_MAXIMUM];
 
 //	union {
-		int Trophies[STATS_VICTIM_MAXIMUM];
-		int LiveHeadBites[STATS_VICTIM_MAXIMUM];
+		int TrophiesOrLiveHeadBites[STATS_VICTIM_MAXIMUM];
+//		int Trophies[STATS_VICTIM_MAXIMUM];
+//		int LiveHeadBites[STATS_VICTIM_MAXIMUM];
 //	};
 
 	int DeadHeadBites[STATS_VICTIM_MAXIMUM];

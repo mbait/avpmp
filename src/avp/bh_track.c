@@ -266,6 +266,8 @@ void TrackObjectBehaveFun(STRATEGYBLOCK* sbptr)
 			to_bhv->request=track_no_request;
 		}
 		break;
+		
+		default:
 	}
 
 	if(!track->playing) return;

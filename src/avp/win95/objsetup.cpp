@@ -5,7 +5,6 @@
 #endif
 
 #include <stdlib.h>
-//#include <string.hpp>
 
 #include "list_tem.hpp"
 #include "chnkload.hpp"
@@ -477,6 +476,9 @@ static void select_alternate_location(BehaviourBlockData* bbd)
 			part_temp->orientation=m;
 			break;
 		}
+		
+		default:
+			break;
 	}
 }
 
@@ -498,6 +500,8 @@ void create_strategies_from_list ()
 			case I_Hard :
 			case I_Impossible :
 				if(!bbd->diff_hard) continue;
+				break;
+			default:
 				break;
 		}
 
@@ -784,6 +788,9 @@ void deallocate_behaviour_list()
 
 				}
 				#endif //!NEW_DEALLOCATION_ORDER
+				
+			default:
+				break;
 		}
 
 		#if !USE_LEVEL_MEMORY_POOL

@@ -83,7 +83,9 @@
 *  										G L O B A L S 	            					    *
 ****************************************************************************************KJL*/
 
+#if 0
 static char tempstring[256];
+#endif
 
 static int WBStrikeTime=(ONE_FIXED>>1);
 static int ACStrikeTime=(ONE_FIXED/6);
@@ -11216,6 +11218,8 @@ int FriendlyFireDamageFilter(DAMAGE_PROFILE *damage) {
 		case AMMO_PRED_TROPHY_KILLSECTION:
 			return(VulnerableToPredatorDamage);
 			break;
+			
+		default:
 	}
 
 	return TRUE;

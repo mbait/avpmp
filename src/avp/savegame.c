@@ -375,7 +375,7 @@ static BOOL SaveGameAllowed()
 			if(NumberOfSavesLeft > NUM_SAVES_FOR_HARD_MODE) 
 				NumberOfSavesLeft = NUM_SAVES_FOR_HARD_MODE;
 			break;
-
+		default:
 	}
 
 
@@ -1043,7 +1043,8 @@ static void SaveStrategies()
 			case I_BehaviourFrisbee :
 				SaveStrategy_Frisbee(sbPtr);
 				break;
-
+			
+			default:
 		}
 	}
 	
@@ -1232,7 +1233,8 @@ static void LoadStrategy(SAVE_BLOCK_STRATEGY_HEADER* header)
 		case I_BehaviourFrisbee :
 			LoadStrategy_Frisbee(header);
 			break;
-
+		
+		default:
 	}
 }
 
@@ -1368,6 +1370,7 @@ extern void ResetNumberOfSaves()
 		case I_Impossible :
 			NumberOfSavesLeft = NUM_SAVES_FOR_HARD_MODE;
 			break;
-
+		
+		default:
 	}
 }

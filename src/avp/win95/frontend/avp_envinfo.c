@@ -210,10 +210,10 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 {
 	{
 		{	/* Derelict / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -232,17 +232,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Colony / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -261,17 +261,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Invasion / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -290,17 +290,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Orbital / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -319,17 +319,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Tyrago / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -348,17 +348,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Hangar / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -377,17 +377,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Waterfall / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -406,17 +406,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Area52 / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -435,17 +435,17 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Vaults / Easy */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -464,10 +464,10 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
 	},
 	{
 		{	/* Fury161 / Easy */
@@ -5091,10 +5091,10 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 	},
 	{
 		{	/* E3DemoSP / Impossible */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures Killed */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Creatures decapitated*/
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Trophies / Live Head Bites */
-			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,},	/* Dead Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures Killed */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Creatures decapitated*/
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Trophies / Live Head Bites */
+			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},	/* Dead Head Bites */
 			-1,		/* Shots Fired */
 			-1,		/* Accuracy */
 			-1,		/* Spotted */
@@ -5113,12 +5113,12 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,
-				0,0,0,0,0,0,0,0,0,0,
-			},
+				0,0,0,0,0,0,0,0,0,0
+			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
-	},
-},
+		CHEATMODE_NONACTIVE	/* Cheat to activate */
+	}
+}
 
 };
 

@@ -129,8 +129,6 @@ extern DISPLAYBLOCK *ActiveBlockList[];
 static VECTORCH *ViewpointDirectionPtr;
 static VECTORCH *ViewpointPositionPtr;
 
-static int ObjectVisiblityTest(DISPLAYBLOCK *objectPtr,VECTORCH *positionPtr,int maxRange);
-
 
 /*KJL****************************************************************************************
 *                                     CODE STARTS HERE!                                     *

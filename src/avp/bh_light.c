@@ -533,10 +533,10 @@ void SendRequestToPlacedLight(STRATEGYBLOCK* sbptr,BOOL state,int extended_data)
 		{
 			if(extended_data & (LightRequest_AdjustType_Standard|LightRequest_AdjustType_Flicker))
 			{
-				//changing state , try to preserve strobe timer
+				/* changing state, try to preserve strobe timer */
 				switch(pl_bhv->state)
 				{
-					//lack of break's intended
+					/* lack of break's intended */
 					case Light_State_StrobeUpDelay:
 						pl_bhv->timer+=pl_bhv->fade_up_time;
 					
@@ -545,6 +545,8 @@ void SendRequestToPlacedLight(STRATEGYBLOCK* sbptr,BOOL state,int extended_data)
 					
 					case Light_State_StrobeDownDelay:
 						pl_bhv->timer+=pl_bhv->fade_down_time;
+	
+					default:
 				}
 			}
 		

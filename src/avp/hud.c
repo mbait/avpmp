@@ -2270,8 +2270,6 @@ int Fast3dMagnitude(VECTORCH *v)
 #define ZOOM_SCALE_2 0.1f
 #define ZOOM_SCALE_3 0.02f
 
-static int CurrentCameraZoomLevel=0;
-
 static float ZoomLevels[] = {1.0f,0.4f,0.1f,0.02f};
 
 void MaintainZoomingLevel(void)

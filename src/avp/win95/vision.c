@@ -220,6 +220,8 @@ extern void ChangePredatorVisionMode(void)
 			CurrentVisionMode=VISION_MODE_NORMAL;
 			break;
 		}
+		default:
+			break;
 	}
 	Sound_Play(SID_VISION_ON,"h");
 	PredatorVisionChangeCounter=ONE_FIXED;
