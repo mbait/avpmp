@@ -388,6 +388,18 @@ int LengthOfMenuText(char *textPtr)
 	return width;
 }
 
+int LengthOfSmallMenuText(char *textPtr)
+{
+	int width = 0;
+	
+	while (textPtr && *textPtr) {
+		width += AAFontWidths[(unsigned int) *textPtr];
+		
+		textPtr++;
+	}
+	return width;
+}
+
 int RenderMenuText(char *textPtr, int sx, int sy, int alpha, enum AVPMENUFORMAT_ID format)
 {
 	int width;

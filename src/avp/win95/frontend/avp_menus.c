@@ -988,7 +988,6 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			break;
 		}
 
-
 		case AVPMENU_MULTIPLAYER_LOADCONFIG :
 		{
 			extern AVPMENU_ELEMENT* AvPMenu_Multiplayer_LoadConfig;
@@ -3213,16 +3212,19 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 }
 
 
+int LengthOfMenuText(char *textPtr);
+int LengthOfSmallMenuText(char *textPtr);
 
 static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 {
 	int (*RenderText)(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format);
 	int (*RenderText_Coloured)(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int r, int g, int b);
-
+	int (*MenuTextLength)(char *textPtr);
+	
 	if (AvPMenus.FontToUse==AVPMENU_FONT_BIG)
 	{
 		RenderText = RenderMenuText;
-
+		MenuTextLength = LengthOfMenuText;
 	}
 	else
 	{
@@ -3237,6 +3239,7 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 			RenderText = RenderSmallMenuText;
 			RenderText_Coloured = RenderSmallMenuText_Coloured;
 		}
+		MenuTextLength = LengthOfSmallMenuText;
 	}
 
 	switch(elementPtr->ElementID)
@@ -3339,9 +3342,9 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				}
 				else
 				{
-					int length = LengthOfMenuText(textPtr);
+					int length = MenuTextLength(textPtr);
 
-					if (length>ScreenDescriptorBlock.SDB_Width-MENU_CENTREX-MENU_ELEMENT_SPACING*2)
+					if (length>(ScreenDescriptorBlock.SDB_Width-MENU_CENTREX-MENU_ELEMENT_SPACING*2))
 					{
 						RenderText
 						(

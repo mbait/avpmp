@@ -15,6 +15,12 @@
 #define UseLocalAssert Yes
 #include "ourasert.h"
 
+#include <glob.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+
 extern "C"
 {
 extern void SetDefaultMultiplayerConfig();
@@ -24,7 +30,7 @@ extern char MP_Config_Description[];
 #define MP_CONFIG_DIR "MPConfig"
 #define MP_CONFIG_WILDCARD "MPConfig/*.cfg"
 
-#define SKIRMISH_CONFIG_WILDCARD "MPConfig/.skirmish_cfg"
+#define SKIRMISH_CONFIG_WILDCARD "MPConfig/*.skirmish_cfg"
 
 static List<char*> ConfigurationFilenameList;
 static List<char*> ConfigurationLocalisedFilenameList;
@@ -57,17 +63,9 @@ BOOL BuildLoadMPConfigMenu()
 		load_name=SKIRMISH_CONFIG_WILDCARD;
 	}
 	
-	fprintf(stderr, "STUB: BuildLoadMPConfigMenu()\n");
-#if 0
-	// allow a wildcard search
-	WIN32_FIND_DATA wfd;
-
-	HANDLE hFindFile = ::FindFirstFile(load_name,&wfd);
-	
-	if (INVALID_HANDLE_VALUE == hFindFile)
-	{
+	glob_t globbuf;
+	if (glob(load_name, 0, NULL, &globbuf))
 		return FALSE;
-	}
 	
 	// get any path in the load_name
 	int nPathLen = 0;
@@ -85,22 +83,25 @@ BOOL BuildLoadMPConfigMenu()
 		int nLen = pSlash - load_name + 1;
 		if (nLen > nPathLen) nPathLen = nLen;
 	}
-
-	do
-	{
-		if
-		(
-			!(wfd.dwFileAttributes &
-				(FILE_ATTRIBUTE_DIRECTORY
-				|FILE_ATTRIBUTE_SYSTEM
-				|FILE_ATTRIBUTE_HIDDEN))
-				// not a directory, hidden or system file
-		)
-		{
-			char* name=new char[strlen(wfd.cFileName)+1];
-			strcpy(name,wfd.cFileName);
-			char* dotpos=strchr(name,'.');
+	
+	for (unsigned int i = 0; i < globbuf.gl_pathc; i++) {
+		struct stat buf;
+		
+		if (stat(globbuf.gl_pathv[i], &buf) == -1)
+			continue;
+		
+		if (S_ISREG(buf.st_mode) && (access(globbuf.gl_pathv[i], R_OK) == 0)) {
+			char *filename = strrchr(globbuf.gl_pathv[i], '/');
+			if (filename)
+				filename++;
+			else
+				filename = globbuf.gl_pathv[i];
+				
+			char* name=new char[strlen(filename)+1];
+			strcpy(name,filename);
+			char* dotpos=strrchr(name,'.');
 			if(dotpos) *dotpos=0;
+			
 			ConfigurationFilenameList.add_entry(name);
 
 			BOOL localisedFilename=FALSE;
@@ -119,19 +120,10 @@ BOOL BuildLoadMPConfigMenu()
 			{
 				ConfigurationLocalisedFilenameList.add_entry(name);
 			}
-	
 		}
-	
-	}while (::FindNextFile(hFindFile,&wfd));
-	
-	
-	if (ERROR_NO_MORE_FILES != GetLastError())
-	{
-		printf("Error finding next file\n");
 	}
 	
-	::FindClose(hFindFile);
-#endif	
+	globfree(&globbuf);
 
 	//delete the old menu
 	if(AvPMenu_Multiplayer_LoadConfig) delete AvPMenu_Multiplayer_LoadConfig;
@@ -234,8 +226,6 @@ void LoadMultiplayerConfigurationByIndex(int index)
 
 void LoadMultiplayerConfiguration(const char* name)
 {
-	
-	
 	FILE* file;
 	char filename[200];
 	if(netGameData.skirmishMode)
@@ -246,9 +236,7 @@ void LoadMultiplayerConfiguration(const char* name)
 	file=fopen(filename,"rb");
 	if(!file) return;
 
-	
-	
-
+		
 	//set defaults first , in case there are entries not set by this file
 	SetDefaultMultiplayerConfig();
 
@@ -477,18 +465,11 @@ BOOL BuildLoadIPAddressMenu()
 
 	//do a search for all the addresses in the address directory
 
-	fprintf(stderr, "STUB: BuildLoadIPAddressMenu()\n");
-#if 0	
+	glob_t globbuf;
 	const char* load_name=IP_ADDRESS_WILDCARD;
-	// allow a wildcard search
-	WIN32_FIND_DATA wfd;
-
-	HANDLE hFindFile = ::FindFirstFile(load_name,&wfd);
 	
-	if (INVALID_HANDLE_VALUE == hFindFile)
-	{
+	if (glob(load_name, 0, NULL, &globbuf))
 		return FALSE;
-	}
 	
 	// get any path in the load_name
 	int nPathLen = 0;
@@ -507,30 +488,28 @@ BOOL BuildLoadIPAddressMenu()
 		if (nLen > nPathLen) nPathLen = nLen;
 	}
 
-	do
-	{
-		if
-		(
-			!(wfd.dwFileAttributes &
-				(FILE_ATTRIBUTE_DIRECTORY
-				|FILE_ATTRIBUTE_SYSTEM
-				|FILE_ATTRIBUTE_HIDDEN))
-				// not a directory, hidden or system file
-		)
-		{
-			char* name=new char[strlen(wfd.cFileName)+1];
-			strcpy(name,wfd.cFileName);
+	for (unsigned int i = 0; i < globbuf.gl_pathc; i++) {
+		struct stat buf;
+		
+		if (stat(globbuf.gl_pathv[i], &buf) == -1)
+			continue;
+		
+		if (S_ISREG(buf.st_mode) && (access(globbuf.gl_pathv[i], R_OK) == 0)) {
+			char *filename = strrchr(globbuf.gl_pathv[i], '/');
+			if (filename)
+				filename++;
+			else
+				filename = globbuf.gl_pathv[i];
+				
+			char* name=new char[strlen(filename)+1];
+			strcpy(name,filename);
 			char* dotpos=strchr(name,'.');
 			if(dotpos) *dotpos=0;
 			IPAddFilenameList.add_entry(name);
-	
 		}
+	}
 	
-	}while (::FindNextFile(hFindFile,&wfd));
-	
-	
-	::FindClose(hFindFile);
-#endif	
+	globfree(&globbuf);
 
 	//delete the old menu
 	if(AvPMenu_Multiplayer_LoadIPAddress) delete [] AvPMenu_Multiplayer_LoadIPAddress;
@@ -572,7 +551,6 @@ void SaveIPAddress(const char* name,const char* address)
 	fwrite(address,1,strlen(address)+1,file);
 	
 	fclose(file);
-	
 }
 
 void LoadIPAddress(const char* name)
@@ -614,54 +592,49 @@ List<char*> CustomLevelNameList;
 void BuildMultiplayerLevelNameArray()
 {
 	char buffer[256];
+
 	//only want to do this once
 	if(MultiplayerLevelNames) return;
 
 	//first do a search for custom level rifs
 	// allow a wildcard search
 
-	fprintf(stderr, "STUB: BuildMultiplayerLevelNameArray()\n");
-#if 0
-	WIN32_FIND_DATA wfd;
-	const char* load_name="avp_rifs\\custom\\*.rif";
-
-	HANDLE hFindFile = ::FindFirstFile(load_name,&wfd);
+	const char* load_name="avp_rifs/custom/*.rif";
 	
-	if (INVALID_HANDLE_VALUE != hFindFile)
-	{
-		char* custom_string = GetTextString(TEXTSTRING_CUSTOM_LEVEL); 
-		do
-		{
-			if
-			(
-				!(wfd.dwFileAttributes &
-					(FILE_ATTRIBUTE_DIRECTORY
-					|FILE_ATTRIBUTE_SYSTEM
-					|FILE_ATTRIBUTE_HIDDEN))
-					// not a directory, hidden or system file
-			)
-			{
-				strcpy(buffer,wfd.cFileName);
-				char* dotpos=strchr(buffer,'.');
+	glob_t globbuf;
+	
+	if (glob(load_name, 0, NULL, &globbuf) == 0) {
+		char* custom_string = GetTextString(TEXTSTRING_CUSTOM_LEVEL);
+		int cs_len = strlen(custom_string);
+		
+		for (unsigned int i = 0; i < globbuf.gl_pathc; i++) {
+			struct stat buf;
+			
+			if (stat(globbuf.gl_pathv[i], &buf) == -1)
+				continue;
+			
+			if (S_ISREG(buf.st_mode) && (access(globbuf.gl_pathv[i], R_OK) == 0)) {
+				char *filename = strrchr(globbuf.gl_pathv[i], '/');
+				if (filename)
+					filename++;
+				else
+					filename = globbuf.gl_pathv[i];
+					
+				char* name=new char[strlen(filename)+cs_len+3+1];
+				
+				strcpy(name, filename);
+				char* dotpos=strrchr(name,'.');
 				if(dotpos) *dotpos=0;
-				strcat(buffer," (");
-				strcat(buffer,custom_string);
-				strcat(buffer,")");
+				strcat(name," (");
+				strcat(name,custom_string);
+				strcat(name,")");
 
-				char* name=new char[strlen(buffer)+1];
-				strcpy(name,buffer);
-
-				CustomLevelNameList.add_entry(name);
-	
+				CustomLevelNameList.add_entry(name);				
 			}
-	
-		}while (::FindNextFile(hFindFile,&wfd));
-	
-	
-		::FindClose(hFindFile);
+		}
+		globfree(&globbuf);
 	}
-#endif
-
+	
 	NumCustomLevels = CustomLevelNameList.size();
 
 
@@ -760,7 +733,6 @@ void BuildMultiplayerLevelNameArray()
 	}
 	elementPtr->b.MaxSliderValue = NumMultiplayerLevels-1;
 	elementPtr->d.TextSliderStringPointer = MultiplayerLevelNames;
-
 }
 
 
@@ -860,7 +832,6 @@ int GetLocalMultiplayerLevelIndex(int index,char* customLevelName,int gameType)
 	}
 
 	return -1;
-	
 }
 
 };
