@@ -65,6 +65,7 @@ Hopefully all the necessary file loading changes were made.  Please let me
 know if something goes wrong.
 ***
 
+The next line can be ignored for now:
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 
 If the version you want to use is not the Gold Edition, download

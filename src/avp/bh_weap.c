@@ -31,7 +31,6 @@
 #include "huddefs.h"
 #include "ai_sight.h"
 #include "targeting.h"
-#include "inventry.h"
 #include "game_statistics.h"
 
 #include "particle.h"

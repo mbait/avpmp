@@ -228,7 +228,7 @@ namespace AwTl
 						db_log1(("AW: Potential Memory Leaks Detected!!!"));
 					}
 					#ifdef _CPPRTTI
-						#warning "Run-Time Type Identification (RTTI) is enabled"
+						//#warning "Run-Time Type Identification (RTTI) is enabled"
 						for (Iterator itLeak(*this) ; !itLeak.Done() ; itLeak.Next())
 						{
 							db_logf1(("\tAW Object not deallocated: Type: %s RefCnt: %u",typeid(*itLeak.Get()).name(),itLeak.Get()->m_nRefCnt));
@@ -238,7 +238,7 @@ namespace AwTl
 							db_log1(("AW: Object dump complete"));
 						}
 					#else // ! _CPPRTTI
-						#warning "Run-Time Type Identification (RTTI) is not enabled - memory leak checking will not report types"
+						//#warning "Run-Time Type Identification (RTTI) is not enabled - memory leak checking will not report types"
 						unsigned nRefs(0);
 						for (Iterator itLeak(*this) ; !itLeak.Done() ; itLeak.Next())
 						{

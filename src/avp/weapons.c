@@ -196,6 +196,8 @@ struct Target PlayersTarget;
 int GrenadeLauncherSelectedAmmo;
 int LastHand;  // For alien claws and two pistols
 
+int AllowGoldWeapons = 0; // flag to indicate the Gold version weapons should be allowed
+
 char *GrenadeLauncherBulletNames[6] = {
 	"bulletF",	//05_
 	"bulletA",	//_
@@ -1637,6 +1639,12 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 					}
 				}
 			}
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                slotValidity=0;
+            }
 		} while(slotValidity==0);
 
 		if(newSlot != playerStatusPtr->SelectedWeaponSlot)
@@ -1704,6 +1712,12 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 					}
 				}
 			}
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                slotValidity=0;
+            }
 		} while(slotValidity==0);
         
 		if(newSlot != playerStatusPtr->SelectedWeaponSlot)
@@ -1723,6 +1737,12 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
         if( (requestedSlot != playerStatusPtr->SelectedWeaponSlot)
           &&(playerStatusPtr->WeaponSlot[requestedSlot].Possessed == 1) )
         { 
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                return 0;
+            }
 			if (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_PRED_DISC) {
 				if (playerStatusPtr->WeaponSlot[requestedSlot].PrimaryRoundsRemaining==0 
 					&& playerStatusPtr->WeaponSlot[requestedSlot].PrimaryMagazinesRemaining==0) {
@@ -1859,6 +1879,12 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
 					}
 				}
 			}
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                slotValidity=0;
+            }
 		}
 		while(slotValidity==0);
 
@@ -1923,6 +1949,12 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
 					}
 				}
 			}
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[newSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                slotValidity=0;
+            }
 		}
 		while(slotValidity==0);
         
@@ -1940,6 +1972,12 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
         if( (requestedSlot != currentSlot)
           &&(playerStatusPtr->WeaponSlot[requestedSlot].Possessed == 1) )
         { 
+            // Disallow Gold version weapons with regular version
+			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
+			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
+			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
+                return 0;
+            }
 			if (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_PRED_DISC) {
 				if (playerStatusPtr->WeaponSlot[requestedSlot].PrimaryRoundsRemaining==0 
 					&& playerStatusPtr->WeaponSlot[requestedSlot].PrimaryMagazinesRemaining==0) {

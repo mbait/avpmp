@@ -30,7 +30,6 @@
 #include "game_statistics.h"
 #include "avp_userprofile.h"
 #include "huddefs.h"
-#include "avp_menus.h"
 
 #include "savegame.h"
 #include "huffman.hpp"

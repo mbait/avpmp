@@ -4,13 +4,14 @@ CXX = gcc
 #CXX = gcc-3.0
 NASM = nasm
 
-#CFLAGS = -g -Wall -pipe -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
-CFLAGS = -g -Wall -pipe -O2 -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
-#CFLAGS = -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentiumpro -mcpu=pentiumpro -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+#CFLAGS = -g -Wall -pipe
+CFLAGS = -g -Wall -pipe -O2
+#CFLAGS = -DNDEBUG -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentiumpro -mcpu=pentiumpro
+
+CFLAGS += -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
 CXXFLAGS = $(CFLAGS)
 
 CFLAGS += $(shell sdl-config --cflags)
-#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext -lGL $(shell sdl-config --libs) -lopenal
 LDLIBS = $(shell sdl-config --libs) -lGL -lopenal
 
 # Debian SDL+NVIDIA workaround (change /usr/lib to the real location of the files)

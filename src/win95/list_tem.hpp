@@ -37,7 +37,7 @@
 #endif
 
 #ifdef NDEBUG
-	#define fail if (0)
+	static void fail(...) {}
 	#define list_fail_get_data_from_sentinel NULL
 	#define list_fail_add_entry_after NULL
 	#define list_fail_add_entry_before NULL

@@ -570,20 +570,28 @@ void InitNPCs(RIFFHANDLE h)
 	}
 #endif
 
-/* i believe this was added for the gold edition */
-#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO||REGULAR_EDITION)
 	if(AvP.PlayerType==I_Marine || Load_HNPC[HNPC_Marine])
 	{
-		//need to load the mdisk hierarchy
-		LoadedNPC tempnpc("mdisk.rif");
-		if (tempnpc.IsValid())
-		{
-			newnpcs.add_entry(tempnpc);
-		}
+        extern int AllowGoldWeapons;
 
+        // if the mdisk.rif file exists, add it.  Note: Only the Gold version
+        // has this file, so the OpenGameFile is called just to check if it
+        // is available.
+        FILE *rifFile = OpenGameFile(DIRECTORY_FOR_RIFS"mdisk.rif", 
+                FILEMODE_READONLY, FILETYPE_PERM);
+        if (rifFile != NULL)
+        {
+            CloseGameFile(rifFile);
+
+            //need to load the mdisk hierarchy
+            LoadedNPC tempnpc("mdisk.rif");
+            if (tempnpc.IsValid())
+            {
+                AllowGoldWeapons = 1;
+                newnpcs.add_entry(tempnpc);
+            }
+        }
 	}
-#endif
-	
 	
 	// see what we already have, unloading what we don't need, and ensuring we don't load a npc twice
 	for (LIF<LoadedNPC> i_loaded_npc(&loaded_npcs); !i_loaded_npc.done(); )
@@ -600,8 +608,10 @@ void InitNPCs(RIFFHANDLE h)
 			i_loaded_npc.delete_current();
 		}
 	}
-	
+
+#if debug	
 	if(!KeepMainRifFile)
+#endif	
 	{
 		//at this point we no longer need the main level rif file
 		unload_rif(h);
@@ -637,11 +647,13 @@ void InitNPCs(RIFFHANDLE h)
 	}
 	Set_Progress_Bar_Position(PBAR_NPC_START+PBAR_NPC_INTERVAL);
 
+#if debug
 	if(KeepMainRifFile)
 	{
 		Env_Chunk = old_env_chunk; // pop Env_Chunk
 	}
 	else
+#endif	
 	{
 		Env_Chunk=0;
 	}
