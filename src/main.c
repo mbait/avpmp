@@ -94,7 +94,7 @@ unsigned char *GetScreenShot24(int *width, int *height)
 	
 	if (surface->flags & SDL_OPENGL) {
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_BYTE, buf);
+		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, buf);
 	} else {
 		unsigned char *ptrd;
 		unsigned short int *ptrs;
@@ -338,6 +338,8 @@ int InitSDL()
 		if (foundit == 0)
 			return -1;
 	}
+	
+	LoadDeviceAndVideoModePreferences();
 	
 	surface = NULL;
 	
