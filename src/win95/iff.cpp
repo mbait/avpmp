@@ -1,8 +1,6 @@
-#include "advwin32.h"
 #include "iff.hpp"
 
 #include <stdio.h>
-#include <tchar.h>
 
 #if defined(_CPPRTTI) && !defined(NDEBUG)
 	#include <typeinfo>

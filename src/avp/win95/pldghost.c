@@ -1,6 +1,6 @@
 /* Patrick 14/7/97----------------------------
   Source for Multi-Player ghost object support header
-d  ----------------------------------------------------------------------*/
+  ----------------------------------------------------------------------*/
 #include "3dc.h"
 #include "inline.h"
 #include "module.h"
@@ -24,7 +24,7 @@ d  ----------------------------------------------------------------------*/
 #include "psndplat.h"
 #include "bh_corpse.h"
 #include "bh_weap.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -3669,16 +3669,20 @@ void MaintainGhosts(void)
 				{
 					if (ghostData->timer>ONE_FIXED*4)
 					{
-						ghostData->EventCounter += NormalFrameTime;
+						/* EventCounter - was in anon. union with currentAnimSequence */
+						ghostData->currentAnimSequence += NormalFrameTime;
 					}
 					else
 					{
-						ghostData->EventCounter += MUL_FIXED(NormalFrameTime,ghostData->timer)/4;
+						/* EventCounter */
+						ghostData->currentAnimSequence += MUL_FIXED(NormalFrameTime,ghostData->timer)/4;
 					}
 			   		
-					while (ghostData->EventCounter >= FLARE_PARTICLE_GENERATION_TIME)
+			   		/* EventCounter */
+					while (ghostData->currentAnimSequence >= FLARE_PARTICLE_GENERATION_TIME)
 					{
-						ghostData->EventCounter -= FLARE_PARTICLE_GENERATION_TIME;
+						/* EventCounter */
+						ghostData->currentAnimSequence -= FLARE_PARTICLE_GENERATION_TIME;
 						MakeFlareParticle(sbPtr->DynPtr);
 					}
 
@@ -3712,11 +3716,15 @@ void MaintainGhosts(void)
 							int scale = ONE_FIXED-ghostData->timer/PROX_GRENADE_LIFETIME;
 							scale = MUL_FIXED(scale,scale);
 							scale = MUL_FIXED(scale,scale)*8;
-							ghostData->EventCounter += NormalFrameTime + MUL_FIXED(NormalFrameTime,scale);
+							
+							/* EventCounter */
+							ghostData->currentAnimSequence += NormalFrameTime + MUL_FIXED(NormalFrameTime,scale);
 				   		}
-						while (ghostData->EventCounter >= PROX_GRENADE_SOUND_GENERATION_TIME)
+				   		/* EventCounter */
+						while (ghostData->currentAnimSequence >= PROX_GRENADE_SOUND_GENERATION_TIME)
 						{
-							ghostData->EventCounter -= PROX_GRENADE_SOUND_GENERATION_TIME;
+							/* EventCounter */
+							ghostData->currentAnimSequence -= PROX_GRENADE_SOUND_GENERATION_TIME;
 							Sound_Play(SID_PROX_GRENADE_ACTIVE,"d",&(dynPtr->Position));
 						}
 

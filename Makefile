@@ -1,7 +1,7 @@
 CC = gcc
 NASM = nasm
 
-CFLAGS = -g -Wall -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+CFLAGS = -g -Wall -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
 CXXFLAGS = $(CFLAGS)
 LDLIBS = -lm # /home/relnev/ElectricFence-2.2.2/libefence.a
 
@@ -14,10 +14,13 @@ ROOT = afont.c frustum.c kshape.c map.c maths.c md5.c mem3dc.c mem3dcpp.cpp modu
 AVP = ai_sight.c avpview.c bh_agun.c bh_ais.c bh_alien.c bh_binsw.c bh_cable.c bh_corpse.c bh_deathvol.c bh_debri.c bh_dummy.c bh_fan.c bh_far.c bh_fhug.c bh_gener.c bh_ldoor.c bh_lift.c bh_light.c bh_lnksw.c bh_ltfx.c bh_marin.c bh_mission.c bh_near.c bh_pargen.c bh_plachier.c bh_plift.c bh_pred.c bh_queen.c bh_rubberduck.c bh_selfdest.c bh_snds.c bh_spcl.c bh_swdor.c bh_track.c bh_types.c bh_videoscreen.c bh_waypt.c bh_weap.c bh_xeno.c bonusabilities.c cheatmodes.c comp_map.c comp_shp.c consolelog.cpp deaths.c decal.c detaillevels.c dynamics.c dynblock.c equipmnt.c equiputl.cpp extents.c game.c gameflow.c hmodel.c hud.c inventry.c language.c lighting.c load_shp.c los.c maps.c mempool.c messagehistory.c movement.c paintball.c particle.c pfarlocs.c pheromon.c pmove.c psndproj.c pvisible.c secstats.c sfx.c stratdef.c targeting.c track.c triggers.c weapons.c
 SHAPES = cube.c
 SUPPORT =
-AVPWIN95 = avpchunk.cpp
-FRONTEND =
+AVPWIN95 = avpchunk.cpp ffstdio.cpp hierplace.cpp kzsort.c langplat.c npcsetup.cpp objsetup.cpp pathchnk.cpp platsup.c pldghost.c projload.cpp strachnk.cpp system.c vision.c
+# usr_io.c
+FRONTEND = avp_envinfo.c avp_intro.cpp
+# avp_menudata.c
 GADGETS =
-WIN95 = huffman.cpp string.cpp
+WIN95 = animchnk.cpp animobs.cpp chnkload.cpp chnktype.cpp chunk.cpp chunkpal.cpp dummyobjectchunk.cpp enumchnk.cpp enumsch.cpp envchunk.cpp fail.c fragchnk.cpp gsprchnk.cpp hierchnk.cpp huffman.cpp iff.cpp iff_ilbm.cpp ilbm_ext.cpp io.c list_tem.cpp ltchunk.cpp media.cpp mishchnk.cpp obchunk.cpp oechunk.cpp our_mem.c plat_shp.c plspecfn.c shpchunk.cpp sndchunk.cpp sprchunk.cpp string.cpp toolchnk.cpp txioctrl.cpp wpchunk.cpp zsp.cpp
+# texio.c
 
 # AVP:
 # unused?: avpitems.cpp avppages.cpp
@@ -38,11 +41,13 @@ SHAPESSRC =	$(call SRCNAMES,$(SHAPES),avp/shapes)
 SHAPESOBJ =	$(call OBJNAMES,$(SHAPES),avp/shapes)
 AVPWIN95SRC =	$(call SRCNAMES,$(AVPWIN95),avp/win95)
 AVPWIN95OBJ =	$(call OBJNAMES,$(AVPWIN95),avp/win95)
+FRONTENDSRC =	$(call SRCNAMES,$(FRONTEND),avp/win95/frontend)
+FRONTENDOBJ =	$(call OBJNAMES,$(FRONTEND),avp/win95/frontend)
 WIN95SRC =	$(call SRCNAMES,$(WIN95),win95)
 WIN95OBJ =	$(call OBJNAMES,$(WIN95),win95)
 
-SRC = $(ROOTSRC) $(AVPSRC) $(SHAPESSRC) $(AVPWIN95SRC) $(WIN95SRC)
-OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(AVPWIN95OBJ) $(WIN95OBJ)
+SRC = $(ROOTSRC) $(AVPSRC) $(SHAPESSRC) $(AVPWIN95SRC) $(FRONTENDSRC) $(WIN95SRC)
+OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(AVPWIN95OBJ) $(FRONTENDOBJ) $(WIN95OBJ)
 
 .SUFFIXES: .asm
 

@@ -700,7 +700,9 @@ inline _base_HashTable<TYPE,ARG_TYPE,CMP_ARG_TYPE>::_base_HashTable(_base_HashTa
 {
 	for (unsigned i=0; i<tableSize; ++i) { chainPA[i] = NULL; }
 
-	for( HashTable<TYPE>::ConstIterator it(ht); !it.Done(); it.Next() )
+	
+//	for(HashTable<TYPE>::ConstIterator it(ht); !it.Done(); it.Next() )
+	for (_base_HashTable::ConstIterator it(ht); !it.Done(); it.Next() )
 	{
 		AddRegardless( it.Get() );
 	}

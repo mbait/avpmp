@@ -279,7 +279,7 @@ void Placed_Hierarchy_Sequence_Chunk::fill_data_block(char* data)
 	*(int*)data=num_extra_data;
 	data+=4;
 
-	for(i=0;i<num_extra_data;i++)
+	for(int i=0;i<num_extra_data;i++)
 	{
 		*(int*) data=extra_data[i];
 		data+=4;

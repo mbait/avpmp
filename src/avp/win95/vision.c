@@ -22,7 +22,7 @@
 ****************************************************************************************KJL*/
 #include "vision.h"
 #include "krender.h"
-#include "frustrum.h"
+#include "frustum.h"
 #include "avpview.h"
 #include "game_statistics.h"
 

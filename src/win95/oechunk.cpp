@@ -1,9 +1,9 @@
 #if objedit
-#include "Template.hpp"
+#include "template.hpp"
 #endif
 
-#include "OEChunk.h"
-#include "Chunk.hpp"
+#include "oechunk.h"
+#include "chunk.hpp"
 
 #ifdef cencon
 #define new my_new

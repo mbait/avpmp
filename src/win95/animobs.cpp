@@ -1,5 +1,5 @@
 #include "hierchnk.hpp"
-#include "Animobs.hpp"
+#include "animobs.hpp"
 #include "list_tem.hpp"
 #include <math.h>
 
@@ -329,7 +329,8 @@ Object_Animation_Sequence_Chunk * Object_Animation_Sequences_Chunk::get_sequence
 	List <Object_Animation_Sequence_Chunk *> seq_list;
 	list_sequences(&seq_list);
 	
-	for (LIF<Object_Animation_Sequence_Chunk *> sli(&seq_list); !sli.done(); sli.next())
+	LIF<Object_Animation_Sequence_Chunk *> sli(&seq_list);
+	for (; !sli.done(); sli.next())
 	{
 		Object_Animation_Sequence_Header_Chunk * oashc = sli()->get_header();
 		if (oashc)

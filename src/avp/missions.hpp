@@ -79,7 +79,6 @@
 			enum TEXTSTRING_ID I_TextString_Description,
 			OurBool bVisible_New
 		);
-		virtual ~MissionHint();
 
 		SCString* GetDesc(void) const;
 
@@ -91,7 +90,8 @@
 		);
 
 		static const List<MissionHint*>& GetAll(void);
-
+		
+		
 	// Protected methods:
 	protected:
 
@@ -104,7 +104,8 @@
 		OurBool bVisible_Val;
 
 		static List<MissionHint*> List_pMissionHint;
-
+	public:
+		virtual ~MissionHint();
 	};
 	// Inline methods:
 		inline SCString* MissionHint::GetDesc(void) const
@@ -180,7 +181,7 @@
 			enum MissionEffects MissionFX
 		);
 
-		~MissionObjective();
+		
 
 		static void TestCompleteNext(void);
 
@@ -241,7 +242,8 @@
 		{
 			return ( MOS_In == MOS_VisibleAndAchieved );
 		}
-
+	public:
+		~MissionObjective();
 	};
 
 		inline int MissionObjective::bAchieved(void) const

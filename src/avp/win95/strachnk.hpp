@@ -377,16 +377,16 @@ class SwitchDoorStrategy : public AvpStrat
 	SwitchDoorStrategy(const char* data_start,size_t);
 	
 	ObjectID AssocDoor;
-	union
-	{
+	//union
+	//{
 		int spare1;
-		struct
-		{
-			unsigned int r6_flags:20;
-			unsigned int r6_open_time:6; //in tenths of a second
-			unsigned int r6_close_time:6; //in tenths of a second
-		};
-	};
+	//	struct
+	//	{
+	//		unsigned int r6_flags:20;
+	//		unsigned int r6_open_time:6; //in tenths of a second
+	//		unsigned int r6_close_time:6; //in tenths of a second
+	//	};
+	//};
 	
 	int spare2;
 

@@ -266,7 +266,7 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 }
 
 
-Sprite_Header_Chunk::write_file(const char* fname)
+int Sprite_Header_Chunk::write_file(const char* fname)
 {
 	HANDLE rif_file;
 
@@ -287,7 +287,7 @@ Sprite_Header_Chunk::write_file(const char* fname)
 	return 0;
 }
 
-Sprite_Header_Chunk::output_chunk(HANDLE & hand)
+BOOL Sprite_Header_Chunk::output_chunk(HANDLE & hand)
 {
 	unsigned long junk;
 	BOOL ok;

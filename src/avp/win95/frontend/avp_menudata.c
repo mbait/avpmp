@@ -4,19 +4,19 @@
 #include "stratdef.h"
 #include "platform.h"
 #include "gamedef.h"
-#include "hudgfx.h"
+//#include "hudgfx.h"
 #include "usr_io.h"
 
-#include "AvP_Menus.h"
-#include "AvP_UserProfile.h"
+#include "avp_menus.h"
+#include "avp_userprofile.h"
 
-#include "GammaControl.h"
+#include "gammacontrol.h"
 #include "bh_types.h"
 #include "pldnet.h"
 
-#include "AvP_MP_Config.h"
-#include "DetailLevels.h"
-#include "CD_player.h"
+#include "avp_mp_config.h"
+#include "detaillevels.h"
+#include "cd_player.h"
 
 #define MPLAYER_SUPPORT 1
 

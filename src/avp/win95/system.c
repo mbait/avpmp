@@ -13,7 +13,7 @@
 #include "bh_far.h"
 #include "pheromon.h"
 #include "huddefs.h"
-#include "hudgfx.h"
+//#include "hudgfx.h"
 #include "font.h"
 #include "bh_gener.h"
 #include "pvisible.h"
@@ -31,7 +31,7 @@ New sound system
 #include "progress_bar.h"
 #include "bh_rubberduck.h"
 #include "game_statistics.h"
-#include "CDTrackSelection.h"
+#include "cdtrackselection.h"
 
 
 // EXTERNS

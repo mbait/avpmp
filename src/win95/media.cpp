@@ -1,4 +1,3 @@
-#include "advwin32.h"
 #include "media.hpp"
 
 void * MediaMedium::GetWriteBuffer(unsigned * pSize, unsigned /*nDesiredSize*/)

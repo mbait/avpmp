@@ -5,6 +5,8 @@
 #error "ffread.hpp requires C++ compilation"
 #endif
 
+#include "fixer.h"
+
 /*
 
 Fastfile format:
@@ -28,7 +30,6 @@ Fastfile format:
 */
 
 #include <stddef.h>
-#include <windows.h>
 #include "list_tem.hpp"
 
 enum FFError

@@ -3,9 +3,9 @@
 #include "module.h"
 #include "stratdef.h"
 #include "gamedef.h"
-#include "AvP_EnvInfo.h"
-#include "AvP_UserProfile.h"
-#include "AvP_MP_Config.h"
+#include "avp_envinfo.h"
+#include "avp_userprofile.h"
+#include "avp_mp_config.h"
 #include "pldnet.h"
 
 static enum AVP_ENVIRONMENT_ID MarineEpisodes[] =

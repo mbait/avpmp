@@ -5,7 +5,7 @@
 #endif
 
 #include <stdlib.h>
-#include <string.hpp>
+//#include <string.hpp>
 
 #include "list_tem.hpp"
 #include "chnkload.hpp"
@@ -948,8 +948,10 @@ void add_placed_hierarchy(Placed_Hierarchy_Chunk* phc,const char* fname,const ch
 	List<Chunk*> chlist;
 	phc->lookup_child("INDSOUND",chlist);
 	phtt->num_sounds=0;
+	
 	//find the highest index
-	for(LIF<Chunk*> chlif(&chlist);!chlif.done();chlif.next())
+	LIF<Chunk*> chlif(&chlist);
+	for(; !chlif.done(); chlif.next())
 	{
 		Indexed_Sound_Chunk* isc=(Indexed_Sound_Chunk*)chlif();
 		phtt->num_sounds=max(phtt->num_sounds,isc->index+1);
@@ -3178,7 +3180,9 @@ void setup_generators (Environment_Data_Chunk * envd)
 			//go through the list to find the number of each type of start location
 			List<Chunk *> cl;
 			soc->lookup_child("AVPGENER",cl);
-			for (LIF<Chunk *> cli(&cl); !cli.done(); cli.next())
+			
+			LIF<Chunk *> cli(&cl);
+			for (; !cli.done(); cli.next())
 			{
 				AVP_Generator_Chunk * agc = (AVP_Generator_Chunk *)cli();
 				if(agc->type) continue;
@@ -3272,7 +3276,9 @@ static void add_mission_to_list(AVP_Strategy_Chunk * asc,ObjectID id)
 
 void SetupMissionObjectives()
 {
-	for(LIF<MISSION_SETUP*> mlif(&mos_list);!mlif.done();mlif.next())
+	LIF<MISSION_SETUP*> mlif(&mos_list);
+	
+	for(; !mlif.done(); mlif.next())
 	{
 		MissionObjectiveStrategy * mos=(MissionObjectiveStrategy*) mlif()->asc->Strategy;
 		assert (mos->mission_description_string>=0 && mos->mission_description_string<450);

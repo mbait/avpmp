@@ -3,8 +3,7 @@
 
 #include "3dc.h"
 
-#include <conio.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 
 #include "inline.h"
 
@@ -19,7 +18,7 @@
 
 #include <stdio.h>
 #include <conio.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 
 #include "system.h"
 #include "equates.h"

@@ -545,7 +545,7 @@ void InitNPCs(RIFFHANDLE h)
 	
 	List<LoadedNPC> newnpcs;
 
-	for(i=0;i<HNPC_Last;i++)
+	for(int i=0;i<HNPC_Last;i++)
 	{
 		if(Load_HNPC[i])
 		{

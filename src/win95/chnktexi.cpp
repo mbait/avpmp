@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <string.h>
-#include <string.hpp>
+#include "string.hpp"
 #ifndef DB_LEVEL
 	#define DB_LEVEL 4
 #endif

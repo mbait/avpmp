@@ -1,7 +1,7 @@
 #ifndef _animchnk_hpp
 #define _animchnk_hpp
 #include "chunk.hpp"
-#include "Chnktype.hpp"
+#include "chnktype.hpp"
 
 struct TEXANIM;
 

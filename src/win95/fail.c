@@ -25,13 +25,3 @@ fail (const char * format, ...)
 
   exit (EXIT_FAILURE);
 }
-
-void FAILHandleCompilerWarningMessage(void)
-{
-	int temp;
-
-	temp = D3DRMMAP_PERSPCORRECT;
-	temp = D3DRMMAP_WRAPU;
-	temp = D3DRMMAP_WRAPV;
-	temp = D3DRMGROUP_ALLGROUPS;
-}	

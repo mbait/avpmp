@@ -298,6 +298,7 @@ Object_Hierarchy_Alternate_Shape_Set_Chunk::Object_Hierarchy_Alternate_Shape_Set
 Object_Hierarchy_Alternate_Shape_Set_Chunk::Object_Hierarchy_Alternate_Shape_Set_Chunk(Chunk_With_Children* parent,const char* data,size_t)
 :Chunk(parent,"OBHALTSH")
 {
+	int i;
 		
 	Shape_Set_Num=*(int*)data;
 	data+=4;
@@ -310,7 +311,7 @@ Object_Hierarchy_Alternate_Shape_Set_Chunk::Object_Hierarchy_Alternate_Shape_Set
 	int num_shapes=*(int*)data;
 	data+=4;
 
-	for(int i=0;i<num_shapes;i++)
+	for(i=0;i<num_shapes;i++)
 	{
 		Replaced_Shape_Details* rsd=new Replaced_Shape_Details;
 		

@@ -1,11 +1,11 @@
 #ifndef _oechunk_h_
 #define _oechunk_h_ 1
 
-#include "Chunk.hpp"
+#include "chunk.hpp"
 #include "obchunk.hpp"
 
 #if objedit
-#include "Template.hpp"
+#include "template.hpp"
 #endif
 //#if engine
 //#define VECTOR VECTORCH

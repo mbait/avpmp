@@ -48,11 +48,13 @@ namespace IFF
 	#else
 		inline void DisplayMessage(char const * pszTitle,char const * pszText)
 		{
-			::printf("%s\n%s\n",pszTitle,pszText);
+			::printf("DisplayMessage\n%s\n%s\n",pszTitle,pszText);
+		/*
 			while (::kbhit())
 				::getch();
 			while (!::kbhit() || '\r' != ::getch())
 				;
+		*/
 		}
 	#endif
 	
@@ -121,17 +123,17 @@ namespace IFF
 		#undef BYTE
 		#pragma message("BYTE was defined - undefining")
 	#endif
-	typedef signed char BYTE;
-	typedef unsigned char UBYTE;
+	typedef int8_t BYTE;
+	typedef uint8_t UBYTE;
 
-	typedef signed short INT16;
-	typedef unsigned short UINT16;
+	typedef int16_t INT16;
+	typedef uint16_t UINT16;
 
-	typedef signed INT32;
-	typedef unsigned UINT32;
+	typedef int32_t INT32;
+	typedef uint32_t UINT32;
 
-	typedef signed __int64 INT64;
-	typedef unsigned __int64 UINT64;
+	typedef int64_t INT64;
+	typedef uint64_t UINT64;
 
 	struct RGBTriple
 	{

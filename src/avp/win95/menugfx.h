@@ -11,7 +11,8 @@ extern "C" {
 typedef struct menugraphic {
 	char *filename;
 	int image_number;
-	LPDIRECTDRAWSURFACE image_ptr;
+//	LPDIRECTDRAWSURFACE image_ptr;
+
 	AW_BACKUPTEXTUREHANDLE hBackup;
 	short destx;
 	short desty;

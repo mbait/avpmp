@@ -10,8 +10,6 @@
 #include "huffman.hpp"
 
 
-#include <mbstring.h>
-
 #ifdef cencon
 #define new my_new
 #endif
@@ -644,7 +642,8 @@ void File_Chunk::post_input_processing()
 		child_lists.delete_first_entry();
 	}
 
-	for (LIF<Shape_Chunk *> sli(&shplist); !sli.done(); sli.next())
+	LIF<Shape_Chunk *> sli(&shplist);
+	for (; !sli.done(); sli.next())
 	{
 		Shape_Chunk::max_id = max (Shape_Chunk::max_id,sli()->get_header()->file_id_num);	
 	}

@@ -1,5 +1,4 @@
-#include "advwin32.h"
-#include "iff_ILBM.hpp"
+#include "iff_ilbm.hpp"
 
 IFF_IMPLEMENT_DYNCREATE("ILBM","BMHD",IlbmBmhdChunk)
 IFF_IMPLEMENT_DYNCREATE("ILBM","CMAP",IlbmCmapChunk)

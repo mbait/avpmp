@@ -586,14 +586,3 @@ Chunk* Chunk_With_Children::DynCreate(const char* data)
 	}
 	return new Miscellaneous_Chunk(this,data,(data + 12), (*(int *) (data + 8))-12);
 }
-
-
-
-
-
-
-
-
-
-
-

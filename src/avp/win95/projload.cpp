@@ -4,8 +4,6 @@
 #include "inline.h"
 #include "module.h"
 
-#include <string.hpp>
-
 #include "list_tem.hpp"
 #include "chnkload.hpp"
 #include "projload.hpp"
@@ -45,7 +43,7 @@
 #include "pvisible.h"
 #include "psndplat.h"
 #include "jsndsup.h"
-#include "AvpReg.hpp"
+#include "avpreg.hpp"
 #include "ffstdio.h"
 
 #include "decal.h"
@@ -172,7 +170,9 @@ void setup_paths(RIFFHANDLE h)
 	if(!pathlist.size()) return;
 	
 	//find the highest path index
-	for(LIF<Chunk*> plif(&pathlist);!plif.done();plif.next())
+	LIF<Chunk*> plif(&pathlist);
+	
+	for(; !plif.done(); plif.next())
 	{
 		AVP_Path_Chunk* apc=(AVP_Path_Chunk*) plif();
 		PathArraySize=max(PathArraySize,apc->PathID+1);	
@@ -200,7 +200,7 @@ void setup_paths(RIFFHANDLE h)
 		
 		path->modules_in_path=(AIMODULE**)PoolAllocateMem(sizeof(AIMODULE*)*length);
 	
-		for(i=0;i<apc->PathLength;i++)
+		for(int i=0;i<apc->PathLength;i++)
 		{
 			Object_Chunk* path_object=h->fc->get_object_by_index(apc->Path[i].module_index);
 			if(!path_object)continue;
@@ -219,7 +219,7 @@ void setup_paths(RIFFHANDLE h)
 
 		if(apc->flags & PathFlag_BackAndForth)
 		{
-			for(i=path->path_length-2;i>0;i--)
+			for(int i=path->path_length-2;i>0;i--)
 			{
 				path->modules_in_path[path->path_length]=path->modules_in_path[i];
 				path->path_length++;
@@ -465,7 +465,9 @@ Global_Hierarchy_Store::Global_Hierarchy_Store (RIFFHANDLE h)
 
 	//find the highest sound index
 	int max_index=-1;
-	for(LIF<Chunk*> chlif(&chlist);!chlif.done();chlif.next())
+	LIF<Chunk*> chlif(&chlist);
+	
+	for(; !chlif.done(); chlif.next())
 	{
 		Indexed_Sound_Chunk* isc=(Indexed_Sound_Chunk*)chlif();
 		max_index=max(max_index,isc->index);
@@ -664,7 +666,8 @@ void Global_Hierarchy_Store::setup_alternate_shape_sets(List <Object_ShapeNum_Pa
 	List<Chunk*> chlist;
 	fc->lookup_child("OBHALTSH",chlist);
 	
-	for(LIF<Chunk*> chlif(&chlist);!chlif.done();chlif.next())
+	LIF<Chunk*> chlif(&chlist);
+	for(; !chlif.done(); chlif.next())
 	{
 		Object_Hierarchy_Alternate_Shape_Set_Chunk* ohassc=(Object_Hierarchy_Alternate_Shape_Set_Chunk*) chlif();
 
@@ -688,7 +691,9 @@ void Global_Hierarchy_Store::setup_alternate_shape_sets(List <Object_ShapeNum_Pa
 			hsr->replacement_id = 0;
 			
 			//find the shape num for the new shape
-			for(LIF<Object_ShapeNum_Pair*> olif(&osnp_lst);!olif.done();olif.next())
+			LIF<Object_ShapeNum_Pair*> olif(&osnp_lst);
+			
+			for(; !olif.done(); olif.next())
 			{
 				if(!strcmp(olif()->ob->object_data.o_name,rlif()->new_object_name))
 				{
@@ -793,7 +798,7 @@ void Global_Hierarchy_Store::setup_alternate_shape_sets(List <Object_ShapeNum_Pa
 			
 
 			int pos=0;
-			for(i=0;i<num_found_sets;i++)
+			for(int i=0;i<num_found_sets;i++)
 			{
 				Hierarchy_Alternate_Shape_Set* hass=found_sets[i];
 				for(int j=0;j<hass->num_replaced_shapes;j++)
@@ -1925,7 +1930,8 @@ BOOL copy_rif_data (RIFFHANDLE h, int flags,int progress_start,int progress_inte
 		MainScene.sm_module += 2;
 		MainScene.sm_marray += 1;
 		
-		for (int i=0; i<num_modules; i++)
+		int i;
+		for (i=0; i<num_modules; i++)
 		{
 			MainScene.sm_module[i] = Empty_Module;
 			MainScene.sm_marray[i] = &MainScene.sm_module[i];
@@ -2431,7 +2437,8 @@ BOOL copy_rif_data (RIFFHANDLE h, int flags,int progress_start,int progress_inte
 						if(adj_ai_module!=this_ai_module_index)
 						{
 							//make sure not already in list
-							for(LIF<int> adjlif(&adjacent_aimodule_list);!adjlif.done();adjlif.next())
+							LIF<int> adjlif(&adjacent_aimodule_list);
+							for(; !adjlif.done();adjlif.next())
 							{
 								if(adjlif()==adj_ai_module) break;
 							}
@@ -2483,7 +2490,8 @@ BOOL copy_rif_data (RIFFHANDLE h, int flags,int progress_start,int progress_inte
 								if(adj_ai_module!=this_ai_module_index)
 								{
 									//make sure not already in list
-									for(LIF<int> adjlif(&adjacent_aimodule_list);!adjlif.done();adjlif.next())
+									LIF<int> adjlif(&adjacent_aimodule_list);
+									for(; !adjlif.done();adjlif.next())
 									{
 										if(adjlif()==adj_ai_module) break;
 									}
@@ -2860,10 +2868,12 @@ static int first_free_pos = GLS_NOTINLIST;
 // reserves the next avaialbe position in the main shape list and returns it
 int GetMSLPos(void)
 {
+	int pos;
+	
 	if (GLS_NOTINLIST == first_free_pos)
 		first_free_pos = msl_term_pos = start_of_loaded_shapes = load_precompiled_shapes();
 
-	for (int pos = first_free_pos; pos < msl_term_pos && FREE_SHAPE != mainshapelist[pos]; ++pos)
+	for (pos = first_free_pos; pos < msl_term_pos && FREE_SHAPE != mainshapelist[pos]; ++pos)
 		;
 
 	first_free_pos = pos+1;
@@ -3256,7 +3266,9 @@ void LoadModuleData()
 		{
 			if(this_mod->m_vmptr[j].vmod_data.vmodidata)
 			{
-				for(int k=j+1;k<vmod_no;k++)
+				int k;
+				
+				for(k=j+1;k<vmod_no;k++)
 				{
 					if(*((int *)this_mod->m_vmptr[k].vmod_name)>=this_mod->m_vmptr[j].vmod_data.vmodidata)
 					{

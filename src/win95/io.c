@@ -1,6 +1,6 @@
 #include "3dc.h"
 
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <string.h>
 
 #include "inline.h"
@@ -600,11 +600,12 @@ void (*SetVideoMode[]) (void) = {
 
 */
 
-void InitialiseSystem(HINSTANCE hInstance, int nCmdShow)
-
+void InitialiseSystem()
 {
 	BOOL 		rc;
-
+	HINSTANCE hInstance = 0;
+	int nCmdShow = 1;
+	
     /*
 		Pick up processor type
 	*/
@@ -1763,15 +1764,6 @@ void InitPrintQueue(void)
 	i.e. AFTER SetVideoMode.
 	AND ONLY ONCE!!!!
 */
-
-#if debug || PreBeta
-extern LPDIRECTDRAWSURFACE lpDDDbgFont;
-#endif
-
-
-
-
-
 
 
 
