@@ -1825,7 +1825,7 @@ namespace AwTl {
 					else
 					{
 						pParams->dataP = va_arg(ap,void const *);
-						db_logf4(("\tData Pointer = %p",pParams->dataP));
+						db_logf4(("\tData Pointer = %p",pParams->dataP.voidP));
 					}
 					break;
 				case 'r':
