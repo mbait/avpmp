@@ -17,8 +17,6 @@ extern "C" {
 #include "stratdef.h"
 #include "gamedef.h"
 #include "bh_types.h"
-#include "d3dmacs.h"
-//#include "string.h"
 
 #include "hudgfx.h"
 #include "huddefs.h"
