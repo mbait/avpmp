@@ -35,7 +35,10 @@
 
 
 #include "awtexld.h"
+
+#if 0 /* SBF - commented out */
 #include "alt_tab.h"
+#endif
 
 /*
 	#define for experimental purposes 
@@ -43,16 +46,6 @@
 */
 
 #define DefinedTextureType TextureTypePPM
-
-
-#if 0
-#if debug
-int tripa = 100;
-int tripb = 100;
-int tripc = 0;
-#define trip_up tripa = tripb / tripc;
-#endif
-#endif
 
 
 /*
@@ -857,10 +850,6 @@ void SpriteResizing(SHAPEHEADER *sptr)
 	}
 
 
-	/* TEST */
-	/*trip_up;*/
-
-
 	texture_defn_index = (pheader->PolyColour >> TxDefn);
 	txah_ptr = (TXANIMHEADER **) shape_textures[texture_defn_index];
 
@@ -1226,10 +1215,6 @@ void FindImageExtents(IMAGEHEADER *ihdr, int numuvs, int *uvdata, IMAGEEXTENTS *
 
 				if(e->u_high == smallint) e->u_high = e_curr->u_high;
 				if(e->v_high == smallint) e->v_high = e_curr->v_high;
-
-
-				/* TEST */
-				/*trip_up;*/
 
 			}
 

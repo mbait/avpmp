@@ -218,7 +218,7 @@
 			ProjChar ProjCh
 		) const
 		{
-			return AAFontWidths[ProjCh];
+			return AAFontWidths[(unsigned char)ProjCh];
 		}
 		
 		inline int GetHeight(void) const

@@ -360,7 +360,7 @@ void MakeLightElement(VECTORCH *positionPtr, enum LIGHTELEMENT_BEHAVIOUR_ID beha
 			lightElementPtr->LifeTime = 0;
 			break;
 		}
-		default:
+		default: ;
 	}
 }
 

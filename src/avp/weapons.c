@@ -11251,7 +11251,7 @@ int FriendlyFireDamageFilter(DAMAGE_PROFILE *damage) {
 			return(VulnerableToPredatorDamage);
 			break;
 			
-		default:
+		default: ;
 	}
 
 	return TRUE;

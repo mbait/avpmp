@@ -829,7 +829,7 @@ extern void CurrentGameStats_CreatureKilled(STRATEGYBLOCK *sbPtr,SECTION_DATA *s
 			break;
 		}
 		
-		default:
+		default: ;
 	}
 }
 

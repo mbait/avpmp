@@ -1,6 +1,8 @@
 #ifndef __FILES_H__
 #define __FILES_H__
 
+#include <time.h>
+
 #define	FILEMODE_READONLY	0x01
 #define	FILEMODE_WRITEONLY	0x02
 #define	FILEMODE_READWRITE	0x04

@@ -57,6 +57,8 @@ int UsingDataBase = 0;
 
 /* HUD globals */
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
+
+#if 0 // SBF - unused
 static int TrackerPolyBuffer[25];
 static int ScanlinePolyBuffer[25];
 static int MotionTrackerWidth;
@@ -67,6 +69,8 @@ static RECT MT_BarDestRect;
 static int MT_BlipHeight;
 static int MT_BlipWidth;
 struct LittleMDescTag *MTLittleMPtr;
+#endif
+
 enum HUD_RES_ID HUDResolution;
 
 /* display co-ords, etc. */
@@ -107,9 +111,9 @@ void BLTPredatorNumericsToHUD(void);
 
 void LoadDDGraphic(struct DDGraphicTag *DDGfxPtr, char *Filename);
 
-
+#if 0 // SBF - unused
 static void SetupScanlinePoly(char const *filenamePtr, int width);
-
+#endif
 
 extern void D3D_InitialiseMarineHUD(void);
 extern void D3D_BLTMotionTrackerToHUD(int scanLineSize);
@@ -133,14 +137,17 @@ void LoadDDGraphic(struct DDGraphicTag *DDGfxPtr, char *Filename)
 ****************************************/
 void PlatformSpecificInitMarineHUD(void)
 {
-	if ((ScanDrawMode != ScanDrawDirectDraw) && (ZBufferOn==ZBufferMode))
+// SBF
+//	if ((ScanDrawMode != ScanDrawDirectDraw) && (ZBufferOn==ZBufferMode))
+
 	{
 		D3D_InitialiseMarineHUD();
 		LoadCommonTextures();
 //		ChromeImageNumber = CL_LoadImageOnce("Common\\chromelike.RIM",LIO_D3DTEXTURE|LIO_RELATIVEPATH|LIO_RESTORABLE);
 		return;
 	}
-	
+
+#if 0 // SBF - unused	
 	//SelectGenTexDirectory(ITI_TEXTURE);
 
 	/* set game mode: different, though for multiplayer game */
@@ -250,6 +257,7 @@ void PlatformSpecificInitMarineHUD(void)
 
 
 	LoadDDGraphic(&PauseDDInfo,"paused");	
+#endif // SBF
 }
 
 void PlatformSpecificInitPredatorHUD(void)
@@ -272,6 +280,7 @@ void PlatformSpecificInitPredatorHUD(void)
 	}
 	return;
 
+#if 0 // SBF - unused
 	int gfxID = NO_OF_PREDATOR_HUD_GFX;
 	
 	if (ScreenDescriptorBlock.SDB_Width>=640)
@@ -305,6 +314,7 @@ void PlatformSpecificInitPredatorHUD(void)
 		LoadDDGraphic(&E3FontDDInfo,"e3font");	
 	}
   	LoadDDGraphic(&PauseDDInfo,"paused");	
+#endif // SBF
 }
 
 
@@ -327,7 +337,8 @@ void PlatformSpecificInitAlienHUD(void)
 	}
 
 	return;
-	
+
+#if 0 // SBF - unused	
 	int gfxID = NO_OF_ALIEN_HUD_GFX;
 
 	if (ScreenDescriptorBlock.SDB_Width==640)
@@ -362,6 +373,7 @@ void PlatformSpecificInitAlienHUD(void)
 		LoadDDGraphic(&E3FontDDInfo,"e3font");	
 	}
 	LoadDDGraphic(&PauseDDInfo,"paused");	
+#endif // SBF
 }
 
 
@@ -610,7 +622,7 @@ extern void BLTMarineNumericsToHUD(enum MARINE_HUD_DIGIT digitsToDraw)
     while(digit--);
 }	
 
-#if 0 /* TODO: remove */
+#if 0 /* SBF - TODO: remove */
 static void BLTDigitToHUD(char digit, int x, int y, int font)
 {
 //	HRESULT ddrval;
@@ -693,7 +705,7 @@ void BLTGunSightToScreen(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsightS
 }
 
 
-#if 0 /* TODO: remove this directdraw code */
+#if 0 /* SBF - TODO: remove this directdraw code */
 
 
 /*KJL************************
@@ -1423,7 +1435,7 @@ int BLTFontOffsetToHUD(PFFONT* font , int xdest, int ydest, int offset)
 
 
 
-#endif
+#endif // SBF
 
 
 
@@ -1432,7 +1444,7 @@ int BLTFontOffsetToHUD(PFFONT* font , int xdest, int ydest, int offset)
 void YClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2);
 void XClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2);
 
-#if 0 /* not used */
+#if 0 /* SBF - not used */
 static void DrawMotionTrackerPoly(void)
 {
 	struct VertexTag vertex[4];
@@ -1531,7 +1543,7 @@ static void DrawMotionTrackerPoly(void)
 		Draw_Item_2dTexturePolygon(TrackerPolyBuffer);
 	}
 }
-#endif
+#endif /* SBF */
 
 void YClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2)
 {
@@ -1606,6 +1618,7 @@ void XClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2)
 	}
 }				    
 
+#if 0 // SBF - unused
 static void SetupScanlinePoly(char const *filenamePtr, int width)
 {
 	int imageNumber;
@@ -1630,86 +1643,6 @@ static void SetupScanlinePoly(char const *filenamePtr, int width)
 
 	ScanlinePolyBuffer[20] = Term;
 }
-
-#define MAX_MESSAGE_LENGTH 50
-#define MESSAGE_FONT_WIDTH 5
-#define MESSAGE_FONT_HEIGHT 8
-extern void DrawOnScreenMessage(unsigned char *messagePtr)
-{
-	RECT srcRect;
-	int destX,destY;
-	int lengthOfMessage=0;
-	int messageFontHeight,messageFontWidth;
-
-	fprintf(stderr, "DrawOnScreenMessage(%s)\n", messagePtr);
-	
-	{
-		unsigned char *textPtr = messagePtr;
-
-		while(*textPtr++)
-		{
-			lengthOfMessage++;
-			if(lengthOfMessage>MAX_MESSAGE_LENGTH)
-			{
-				/* message is too long; this could indicate a corrupt ptr */
-				LOCALASSERT(0);
-				return;
-			}
-		}
-	}
-	if (HUDResolution == HUD_RES_LO)
-	{
-		messageFontWidth = MESSAGE_FONT_WIDTH;
-		messageFontHeight = MESSAGE_FONT_HEIGHT;
-		srcRect.top = 0;
-		srcRect.bottom = messageFontHeight;
-	}
-	else
-	{
-		messageFontWidth = MESSAGE_FONT_WIDTH*2;
-		messageFontHeight = MESSAGE_FONT_HEIGHT*2;
-		srcRect.left = 0;
-		srcRect.right = messageFontWidth;
-	}
-
-	destX = (ScreenDescriptorBlock.SDB_Width - (messageFontWidth+1)*lengthOfMessage)/2;
-	destX &= 0xfffffffe;
-	destY = ScreenDescriptorBlock.SDB_Height/2 - messageFontHeight*3;
-	
-
-	while(*messagePtr)
-	{
-		signed int letter;
-
-		letter = *messagePtr++;
-		letter -= 'A';
-
-		/* needs changing for other languages! */
-		if (letter>=0 && letter<=26)
-		{
-			if (HUDResolution == HUD_RES_LO)
-			{
-			   	srcRect.left = letter*messageFontWidth;
-			  	srcRect.right = srcRect.left+messageFontWidth;
-			}
-			else
-			{
-			   	srcRect.top = letter*messageFontHeight;
-			  	srcRect.bottom = srcRect.top+messageFontHeight;
-			}
-/*
-		   	lpDDSBack->BltFast
-		   	(
-		   		destX,destY,
-		   		E3FontDDInfo.LPDDS,
-		   		&srcRect,
-		   		DDBLTFAST_WAIT | DDBLTFAST_SRCCOLORKEY
-		   	);
-*/		   	
-		}
-		destX += messageFontWidth+2;
-	}
-}
-
+#endif // SBF
 
 }; // extern 

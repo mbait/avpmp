@@ -788,7 +788,7 @@ int NumNPCsFromThisGenerator(STRATEGYBLOCK* gen_sbptr)
 				}
 				break;
 									
-			default: // - do nothing
+			default: ; /* do nothing */
 		}
 		
 	}

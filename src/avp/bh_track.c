@@ -267,7 +267,7 @@ void TrackObjectBehaveFun(STRATEGYBLOCK* sbptr)
 		}
 		break;
 		
-		default:
+		default: ;
 	}
 
 	if(!track->playing) return;

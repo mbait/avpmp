@@ -5415,7 +5415,7 @@ void TimeScaleThingy()
 					DesiredTimeScale=MUL_FIXED(DesiredTimeScale,ONE_FIXED*.7);
 					break;
 					
-				default:
+				default: ;
 			}
 		}
 	}

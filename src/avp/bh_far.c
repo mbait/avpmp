@@ -148,6 +148,7 @@ void FarAlienBehaviour(STRATEGYBLOCK *sbPtr)
 		}
 		default:
 		{
+			descriptor=NULL;
 			LOCALASSERT(1==0); /* should never get here */
 		}
 	}

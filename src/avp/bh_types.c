@@ -2392,7 +2392,7 @@ void RequestState(STRATEGYBLOCK* sbptr, int message, STRATEGYBLOCK * SBRequester
 								lfxbb->current_state = LFXS_Flicking;
 							}
 							break;
-						default:
+						default: ;
 					}
 				}
 				

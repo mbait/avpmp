@@ -3874,7 +3874,9 @@ void AddShape(DISPLAYBLOCK *dptr, VIEWDESCRIPTORBLOCK *VDB_Ptr)
  	if(dptr->ObMorphCtrl)
 	{
 		LOCALASSERT(dptr->ObMorphCtrl->ObMorphHeader);
-		if(dptr->ObMorphCtrl->ObMorphHeader)
+
+		/* SBF - commented out */
+		/* if(dptr->ObMorphCtrl->ObMorphHeader) */
 	 	{
 			GetMorphDisplay(&MorphDisplay, dptr);
 			dptr->ObShape     = MorphDisplay.md_shape1;

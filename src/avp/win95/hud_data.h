@@ -50,6 +50,8 @@ static struct DigitPropertiesTag LoresMarineHUDDigitProperties[] =
   	{-61,25, MARINE_HUD_FONT_RED},
 	{-70,25, MARINE_HUD_FONT_RED},
 };
+
+#if 0 /* SBF - unused */
 static char *LoresMarineHUDGfxFilenamePtr[]=
 {
     {"blips.pg0"}, 	//MARINE_HUD_GFX_MOTIONTRACKERBLIP,
@@ -58,6 +60,8 @@ static char *LoresMarineHUDGfxFilenamePtr[]=
 	{"trakfont.pg0"},
 	{"bluebar.pg0"},
 };
+#endif /* SBF */
+
 #if 0
 static struct HUDFontDescTag LoresHUDFontDesc[] =
 {
@@ -94,6 +98,8 @@ static struct HUDFontDescTag LoresHUDFontDesc[] =
 
 };
 #endif
+
+#if 0 /* SBF - unused */
 static struct LittleMDescTag LoresHUDLittleM =
 {
 	80,8,  // source top,left
@@ -102,7 +108,7 @@ static struct LittleMDescTag LoresHUDLittleM =
 
 	7,7,   // screen x,y
 };
-
+#endif /* SBF */
 
 /* MARINE MED RES (width = 640)  */
 static struct DigitPropertiesTag MedresMarineHUDDigitProperties[] =
@@ -148,6 +154,8 @@ static struct DigitPropertiesTag MedresMarineHUDDigitProperties[] =
   	{-122,50, MARINE_HUD_FONT_RED},
 	{-140,50, MARINE_HUD_FONT_RED},
 };
+
+#if 0 /* SBF - unused */
 static char *MedresMarineHUDGfxFilenamePtr[]=
 {
     {"blipsHRz.pg0"}, 	//MARINE_HUD_GFX_MOTIONTRACKERBLIP,
@@ -156,6 +164,8 @@ static char *MedresMarineHUDGfxFilenamePtr[]=
 	{"trkfntmr.pg0"},
 	{"blubarmr.pg0"},
 };
+#endif /* SBF */
+
 #if 0
 static struct HUDFontDescTag MedresHUDFontDesc[] =
 {
@@ -192,6 +202,8 @@ static struct HUDFontDescTag MedresHUDFontDesc[] =
 
 };
 #endif
+
+#if 0 /* SBF - unused */
 static struct LittleMDescTag MedresHUDLittleM =
 {
 	120,14,  // source top,left
@@ -200,7 +212,7 @@ static struct LittleMDescTag MedresHUDLittleM =
 
 	10,10,   // screen x,y
 };
-
+#endif /* SBF */
 
 
 
@@ -250,6 +262,8 @@ static struct DigitPropertiesTag HiresMarineHUDDigitProperties[] =
   	{-122,55, MARINE_HUD_FONT_RED},
 	{-142,55, MARINE_HUD_FONT_RED},
 };
+
+#if 0 /* SBF - unused */
 static char *HiresMarineHUDGfxFilenamePtr[]=
 {
     {"blipsHRz.pg0"}, 	//MARINE_HUD_GFX_MOTIONTRACKERBLIP,
@@ -258,6 +272,8 @@ static char *HiresMarineHUDGfxFilenamePtr[]=
 	{"trkfnthr.pg0"},
 	{"blubarhr.pg0"},
 };
+#endif /* SBF */
+
 #if 0
 static struct HUDFontDescTag HiresHUDFontDesc[] =
 {
@@ -287,6 +303,8 @@ static struct HUDFontDescTag HiresHUDFontDesc[] =
 	},
 };
 #endif
+
+#if 0 /* SBF - unused */
 static struct LittleMDescTag HiresHUDLittleM =
 {
 	150,17,  // source top,left
@@ -295,26 +313,9 @@ static struct LittleMDescTag HiresHUDLittleM =
 
 	14,14,   // screen x,y
 };
+#endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#if 0 /* SBF - unused */
 
 /* PREDATOR */
 
@@ -408,6 +409,7 @@ static char *MedresAlienHUDGfxFilenamePtr[]=
    	{"ahMRTop.pg0"}, // ALIEN_HUD_GFX_TOP
     {"ahMRNum.pg0"}, // ALIEN_HUD_GFX_NUMBERS
 };
+
 #if 0
 static struct DigitPropertiesTag LoresAlienHUDDigitProperties[] =
 {
@@ -425,3 +427,6 @@ static struct DigitPropertiesTag MedresAlienHUDDigitProperties[] =
 	{274*2, 157*2+80, ALIEN_HUD_GFX_NUMBERS},
 };
 #endif
+
+#endif /* SBF */
+

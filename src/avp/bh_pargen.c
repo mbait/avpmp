@@ -228,7 +228,7 @@ void ParticleGeneratorBehaveFun(STRATEGYBLOCK* sbptr)
 				}
 				break;
 				
-				default:
+				default: ;
 			}
 		}
 

@@ -65,11 +65,13 @@ enum
 	, _AW_TLF_FORCE32BITENUM = 0x0fffffffU /* probably entirely unnecessary */
 };
 
-/* alt_tab junk */
+/* SBF - alt_tab junk */
 #define ATIncludeSurfaceDb(p, d, s) fprintf(stderr, "ATIncludeSurfaceDb: %s/%d: %s\n", __FILE__, __LINE__, s)
 #define ATIncludeTextureDb(p, d, s) fprintf(stderr, "ATIncludeTextureDb: %s/%d: %s\n", __FILE__, __LINE__, s)
 void ATIncludeSurface(DDSurface * pSurface, AW_BACKUPTEXTUREHANDLE hBackup);
 void ATRemoveSurface(DDSurface * pSurface);
+void ATRemoveTexture(D3DTexture * pTexture);
+
 
 extern AW_TL_ERC awTlLastErr;
 

@@ -245,12 +245,6 @@ extern void NewOnScreenMessage(unsigned char *messagePtr);
 * still being displayed will be overwritten.                            *
 ********************************************************************KJL*/
 
-extern void DrawOnScreenMessage(unsigned char *messagePtr);
-/*KJL*********************************************************************
-* This is a platform specific fn which draws the required message to the *
-* screen. Implemented in ddplat.cpp on the PC.                           *
-*********************************************************************KJL*/
-
 	#ifdef __cplusplus
 		};	/* end of C-Linkage spec */
 	#endif

@@ -546,7 +546,7 @@ void SendRequestToPlacedLight(STRATEGYBLOCK* sbptr,BOOL state,int extended_data)
 					case Light_State_StrobeDownDelay:
 						pl_bhv->timer+=pl_bhv->fade_down_time;
 	
-					default:
+					default: ;
 				}
 			}
 		
