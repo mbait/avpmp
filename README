@@ -67,11 +67,19 @@ MPConfig/  User_Profiles/
 Support for the demo is not quite complete (some sounds are missing and some
 text is incorrect/missing).
 
+If the version you want to use is not the Gold Edition, download
+http://www.icculus.org/avp/english.txt.gz, extract it, and rename it
+language.txt (Regular Ed.) or aenglish.txt (Alien Demo). 
+
+
+Linux Port-specific commands:
+- ALT-ENTER for fullscreen
+- CTRL-G for mouse grab
+
 
 The source code that was released only works with Aliens vs Predator Gold. 
 In the future I'd like this port to support Gold, Regular and the Alien
 demo.  (The Marine and Predator demos are a bit older and might not work.)
-
 
 
 At least with the Gold edition, a number of files are encoded on the CD. So
@@ -83,10 +91,6 @@ Currently, all AvP files and directories need to be lowercase, and the
 program ran from the directory with all the game data (language.txt,
 avp_huds, avp_rifs, fastfile).  zakk recommends
 http://blemished.net/chcase.html for renaming the files.
-
-
-If you think the default game controls are terrible and insist on changing
-them, take a look at avp/win95/usr_io.c.
 
 
 Apparantly AvP Gold is no longer available at most places.  I had ordered my
