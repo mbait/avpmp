@@ -113,7 +113,7 @@ void ReadJoysticks()
 	JoystickData.dwRpos = 0;
 	JoystickData.dwUpos = 0;
 	JoystickData.dwVpos = 0;
-	JoystickData.dwPOV = -1;	
+	JoystickData.dwPOV = (DWORD) -1;	
 	
 	if (joy == NULL || !GotJoystick) {
 		return;
@@ -138,7 +138,7 @@ void ReadJoysticks()
 		switch (hat) {
 			default:
 			case SDL_HAT_CENTERED:
-				JoystickData.dwPOV = -1;
+				JoystickData.dwPOV = (DWORD) -1;
 				break;
 			case SDL_HAT_UP:
 				JoystickData.dwPOV = 0;
@@ -415,7 +415,7 @@ int InitSDL()
 	LoadDeviceAndVideoModePreferences();
 
 	if (WantJoystick) {
-		SDL_Init(SDL_INIT_JOYSTICK);
+		SDL_InitSubSystem(SDL_INIT_JOYSTICK);
 		
 		if (SDL_NumJoysticks() > 0) {
 			/* TODO: make joystick number a configuration parameter */
@@ -432,7 +432,7 @@ int InitSDL()
 			JoystickData.dwRpos = 0;
 			JoystickData.dwUpos = 0;
 			JoystickData.dwVpos = 0;
-			JoystickData.dwPOV = -1;
+			JoystickData.dwPOV = (DWORD) -1;
 		}
 	}
 	

@@ -209,12 +209,12 @@ typedef DPMSG_DESTROYPLAYERORGROUP * LPDPMSG_DESTROYPLAYERORGROUP;
 
 typedef struct JOYINFOEX
 {
-	int dwXpos;
-	int dwYpos;
-	int dwRpos;
-	int dwUpos;
-	int dwVpos;
-	int dwPOV;
+	DWORD dwXpos;
+	DWORD dwYpos;
+	DWORD dwRpos;
+	DWORD dwUpos;
+	DWORD dwVpos;
+	DWORD dwPOV;
 } JOYINFOEX;
 
 typedef struct JOYCAPS
