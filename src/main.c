@@ -494,18 +494,6 @@ void FlipBuffers()
 	SDL_GL_SwapBuffers();
 }
 
-void ThisFramesRenderingHasBegun()
-{
-/* sets scene defaults */
-}
-
-void ThisFramesRenderingHasFinished()
-{
-/* This is where the queued drawing commands' execution takes place */
-
-	LightBlockDeallocation();
-}
-                
 int ExitWindowsSystem()
 {
 	SDL_Quit();
@@ -602,7 +590,7 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);
 	
 //	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_COOP); /* coop/skirmish */
-
+		
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
 

@@ -571,7 +571,6 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 /* temp junk */
 	Tex->w = m_nWidth;
 	Tex->h = m_nHeight;
-	Tex->data = NULL;
 	CreateOGLTexture(Tex, buf); /* this will set the id */
 	free(buf);
 			

@@ -47,30 +47,61 @@ static D3DTexture *CurrTextureHandle;
 static enum TRANSLUCENCY_TYPE CurrentTranslucencyMode = TRANSLUCENCY_OFF; /* opengl state variable */
 static enum FILTERING_MODE_ID CurrentFilteringMode = FILTERING_BILINEAR_OFF;
 
-static GLuint CurrentlyBoundTexture = 0; /* opengl state variable */
+static D3DTexture *CurrentlyBoundTexture = NULL; /* opengl state variable (->id) */
 
-static void CheckBoundTextureIsCorrect(GLuint tex)
+static void CheckBoundTextureIsCorrect(D3DTexture *tex)
 {
 	if (tex == CurrentlyBoundTexture)
 		return;
 
-	glBindTexture(GL_TEXTURE_2D, tex);
+	if (tex == NULL) {
+		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		CurrentlyBoundTexture = NULL;
+		
+		return;
+	} 
+	
+	glBindTexture(GL_TEXTURE_2D, tex->id);
 
-/*	
-	switch(CurrentFilteringMode) {
-		case FILTERING_BILINEAR_OFF:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			break;
-		case FILTERING_BILINEAR_ON:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			break;
-		default:
+	if (tex->filter != CurrentFilteringMode) {
+		switch(CurrentFilteringMode) {
+			case FILTERING_BILINEAR_OFF:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				break;
+			case FILTERING_BILINEAR_ON:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				break;
+			default:
+		}
+		
+		tex->filter = CurrentFilteringMode;
 	}
-*/
 	
 	CurrentlyBoundTexture = tex;
+}
+
+static void CheckFilteringModeIsCorrect(enum FILTERING_MODE_ID filter)
+{
+	CurrentFilteringMode = filter;
+	
+	if (CurrentlyBoundTexture && CurrentlyBoundTexture->filter != CurrentFilteringMode) {
+		switch(CurrentFilteringMode) {
+			case FILTERING_BILINEAR_OFF:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				break;
+			case FILTERING_BILINEAR_ON:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				break;
+			default:
+		}
+		
+		CurrentlyBoundTexture->filter = CurrentFilteringMode;
+	}
 }
 		
 static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
@@ -115,27 +146,6 @@ static void CheckTranslucencyModeIsCorrect(enum TRANSLUCENCY_TYPE mode)
 		glEnable(GL_BLEND);
 		
 	CurrentTranslucencyMode = mode;
-}
-
-void CheckFilteringModeIsCorrect(enum FILTERING_MODE_ID filter)
-{
-	if (filter == CurrentFilteringMode)
-		return;
-
-	switch(filter) {
-		case FILTERING_BILINEAR_OFF:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			break;
-		case FILTERING_BILINEAR_ON:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			break;
-		default:
-			fprintf(stderr, "CheckFilteringModeIsCorrect: filter = %d\n", filter);
-	}
-			                			                
-	CurrentFilteringMode = filter;		
 }
 
 #define TA_MAXVERTICES		8
@@ -326,12 +336,28 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
 	tex->id = h;
-	
-	glBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture); /* restore current */
+	tex->filter = FILTERING_BILINEAR_ON;
+
+	if (CurrentlyBoundTexture)
+		glBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture->id); /* restore current */
 	
 	return h;
 }
 
+/* ** */
+
+void ThisFramesRenderingHasBegun()
+{
+	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);	        
+}
+
+void ThisFramesRenderingHasFinished()
+{
+/* This is where the queued drawing commands' execution takes place */
+
+	LightBlockDeallocation();
+}
+        
 /* ** */
 
 void FlushD3DZBuffer()
@@ -370,7 +396,7 @@ void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a)
 		return;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	CheckBoundTextureIsCorrect(0);
+	CheckBoundTextureIsCorrect(NULL);
 	
 	glColor4ub(r, g, b, a);
 
@@ -431,10 +457,20 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
 
-	RecipW = (1.0f/65536.0f)/128.0f;
-	RecipH = (1.0f/65536.0f)/128.0f;
+	if (TextureHandle->w == 128) {
+		RecipW = (1.0f / 128.0f) / 65536.0f;
+	} else {
+		float width = TextureHandle->w;
+		RecipW = (1.0f / width) / 65536.0f;
+	}
+	if (TextureHandle->h == 128) {
+		RecipH = (1.0f / 128.0f) / 65536.0f;
+	} else {
+		float height = TextureHandle->h;
+		RecipH = (1.0f / height) / 65536.0f;
+	}
 	
-	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
@@ -491,7 +527,7 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_C4UB_V4F();
 
-	CheckBoundTextureIsCorrect(0);
+	CheckBoundTextureIsCorrect(NULL);
 		
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	
@@ -511,24 +547,29 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 	int texoffset;
 	D3DTexture *TextureHandle;
 	int i;
-	GLfloat ZNear;
 	float RecipW, RecipH;
 
-	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
-	
 	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
-	if (texoffset) {
-		TextureHandle = (void *)ImageHeaderArray[texoffset].D3DTexture;
+	TextureHandle = (void *)ImageHeaderArray[texoffset].D3DTexture;		
+	CurrTextureHandle = TextureHandle;
+	
+	
+
+	if (TextureHandle->w == 128) {
+		RecipW = (1.0f / 128.0f) / 65536.0f;
 	} else {
-		TextureHandle = CurrTextureHandle;
+		float width = TextureHandle->w;
+		RecipW = (1.0f / width) / 65536.0f;
+	}
+	if (TextureHandle->h == 128) {
+		RecipH = (1.0f / 128.0f) / 65536.0f;
+	} else {
+		float height = TextureHandle->h;
+		RecipH = (1.0f / height) / 65536.0f;
 	}
 	
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
-
-	RecipW = (1.0f/65536.0f)/128.0f;
-	RecipH = (1.0f/65536.0f)/128.0f;
-	
-	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
@@ -545,7 +586,7 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 1
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -557,15 +598,13 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
+
 		x = x1;
 		y = y1;
 						
-		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
-		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		x =  (x - (float)ScreenDescriptorBlock.SDB_CentreX - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreX - 0.5f);
+		y = -(y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
 
-//		zvalue = vertices->Z+HeadUpDisplayZOffset;
-//		z = 1.0 - 2*ZNear/zvalue;
 		z = 1.0f;
 
 		tarr.v[4*i+0] = x/rhw;
@@ -585,7 +624,7 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_C4UB_V4F();
 	
-	CurrTextureHandle = TextureHandle;
+	
 }
 
 void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
@@ -605,7 +644,7 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 	
 	TextureHandle = ImageHeaderArray[texoffset].D3DTexture;
 	
-	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 	
 	if (TextureHandle->w == 128) {
@@ -639,7 +678,7 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 1
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -651,7 +690,7 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
+
 		x = x1;
 		y = y1;
 						
@@ -700,7 +739,7 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		/* not (yet) implemented */
 		return;
 	} else if (decalPtr->DecalID == DECAL_SHAFTOFLIGHT||decalPtr->DecalID == DECAL_SHAFTOFLIGHT_OUTER) {
-		CheckBoundTextureIsCorrect(0);
+		CheckBoundTextureIsCorrect(NULL);
 		
 		RecipW = 1.0 / 256.0; /* ignored */
 		RecipH = 1.0 / 256.0;
@@ -723,7 +762,7 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 			RecipH = 1.0 / height;
 		}
 		
-		CheckBoundTextureIsCorrect(TextureHandle->id);
+		CheckBoundTextureIsCorrect(TextureHandle);
 	}
 	
 	if (decalDescPtr->IsLit) {
@@ -761,7 +800,7 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 1
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -773,7 +812,6 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
 		
 		x = x1;
 		y = y1;
@@ -816,7 +854,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	
 	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
 	
-	CheckBoundTextureIsCorrect(TextureHandle->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	CheckTranslucencyModeIsCorrect(particleDescPtr->TranslucencyType);
 
 //	if(ImageHeaderArray[texoffset].ImageWidth==256) {
@@ -881,7 +919,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		glColor4ub(FastRandom()&255, FastRandom()&255, FastRandom()&255, particleDescPtr->Alpha);
 	}
 
-//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -897,7 +934,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
 
-#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -909,7 +945,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
 		
 		x = x1;
 		y = y1;
@@ -925,15 +960,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 			z = 1.0 - 2.0*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
 		}
 
-#if 0
-#if 0		
-		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
-		glVertex3f(x, y, z);
-#else
-		glTexCoord2f(s, t);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif
-#endif
 		tarr.v[4*i+0] = x/rhw;
 		tarr.v[4*i+1] = y/rhw;
 		tarr.v[4*i+2] = z/rhw;
@@ -942,7 +968,6 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		tarr.t[4*i+0] = s;
 		tarr.t[4*i+1] = t;
 	}
-//	glEnd();
 
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_V4F();
@@ -954,7 +979,7 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 	int i;
 	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
 	
-	CheckBoundTextureIsCorrect(0); /* disable texturing */
+	CheckBoundTextureIsCorrect(NULL); /* disable texturing */
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_OFF);
 	
 	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
@@ -1011,7 +1036,7 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 	flags = inputPolyPtr->PolyFlags;
 	
 	CheckTranslucencyModeIsCorrect(RenderPolygon.TranslucencyMode);
-	CheckBoundTextureIsCorrect(0);
+	CheckBoundTextureIsCorrect(NULL);
 	
 	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
@@ -1067,17 +1092,17 @@ void D3D_PlayerOnFireOverlay()
 	GLfloat x[4], y[4], s[4], t[4];
 	float u, v;
 	int r, g, b, a;
-	D3DTexture *tex;
+	D3DTexture *TextureHandle;
 
 	b = (colour >> 0)  & 0xFF;
 	g = (colour >> 8)  & 0xFF;
 	r = (colour >> 16) & 0xFF;
 	a = (colour >> 24) & 0xFF;
 	
-	tex = ImageHeaderArray[BurningImageNumber].D3DTexture;
+	TextureHandle = ImageHeaderArray[BurningImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	
 	glColor4ub(r, g, b, a);
@@ -1123,7 +1148,7 @@ void D3D_PlayerOnFireOverlay()
 
 void D3D_PlayerDamagedOverlay(int intensity)
 {
-	D3DTexture *tex;
+	D3DTexture *TextureHandle;
 	int theta[2];
 	int colour, baseColour;
 	int r, g, b, a;
@@ -1132,7 +1157,7 @@ void D3D_PlayerDamagedOverlay(int intensity)
 	theta[0] = (CloakingPhase/8)&4095;
 	theta[1] = (800-CloakingPhase/8)&4095;
 	
-	tex = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
+	TextureHandle = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
 	switch(AvP.PlayerType) {
 		default:
 			// LOCALASSERT(0);
@@ -1147,7 +1172,7 @@ void D3D_PlayerDamagedOverlay(int intensity)
 			break;
 	}
 	
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(TextureHandle);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	
 	colour = 0xffffff - baseColour + (intensity<<24);
@@ -1230,7 +1255,7 @@ void DrawNoiseOverlay(int tr)
 	tex = ImageHeaderArray[StaticImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	glDepthFunc(GL_ALWAYS);
 	
@@ -1288,7 +1313,7 @@ void D3D_ScreenInversionOverlay()
 	tex = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1341,7 +1366,7 @@ void D3D_ScreenInversionOverlay()
 void D3D_PredatorScreenInversionOverlay()
 {
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
-	CheckBoundTextureIsCorrect(0);
+	CheckBoundTextureIsCorrect(NULL);
 	glDepthFunc(GL_ALWAYS);
 	
 	SelectPolygonBeginType(3); /* triangles */
@@ -1371,7 +1396,7 @@ void DrawScanlinesOverlay(float level)
 	tex = ImageHeaderArray[PredatorNumbersImageNumber].D3DTexture;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	glDepthFunc(GL_ALWAYS);
 	
@@ -1430,7 +1455,7 @@ void D3D_FadeDownScreen(int brightness, int colour)
 	colour = (t<<24)+colour;
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
-	CheckBoundTextureIsCorrect(0);
+	CheckBoundTextureIsCorrect(NULL);
 	
 	b = (colour >> 0)  & 0xFF;
 	g = (colour >> 8)  & 0xFF;
@@ -1479,7 +1504,7 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 /* possibly use polygon offset? (predator hud) */
 
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	CheckBoundTextureIsCorrect(tex->id);
+	CheckBoundTextureIsCorrect(tex);
 	
 	if (tex->w == 128) {
 		RecipW = 1.0f / 128.0f;
