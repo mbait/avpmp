@@ -53,19 +53,7 @@
 #endif
 		extern unsigned char KeyboardInput[];
 		extern unsigned char DebouncedKeyboardInput[];
-
-		#if 0
-		extern OurBool			DaveDebugOn;
-		extern FDIEXTENSIONTAG	FDIET_Dummy;
-		extern IFEXTENSIONTAG	IFET_Dummy;
-		extern FDIQUAD			FDIQuad_WholeScreen;
-		extern FDIPOS			FDIPos_Origin;
-		extern FDIPOS			FDIPos_ScreenCentre;
-		extern IFOBJECTLOCATION IFObjLoc_Origin;
-		extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-		extern IFCOLOUR			IFColour_Dummy;
- 		extern IFVECTOR			IFVec_Zero;
-		#endif
+		
 #ifdef __cplusplus
 	};
 #endif
@@ -111,7 +99,8 @@ KeyBinding :: ParseBindCommand
 		SCString* pSCString_ToBind = new SCString(pProjCh_FollowingTheKey);
 
 		// Create the KeyBinding object:
-		KeyBinding* pNewBinding = new KeyBinding
+		KeyBinding* pNewBinding;
+		pNewBinding = new KeyBinding
 		(
 			theKey,
 			pSCString_ToBind
@@ -185,7 +174,7 @@ KeyBinding :: ParseUnbindCommand
 	{
 		OurBool bGotMatch = No;
 		unsigned int LongestMatch = 0;
-		BindableKey theKey_ToUnbind;
+		BindableKey theKey_ToUnbind = (BindableKey)0;
 
 		for (int i=0;i<MAX_VALUE_BINDABLE_KEY; i++)
 		{
@@ -384,7 +373,7 @@ void KeyBinding :: WriteToConfigFile(char* Filename)
 
 	GLOBALASSERT(Filename);
 
-	FILE* pFile = fopen(Filename,"w");
+	FILE* pFile = OpenGameFile(Filename, FILEMODE_WRITEONLY, FILETYPE_CONFIG);
 
 	if (!pFile)
 	{

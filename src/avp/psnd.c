@@ -511,10 +511,10 @@ void Sound_Play(SOUNDINDEX soundNumber, char *format, ...)
 	if(loop) ActiveSounds[newIndex].loop = 1;
 	else ActiveSounds[newIndex].loop = 0;
 
-/*
-printf("Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
-printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].wavName, loop);
-*/
+#if 0
+fprintf(stderr, "PSND: Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
+fprintf(stderr, "PSND: Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].wavName, loop);
+#endif
 
 	if(worldPosn) 
 	{
@@ -562,8 +562,10 @@ printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].w
 //		//sound starts part of the way in
 //		IDirectSoundBuffer_SetCurrentPosition(ActiveSounds[newIndex].dsBufferP,soundStartPosition);
 //	}
+#if 0 /* TODO */
 	if (soundStartPosition)
 		fprintf(stderr, "Sound_Play: sound starts part of the way in (%d)\n", soundStartPosition);
+#endif		
 }
 
 void Sound_Stop(int activeSoundNumber)
@@ -590,9 +592,11 @@ void Sound_Stop(int activeSoundNumber)
 	/* stop the sound: it may have already stopped, of course, but never mind */
 	
 	PlatStopSound(activeSoundNumber);
-/*	
-printf("Stop: %d %d %s\n", activeSoundNumber, soundNo, GameSounds[soundNo].wavName);
-*/	
+
+#if 0	
+fprintf(stderr, "PSND: Stop: %d %d %s\n", activeSoundNumber, soundNo, GameSounds[soundNo].wavName);
+#endif
+	
 	/* release the active sound slot */
 	buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
 	ActiveSounds[activeSoundNumber] = BlankActiveSound;
@@ -853,8 +857,9 @@ void Save_SoundState(int* soundHandle)
 //			IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
 //		else
 			block->position = 0;
+#if 0 /* TODO */
 fprintf(stderr, "Save_SoundState: GetCurrentPosition!\n");
-		
+#endif		
 		strcpy((char*)(block+1),name);
 		
 	}	
@@ -944,7 +949,9 @@ void Save_SoundsWithNoReference()
 //					IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
 //				else
 					block->position = 0;
+#if 0 /* TODO */
 				fprintf(stderr, "Save_SoundsWithNoReference: GetCurrentPosition!\n");
+#endif
 				
 				strcpy((char*)(block+1),name);
 			}

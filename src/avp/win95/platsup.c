@@ -52,7 +52,7 @@ void catpathandextension(char* dst, char* src)
 
 	if ((len > 0 && (dst[len-1] != '\\' && dst[len-1] != '/')) && *src != '.')
 		{
-			lstrcat(dst,"\\");
+			lstrcat(dst,"/");
 		}
 
     lstrcat(dst,src);
@@ -367,7 +367,7 @@ char *LoadTextFile(char *filename)
 	char *bufferPtr;
 	long int save_pos, size_of_file;
 	FILE *fp;
-	fp = fopen(filename,"rb");
+	fp = OpenGameFile(filename, FILEMODE_READONLY, FILETYPE_PERM);
 	
 	if (!fp) goto error;
 

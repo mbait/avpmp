@@ -84,12 +84,6 @@ const char * SubShps_Directory = "SubShps\\All\\";
 // const char * GenTex_Directory = 0;
 const char * FixTex_Directory = "\\\\Kate\\Kate Share\\avp\\Fix-Tex\\";
 const char * GameTex_Directory = "\\\\Kate\\Kate Share\\avp\\game-tex\\";
-// these link with pcmenus.cpp
-const char * GenTex4bit_Directory = "\\\\Kate\\Kate Share\\avp\\G4bitTex\\";
-const char * GenTex8bit_Directory = "\\\\Kate\\Kate Share\\avp\\GenG-Tex\\";
-const char * GenTex75pc_Directory = "\\\\Kate\\Kate Share\\avp\\Gen34Tex\\";
-const char * GenTex50pc_Directory = "\\\\Kate\\Kate Share\\avp\\Gen12Tex\\";
-
 // new directories for new-style graphics - to be determined properly
 char const * FirstTex_Directory = "Graphics"; // currently relative to cwd
 char const * SecondTex_Directory = 0; // will be the src safe shadow for development builds
@@ -357,9 +351,9 @@ struct LoadedPlacedHierarchy
 #define NumPlacedHierarchy 3
 LoadedPlacedHierarchy PlacedHierarchyArray[NumPlacedHierarchy]=
 {
-	"dropship","dropship",INVALID_RIFFHANDLE,
-	"pred ship fury","pred ship fury",INVALID_RIFFHANDLE,
-	"pred ship ob","pred ship ob",INVALID_RIFFHANDLE,
+	{ "dropship","dropship",INVALID_RIFFHANDLE },
+	{ "pred ship fury","pred ship fury",INVALID_RIFFHANDLE },
+	{ "pred ship ob","pred ship ob",INVALID_RIFFHANDLE },
 };
 
 
@@ -368,7 +362,6 @@ void LoadedPlacedHierarchy::load_rif()
 	if(placed_rif!=INVALID_RIFFHANDLE) return;
 	char file_path[100];
 
-/* TODO: dir seperator */
 	sprintf(file_path,"avp_huds/%s.rif",file_name);
 	
 	placed_rif=avp_load_rif_non_env(file_path);
@@ -505,7 +498,6 @@ Global_Hierarchy_Store::Global_Hierarchy_Store (RIFFHANDLE h)
 			sound_array[index].volume=isc->max_volume;
 			if(dir_chunk)
 			{
-			/* TODO: dir separator */
 				sprintf(wavname,"%s\\%s",dir_chunk->directory,isc->wav_name);
 				sound_array[index].sound_loaded=GetSound(wavname);
 			}
@@ -516,14 +508,9 @@ Global_Hierarchy_Store::Global_Hierarchy_Store (RIFFHANDLE h)
 			if(sound_array[index].sound_loaded)
 			{
 				sound_array[index].sound_index=(SOUNDINDEX)sound_array[index].sound_loaded->sound_num;
-			}
-			
-		
+			}		
 		}
 	}
-	
-
-
 }
 
 
@@ -1989,7 +1976,6 @@ BOOL copy_rif_data (RIFFHANDLE h, int flags,int progress_start,int progress_inte
 					int start_shape_no = rt_temp.start_list_pos;
 					int list_pos = rt_temp.main_list_pos;
 					db_logf3(("Shape copied to %d",list_pos));
-					MORPHCTRL * mc = rt_temp.mc;
 					#else
 					int list_pos = copy_to_mainshapelist(h,shplif(),flags,&ob->object_data);
 					int start_shape_no = list_pos;
@@ -3010,10 +2996,9 @@ void DeallocateLoadedShapeheader(SHAPEHEADER * shp)
 
 void DeallocateModules()
 {
-	
-	MODULE ** m_arrayPtr = MainScene.sm_marray;
-	
 	#if !USE_LEVEL_MEMORY_POOL
+	MODULE ** m_arrayPtr = MainScene.sm_marray;
+
 	while (*m_arrayPtr)
 	{
 		List<Light_Chunk *> lights_for_this_module;
@@ -3092,7 +3077,7 @@ void avp_undo_rif_load(RIFFHANDLE h)
 RIFFHANDLE avp_load_rif (const char * fname)
 {
 	//see if there is a local copy of the rif file
-	FILE* rifFile = fopen(fname,"rb");
+	FILE* rifFile = OpenGameFile(fname, FILEMODE_READONLY, FILETYPE_PERM);
 
 /* TODO: Let's find a better method */
 	if (!rifFile && AvpCDPath)
@@ -3111,7 +3096,7 @@ RIFFHANDLE avp_load_rif (const char * fname)
 RIFFHANDLE avp_load_rif_non_env (const char * fname)
 {
 	//see if there is a local copy of the rif file
-	FILE* rifFile = fopen(fname, "rb");
+	FILE* rifFile = OpenGameFile(fname, FILEMODE_READONLY, FILETYPE_PERM);
 	
 /* TODO: Let's find a better method */	
 	if (!rifFile && AvpCDPath)

@@ -121,21 +121,6 @@ void ATRemoveTexture(void * pTexture)
 }
 
 
-/* avpreg.cpp */
-char *AvpCDPath = 0;
-
-void GetPathFromRegistry()
-{
-extern char * SecondTex_Directory;
-extern char * SecondSoundDir;
-
-	fprintf(stderr, "GetPathFromRegistry()\n");
-	
-	SecondTex_Directory = "./graphics";
-	SecondSoundDir = "./sounds";
-}
-
-
 /* d3_func.cpp */
 int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
 {
@@ -189,32 +174,6 @@ void CheckWireFrameMode(int shouldBeOn)
 {
 	if (shouldBeOn)
 		fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
-}
-
-void WriteEndCodeToExecuteBuffer()
-{
-	fprintf(stderr, "WriteEndCodeToExecuteBuffer()\n");
-}
-
-BOOL UnlockExecuteBufferAndPrepareForUse()
-{
-	fprintf(stderr, "UnlockExecuteBufferAndPrepareForUse()\n");
-	
-	return FALSE;
-}
-
-BOOL ExecuteBuffer()
-{
-	fprintf(stderr, "ExecuteBuffer()\n");
-	
-	return FALSE;
-}
-
-BOOL EndD3DScene()
-{
-	fprintf(stderr, "EndD3DScene()\n");
-	
-	return FALSE;
 }
 
 
@@ -304,17 +263,12 @@ void GenerateDirectDrawSurface()
 }
 
 
-/* dx_proj.cpp */
-int use_mmx_math = 0;
-
-
-
 /* dxlog.c */
 void dx_str_log(char const * str, int line, char const * file)
 {
 	FILE *fp;
-	
-	fp = fopen("dx_error.log", "a");
+
+	fp = OpenGameFile("dx_error.log", FILEMODE_APPEND, FILETYPE_CONFIG);	
 	if (fp == NULL)
 		fp = stderr;
 		
@@ -328,7 +282,7 @@ void dx_strf_log(char const * fmt, ... )
 	va_list ap;
 	FILE *fp;
 	
-	fp = fopen("dx_error.log", "a");
+	fp = OpenGameFile("dx_error.log", FILEMODE_APPEND, FILETYPE_CONFIG);
 	if (fp == NULL)
 		fp = stderr;
         
@@ -345,7 +299,7 @@ void dx_line_log(int line, char const * file)
 {
 	FILE *fp;
 	
-	fp = fopen("dx_error.log", "a");
+	fp = OpenGameFile("dx_error.log", FILEMODE_APPEND, FILETYPE_CONFIG);
 	if (fp == NULL)
 		fp = stderr;	
 	

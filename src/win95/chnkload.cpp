@@ -378,32 +378,32 @@ ShapeInMSL const * ShapeInMSL::GetByName(char const * nam)
 }
 
 ShapeInMSL::ShapeInMSL()
-: shptr(0)
-, listpos(GLS_NOTINLIST)
+: listpos(GLS_NOTINLIST)
+, shptr(0)
 , in_hash_table(FALSE)
 {
 }
 
 ShapeInMSL::ShapeInMSL(int _p)
-: shptr(0)
-, listpos(_p)
+: listpos(_p)
+, shptr(0)
 , in_hash_table(FALSE)
 {
 }
 
 ShapeInMSL::ShapeInMSL(SHAPEHEADER * _s, char const * _n, int _p)
-: shptr(_s)
+: listpos(_p)
+, shptr(_s)
 , name(_n)
-, listpos(_p)
 , in_hash_table(FALSE)
 {
 	AddToHashTables();
 }
 
 ShapeInMSL::ShapeInMSL(ShapeInMSL const & sim)
-: shptr(sim.shptr)
+: listpos(sim.listpos)
+, shptr(sim.shptr)
 , name(sim.name)
-, listpos(sim.listpos)
 , in_hash_table(FALSE)
 {
 	if (sim.in_hash_table) AddToHashTables();
@@ -479,11 +479,7 @@ RIFFHANDLE load_rif (const char * fname)
 		CL_LogFile.lprintf("FAILED TO LOAD RIF: %s\n",fname);
 		#endif
 	   	ReleaseDirect3D();
-#if 0	   	
-		char message[200];
-		sprintf(message,"Error loading %s",fname);
-		MessageBox(NULL,message,"AvP",MB_OK+MB_SYSTEMMODAL);
-#endif		
+
 		fprintf(stderr, "load_rif: Error loading %s\n", fname);
 		exit(0x111);
 		return INVALID_RIFFHANDLE;
@@ -516,13 +512,9 @@ RIFFHANDLE load_rif_non_env (const char * fname)
 		#endif
 		
 	   	ReleaseDirect3D();
-#if 0	   	
-		char message[200];
-		sprintf(message,"Error loading %s",fname);
-		MessageBox(NULL,message,"AvP",MB_OK+MB_SYSTEMMODAL);
-#endif
 		fprintf(stderr, "load_rif_non_env: Error loading %s\n", fname);		
 		exit(0x111);
+
 		return INVALID_RIFFHANDLE;
 	}
 	#if OUTPUT_LOG
@@ -1559,10 +1551,7 @@ void DeallocateRifLoadedShapeheader(SHAPEHEADER * shp)
 	#if !StandardShapeLanguage
 	#error Must have standard shape language
 	#endif
-
-	int max_num_texs = 0;
-	int i;
-
+	
 	if(shp->animation_header)
 	{
 		// so it gets deallocated properly
@@ -1576,6 +1565,9 @@ void DeallocateRifLoadedShapeheader(SHAPEHEADER * shp)
 	}
 	
 	#if !USE_LEVEL_MEMORY_POOL
+	int max_num_texs = 0;
+	int i;
+	
 	if (shp->points)
 	{
 		if (*shp->points) DeallocateMem(*shp->points);

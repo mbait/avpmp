@@ -85,7 +85,7 @@ int db_option = 0; /* Default is off. */
  * logfile will go in the directory that is current when db_log_init() 
  * is called.
  */
-#define ABSOLUTE_PATH	0
+#define ABSOLUTE_PATH	1
 
 /* M A C R O S ******************************************************** */
 
@@ -152,12 +152,14 @@ static const char* db_assert_textA[ 3 ] =
 	"Expression: %s",
 	"File: %s Line: %d"
 };
-#if 0
+
+#ifndef DB_NOWINDOWS
 static const char* db_prompt_std =
 	"Quit program/force e(x)ception? [y/n/x]";
 static const char* db_prompt_windows =
 	"Quit program? [Yes/No]/force exception? [Cancel]";
 #endif
+	
 static const char* db_assert_log_begin_text =
 	"DB: FAILED ASSERTION BEGINS";
 static const char* db_assert_log_end_text =
@@ -394,7 +396,7 @@ void db_log_fired(const char *strP)
 	if(!InitialisedLog) db_log_init();
 	{
 		/* Open a file for appending, creating one if it doesn't yet exist. */
-		FILE *fP = fopen(LogFileNameP, "a+");
+		FILE *fP = OpenGameFile(LogFileNameP, FILEMODE_APPEND, FILETYPE_CONFIG);
 
 		if(!fP) return;
 
@@ -409,13 +411,12 @@ void db_log_init(void)
 	sprintf( LogFileNameP, "%s", db_log_file_name ); 
 	#else
 	/* Append the log file name to the current working directory. */
-/* TODO - path seperator */
 	sprintf( LogFileNameP, "%s/%s", getcwd( LogFileNameP, 240 ),
 		db_log_file_name );
 	#endif
 	
 	/* Delete old log file. */
-	remove(LogFileNameP);
+	DeleteGameFile(LogFileNameP);
 	
 	/* Flag that we have initialised the log file. */
 	InitialisedLog = 1;

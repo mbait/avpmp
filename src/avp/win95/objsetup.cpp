@@ -3719,6 +3719,9 @@ void setup_sounds (Environment_Data_Chunk * envd)
 			stt->outer_range = snd->outer_range * local_scale;
 			stt->max_volume = snd->max_volume;
 			stt->pitch = snd->pitch;
+			
+			stt->playing = 0;
+			stt->loop = 0;
 
 			if(snd->flags & SoundObjectFlag_NotPlayingAtStart)
 				stt->playing=0;
@@ -3729,13 +3732,11 @@ void setup_sounds (Environment_Data_Chunk * envd)
 				stt->loop=0;
 			else
 				stt->loop=1;
-		
 
 			stt->sound_name =(char*) PoolAllocateMem(strlen (snd->wav_name) + 1);
 			strcpy(stt->sound_name,snd->wav_name);
 			stt->sound_loaded=GetSoundForMainRif(snd->wav_name);
-			
-		
+					
 			AddToBehaviourList(snd->snd_name,snd->CalculateID(), I_BehaviourPlacedSound, (void *) stt);
 		}
 	}

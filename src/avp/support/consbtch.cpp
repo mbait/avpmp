@@ -83,7 +83,7 @@ BatchFileProcessing :: Run(char* Filename)
 	RefList<SCString> PendingList;
 
 	{
-		FILE* pFile = fopen(Filename,"r");
+		FILE* pFile = OpenGameFile(Filename, FILEMODE_READONLY, FILETYPE_CONFIG);
 
 		if (NULL==pFile)
 		{

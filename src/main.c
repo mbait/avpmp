@@ -48,17 +48,20 @@ int JoystickEnabled;
 int MouseVelX;
 int MouseVelY;
 
-extern int ScanDrawMode; /* to fix image loading */
+extern int ScanDrawMode;
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern unsigned char KeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
 extern unsigned char GotAnyKey;
 extern int NormalFrameTime;
 
 SDL_Surface *surface;
+/* SDL_Joystick *joy; */
 
+/* defaults */
 static int WantFullscreen = 1;
-static int WantSound = 1;
+int WantSound = 1;
 static int WantCDRom = 1;
+static int WantJoystick = 1;
 
 #if GL_EXT_secondary_color
 PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
@@ -195,13 +198,10 @@ const int TotalVideoModes = sizeof(VideoModeList) / sizeof(VideoModeList[0]);
 
 void LoadDeviceAndVideoModePreferences()
 {
-/*
-	fprintf(stderr, "LoadDeviceAndVideoModePreferences()\n");
-*/	
 	FILE *fp;
 	int mode;
 	
-	fp = fopen("AvP_TempVideo.cfg", "r");
+	fp = OpenGameFile("AvP_TempVideo.cfg", FILEMODE_READONLY, FILETYPE_CONFIG);
 	
 	if (fp != NULL) {
 	 	if (fscanf(fp, "%d", &mode) == 1) {
@@ -235,12 +235,9 @@ void LoadDeviceAndVideoModePreferences()
 
 void SaveDeviceAndVideoModePreferences()
 {
-/*
-	fprintf(stderr, "SaveDeviceAndVideoModePreferences()\n");
-*/
 	FILE *fp;
 	
-	fp = fopen("AvP_TempVideo.cfg", "w");
+	fp = OpenGameFile("AvP_TempVideo.cfg", FILEMODE_WRITEONLY, FILETYPE_CONFIG);
 	if (fp != NULL) {
 		fprintf(fp, "%d\n", CurrentVideoMode);
 		fclose(fp);
@@ -249,9 +246,6 @@ void SaveDeviceAndVideoModePreferences()
 
 void PreviousVideoMode2()
 {
-/*
-	fprintf(stderr, "PreviousVideoMode2()\n");
-*/
 	int cur = CurrentVideoMode;
 
 	do {
@@ -267,9 +261,6 @@ void PreviousVideoMode2()
 
 void NextVideoMode2()
 {
-/*
-	fprintf(stderr, "NextVideoMode2()\n");
-*/
 	int cur = CurrentVideoMode;
 
 	do {
@@ -286,17 +277,11 @@ void NextVideoMode2()
 
 char *GetVideoModeDescription2()
 {
-/*
-	fprintf(stderr, "GetVideoModeDescription2()\n");
-*/	
 	return "SDL";
 }
 
 char *GetVideoModeDescription3()
 {
-/*
-	fprintf(stderr, "GetVideoModeDescription3()\n");
-*/	
 	static char buf[64];
 	
 	snprintf(buf, 64, "%dx%d", VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
@@ -357,6 +342,19 @@ int InitSDL()
 	}
 	
 	LoadDeviceAndVideoModePreferences();
+
+#if 0	
+	if (WantJoystick) {
+		SDL_Init(SDL_INIT_JOYSTICK);
+		
+		if (SDL_NumJoysticks() > 0) {
+			joy = SDL_JoystickOpen(0);
+			if (joy) {
+				GotJoystick = 1;
+			}
+		}
+	}
+#endif
 	
 	surface = NULL;
 	
@@ -536,6 +534,18 @@ int SetOGLVideoMode(int Width, int Height)
 
 int InitialiseWindowsSystem(HANDLE hInstance, int nCmdShow, int WinInitMode)
 {
+	return 0;
+}
+
+int ExitWindowsSystem()
+{
+#if 0
+	if (joy) {
+		SDL_JoystickClose(joy);
+	}
+#endif	
+	SDL_Quit();
+
 	return 0;
 }
 
@@ -848,6 +858,7 @@ static void handle_buttonpress(int button, int press)
 		DebouncedKeyboardInput[key] = 1;
 	}
 	
+	GotAnyKey = 1;
 	KeyboardInput[key] = press;
 }
 
@@ -924,7 +935,34 @@ void CheckForWindowsMessages()
 		MouseVelX = 0;
 		MouseVelY = 0;
 	}
-	
+
+/*
+This is half of the necessary joystick code, the rest of the changes
+involve avp/win95/usr_io.c.  I don't own a joystick so I have no idea
+how things should be implemented.
+*/
+#if 0	
+	if (GotJoystick) {
+		int numbuttons;
+		
+		SDL_JoystickUpdate();
+		
+		numbuttons = SDL_JoystickNumButtons(joy);
+		if (numbuttons > 16) numbuttons = 16;
+		
+		for (x = 0; x < numbuttons; x++) {
+			if (SDL_JoystickGetButton(joy, x)) {
+				GotAnyKey = 1;
+				if (!KeyboardInput[KEY_JOYSTICK_BUTTON_1+x]) {
+					KeyboardInput[KEY_JOYSTICK_BUTTON_1+x] = 1;
+					DebouncedKeyboardInput[KEY_JOYSTICK_BUTTON_1+x] = 1;
+				}
+			} else {
+				KeyboardInput[KEY_JOYSTICK_BUTTON_1+x] = 0;
+			}	
+		}
+	}
+#endif	
 	if ((KeyboardInput[KEY_LEFTALT]||KeyboardInput[KEY_RIGHTALT]) && DebouncedKeyboardInput[KEY_CR]) {
 		SDL_GrabMode gm;
 
@@ -967,11 +1005,53 @@ void FlipBuffers()
 	SDL_Flip(surface);
 }
 
-int ExitWindowsSystem()
-{
-	SDL_Quit();
+char *AvpCDPath = 0;
 
-	return 0;
+void InitGameDirectories(char *argv0)
+{
+	extern char *SecondTex_Directory;
+	extern char *SecondSoundDir;
+	char *homedir, *gamedir, *localdir, *tmp;
+	
+	SecondTex_Directory = "graphics/";
+	SecondSoundDir = "sound/";
+/* 
+ 	printf("argv[0] = %s\n", argv0);
+	printf("$HOME = %s\n", getenv("HOME"));
+	printf("$AVP_DATA = %s\n", getenv("AVP_DATA"));
+*/
+	homedir = getenv("HOME");
+	if (homedir == NULL)
+		homedir = ".";
+	localdir = (char *)malloc(strlen(homedir)+10);
+	strcpy(localdir, homedir);
+	strcat(localdir, "/");
+	strcat(localdir, ".avp");
+	
+	tmp = NULL;
+	
+	/* TODO: for each step, check existance of avp_rifs directory? */
+	gamedir = getenv("AVP_DATA");
+	if (gamedir == NULL) {
+		tmp = strdup(argv0);
+		
+		gamedir = strrchr(tmp, '/');
+		if (gamedir == NULL) {
+			gamedir = ".";
+		} else {
+			*gamedir = 0;
+			gamedir = tmp;
+		}
+	}
+	
+	SetGameDirectories(localdir, gamedir);
+	
+	free(localdir);
+	if (tmp)
+		free(tmp);
+		
+	/* delete some log files */
+	DeleteGameFile("dx_error.log");
 }
 
 static struct option getopt_long_options[] = {
@@ -981,9 +1061,10 @@ static struct option getopt_long_options[] = {
 { "windowed",	0,	NULL,	'w' },
 { "nosound",	0,	NULL,	's' },
 { "nocdrom",	0,	NULL,	'c' },
+/* { "nojoy",	0,	NULL,	'j' }, */
 { "debug",	0,	NULL,	'd' },
 /*
-{ "loadrifs",	0,	NULL,	'l' },
+{ "loadrifs",	1,	NULL,	'l' },
 { "server",	0,	someval,	1 },
 { "client",	1,	someval,	2 },
 */
@@ -999,6 +1080,7 @@ static const char *usage_string =
 "      [-w | --windowed]       Run the game in a window\n"
 "      [-s | --nosound]        Do not access the soundcard\n"
 "      [-c | --nocdrom]        Do not access the CD-ROM\n"
+/* "      [-j | --nojoy]          Do not access the joystick\n" */
 ;
          
 int main(int argc, char *argv[])
@@ -1026,6 +1108,11 @@ int main(int argc, char *argv[])
 			case 'c':
 				WantCDRom = 0;
 				break;
+			/*
+			case 'j':
+				WantJoystick = 0;
+				break;
+			*/				
 			case 'd': {
 				extern int DebuggingCommandsActive;
 				DebuggingCommandsActive = 1;
@@ -1037,6 +1124,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	InitGameDirectories(argv[0]);
+	
 	if (InitSDL() == -1) {
 		fprintf(stderr, "Could not find a sutable resolution!\n");
 		fprintf(stderr, "At least 512x384 is needed.  Does OpenGL work?\n");
@@ -1047,9 +1136,6 @@ int main(int argc, char *argv[])
 	
 	SetFastRandom();
 	
-	/* WeWantAnIntro(); */
-	GetPathFromRegistry();
-
 #if MARINE_DEMO
 	ffInit("fastfile/mffinfo.txt","fastfile/");
 #elif ALIEN_DEMO
@@ -1071,7 +1157,7 @@ int main(int argc, char *argv[])
 	
 	LoadKeyConfiguration();
 	
-	if (WantSound) SoundSys_Start();
+	SoundSys_Start();
 	if (WantCDRom) CDDA_Start();
 	
 	InitTextStrings();

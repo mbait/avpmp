@@ -23,7 +23,7 @@ FORCE_CHUNK_INCLUDE_IMPLEMENT(bmpnames)
 
 
 BMP_Name::BMP_Name (const char * fname, int const gbnc_version)
-: flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (gbnc_version << BMPNAME_PARENT_VER_SHIFT), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0), enum_id(0)
+: flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (gbnc_version << BMPNAME_PARENT_VER_SHIFT), enum_id(0), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0)
 #if cencon
 , md5val(0)
 #endif
@@ -33,7 +33,7 @@ BMP_Name::BMP_Name (const char * fname, int const gbnc_version)
 }
 
 BMP_Name::BMP_Name (const char * fname)
-: flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (0), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0), enum_id(0)
+: flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (0), enum_id(0), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0)
 #if cencon
 , md5val(0)
 #endif
@@ -824,8 +824,6 @@ Matching_Images_Chunk::Matching_Images_Chunk(Chunk_With_Children * parent, char 
 : Chunk(parent,"MATCHIMG")
 , flags ((MICFlags)(*(int *)(datablock+8) & MICF_MASK))
 {
-	char const * datastart = datablock;
-	
 	spares[0] = *(int *)datablock;
 	spares[1] = *(int *)(datablock+4);
 
@@ -888,7 +886,7 @@ ImageDescriptor const & Matching_Images_Chunk::GetLoadImage(ImageDescriptor cons
 RIF_IMPLEMENT_DYNCREATE("BMPMD5ID",Bitmap_MD5_Chunk)
 
 Bitmap_MD5_Chunk::Bitmap_MD5_Chunk(Chunk_With_Children * parent, int const * md5id, BMP_Name const & rcbmp, char const * rname, char const * sname)
-: Chunk(parent,"BMPMD5ID"), spare(0), flags(BMD5F_0), version_num(rcbmp.version_num)
+: Chunk(parent,"BMPMD5ID"), flags(BMD5F_0), version_num(rcbmp.version_num), spare(0)
 {
 	memcpy(md5_val,md5id,16);
 	
@@ -907,7 +905,7 @@ Bitmap_MD5_Chunk::Bitmap_MD5_Chunk(Chunk_With_Children * parent, int const * md5
 }
 
 Bitmap_MD5_Chunk::Bitmap_MD5_Chunk(Chunk_With_Children * parent, char const * datablock, size_t)
-: Chunk(parent,"BMPMD5ID"), spare(*(int *)datablock), flags((BMPMD5_Flags)(*(int *)(datablock+4) & BMD5F_MASK)), version_num(*(int *)(datablock+8))
+: Chunk(parent,"BMPMD5ID"), flags((BMPMD5_Flags)(*(int *)(datablock+4) & BMD5F_MASK)), version_num(*(int *)(datablock+8)), spare(*(int *)datablock) 
 {
 	memcpy(md5_val,datablock+12,16);
 	datablock += 28;

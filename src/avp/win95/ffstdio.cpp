@@ -54,7 +54,7 @@ FFileDesc::FFileDesc(char const * infoline, char const * path)
 		do
 		{
 			c2 = c1 = *infoline++;
-			if (';'==c1||'\n'==c1)
+			if (';'==c1||'\n'==c1||'\r'==c1)
 				c1 = 0;
 			*dbufP++ = (char)c1;
 		}
@@ -65,7 +65,7 @@ FFileDesc::FFileDesc(char const * infoline, char const * path)
 			do
 			{
 				c1 = *infoline++;
-				if ('\n'==c1)
+				if ('\n'==c1||'\r'==c1)
 					c1 = 0;
 				*fbufP++ = (char)c1;
 			}
@@ -158,7 +158,7 @@ static List<FFILE *> openlist;
 
 int ffInit(char const * infofilename, char const * ffpath)
 {
-	FILE * fp = fopen(infofilename,"r");
+	FILE * fp = OpenGameFile(infofilename, FILEMODE_READONLY, FILETYPE_PERM);
 	if (!fp) return 0;
 	
 	while (fdesclist.size())
@@ -370,7 +370,9 @@ FFILE * ffopen(char const * filename, char const * mode)
 	#if debug && 0 // dont do this, caller should handle this situation
 	LOGDXFMT(("%s not in any fastfile",filename));
 
-	FILE * sfp = fopen(filename,mode);
+	/* mode is always "rb" */
+	FILE *sfp = OpenGameFile(filename, FILEMODE_READONLY, FILETYPE_PERM);
+	
 	if (!sfp) return 0;
 
 	fseek(sfp,0,SEEK_END);
@@ -442,7 +444,7 @@ int ffseek(FFILE * fp, long offset, int whence)
 	switch (whence)
 	{
 		case SEEK_SET:
-			if (offset > fp->length || offset < 0)
+			if ((unsigned long)offset > fp->length || offset < 0)
 			{
 				fp->flag |= FFF_ERR;
 				errno = EDOM;

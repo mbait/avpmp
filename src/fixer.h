@@ -11,7 +11,7 @@ extern "C" {
 #include <limits.h>
 #include <inttypes.h> /* int64_t */
 
-void FixFilename(char *str);
+#include "files.h"
 
 #define PACKED __attribute__((packed))
 

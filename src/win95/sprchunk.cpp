@@ -184,10 +184,9 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 : Chunk_With_Children(parent,"SPRIHEAD")
 {
 // Load in whole chunk and traverse
-	HANDLE rif_file;
+	FILE *rif_file;
 	DWORD file_size;
 	DWORD file_size_from_file;
-	unsigned long bytes_read;
 	char * buffer;
 	char * buffer_ptr;
 	char id_buffer[9];
@@ -197,49 +196,51 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 	error_code = 0;
 
 
-	rif_file = CreateFileA (file_name, GENERIC_READ, 0, 0, OPEN_EXISTING, 
-					FILE_FLAG_RANDOM_ACCESS, 0);
-
-	if (rif_file == INVALID_HANDLE_VALUE) {
+	rif_file = OpenGameFile(file_name, FILEMODE_READONLY, FILETYPE_PERM);	
+	if (rif_file == NULL) {
 		return;
 	}
 
-	file_size = GetFileSize (rif_file, 0);
-
+	fseek(rif_file, 0, SEEK_END);
+	file_size = ftell(rif_file);
+	rewind(rif_file);
 	
-	if (!ReadFile(rif_file, id_buffer, 8, &bytes_read, 0)) {
+	if (fread(id_buffer, 1, 8, rif_file) != 8) {
 		error_code = CHUNK_FAILED_ON_LOAD;
-		CloseHandle (rif_file);
+		fclose(rif_file);
 		return;
 	}	
 
-	if (strncmp (id_buffer, "SPRIHEAD", 8)) {
+	if (strncmp(id_buffer, "SPRIHEAD", 8) != 0) {
 		error_code = CHUNK_FAILED_ON_LOAD_NOT_RECOGNISED;
-		CloseHandle (rif_file);
+		fclose(rif_file);
 		return;
 	}	
 
-	if (!ReadFile(rif_file, &file_size_from_file, 4, &bytes_read, 0)) {
+	if (fread(&file_size_from_file, 1, 4, rif_file) != 4) {
 		error_code = CHUNK_FAILED_ON_LOAD;
-		CloseHandle (rif_file);
+		fclose(rif_file);
 		return;
 	}	
 
 	if (file_size != file_size_from_file) {
 		error_code = CHUNK_FAILED_ON_LOAD_NOT_RECOGNISED;
-		CloseHandle (rif_file);
+		fclose(rif_file);
 		return;
 	}	
 
-
 	buffer = new char [file_size];
 
-	if (!ReadFile(rif_file, buffer, (file_size-12), &bytes_read, 0)) {
+	if (fread(buffer, 1, (file_size-12), rif_file) != (file_size-12)) {
 		error_code = CHUNK_FAILED_ON_LOAD;
-		CloseHandle (rif_file);
+		delete [] buffer;
+		
+		fclose(rif_file);
 		return;
 	}
 
+	fclose(rif_file);
+	
 	// Process the file
 
 	buffer_ptr = buffer;
@@ -248,7 +249,6 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 	// The start of the first chunk
 
 	while ((buffer_ptr-buffer)< ((signed) file_size-12) && !error_code) {
-
 		if ((*(int *)(buffer_ptr + 8)) + (buffer_ptr-buffer) > ((signed) file_size-12)) {
 			error_code = CHUNK_FAILED_ON_LOAD_NOT_RECOGNISED;
 			break;
@@ -256,13 +256,9 @@ Sprite_Header_Chunk::Sprite_Header_Chunk(const char * file_name, Chunk_With_Chil
 
 		DynCreate(buffer_ptr);
 		buffer_ptr += *(int *)(buffer_ptr + 8);
-
 	}
 
 	delete [] buffer;
-
-	CloseHandle (rif_file);
-
 }
 
 
@@ -960,5 +956,4 @@ void Sprite_Extent_Chunk::fill_data_block(char* data_start)
 	data_start+=4;
 	*(int*)data_start=spare2;
 	data_start+=4;
-
 }

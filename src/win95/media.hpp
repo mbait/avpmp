@@ -2,7 +2,7 @@
 #define _INCLUDED_MEDIA_HPP_
 
 //#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
-	#define _MEDIA_WIN_TARGET
+//	#define _MEDIA_WIN_TARGET
 //	#include <windows.h>
 //#endif // WIN32 || _WIN32 || WINDOWS || _WINDOWS
 
@@ -497,7 +497,12 @@ class MediaStdFileMedium : public MediaMedium
 		
 		void Open(char const * pszFileName, char const * pszOpenMode)
 		{
-			m_pFile = fopen(pszFileName,pszOpenMode);
+			if (pszOpenMode[0] != 'r' || pszOpenMode[1] != 'b') {
+				fprintf(stderr, "Open(%s, %s)\n", pszFileName, pszOpenMode);
+				m_fError |= MME_OPENFAIL;
+				return;
+			} 
+			m_pFile = OpenGameFile(pszFileName, FILEMODE_READONLY, FILETYPE_PERM);
 			if (!m_pFile)
 				m_fError |= MME_OPENFAIL;
 		}

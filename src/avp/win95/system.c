@@ -734,8 +734,8 @@ void IntegrateNewEnvironment()
 }
 
 
-const char GameDataDirName[20] = {"AVP_RIFS"};
-const char FileNameExtension[5] =  {".RIF"};
+const char GameDataDirName[20] = {"avp_rifs"};
+const char FileNameExtension[5] =  {".rif"};
  
 void LoadRifFile()
 {
@@ -760,8 +760,6 @@ void LoadRifFile()
 	catpathandextension(&file_and_path[0], Env_List[AvP.CurrentEnv]->main); /* root of the file name,smae as dir*/
 	catpathandextension(&file_and_path[0], (char *)&FileNameExtension[0]);	/* extension*/
 	
-	FixFilename(file_and_path);
-	
 	env_rif = avp_load_rif((const char*)&file_and_path[0]);
 	Set_Progress_Bar_Position(PBAR_LEVEL_START+PBAR_LEVEL_INTERVAL*.4);
 	
@@ -771,10 +769,6 @@ void LoadRifFile()
 			exit(0x3421);
 				
 	  };
-
-//	#ifdef __WATCOMC__
-//	#pragma message("Note: use copy_chunks_from_envronment(CCF_ENVIRONMENT) iff a character rif is loaded")
-//	#endif
 
 	#if MaxImageGroups>1
 	SetCurrentImageGroup(2); // FOR ENV

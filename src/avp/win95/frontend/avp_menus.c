@@ -110,7 +110,6 @@ static void KeyboardEntryQueue_Clear(void);
 static void KeyboardEntryQueue_StartProcessing(void);
 void ScanSaveSlots(void);
 extern void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr);
-static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* filename);
 
 static void PasteFromClipboard(char* Text,int MaxTextLength);
 /* KJL 11:23:03 23/06/98 - Requirements
@@ -4451,7 +4450,7 @@ void DisplayVideoModeUnavailableScreen(void)
 void CheckForCredits(void)
 {
 #if 0
-	FILE *fp = fopen("credits.txt","rb");
+	FILE *fp = OpenGameFile("credits.txt", FILEMODE_READONLY, FILETYPE_PERM);
 	
 	if (!fp)
 	{
@@ -5437,28 +5436,6 @@ static char KeyboardEntryQueue_ProcessCharacter(void)
 
 
 
-
-void ScanSaveSlots(void)
-{
-	unsigned char filename[100];
-	int i;
-	SAVE_SLOT_HEADER *slotPtr = SaveGameSlot;
-
-	for (i=0; i<NUMBER_OF_SAVE_SLOTS; i++, slotPtr++)
-	{
-		GetFilenameForSaveSlot(i,filename);
-
-		GetHeaderInfoForSaveSlot(slotPtr,filename);
-	}
-}
-
-extern void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr)
-{
-	sprintf(filenamePtr,"%s%s_%d.sav",USER_PROFILES_PATH,UserProfilePtr->Name,i+1);
-}
-
-
-
 /*------------------------------------**
 ** Loading and saving main level info **
 **------------------------------------*/
@@ -5502,7 +5479,6 @@ void SaveLevelHeader()
 
 	block->Difficulty = AvP.Difficulty;
 	block->NumberOfSavesLeft = (unsigned char) NumberOfSavesLeft;
-
 }
 
 void LoadLevelHeader(SAVE_BLOCK_HEADER* header)
@@ -5514,48 +5490,43 @@ void LoadLevelHeader(SAVE_BLOCK_HEADER* header)
 	AvP.ElapsedHours = block->ElapsedTime_Hours;
 	AvP.ElapsedMinutes = block->ElapsedTime_Minutes;
 	AvP.ElapsedSeconds = block->ElapsedTime_Seconds;
-
 }
 
-static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* filename)
+static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot, const GameDirectoryFile *gdf)
 {
 	LEVEL_SAVE_BLOCK block;
 	unsigned int file_size;
-	unsigned int bytes_read;
-	HANDLE file;
+	unsigned char filename[100];
+	FILE *file;
 
 	save_slot->SlotUsed = 0;
 
-	file = CreateFile(filename,GENERIC_READ, 0, 0, OPEN_EXISTING,FILE_FLAG_RANDOM_ACCESS, 0);
+	sprintf(filename, "%s%s", USER_PROFILES_PATH, gdf->filename);
+	file = OpenGameFile(filename, FILEMODE_READONLY, FILETYPE_CONFIG);
 
-	if(file==INVALID_HANDLE_VALUE)
+	if (file==NULL)
 	{
 		//failed to load (probably doesn't exist)
 		return;
 	}
-
-
-	file_size = GetFileSize(file,0);
-
+	
+	fseek(file, 0, SEEK_END);
+	file_size = ftell(file);
+	rewind(file);
+	
 	if(file_size < sizeof(LEVEL_SAVE_BLOCK))
 	{
 		//obviously not much of a save file then...
-		CloseHandle(file);
+		fclose(file);
 		return;
 
 	}
 
-{
-	struct stat buf;
-
-	if (stat(filename, &buf) != -1) {
-		save_slot->TimeStamp = buf.st_mtime;
-	}
-}
+	save_slot->TimeStamp = gdf->timestamp;
    	
 	//load the level header
-	ReadFile(file,&block,sizeof(block),(LPDWORD)&bytes_read,0);
-	CloseHandle(file);
+	fread(&block, sizeof(block), 1, file);
+	fclose(file);
 
 	//a few checks
 	if(block.header.type != SaveBlock_MainHeader ||
@@ -5580,6 +5551,40 @@ static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot,const char* fil
 	save_slot->SavesLeft = block.NumberOfSavesLeft;
 }
 
+void ScanSaveSlots(void)
+{
+	unsigned char pattern[100], *ptr;
+	int i;
+	void *gd;
+	GameDirectoryFile *gdf;
+	
+	sprintf(pattern, "%s_?.sav", UserProfilePtr->Name);
+	gd = OpenGameDirectory(USER_PROFILES_PATH, pattern, FILETYPE_CONFIG);
+	if (gd == NULL)
+		return;
+
+	while ((gdf = ScanGameDirectory(gd)) != NULL) {
+		if ((gdf->attr & FILEATTR_DIRECTORY) != 0)
+			continue;
+		if ((gdf->attr & FILEATTR_READABLE) == 0)
+			continue;
+
+		ptr = strrchr(gdf->filename, '.');
+		if (ptr == NULL)
+			continue;
+		ptr--;
+
+		i = *ptr - '1';
+		if (i >= 0 && (i < NUMBER_OF_SAVE_SLOTS)) {
+			GetHeaderInfoForSaveSlot(&SaveGameSlot[i], gdf);
+		}		
+	}
+}
+
+extern void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr)
+{
+	sprintf(filenamePtr,"%s%s_%d.sav",USER_PROFILES_PATH,UserProfilePtr->Name,i+1);
+}
 
 static void CheckForLoadGame()
 {

@@ -254,7 +254,7 @@ namespace AwTl {
 			case 4:
 			{
 				unsigned shift=0;
-				unsigned val;
+				unsigned val=0;
 				--_dstRowP.byteP; // decrement here because we increment before the first write
 				for (unsigned colcount = _srcWidth; colcount; --colcount)
 				{
@@ -441,7 +441,7 @@ namespace AwTl {
 	class TypicalTexFileLoader : public TexFileLoader
 	{
 		protected:
-			TypicalTexFileLoader() : m_pRowBuf(NULL), m_ppPixMap(NULL), m_pPalette(NULL) {}
+			TypicalTexFileLoader() : m_pPalette(NULL), m_ppPixMap(NULL), m_pRowBuf(NULL) {}
 		
 			virtual ~TypicalTexFileLoader();
 		

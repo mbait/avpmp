@@ -27,10 +27,13 @@ extern void LoadModuleData();
 
 void LogCameraPosForModuleLinking()
 {
+	fprintf(stderr, "STUB: LogCameraPosForModuleLinking()\n");
+	
+#if 0 /* TODO: commented out because I want to know if its actually used */
 	if(!playerPherModule) return;
 	if(!playerPherModule->name) return;
 	
-	char Filename[100]={"avp_rifs\\"};
+	char Filename[100]={"avp_rifs/"};
 	
 	strcat(Filename,Env_List[AvP.CurrentEnv]->main);
 	strcat(Filename,".mlf");
@@ -59,6 +62,7 @@ void LogCameraPosForModuleLinking()
 	fwrite(&output_buffer[0],4,length/4,file);
 	fclose(file);		
 	textprint("Saving camera for module links");
+#endif	
 }
 int SaveCameraPosKeyPressed=0;
 static BOOL ModuleLinkAssist=FALSE;
@@ -115,7 +119,7 @@ void ScreenShot()
 	{
 		Name[length]=i/10+'0';
 		Name[length+1]=(i%10)+'0';
-		FILE* tempfp=fopen(Name,"r");
+		FILE* tempfp = OpenGameFile(Name, FILEMODE_READONLY, FILETYPE_CONFIG);
 		if(!tempfp)break;
 		else
  		{
@@ -124,7 +128,7 @@ void ScreenShot()
 	}
 	if(i==100) return;
 	
-	FILE * fp = fopen(Name,"wb");
+	FILE *fp = OpenGameFile(Name, FILEMODE_WRITEONLY, FILETYPE_CONFIG);
 	if (!fp)
 	{
 		return;
@@ -190,7 +194,7 @@ void ScreenShot()
 	unsigned char *BufferPtr = &buf[0];
 	for (i=h.WinInfo.Height-1; i>=0; --i)
 	{
-		int j;
+		unsigned int j;
 		for (j=0; j<h.WinInfo.Width; ++j)
 		{
 			PutByte((BYTE)BufferPtr[j*3+2],fp);  //b

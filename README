@@ -11,8 +11,7 @@ end users."  Hopefully this status will change in the not-so-distant future.
 
 
 
-
-
+(Please see note below regarding installation/running.)
 
 
 Obviously this README is totally incomplete, and will probably remain so for
@@ -42,12 +41,29 @@ If you are wanting to run the Alien demo (the installer is an .exe but you
 can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
 the CFLAGS line (the one that's uncommented) in the Makefile. Rename all game 
 files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org) with
-OpenGL support, nasm 0.98, PhysicsFS 0.1.4 (http://icculus.org/physfs/),
-and the latest OpenAL CVS (http://www.openal.org).  AvP requires a 3D card 
-with OpenGL support.
+OpenGL support, nasm 0.98, and the latest OpenAL CVS (http://www.openal.org).
+AvP requires a 3D card with OpenGL support.
 
-Create the MPConfig and User_Profiles directories if they do not exist. 
-(Note: Windows profiles probably do not work in Linux and vice versa)
+***
+IMPORTANT:
+AvP now uses $HOME/.avp/ to load/store configs, logs, etc.
+NOTE: Windows profiles probably do not work in Linux and vice versa.
+
+AvP will no longer use the current working directory to look for files.  You
+must either copy or symlink the AvP binary to the game data directory and run
+that, or set AVP_DATA to the data directory.
+
+Currently:
+If you want to install the mappacks from
+http://www.avpnews.com/files/avpfiles.html, install them with the rest of
+the game data, not in ~/.avp/.  Make sure everything is lowercase (although,
+the maps in avp_rifs/Custom do not have to be totally lowercase, just the .rif
+extension).  Maybe in the future users will be able to install the files in
+~/.avp/ also.
+
+Hopefully all the necessary file loading changes were made.  Please let me
+know if something goes wrong.
+***
 
 If you have the regular edition, add -DREGULAR_EDITION to CFLAGS.
 
@@ -64,14 +80,11 @@ have to uncomment a LDLIBS line in the Makefile.
 
 
 relnev:~/avp/AvP Demo 3 - Alien$ ls
-aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/  MPConfig/
-User_Profiles/
+aenglish.txt  alienavp_huds/  alienfastfile/  avp_rifs/
 relnev:~/avp/Gold Edition$ ls
-avp_huds/  avp_rifs/  cd tracks.txt  default.cfg  fastfile/  language.txt
-MPConfig/  User_Profiles/
+avp_huds/  avp_rifs/  cd tracks.txt  fastfile/  language.txt
 
-Support for the demo is not quite complete (some sounds are missing and some
-text is incorrect/missing).
+Support for the demo is not quite complete (some sounds are missing).
 
 
 Linux Port-specific commands:

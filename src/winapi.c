@@ -10,23 +10,6 @@
 
 #include "fixer.h"
 
-void FixFilename(char *str)
-{
-	int len = strlen(str);
-	int i;
-	
-	for (i = 0; i < len; i++) {
-		if (str[i] == '\\')
-			str[i] = '/';
-		else if (str[i] == '\r')
-			str[i] = 0;
-		else if (str[i] == '\n')
-			str[i] = 0;
-		else
-			str[i] = tolower(str[i]);
-	}
-}
-
 size_t _mbclen(const unsigned char *s)
 {
 	return strlen((const char *)s);
@@ -35,9 +18,9 @@ size_t _mbclen(const unsigned char *s)
 HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags2, int z)
 {
 	int fd;
-/*	
+	
 	fprintf(stderr, "CreateFile(%s, %d, %d, %d, %d, %d, %d)\n", file, mode, x, y, flags, flags2, z);
-*/
+
 	switch(mode) {
 		case GENERIC_READ:
 			if (flags != OPEN_EXISTING) {
@@ -78,9 +61,9 @@ HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int fla
 int WriteFile(HANDLE file, const void *data, int len, void *byteswritten, int lpOverlapped)
 {
 	unsigned long *bw, i;
-/*	
+	
 	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, lpOverlapped);
-*/
+
 	bw = (unsigned long *)byteswritten;
 	*bw = 0;
 	
@@ -96,9 +79,9 @@ int WriteFile(HANDLE file, const void *data, int len, void *byteswritten, int lp
 int ReadFile(HANDLE file, void *data, int len, void *bytesread, int lpOverlapped)
 {
 	unsigned long *br, i;
-/*	
+	
 	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, lpOverlapped);
-*/
+
 	br = (unsigned long *)bytesread;
 	*br = 0;
 	
@@ -114,9 +97,9 @@ int ReadFile(HANDLE file, void *data, int len, void *bytesread, int lpOverlapped
 int GetFileSize(HANDLE file, int lpFileSizeHigh)
 {
 	struct stat buf;
-/*	
+	
 	fprintf(stderr, "GetFileSize(%d, %d)\n", file, lpFileSizeHigh);
-*/	
+	
 	if (fstat(file, &buf) == -1)
 		return -1;
 	return buf.st_size;
@@ -124,9 +107,9 @@ int GetFileSize(HANDLE file, int lpFileSizeHigh)
 
 int CloseHandle(HANDLE file)
 {
-/*
+
 	fprintf(stderr, "CloseHandle(%d)\n", file);
-*/	
+	
 	if (close(file) == -1) 
 		return 0;
 	else
@@ -137,9 +120,9 @@ int CloseHandle(HANDLE file)
 
 int DeleteFile(const char *file)
 {
-/*
+
 	fprintf(stderr, "DeleteFile(%s)\n", file);
-*/	
+	
 	if (unlink(file) == -1)
 		return 0;
 	else
@@ -160,9 +143,9 @@ int GetDiskFreeSpace(int x, unsigned long *a, unsigned long *b, unsigned long *c
 
 int CreateDirectory(char *dir, int lpSecurityAttributes)
 {
-/*
+
 	fprintf(stderr, "CreateDirectory(%s, %d)\n", dir, lpSecurityAttributes);
-*/
+
 	if (mkdir(dir, S_IRWXU) == -1)
 		return 0;
 	else

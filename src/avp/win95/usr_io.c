@@ -1718,7 +1718,7 @@ void SaveAKeyConfiguration(char* Filename)
 
 void SaveDefaultPrimaryConfigs(void)
 {
-	FILE* file=fopen("default.cfg","wb");
+	FILE *file = OpenGameFile("default.cfg", FILEMODE_WRITEONLY, FILETYPE_CONFIG);
 	if(!file) return;
 
 	fwrite(&DefaultMarineInputPrimaryConfig,sizeof(PLAYER_INPUT_CONFIGURATION),1,file);
@@ -1729,7 +1729,7 @@ void SaveDefaultPrimaryConfigs(void)
 }
 void LoadDefaultPrimaryConfigs(void)
 {
-	FILE* file=fopen("default.cfg","rb");
+	FILE *file = OpenGameFile("default.cfg", FILEMODE_READONLY, FILETYPE_CONFIG);
 	if(!file) return;
 
 	fread(&DefaultMarineInputPrimaryConfig,sizeof(PLAYER_INPUT_CONFIGURATION),1,file);

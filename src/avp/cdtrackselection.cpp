@@ -112,8 +112,9 @@ void LoadCDTrackList()
 	//clear out the old list first
 	EmptyCDTrackList();
 
-	HANDLE file=CreateFile(CDTrackFileName,GENERIC_READ, 0, 0, OPEN_EXISTING,FILE_FLAG_RANDOM_ACCESS, 0);
-	if(file==INVALID_HANDLE_VALUE)
+	FILE *file = OpenGameFile(CDTrackFileName, FILEMODE_READONLY, FILETYPE_OPTIONAL);
+	
+	if(file==NULL)
 	{
 		LOGDXFMT(("Failed to open %s",CDTrackFileName));
 		return;
@@ -121,13 +122,15 @@ void LoadCDTrackList()
 
 	char* buffer;
 	int file_size;
-	unsigned long bytes_read;
 
+	fseek(file, 0, SEEK_END);
+	file_size = ftell(file);
+	rewind(file);
+	
 	//copy the file contents into a buffer
-	file_size= GetFileSize(file,0);
 	buffer=new char[file_size+1];
-	ReadFile(file,buffer,file_size,&bytes_read,0);
-	CloseHandle(file);
+	fread(buffer, 1, file_size, file);
+	fclose(file);
 	
 	char* bufferptr=buffer;
 

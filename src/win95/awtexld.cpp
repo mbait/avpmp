@@ -156,20 +156,20 @@ namespace AwTl
 	{
 		public:
 			inline CreateTextureParms()
-				: fileNameS(NULL)
-				, fileH(INVALID_HANDLE_VALUE)
+				: loadTextureB(false)
+				, fileNameS(NULL)
+				, fileH(NULL)
 				, dataP(NULL)
 				, restoreH(NULL)
 				, maxReadBytes(UINT_MAX)
 				, bytesReadP(NULL)
 				, flags(AW_TLF_DEFAULT)
-				, originalWidthP(NULL)
-				, originalHeightP(NULL)
 				, widthP(NULL)
 				, heightP(NULL)
+				, originalWidthP(NULL)
+				, originalHeightP(NULL)	
 				, prevTexP(static_cast<D3DTexture *>(NULL))
 				, prevTexB(false)
-				, loadTextureB(false)
 				, callbackF(NULL)
 				, rectA(NULL)
 			{
@@ -180,7 +180,7 @@ namespace AwTl
 			bool loadTextureB;
 			
 			char *fileNameS;
-			HANDLE fileH;
+			FILE *fileH;
 			PtrUnionConst dataP;
 			AW_BACKUPTEXTUREHANDLE restoreH;
 			
@@ -228,7 +228,7 @@ namespace AwTl
 						db_log1(("AW: Potential Memory Leaks Detected!!!"));
 					}
 					#ifdef _CPPRTTI
-						#pragma message("Run-Time Type Identification (RTTI) is enabled")
+						#warning "Run-Time Type Identification (RTTI) is enabled"
 						for (Iterator itLeak(*this) ; !itLeak.Done() ; itLeak.Next())
 						{
 							db_logf1(("\tAW Object not deallocated: Type: %s RefCnt: %u",typeid(*itLeak.Get()).name(),itLeak.Get()->m_nRefCnt));
@@ -238,7 +238,7 @@ namespace AwTl
 							db_log1(("AW: Object dump complete"));
 						}
 					#else // ! _CPPRTTI
-						#pragma message("Run-Time Type Identification (RTTI) is not enabled - memory leak checking will not report types")
+						#warning "Run-Time Type Identification (RTTI) is not enabled - memory leak checking will not report types"
 						unsigned nRefs(0);
 						for (Iterator itLeak(*this) ; !itLeak.Done() ; itLeak.Next())
 						{
@@ -1762,9 +1762,9 @@ namespace AwTl {
 	
 	SurfUnion CreateTextureParms::DoCreate() const
 	{
-		if (INVALID_HANDLE_VALUE!=fileH)
+		if (NULL != fileH)
 		{
-			MediaWinFileMedium * pMedium = new MediaWinFileMedium;
+			MediaStdFileMedium * pMedium = new MediaStdFileMedium;
 			pMedium->Attach(fileH);
 			SurfUnion pTex = LoadTexture(pMedium,*this);
 			pMedium->Detach();
@@ -1802,7 +1802,7 @@ namespace AwTl {
 			switch (*_argFormatS++)
 			{
 				case 's':
-					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH)
+					if (pParams->fileNameS || NULL!=pParams->fileH || pParams->dataP || pParams->restoreH)
 						bad_parmsB = true;
 					else
 					{
@@ -1811,16 +1811,16 @@ namespace AwTl {
 					}
 					break;
 				case 'h':
-					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH)
+					if (pParams->fileNameS || NULL!=pParams->fileH || pParams->dataP || pParams->restoreH)
 						bad_parmsB = true;
 					else
 					{
-						pParams->fileH = va_arg(ap,HANDLE);
-						db_logf4(("\tFile HANDLE = 0x%08x",pParams->fileH));
+						pParams->fileH = va_arg(ap,FILE *);
+						db_logf4(("\tFile HANDLE = %p",pParams->fileH));
 					}
 					break;
 				case 'p':
-					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH)
+					if (pParams->fileNameS || NULL!=pParams->fileH || pParams->dataP || pParams->restoreH)
 						bad_parmsB = true;
 					else
 					{
@@ -1829,7 +1829,7 @@ namespace AwTl {
 					}
 					break;
 				case 'r':
-					if (pParams->fileNameS || INVALID_HANDLE_VALUE!=pParams->fileH || pParams->dataP || pParams->restoreH || UINT_MAX!=pParams->maxReadBytes || pParams->bytesReadP)
+					if (pParams->fileNameS || NULL!=pParams->fileH || pParams->dataP || pParams->restoreH || UINT_MAX!=pParams->maxReadBytes || pParams->bytesReadP)
 						bad_parmsB = true;
 					else
 					{
@@ -1948,7 +1948,7 @@ namespace AwTl {
 			}
 		}
 		
-		if (!pParams->fileNameS && INVALID_HANDLE_VALUE==pParams->fileH && !pParams->dataP && !pParams->restoreH)
+		if (!pParams->fileNameS && NULL==pParams->fileH && !pParams->dataP && !pParams->restoreH)
 		{
 			awTlLastErr = AW_TLE_BADPARMS;
 			db_log2("AwCreateGraphic(): ERROR: No data medium is specified");
@@ -1973,9 +1973,9 @@ namespace AwTl {
 	{
 		if (pParams->fileNameS)
 		{
-			pParams->fileH = CreateFile(pParams->fileNameS,GENERIC_READ,FILE_SHARE_READ,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+			pParams->fileH = OpenGameFile(pParams->fileNameS, FILEMODE_READONLY, FILETYPE_PERM);
 		
-			if (INVALID_HANDLE_VALUE==pParams->fileH)
+			if (NULL==pParams->fileH)
 			{
 				awTlLastErr = AW_TLE_CANTOPENFILE;
 			//	awTlLastWinErr = GetLastError();
@@ -1986,7 +1986,7 @@ namespace AwTl {
 			
 			SurfUnion textureP = pParams->DoCreate();
 		
-			CloseHandle(pParams->fileH);
+			fclose(pParams->fileH);
 			
 			return textureP;
 		}

@@ -109,12 +109,13 @@ static inline bool IsFileInFastFile(char const * pszFileName)
 
 static bool DoesFileExist(char const * pszFileName)
 {
-	DWORD dwFileAttributes = GetFileAttributes(pszFileName);
-	
-	if (0xffffffff == dwFileAttributes || dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	unsigned int attr = GetGameFileAttributes(pszFileName, FILETYPE_PERM);
+
+	if ((attr & FILEATTR_DIRECTORY) != 0)
 		return false;
-	else
-		return true;
+	if ((attr & FILEATTR_READABLE) == 0)
+		return false;
+	return true;
 }
 
 static char * GetPath(char * pszFileNameBuf, unsigned nBufSize, ImageDescriptor const & idsc, Chunk_With_Children * pEnvDataChunk, bool bGloballyPalettized)

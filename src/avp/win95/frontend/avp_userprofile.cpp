@@ -20,11 +20,6 @@ extern "C"
 #include "pldnet.h"
 #include <time.h>
 
-#include <glob.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 static int LoadUserProfiles(void);
 
 static void EmptyUserProfilesList(void);
@@ -112,9 +107,9 @@ extern int SaveUserProfile(AVP_USER_PROFILE *profilePtr)
 	strcat(filename,profilePtr->Name);
 	strcat(filename,USER_PROFILES_SUFFIX);
 
-	FILE* file=fopen(filename,"wb");
+	FILE* file=OpenGameFile(filename, FILEMODE_WRITEONLY, FILETYPE_CONFIG);
 	delete [] filename;
-	if(!file) return 0;
+	if (!file) return 0;
 	
 	SaveSettingsToUserProfile(profilePtr);
 	
@@ -135,7 +130,7 @@ extern void DeleteUserProfile(int number)
 	strcat(filename,profilePtr->Name);
 	strcat(filename,USER_PROFILES_SUFFIX);
 
-	DeleteFile(filename);
+	DeleteGameFile(filename);
 
 	delete [] filename;
 	{
@@ -145,7 +140,7 @@ extern void DeleteUserProfile(int number)
 		for (i=0; i<NUMBER_OF_SAVE_SLOTS; i++)
 		{
 			sprintf(filename,"%s%s_%d.sav",USER_PROFILES_PATH,profilePtr->Name,i+1);
-			DeleteFile(filename);
+			DeleteGameFile(filename);
 		}
 		delete [] filename;
 	}
@@ -180,71 +175,54 @@ static int ProfileIsMoreRecent(AVP_USER_PROFILE *profilePtr, AVP_USER_PROFILE *p
 
 static int LoadUserProfiles(void)
 {
-	glob_t globbuf;
-	const char* load_name=USER_PROFILES_WILDCARD_NAME;
+	void *gd;
+	GameDirectoryFile *gdf;
 	
-	if (glob(load_name, 0, NULL, &globbuf))
+	gd = OpenGameDirectory(USER_PROFILES_PATH, USER_PROFILES_WILDCARD_NAME, FILETYPE_CONFIG);
+	if (gd == NULL) {
+		CreateGameDirectory(USER_PROFILES_PATH); /* maybe it didn't exist.. */
 		return 0;
-	
-	// get any path in the load_name
-	int nPathLen = 0;
-	char * pColon = strrchr(load_name,':');
-	if (pColon) nPathLen = pColon - load_name + 1;
-	char * pBackSlash = strrchr(load_name,'\\');
-	if (pBackSlash)
-	{
-		int nLen = pBackSlash - load_name + 1;
-		if (nLen > nPathLen) nPathLen = nLen;
-	}
-	char * pSlash = strrchr(load_name,'/');
-	if (pSlash)
-	{
-		int nLen = pSlash - load_name + 1;
-		if (nLen > nPathLen) nPathLen = nLen;
 	}
 
-	for (unsigned int i = 0; i < globbuf.gl_pathc; i++) {
-		struct stat buf;
-		
-		if (stat(globbuf.gl_pathv[i], &buf) == -1)
+	int nPathLen = strlen(USER_PROFILES_PATH);
+	
+	while ((gdf = ScanGameDirectory(gd)) != NULL) {
+		if ((gdf->attr & FILEATTR_DIRECTORY) != 0)
+			continue;
+		if ((gdf->attr & FILEATTR_READABLE) == 0)
 			continue;
 		
-		if (S_ISREG(buf.st_mode) && (access(globbuf.gl_pathv[i], R_OK) == 0))
+		char * pszFullPath = new char [nPathLen+strlen(gdf->filename)+1];
+		strcpy(pszFullPath, USER_PROFILES_PATH);
+		strcat(pszFullPath, gdf->filename);
+			
+		FILE *rif_file;
+		rif_file = OpenGameFile(pszFullPath, FILEMODE_READONLY, FILETYPE_CONFIG);
+		if(rif_file==NULL)
 		{
-			char * pszFullPath = new char [nPathLen+strlen(globbuf.gl_pathv[i])+1];
-			// strncpy(pszFullPath,load_name,nPathLen);
-			strcpy(pszFullPath /* +nPathLen */, globbuf.gl_pathv[i]);
-			
-			HANDLE rif_file;
-			rif_file = CreateFile (pszFullPath, GENERIC_READ, 0, 0, OPEN_EXISTING, 
-					FILE_FLAG_RANDOM_ACCESS, 0);
-			if(rif_file==INVALID_HANDLE_VALUE)
-			{
-				delete[] pszFullPath;
-				continue;
-			}
-
-			AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
-			unsigned long bytes_read;
-			
-			if (!ReadFile(rif_file, profilePtr, sizeof(AVP_USER_PROFILE), &bytes_read, 0))
-			{
-		       		CloseHandle (rif_file);
-				delete[] pszFullPath;
-				delete profilePtr;
-				continue;
-			}
-
-			profilePtr->FileTime = buf.st_mtime;
-			
-			InsertProfileIntoList(profilePtr);
-			CloseHandle (rif_file);
 			delete[] pszFullPath;
+			continue;
 		}
+
+		AVP_USER_PROFILE *profilePtr = new AVP_USER_PROFILE;
+			
+		if (fread(profilePtr, 1, sizeof(AVP_USER_PROFILE), rif_file) != sizeof(AVP_USER_PROFILE))
+		{
+	       		fclose(rif_file);
+			delete[] pszFullPath;
+			delete profilePtr;
+			continue;
+		}
+
+		profilePtr->FileTime = gdf->timestamp;
+	
+		InsertProfileIntoList(profilePtr);
+		fclose(rif_file);
+		delete[] pszFullPath;
 	}
 	
-	globfree(&globbuf);
-
+	CloseGameDirectory(gd);
+	
 	return 1;
 }
 

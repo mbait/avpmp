@@ -56,102 +56,12 @@ static CharacterSoundEffects QueenSounds={0,0,0,SID_NOSOUND};
 //static SOUNDINDEX global_last_sound;
 
 
-/* TODO: dir separator */
 #if ALIEN_DEMO
 #define ScreamFilePath "alienfastfile/"
 #elif LOAD_SCREAMS_FROM_FASTFILES
 #define ScreamFilePath "fastfile/"
 #else
 #define ScreamFilePath "sound/"
-#endif
-
-#if 0
-void LoadScreamSounds()
-{
-	if(voice_types) return;
-
-	HANDLE file=CreateFile(ScreamFileName,GENERIC_READ, 0, 0, OPEN_EXISTING,FILE_FLAG_RANDOM_ACCESS, 0);
-	if(file==INVALID_HANDLE_VALUE)
-	{
-		LOGDXFMT(("Failed to open %s",ScreamFileName));
-		return;
-	}
-
-	char* buffer;
-	int file_size;
-	unsigned long bytes_read;
-
-	file_size= GetFileSize(file,0);
-	buffer=new char[file_size+1];
-	ReadFile(file,buffer,file_size,&bytes_read,0);
-	CloseHandle(file);
-
-	if(strncmp("MARSOUND",buffer,8))
-	{
-		return;
-	}
-
-	char* bufpos=buffer+8;
-
-	num_voice_types=*(int*)bufpos;
-	bufpos+=4;
-	num_voice_cats=*(int*)bufpos;
-	bufpos+=4;
-	
-	voice_types=(ScreamVoiceType*) PoolAllocateMem(num_voice_types * sizeof(ScreamVoiceType));
-	
-	/* TODO: dir separator */
-	char wavpath[200]="npc/marinevoice/";
-	char* wavname=&wavpath[strlen(wavpath)];
-	for(int i=0;i<num_voice_types;i++)	
-	{
-		voice_types[i].category=(ScreamSoundCategory*) PoolAllocateMem( num_voice_cats * sizeof(ScreamSoundCategory));
-		for(int j=0;j<num_voice_cats;j++)
-		{
-			ScreamSoundCategory* cat=&voice_types[i].category[j];
-			cat->last_sound=SID_NOSOUND;
-			cat->num_sounds=*(int*)bufpos;
-			bufpos+=4;
-
-			if(cat->num_sounds)
-			{
-				cat->sounds=(ScreamSound*) PoolAllocateMem(cat->num_sounds * sizeof(ScreamSound));
-			}
-			else
-			{
-				cat->sounds=0;
-			}
-
-			for(int k=0;k<cat->num_sounds;)
-			{
-				ScreamSound * sound=&cat->sounds[k];
-
-				strcpy(wavname,bufpos);
-				bufpos+=strlen(bufpos)+1;
-
-				sound->pitch=*(int*)bufpos;
-				bufpos+=4;
-				sound->volume=*(int*)bufpos;
-				bufpos+=4;
-
-				sound->sound_loaded=GetSound(wavpath);
-				if(sound->sound_loaded)
-				{
-					k++;
-				}
-				else
-				{
-					cat->num_sounds--;
-				}
-
-			}
-
-		}
-	}
-
-	delete [] buffer;
-		
-}
 #endif
 
 
@@ -162,8 +72,8 @@ void CharacterSoundEffects::LoadSounds(const char* filename,const char* director
 	char path[100]=ScreamFilePath;
 	strcat(path,filename);
 
-	HANDLE file=CreateFile(path,GENERIC_READ, 0, 0, OPEN_EXISTING,FILE_FLAG_RANDOM_ACCESS, 0);
-	if(file==INVALID_HANDLE_VALUE)
+	FILE *file = OpenGameFile(path, FILEMODE_READONLY, FILETYPE_PERM);
+	if(file==NULL)
 	{
 		LOGDXFMT(("Failed to open %s",path));
 		return;
@@ -171,12 +81,15 @@ void CharacterSoundEffects::LoadSounds(const char* filename,const char* director
 
 	char* buffer;
 	int file_size;
-	unsigned long bytes_read;
 
-	file_size= GetFileSize(file,0);
+	fseek(file, 0, SEEK_END);
+	file_size = ftell(file);
+	rewind(file);
+	
 	buffer=new char[file_size+1];
-	ReadFile(file,buffer,file_size,&bytes_read,0);
-	CloseHandle(file);
+	
+	fread(buffer, file_size, 1, file);
+	fclose(file);
 
 	if(strncmp("MARSOUND",buffer,8))
 	{
@@ -347,7 +260,6 @@ void UnloadScreamSounds()
 }
 
 
-/* TODO: dir separator */
 void LoadMarineScreamSounds()
 {
 	MarineSounds.LoadSounds("marsound.dat","npc\\marinevoice\\");

@@ -69,7 +69,7 @@ void ReportError(char const * mesg1, char const * mesg2)
 /***************/
 
 #define READ_FILE(fname,post_proc,on_return,h,data,n_bytes,n_bytes_read,p5) \
-	if (!ReadFile(h,data,n_bytes,&n_bytes_read,p5)) \
+	if ((n_bytes_read = fread(data, 1, n_bytes, h)) == 0) \
 	{ \
 		ReportError(fname); \
 		post_proc; \
@@ -181,8 +181,6 @@ FFHeaderI::FFHeaderI(char const *_filename,BOOL _should_be_kept)
 	{
 		filename = new char [strlen(_filename) + 1];
 		strcpy(filename,_filename);
-		
-		FixFilename(filename);
 				
 		Read();
 	}
@@ -280,9 +278,9 @@ FFError FFHeaderI::Read(char const *_filename)
 		strcpy(filename,_filename);
 	}
 	
-	HANDLE h = CreateFile (filename, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+	FILE *h = OpenGameFile(filename, FILEMODE_READONLY, FILETYPE_PERM);
 	
-	if (INVALID_HANDLE_VALUE==h)
+	if (h == NULL)
 	{
 		ReportError(filename);
 		return FF_COULDNOTOPENFILE;
@@ -298,40 +296,40 @@ FFError FFHeaderI::Read(char const *_filename)
 	
 	DWORD bytes_read;
 	
-	READ_FILE(filename,(void)0,CloseHandle(h),h,magic,4,bytes_read,0)
-	READ_FILE(filename,(void)0,CloseHandle(h),h,&rffl_version,4,bytes_read,0)
-	READ_FILE(filename,(void)0,CloseHandle(h),h,&num_files,4,bytes_read,0)
-	READ_FILE(filename,(void)0,CloseHandle(h),h,&total_headsize,4,bytes_read,0)
-	READ_FILE(filename,(void)0,CloseHandle(h),h,&length,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,magic,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,&rffl_version,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,&num_files,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,&total_headsize,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,&length,4,bytes_read,0)
 	
 	if (strncmp(magic,"RFFL",4))
 	{
 		ReportError(filename,"Incorrect file type");
-		CloseHandle(h);
+		fclose(h);
 		return FF_COULDNOTREADFILE;
 	}
 	if (rffl_version>0)
 	{
 		ReportError(filename,"Version not supported");
-		CloseHandle(h);
+		fclose(h);
 		return FF_COULDNOTREADFILE;
 	}
 	
 	void * header = malloc(total_headsize);
 	
-	READ_FILE(filename,(void)0,CloseHandle(h),h,header,total_headsize,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,header,total_headsize,bytes_read,0)
 	
 	data = malloc(length);
 	
-	READ_FILE(filename,(void)0,CloseHandle(h),h,data,length,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,data,length,bytes_read,0)
 	
-	CloseHandle(h);
+	fclose(h);
 	
 	// now parse the header
 	
 	void * headerP = header;
 	
-	for (int i=0; i<num_files; ++i)
+	for (unsigned int i=0; i<num_files; ++i)
 	{
 		char const * fnameP = (char *)((size_t)headerP + 8);
 		size_t leng = *(size_t *)((size_t)headerP + 4);
