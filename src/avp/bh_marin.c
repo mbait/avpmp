@@ -80,7 +80,6 @@ extern enum PARTICLE_ID GetBloodType(STRATEGYBLOCK *sbPtr);
 extern HIERARCHY_SHAPE_REPLACEMENT* GetHierarchyAlternateShapeSetFromLibrary(const char* rif_name,const char* shape_set_name);
 extern HIERARCHY_VARIANT_DATA* GetHierarchyAlternateShapeSetCollectionFromLibrary(const char* rif_name,int collection_index);
 extern SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char * hier_name);
-extern STRATEGYBLOCK* CreateGrenadeKernel(AVP_BEHAVIOUR_TYPE behaviourID, VECTORCH *position, MATRIXCH *orient,int fromplayer);
 extern STRATEGYBLOCK* CreateRocketKernel(VECTORCH *position, MATRIXCH *orient,int fromplayer);
 extern STRATEGYBLOCK* CreateFrisbeeKernel(VECTORCH *position, MATRIXCH *orient, int fromplayer);
 extern int AlienPCIsCurrentlyVisible(int checktime,STRATEGYBLOCK *sbPtr);

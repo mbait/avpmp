@@ -25,6 +25,7 @@
 #include "bh_corpse.h"
 #include "bh_weap.h"
 #include "showcmds.h"
+#include "weapons.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -51,7 +52,9 @@ extern MATRIXCH Identity_RotMat; /* From HModel.c */
   ----------------------------------------------------------------------*/
 
 static void SetPlayerGhostAnimationSequence(STRATEGYBLOCK *sbPtr, int sequence, int special);
+#if 0
 static void InitPlayerGhostAnimSequence(STRATEGYBLOCK *sbPtr);
+#endif
 static void UpdatePlayerGhostAnimSequence(STRATEGYBLOCK *sbPtr, int sequence, int special);
 
 SOUND3DDATA Ghost_Explosion_SoundData={
@@ -62,9 +65,6 @@ SOUND3DDATA Ghost_Explosion_SoundData={
 };
 
 void UpdateObjectTrails(STRATEGYBLOCK *sbPtr);
-void CreateMarineHModel(NETGHOSTDATABLOCK *ghostDataPtr, int weapon);
-void CreateAlienHModel(NETGHOSTDATABLOCK *ghostDataPtr,int alienType);
-void CreatePredatorHModel(NETGHOSTDATABLOCK *ghostDataPtr, int weapon);
 static void CalculatePosnForGhostAutoGunMuzzleFlash(STRATEGYBLOCK *sbPtr,VECTORCH *position, EULER *orientation);
 void UpdateAlienAIGhostAnimSequence(STRATEGYBLOCK *sbPtr,HMODEL_SEQUENCE_TYPES type, int subtype, int length, int tweeningtime);
 
@@ -882,7 +882,6 @@ void PostDynamicsExtrapolationUpdate()
 				{
 					if(MultiplayerObservedPlayer==ghostData->playerId)
 					{
-						PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
 						Player->ObStrategyBlock->DynPtr->Position=sbPtr->DynPtr->Position;
 						Player->ObStrategyBlock->DynPtr->PrevPosition=sbPtr->DynPtr->Position;
 						
@@ -1669,6 +1668,7 @@ Update changes the sequence if appropriate (and calls set if the sbPtr has a dpt
 Set selects the correct sequence/type, infers the speed and follow-on sequences,
 etc, and sets it.
 ------------------------------------------------------------------------------*/
+#if 0
 static void InitPlayerGhostAnimSequence(STRATEGYBLOCK *sbPtr)
 {
 	NETGHOSTDATABLOCK *ghostData;
@@ -1705,6 +1705,7 @@ static void InitPlayerGhostAnimSequence(STRATEGYBLOCK *sbPtr)
 		}
 	}
 }
+#endif
 
 static void UpdatePlayerGhostAnimSequence(STRATEGYBLOCK *sbPtr, int sequence, int special)
 {
@@ -4448,9 +4449,6 @@ int Deduce_PlayerMarineDeathSequence(STRATEGYBLOCK* sbPtr,DAMAGE_PROFILE* damage
 	NETCORPSEDATABLOCK *corpseDataPtr=(NETCORPSEDATABLOCK *)sbPtr->SBdataptr;
 	
 	int deathtype,gibbFactor;
-	int a;
-
-	SECTION_DATA *head;
 
 	/* Set GibbFactor  and death type*/
 	gibbFactor=0;
@@ -4719,7 +4717,6 @@ int Deduce_PlayerPredatorDeathSequence(STRATEGYBLOCK* sbPtr,DAMAGE_PROFILE* dama
 		HIT_FACING facing;
 		SECTION *root;
 		int burning;
-		int wounds;
 		int crouched;
 
 		root=GetNamedHierarchyFromLibrary("hnpcpredator","Template");

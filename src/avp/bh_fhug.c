@@ -53,7 +53,9 @@ static int HuggerShouldAttackPlayer(void);
 static void SetHuggerAnimationSequence(STRATEGYBLOCK *sbPtr, HUGGER_SUBSEQUENCES seq, int length);
 static void KillFaceHugger(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage);
 
+#if 0
 static int InContactWithPlayer(DYNAMICSBLOCK *dynPtr);
+#endif
 static void JumpAtPlayer(STRATEGYBLOCK *sbPtr);
 
 extern SECTION *GetHierarchyFromLibrary(const char *rif_name);
@@ -932,6 +934,7 @@ static int HuggerShouldAttackPlayer(void)
 	return 1;
 }
 
+#if 0
 static int InContactWithPlayer(DYNAMICSBLOCK *dynPtr)
 {
 	struct collisionreport *nextReport;
@@ -948,6 +951,7 @@ static int InContactWithPlayer(DYNAMICSBLOCK *dynPtr)
 	
 	return 0;	
 }
+#endif
 
 static void JumpAtPlayer(STRATEGYBLOCK *sbPtr)
 {

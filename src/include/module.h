@@ -454,6 +454,7 @@ int SaveModuleArray(MODULE *mptr, char *filename);
 MODULE* LoadModuleArray(MODULE *mptr, int size, char *filename);
 
 int IsModuleVisibleFromModule(MODULE *source, MODULE *target);
+int ThisObjectIsInAModuleVisibleFromCurrentlyVisibleModules(struct strategyblock *sbPtr);
 
 #endif	/* IncludeModuleFunctionPrototypes */
 

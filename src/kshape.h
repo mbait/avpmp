@@ -110,6 +110,8 @@ void OutputTranslucentPolyList(void);
 void RenderLightFlare(VECTORCH *positionPtr, unsigned int colour);
 extern void RenderFlechetteParticle(PARTICLE *particlePtr);
 void RenderExplosionSurface(VOLUMETRIC_EXPLOSION *explosionPtr);
+void ClearTranslucentPolyList(void);
+void AddHierarchicalShape(DISPLAYBLOCK *dptr, VIEWDESCRIPTORBLOCK *VDB_Ptr);
 
 /* KJL 10:25:44 7/23/97 - this offset is used to push back the normal game gfx,
 so that the HUD can be drawn over the top without sinking into walls, etc. */

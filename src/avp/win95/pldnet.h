@@ -1007,6 +1007,7 @@ void MinimalNetCollectMessages(void);
 void InitAVPNetGameForHost(int species, int gamestyle, int level);
 void InitAVPNetGameForJoin(void);
 void CreatePlayersImageInMirror(void);
+void RenderPlayersImageInMirror(void);
 
 
 /* ---------------------------------------------------------------------

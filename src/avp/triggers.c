@@ -12,6 +12,7 @@
 #include "huddefs.h"
 #include "triggers.h"
 #include "pldnet.h"
+#include "los.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

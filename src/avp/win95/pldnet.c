@@ -2,6 +2,7 @@
   Source for Multi-Player game support 
   ----------------------------------------------------------------------*/
 
+#include <ctype.h>
 #include "3dc.h"
 #include "inline.h"
 #include "module.h"
@@ -21,9 +22,16 @@
 #include "weapons.h"
 #include "multmenu.h"
 #include "bh_gener.h"
+#include "bh_lnksw.h"
+#include "bh_track.h"
 #include "psnd.h"
 #include "kshape.h"
 #include "pfarlocs.h"
+#include "avpview.h"
+#include "net.h"
+#include "los.h"
+#include "maths.h"
+#include "opengl.h"
 
 /* these required sequence enumerations...*/
 #include "bh_pred.h"
@@ -279,8 +287,7 @@ static void ProcessGameMessage(DPID senderId, char *msgP,unsigned int msgSize);
 static void AddPlayerToGame(DPID id, char*name);
 static void AddPlayerAndObjectUpdateMessages(void);
 static void UpdateNetworkGameScores(DPID playerKilledId, DPID killerId,NETGAME_CHARACTERTYPE playerKilledType,NETGAME_CHARACTERTYPE killerType);
-static void InitFinalNetGameScores(void);
-static void ConvertNetNameToUpperCase(char *strPtr);
+//static void ConvertNetNameToUpperCase(char *strPtr);
 
 static void ProcessNetMsg_GameDescription(NETMESSAGE_GAMEDESCRIPTION *msgPtr);
 static void ProcessNetMsg_PlayerDescription(NETMESSAGE_PLAYERDESCRIPTION *msgPtr, DPID senderId);
@@ -379,6 +386,8 @@ static int CalculateMyScore();
 static void PeriodicScoreUpdate();
 
 void CheckStateOfObservedPlayer();
+static int MyPlayerHasAMuzzleFlash(STRATEGYBLOCK *sbPtr);
+
 /*----------------------------------------------------------------------
   Initalisation of net game
   ----------------------------------------------------------------------*/
@@ -482,7 +491,7 @@ void InitAVPNetGameForHost(int species, int gamestyle, int level)
 		int i,j;
 		for(i=0;i<(NET_MAXPLAYERS);i++)
 		{
-			netGameData.playerData[i].playerId = NULL;		
+			netGameData.playerData[i].playerId = 0;		
 			for(j=0;j<(NET_PLAYERNAMELENGTH);j++) netGameData.playerData[i].name[j] = '\0';
 			netGameData.playerData[i].characterType = NGCT_Marine;
 			netGameData.playerData[i].characterSubType = NGSCT_General;
@@ -636,7 +645,7 @@ void InitAVPNetGameForJoin(void)
 		int i,j;
 		for(i=0;i<(NET_MAXPLAYERS);i++)
 		{
-			netGameData.playerData[i].playerId = NULL;		
+			netGameData.playerData[i].playerId = 0;		
 			for(j=0;j<(NET_PLAYERNAMELENGTH);j++) netGameData.playerData[i].name[j] = '\0';
 			netGameData.playerData[i].characterType = NGCT_Marine;
 			netGameData.playerData[i].characterSubType = NGSCT_General;
@@ -725,8 +734,8 @@ void MinimalNetCollectMessages(void)
 void NetCollectMessages(void)
 {			
 	HRESULT res = DP_OK;
-	DPID	dPlayFromId = NULL;
-	DPID 	dPlayToId = NULL;
+	DPID	dPlayFromId = 0;
+	DPID 	dPlayToId = 0;
 	unsigned char *msgP = NULL;
 	unsigned msgSize = 0;
 		
@@ -1118,7 +1127,7 @@ void RemovePlayerFromGame(DPID id)
 	}
 
 	/* free the slot */
-	netGameData.playerData[playerIndex].playerId = NULL;		
+	netGameData.playerData[playerIndex].playerId = 0;		
 	for(j=0;j<NET_PLAYERNAMELENGTH;j++) netGameData.playerData[playerIndex].name[j] = '\0';
 	netGameData.playerData[playerIndex].characterType = NGCT_Marine;
 	netGameData.playerData[playerIndex].characterSubType = NGSCT_General;
@@ -1868,7 +1877,9 @@ static void AddPlayerAndObjectUpdateMessages(void)
   ----------------------------------------------------------------------*/
 void EndAVPNetGame(void)
 {
+#if 0
 	HRESULT hres;
+#endif
 
 	/* garry's dp extended clean up */
 	if(!netGameData.skirmishMode)
@@ -5465,7 +5476,7 @@ static void ProcessNetMsg_GameDescription(NETMESSAGE_GAMEDESCRIPTION *messagePtr
 
 			if (netGameData.myGameState==NGS_Playing && playerChanged)
 			{
-				if (messagePtr->players[i].playerId==NULL)
+				if (messagePtr->players[i].playerId==0)
 				{
 					Inform_PlayerHasLeft(netGameData.playerData[i].playerId);
 				}
@@ -7382,7 +7393,6 @@ static void ProcessNetMsg_StrategySynch(NETMESSAGE_STRATEGYSYNCH *messagePtr)
 	for (i=0; i<NumActiveStBlocks; i++)
 	{
 		STRATEGYBLOCK *sbPtr = ActiveStBlockList[i];
-		int status;
 
 		if(sbPtr->I_SBtype == I_BehaviourBinarySwitch ||
 		   sbPtr->I_SBtype == I_BehaviourLinkSwitch ||
@@ -7897,9 +7907,6 @@ static void ProcessNetMsg_Gibbing(NETMESSAGE_GIBBING *messagePtr,DPID senderId)
 	}
 	else
 	{
-		SECTION_DATA *section_data=NULL;
-		HMODELCONTROLLER *controller=NULL;
-		
 		ghostData = (NETGHOSTDATABLOCK *)sbPtr->SBdataptr;
 
 		//only interested in gibbing corpses
@@ -7972,7 +7979,7 @@ int PlayerIdInPlayerList(DPID Id)
 {
 	int i;
 	/* check first, if we've been passed a null id */
-	if(Id==NULL) return NET_IDNOTINPLAYERLIST;
+	if(Id==0) return NET_IDNOTINPLAYERLIST;
 
 	/* check player list */
 	for(i=0;i<NET_MAXPLAYERS;i++)
@@ -7991,7 +7998,7 @@ int EmptySlotInPlayerList(void)
 
 	for(i=0;i<NET_MAXPLAYERS;i++)
 	{
-		if(netGameData.playerData[i].playerId == NULL) return i;
+		if(netGameData.playerData[i].playerId == 0) return i;
 	}
 	return NET_NOEMPTYSLOTINPLAYERLIST;
 }
@@ -8094,7 +8101,7 @@ static void UpdateNetworkGameScores(DPID playerKilledId, DPID killerId,NETGAME_C
 	playerKilledIndex = PlayerIdInPlayerList(playerKilledId);
 	if(playerKilledIndex==NET_IDNOTINPLAYERLIST) return;
 					
-	if(killerId==NULL || killerId == playerKilledId || killerType>=NGCT_AI_Alien)
+	if(killerId==0 || killerId == playerKilledId || killerType>=NGCT_AI_Alien)
 	{		
 		//suicide
 		killerIndex=playerKilledIndex;
@@ -8330,6 +8337,7 @@ int AddUpPlayerFrags(int playerId)
 	return score;
 }
 
+#if 0
 static void ConvertNetNameToUpperCase(char *strPtr)
 {
 	int count = 0;
@@ -8340,6 +8348,7 @@ static void ConvertNetNameToUpperCase(char *strPtr)
 	}
 
 }
+#endif
 
 
 /* Patrick 11/7/97 ----------------------------------------------
@@ -8498,7 +8507,6 @@ static MARINE_SEQUENCE GetMyMarineSequence(void)
 static ALIEN_SEQUENCE GetMyAlienSequence(void)
 {
 	extern STRATEGYBLOCK *Biting;
-	extern int Bit;
 	int playerIsMoving = 0;
 	int playerIsFiring = 0;
 	int playerIsCrouching = 0;
@@ -9095,9 +9103,6 @@ void TeleportNetPlayerToAStartingPosition(STRATEGYBLOCK *playerSbPtr, int startO
 {
 	int numStartPositions;
 	MULTIPLAYER_START* startPositions;
-
-	int sbIndex = 0;
-
 	int start_index;
 	int numChecked=0;
 	int bestDistance=-1;
@@ -9222,8 +9227,6 @@ void TeleportNetPlayerToAStartingPosition(STRATEGYBLOCK *playerSbPtr, int startO
 in order to avoid having several players appearing at the same place*/
 void StartOfGame_PlayerPlacement(STRATEGYBLOCK *playerSbPtr,int seed)
 {
-	extern int NumActiveStBlocks;
-	extern STRATEGYBLOCK *ActiveStBlockList[];	
 	int numStartPositions;
 	MULTIPLAYER_START* startPositions;
 	PLAYER_STATUS *psPtr=(PLAYER_STATUS*)playerSbPtr->SBdataptr;
@@ -9436,7 +9439,7 @@ void CreatePlayersImageInMirror(void)
 		}
 		case(I_BehaviourAlienPlayer):
 		{
-			CreateAlienHModel(ghostData);
+			CreateAlienHModel(ghostData,AT_Standard);
 			break;
 		}
 		case(I_BehaviourPredatorPlayer):
@@ -9827,7 +9830,7 @@ static int GetDynamicScoreMultiplier(int playerKilledIndex,int killerIndex)
 	//count players
 	for(i=0;i<NET_MAXPLAYERS;i++) 	
 	{
-		if(netGameData.playerData[i].playerId==NULL) continue;
+		if(netGameData.playerData[i].playerId==0) continue;
 		playerCount++;
 	}
 	//only bother if there are at least 3 players
@@ -10895,7 +10898,7 @@ static void CheckForPointBasedObjectRespawn()
 
 static int CountMultiplayerLivesLeft()
 {
-	int i,j;
+	int i;
 	int livesUsed=0;
 	
 	

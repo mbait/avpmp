@@ -4,8 +4,12 @@
 #include "stratdef.h"
 #include "gamedef.h"
 #include "bh_types.h"
+#include "cheatmodes.h"
+#include "net.h"
+#include "opengl.h"
 #include "pldnet.h"
 
+#include "avp_menudata.h"
 #include "avp_menus.h"
 #include "avp_envinfo.h"
 
@@ -75,6 +79,9 @@ extern void Show_WinnerScreen(void);
 
 extern void GetNextAllowedSpecies(int* species,BOOL search_forwards);
 static void SetBriefingTextForMultiplayer();
+int NumberOfAvailableLevels(I_PLAYER_TYPE playerID);
+int LevelMostLikelyToPlay(I_PLAYER_TYPE playerID);
+int MaxDifficultyLevelAllowed(I_PLAYER_TYPE playerID, int level);
 
 int CloudTable[128][128];
 
@@ -110,8 +117,6 @@ void HandleCheatModeFeatures(void);
 void ShowMenuFrameRate(void);
 static void KeyboardEntryQueue_Clear(void);
 static void KeyboardEntryQueue_StartProcessing(void);
-void ScanSaveSlots(void);
-extern void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr);
 
 static void PasteFromClipboard(char* Text,int MaxTextLength);
 /* KJL 11:23:03 23/06/98 - Requirements
@@ -2038,8 +2043,8 @@ static void ActUponUsersInput(void)
 						{
 							extern char AAFontWidths[256];
 							//using small font
-							if(AvPMenus.WidthLeftForText<AAFontWidths[c]) break;
-							AvPMenus.WidthLeftForText-=AAFontWidths[c];
+							if(AvPMenus.WidthLeftForText<AAFontWidths[(int)c]) break;
+							AvPMenus.WidthLeftForText-=AAFontWidths[(int)c];
 						}
 
 						elementPtr->c.TextPtr[AvPMenus.PositionInTextField++] = c;
@@ -2070,7 +2075,7 @@ static void ActUponUsersInput(void)
 			char c=0;
 			
 			KeyboardEntryQueue_StartProcessing();
-			while(c=KeyboardEntryQueue_ProcessCharacter())
+			while((c=KeyboardEntryQueue_ProcessCharacter()))
 			{
 				if (AvPMenus.PositionInTextField<elementPtr->b.MaxTextLength)
 				{
@@ -5300,7 +5305,7 @@ void RenderBriefingText(int centreY, int brightness)
 
 			while(*ptr)
 			{
-				length+=AAFontWidths[*ptr++];
+				length+=AAFontWidths[(int)(*ptr++)];
 			}
 		}
 		

@@ -535,7 +535,7 @@ SCString :: SCString
 		NumberOfCharacters = STRUTIL_SC_Strlen( pProjCh_Init );
 			// doesn't include NULL terminator
 
-		if ( NumberOfCharacters > Length )
+		if ( (unsigned)NumberOfCharacters > Length )
 		{
 			NumberOfCharacters = Length;
 		}		

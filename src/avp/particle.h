@@ -200,6 +200,9 @@ void MakeGrenadeTrailParticles(VECTORCH *prevPositionPtr, VECTORCH *positionPtr)
 void MakePlasmaTrailParticles(DYNAMICSBLOCK *dynPtr, int number);
 void NewTrailPoint(DYNAMICSBLOCK *dynPtr);
 void TimeScaleThingy();
+void DrawFrisbeePlasmaBolt(VECTORCH *positionPtr,VECTORCH *directionPtr);
+void DrawPredatorPlasmaBolt(VECTORCH *positionPtr,VECTORCH *directionPtr);
+void DrawSmallPredatorPlasmaBolt(VECTORCH *positionPtr,VECTORCH *directionPtr);
 
 
 #define MAX_NO_OF_BLOOD_PARTICLES 500

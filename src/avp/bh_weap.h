@@ -145,6 +145,7 @@ typedef struct SpearBehaviourType
 #define PROX_GRENADE_SOUND_GENERATION_TIME 65536
 #define PROX_GRENADE_LIFETIME (20)
 
+STRATEGYBLOCK* CreateGrenadeKernel(AVP_BEHAVIOUR_TYPE behaviourID, VECTORCH *position, MATRIXCH *orient,int fromplayer);
 
 
 /* KJL 17:46:30 02/24/97 - below is some old stuff I'll leave for reference */

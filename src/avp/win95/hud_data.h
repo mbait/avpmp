@@ -58,6 +58,7 @@ static char *LoresMarineHUDGfxFilenamePtr[]=
 	{"trakfont.pg0"},
 	{"bluebar.pg0"},
 };
+#if 0
 static struct HUDFontDescTag LoresHUDFontDesc[] =
 {
 	//MARINE_HUD_FONT_BLUE,
@@ -92,6 +93,7 @@ static struct HUDFontDescTag LoresHUDFontDesc[] =
 	},
 
 };
+#endif
 static struct LittleMDescTag LoresHUDLittleM =
 {
 	80,8,  // source top,left
@@ -154,6 +156,7 @@ static char *MedresMarineHUDGfxFilenamePtr[]=
 	{"trkfntmr.pg0"},
 	{"blubarmr.pg0"},
 };
+#if 0
 static struct HUDFontDescTag MedresHUDFontDesc[] =
 {
 	//MARINE_HUD_FONT_BLUE,
@@ -188,6 +191,7 @@ static struct HUDFontDescTag MedresHUDFontDesc[] =
 	},
 
 };
+#endif
 static struct LittleMDescTag MedresHUDLittleM =
 {
 	120,14,  // source top,left
@@ -254,6 +258,7 @@ static char *HiresMarineHUDGfxFilenamePtr[]=
 	{"trkfnthr.pg0"},
 	{"blubarhr.pg0"},
 };
+#if 0
 static struct HUDFontDescTag HiresHUDFontDesc[] =
 {
 	//MARINE_HUD_FONT_BLUE,
@@ -281,6 +286,7 @@ static struct HUDFontDescTag HiresHUDFontDesc[] =
 		17,//Width
 	},
 };
+#endif
 static struct LittleMDescTag HiresHUDLittleM =
 {
 	150,17,  // source top,left
@@ -327,6 +333,7 @@ static char *MedresPredatorHUDGfxFilenamePtr[]=
    	{"prednum.pg0"},	//PREDATOR_HUD_GFX_NUMBERS,
     {"predsymb.pg0"},   //PREDATOR_HUD_GFX_SYMBOLS,
 };
+#if 0
 static struct DigitPropertiesTag LoresPredatorHUDDigitProperties[] =
 {
 	/* armour, units first */
@@ -381,6 +388,7 @@ static struct DigitPropertiesTag MedresPredatorHUDDigitProperties[] =
 	{230-6, 180, PREDATOR_HUD_GFX_NUMBERS},	  
     	
 };
+#endif
 
 
 /* ALIEN */
@@ -400,6 +408,7 @@ static char *MedresAlienHUDGfxFilenamePtr[]=
    	{"ahMRTop.pg0"}, // ALIEN_HUD_GFX_TOP
     {"ahMRNum.pg0"}, // ALIEN_HUD_GFX_NUMBERS
 };
+#if 0
 static struct DigitPropertiesTag LoresAlienHUDDigitProperties[] =
 {
 	/* health, units first */
@@ -415,3 +424,4 @@ static struct DigitPropertiesTag MedresAlienHUDDigitProperties[] =
 	{281*2, 157*2+80, ALIEN_HUD_GFX_NUMBERS},	  
 	{274*2, 157*2+80, ALIEN_HUD_GFX_NUMBERS},
 };
+#endif

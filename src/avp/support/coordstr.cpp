@@ -325,18 +325,6 @@ ACTIVITY_RETURN_TYPE CyclicPulsingCoordinate :: Activity(ACTIVITY_INPUT)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #if 1
 HomingCoordinate::HomingCoordinate
 (

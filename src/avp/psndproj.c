@@ -44,10 +44,12 @@
 -----------------------------------------------------------------------------*/
 int weaponHandle = SOUND_NOACTIVEINDEX;
 
+#if 0
 static int weaponReloading = 0;
+static int backgroundHandle = SOUND_NOACTIVEINDEX;
+#endif
 static int sadarReloadTimer = 0;
 static int weaponPitchTimer = 0;
-static int backgroundHandle = SOUND_NOACTIVEINDEX;
 static int playOneShotWS = 1;
 static int oldRandomValue = -1;
 
@@ -76,6 +78,7 @@ extern ACTIVESOUNDSAMPLE ActiveSounds[];
   A.N.Other background sound management function  
 ------------------------------------------------------------------------------*/
 
+#if 0
 static void DoPredatorBackgroundLoop(void)
 {
 	if (backgroundHandle == SOUND_NOACTIVEINDEX)
@@ -83,7 +86,7 @@ static void DoPredatorBackgroundLoop(void)
     Sound_Play(SID_VISION_LOOP,"evl",&backgroundHandle,75);
   }
 }
-
+#endif
 
 
 void DoPlayerSounds(void)

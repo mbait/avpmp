@@ -192,8 +192,6 @@ void D3D_InitialiseMarineHUD(void)
 {
 	//SelectGenTexDirectory(ITI_TEXTURE);
 
-	extern unsigned char *ScreenBuffer;
-
 	/* set game mode: different though for multiplayer game */
 	if(AvP.Network==I_No_Network)
 		cl_pszGameMode = "marine";
@@ -328,7 +326,6 @@ void D3D_BLTMotionTrackerToHUD(int scanLineSize)
 
 	struct VertexTag quadVertices[4];
 	int widthCos,widthSin;
-	extern int CloakingPhase;
 
 	BlueBar.TopLeftY = ScreenDescriptorBlock.SDB_Height-MUL_FIXED(MotionTrackerScale,40);
 	MotionTrackerCentreY = BlueBar.TopLeftY;
@@ -444,7 +441,6 @@ void D3D_BLTMotionTrackerToHUD(int scanLineSize)
 void D3D_BLTMotionTrackerBlipToHUD(int x, int y, int brightness)
 {
 	HUDImageDesc imageDesc;
-	int screenX,screenY; /* in 16.16 */
 	int frame;
 	int motionTrackerScaledHalfWidth = MUL_FIXED(MotionTrackerScale*3,MotionTrackerHalfWidth/2);
     
@@ -700,8 +696,6 @@ void D3D_BLTGunSightToHUD(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsight
 
 void Render_HealthAndArmour(unsigned int health, unsigned int armour)
 {
-	HUDCharDesc charDesc;
-	int i=MAX_NO_OF_COMMON_HUD_DIGITS;
 	unsigned int healthColour;
 	unsigned int armourColour;
 
@@ -847,8 +841,6 @@ void Render_HealthAndArmour(unsigned int health, unsigned int armour)
 } 
 void Render_MarineAmmo(enum TEXTSTRING_ID ammoText, enum TEXTSTRING_ID magazinesText, unsigned int magazines, enum TEXTSTRING_ID roundsText, unsigned int rounds, int primaryAmmo)
 {
-	HUDCharDesc charDesc;
-	int i=MAX_NO_OF_COMMON_HUD_DIGITS;
 	int xCentre = MUL_FIXED(HUDLayout_RightmostTextCentre,HUDScaleFactor)+ScreenDescriptorBlock.SDB_Width;
 	if(!primaryAmmo) xCentre+=MUL_FIXED(HUDScaleFactor,HUDLayout_RightmostTextCentre*2);
 

@@ -352,5 +352,7 @@ int AvP_InGameMenus(void);
 int InGameMenusAreRunning(void);
 
 void RenderBriefingText(int centreY, int brightness);
+void GetFilenameForSaveSlot(int i, unsigned char *filenamePtr);
+void ScanSaveSlots(void);
 
 #endif

@@ -65,7 +65,9 @@ void LogCameraPosForModuleLinking()
 #endif	
 }
 int SaveCameraPosKeyPressed=0;
+#ifdef AVP_DEBUG_VERSION
 static BOOL ModuleLinkAssist=FALSE;
+#endif
 
 void HandleScreenShot()
 {

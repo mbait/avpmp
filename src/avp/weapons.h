@@ -95,6 +95,7 @@ extern void PositionPlayersWeapon(void);
 extern void PositionPlayersWeaponMuzzleFlash(void);
 extern void AutoSwapToDisc(void);
 extern void AutoSwapToDisc_OutOfSequence(void);
+void CreateSpearPossiblyWithFragment(DISPLAYBLOCK *dispPtr, VECTORCH *spearPositionPtr, VECTORCH *spearDirectionPtr);
 
 
 struct Target

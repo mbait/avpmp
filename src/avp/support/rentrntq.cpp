@@ -121,7 +121,7 @@ void RE_ENTRANT_QUEUE_WinMain_FlushMessages(void)
 		// AVP/Win95-specific code
 		if ( HUDGadget :: GetHUD() )
 		{
-			int i;
+			unsigned int i;
 
 			for (i=0;i<NumQMessages;i++)
 			{

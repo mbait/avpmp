@@ -75,6 +75,7 @@ extern void PlayerBehaviour(STRATEGYBLOCK* sbptr);
 extern void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr);
 void ThrowAFlare(void);
 void StartPlayerTaunt(void);
+void NetPlayerRespawn(STRATEGYBLOCK *sbPtr);
 
 
 #ifdef __cplusplus

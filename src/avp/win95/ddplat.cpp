@@ -90,7 +90,12 @@ void PlatformSpecificEnteringHUD(void);
 void BLTMotionTrackerToHUD(int scanLineSize);
 void BLTMotionTrackerBlipToHUD(int x, int y, int brightness);
 
+#if 0
 static void BLTDigitToHUD(char digit, int x, int y, int font);
+void BLTPredatorOverlayToHUD(void);
+static void DrawMotionTrackerPoly(void);
+static void BLTPredatorDigitToHUD(char digit, int x, int y, int font);
+#endif
 
 void BLTGunSightToScreen(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsightShape);
 void BLTWeaponToHUD(PLAYER_WEAPON_DATA* weaponPtr);
@@ -98,14 +103,11 @@ int CueWeaponFrameFromSequence(struct WeaponFrameTag *weaponFramePtr, int timeOu
 
 
 
-void BLTPredatorOverlayToHUD(void);
 void BLTPredatorNumericsToHUD(void);
-static void BLTPredatorDigitToHUD(char digit, int x, int y, int font);
 
 void LoadDDGraphic(struct DDGraphicTag *DDGfxPtr, char *Filename);
 
 
-static void DrawMotionTrackerPoly(void);
 static void SetupScanlinePoly(char const *filenamePtr, int width);
 
 

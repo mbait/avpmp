@@ -605,6 +605,7 @@ typedef struct epbbextents
 	int	minZ;
 } EPBBEXTENTS;
 
+#if 0
 static EPBBEXTENTS MI_Volume1;
 static EPBBEXTENTS MI_Volume2;
 static EPBBEXTENTS MI_Volume3;
@@ -612,6 +613,7 @@ static EPBBEXTENTS MI_Volume3;
 static int GetModulesIntersection(MODULE *thisModule, MODULE *targetModule);
 static int GetModulePointBox(MODULE *thisModule, EPBBEXTENTS *extents);
 static void AddModuleEP(MODULE* thisModule, MODULE*fromModule, VECTORCH *posn);
+#endif
 
 /*-----------------------Patrick 16/12/96---------------------------
 This Function checks if a module has any adjacent modules, and if
@@ -943,6 +945,7 @@ static void BuildFM_ASingleEP(MODULE *thisModule, MODULE *targetModule)
   
   Returns 1 if the bounding box is valis, 0 if not.
   ------------------------------------------------------------------*/ 
+#if 0
 static int GetModulesIntersection(MODULE *thisModule, MODULE *targetModule)
 {
 	int thisExtent, targetExtent;
@@ -1051,7 +1054,7 @@ static void AddModuleEP(MODULE* thisModule, MODULE*fromModule, VECTORCH *posn)
 	FARENTRYPOINTSHEADER *epHeader = &FALLP_EntryPoints[thisModule->m_index];
 	FARENTRYPOINT *epList = epHeader->entryPointsList;
 
-	if(epHeader->numEntryPoints==(NumAdjacentModules(thisModule)))
+	if(epHeader->numEntryPoints==(NumAdjacentModules((AIMODULE*)thisModule)))
 	{
 		/* no room for any more eps. This may occur where two modules are not
 		mutually linked as adjacent... specifically, the target is missing the
@@ -1074,7 +1077,7 @@ static void AddModuleEP(MODULE* thisModule, MODULE*fromModule, VECTORCH *posn)
 	(epHeader->numEntryPoints)++;
 
 }
-
+#endif
 
 /*-----------------------Patrick 20/12/96---------------------------
 LOCAL FUNCTIONS FOR AUXILARY MODULE LOCATION SUPPORT

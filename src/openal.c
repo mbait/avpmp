@@ -21,6 +21,7 @@
 #include "dynamics.h"
 #include "dynblock.h"
 #include "stratdef.h"
+#include "openal.h"
 
 ACTIVESOUNDSAMPLE ActiveSounds[SOUND_MAXACTIVE];
 ACTIVESOUNDSAMPLE BlankActiveSound = {SID_NOSOUND,ASP_Minimum,0,0,NULL,0,0,0,0,0, { {0,0,0},{0,0,0},0,0 }, 0, 0, { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, NULL, NULL, NULL};

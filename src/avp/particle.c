@@ -25,6 +25,7 @@
 #include "bh_rubberduck.h"
 #include "bh_weap.h"
 #include "weapons.h"
+#include "decal.h"
 #include "avpview.h"
 #include "pldghost.h"
 #include "detaillevels.h"

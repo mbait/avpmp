@@ -106,7 +106,11 @@ extern int Hardware_RenderSmallMenuText(char *textPtr, int x, int y, int alpha, 
 extern int Hardware_RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int red, int green, int blue);
 
 extern int RenderMenuText_Clipped(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int topY, int bottomY);
-extern void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* output_x,int* output_y);
+extern void RenderSmallFontString_Wrapped(const char *textPtr,RECT* area,int alpha,int* output_x,int* output_y);
+extern void Hardware_RenderKeyConfigRectangle(int alpha);
+extern void RenderKeyConfigRectangle(int alpha);
+extern void Hardware_RenderHighlightRectangle(int x1,int y1,int x2,int y2,int r, int g, int b);
+extern void RenderHighlightRectangle(int x1,int y1,int x2,int y2, int r, int g, int b);
 
 
 extern void DrawAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID, int topleftX, int topleftY, int alpha,enum AVPMENUFORMAT_ID format);

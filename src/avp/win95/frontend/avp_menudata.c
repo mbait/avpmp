@@ -1080,7 +1080,7 @@ extern void MakeUserProfileSelectMenu(void)
 	else UserProfileNumber=0;
 }
 
-extern void MakeConnectionSelectMenu()
+void MakeConnectionSelectMenu()
 {
 	int pos=0;
 

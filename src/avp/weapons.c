@@ -35,6 +35,8 @@
 #include "bh_light.h"
 #include "bh_corpse.h"
 #include "bh_ais.h"
+#include "bh_videoscreen.h"
+#include "bh_track.h"
 #include "weapons.h"
 #include "avpview.h"
 
@@ -46,6 +48,7 @@
 #include "psndproj.h"
 #include "psndplat.h"
 #include "showcmds.h"
+#include "projload.hpp"
 
 /* for win 95 net support */
 #if SupportWindows95
@@ -289,7 +292,6 @@ int FireEmptyMinigun(PLAYER_WEAPON_DATA *weaponPtr);
 int Staff_Manager(DAMAGE_PROFILE *damage,SECTION_DATA *section1,SECTION_DATA *section2,SECTION_DATA *section3,
 	STRATEGYBLOCK *wielder);
 
-static void FireLineOfSightAmmo(enum AMMO_ID AmmoID, VECTORCH* sourcePtr, VECTORCH* directionPtr, int multiple);
 static void PlayerFireLineOfSightAmmo(enum AMMO_ID AmmoID, int multiple);
 extern void FireProjectileAmmo(enum AMMO_ID AmmoID);
 
@@ -327,8 +329,6 @@ void WeaponCreateStartFrame(void *playerStatus, PLAYER_WEAPON_DATA *weaponPtr);
 #endif
 int PC_Alien_Eat_Attack(int hits);
 int FirePredatorDisc(PLAYER_WEAPON_DATA *weaponPtr,SECTION_DATA *disc_section);
-
-void SmartTarget_GetCofM(DISPLAYBLOCK *target,VECTORCH *viewSpaceOutput);
 
 void BiteAttack_AwardHealth(STRATEGYBLOCK *sbPtr,AVP_BEHAVIOUR_TYPE pre_bite_type);
 void LimbRip_AwardHealth(void);
@@ -1360,8 +1360,8 @@ static void WeaponStateIdle(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *w
 			}
 		}
     } else if ((RequestChangeOfWeapon(playerStatusPtr,weaponPtr))
-    	||((playerStatusPtr->SelectedWeaponSlot!=playerStatusPtr->SwapToWeaponSlot))
-    		&&(playerStatusPtr->SwapToWeaponSlot!=WEAPON_FINISHED_SWAPPING)) {
+    	||((playerStatusPtr->SelectedWeaponSlot!=playerStatusPtr->SwapToWeaponSlot)
+    		&&(playerStatusPtr->SwapToWeaponSlot!=WEAPON_FINISHED_SWAPPING))) {
 		weaponPtr->CurrentState = WEAPONSTATE_UNREADYING;
 	    weaponPtr->StateTimeOutCounter = WEAPONSTATE_INITIALTIMEOUTCOUNT;
 		NewOnScreenMessage
@@ -3358,7 +3358,7 @@ void FindEndOfShape(VECTORCH* endPositionPtr, int shapeIndex)
 }
 
 
-
+#if 0
 static void FireLineOfSightAmmo(enum AMMO_ID AmmoID, VECTORCH* sourcePtr, VECTORCH* directionPtr, int multiple)
 {
 	#if 0
@@ -3396,7 +3396,7 @@ static void FireLineOfSightAmmo(enum AMMO_ID AmmoID, VECTORCH* sourcePtr, VECTOR
 		HandleWeaponImpact(&LOS_Point,LOS_ObjectHitPtr->ObStrategyBlock,AmmoID,directionPtr, multiple*ONE_FIXED, LOS_HModel_Section);
 	}
 }
-
+#endif
 
 
 static void CalculateTorque(EULER *rotationPtr, VECTORCH *directionPtr, STRATEGYBLOCK *sbPtr)
@@ -6325,7 +6325,6 @@ void PredPistol_Firing(void *playerStatus, PLAYER_WEAPON_DATA *weaponPtr) {
 
 int PlayerFireFlameThrower(PLAYER_WEAPON_DATA *weaponPtr) {
 
-	extern VECTORCH CentreOfMuzzleOffset;
 	VECTORCH *firingpos;
 
 	TEMPLATE_WEAPON_DATA *twPtr=&TemplateWeapon[weaponPtr->WeaponIDNumber];
@@ -6578,7 +6577,7 @@ DISPLAYBLOCK *CauseDamageToHModel(HMODELCONTROLLER *HMC_Ptr, STRATEGYBLOCK *sbPt
 		} else if ( ((this_section_data->sempai->flags&section_is_master_root)==0) 
 			&&((this_section_data->sempai->flags&section_flag_never_frag)==0)
 			&&(((this_section_data->sempai->flags&section_sprays_acid)&&((this_section_data->sempai->flags&section_flag_fragonlyfordisks)==0))
-				||((this_section_data->sempai->StartingStats.Health<TotalKineticDamage(damage))&&(this_section_data->sempai->flags&section_flag_fragonlyfordisks==0))
+				||((this_section_data->sempai->StartingStats.Health<TotalKineticDamage(damage))&&((this_section_data->sempai->flags&section_flag_fragonlyfordisks)==0))
 				||((damage->Slicing>2)&&(this_section_data->sempai->flags&section_flag_fragonlyfordisks))
 				||((damage->Slicing>0)&&((this_section_data->sempai->flags&section_flag_fragonlyfordisks)==0))
 			)
@@ -10540,7 +10539,6 @@ extern void AutoSwapToDisc_OutOfSequence(void) {
 
 #define SPEAR_NPC_IMPULSE	(20000)
 
-void CreateSpearPossiblyWithFragment(DISPLAYBLOCK *dispPtr, VECTORCH *spearPositionPtr, VECTORCH *spearDirectionPtr);
 void HandleSpearImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_ID AmmoID, VECTORCH *directionPtr, int multiple, SECTION_DATA *this_section_data) 
 {
 	VECTORCH incoming,*invec;
@@ -11667,18 +11665,6 @@ int AreTwoPistolsInTertiaryFire(void) {
 
 }
 
-int FireMarineTwoPistolsPrimary(PLAYER_WEAPON_DATA *weaponPtr) {
-	
-	return(FireMarineTwoPistols(weaponPtr,0));
-
-}
-
-int FireMarineTwoPistolsSecondary(PLAYER_WEAPON_DATA *weaponPtr) {
-	
-	return(FireMarineTwoPistols(weaponPtr,1));
-
-}
-
 int FireMarineTwoPistols(PLAYER_WEAPON_DATA *weaponPtr, int secondary)
 {
 	TEMPLATE_WEAPON_DATA *twPtr=&TemplateWeapon[weaponPtr->WeaponIDNumber];
@@ -11777,6 +11763,18 @@ int FireMarineTwoPistols(PLAYER_WEAPON_DATA *weaponPtr, int secondary)
 	}	
 	return(1);	
 }	
+
+int FireMarineTwoPistolsPrimary(PLAYER_WEAPON_DATA *weaponPtr) {
+	
+	return(FireMarineTwoPistols(weaponPtr,0));
+
+}
+
+int FireMarineTwoPistolsSecondary(PLAYER_WEAPON_DATA *weaponPtr) {
+	
+	return(FireMarineTwoPistols(weaponPtr,1));
+
+}
 
 void MarineTwoPistols_Fidget(void *playerStatus, PLAYER_WEAPON_DATA *weaponPtr) {
 

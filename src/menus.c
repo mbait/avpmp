@@ -667,7 +667,7 @@ static int RenderSmallFontString(char *textPtr,int sx,int sy,int alpha, int red,
 	return sx;
 }
 
-void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
+void RenderSmallFontString_Wrapped(const char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
 {
 	unsigned char *srcPtr;
 	unsigned short *destPtr;
@@ -684,7 +684,7 @@ void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* outpu
 Determine area used by text , so we can draw it centrally
 */                        	
 {
-	char *textPtr2=textPtr;
+	const char *textPtr2=textPtr;
 	while (*textPtr2) {
 		int widthFromSpaces=0;
 		int widthFromChars=0;
@@ -749,7 +749,7 @@ Determine area used by text , so we can draw it centrally
 	}
 	
 	while ( *textPtr ) {
-		char* textPtr2=textPtr;
+		const char* textPtr2=textPtr;
 		wordWidth=0;
 		
 		while(*textPtr2 && *textPtr2==' ') {

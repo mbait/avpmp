@@ -14,6 +14,7 @@
 #include "equipmnt.h"
 
 #include "pldnet.h"
+#include "net.h"
 
 
 DPID AVPDPNetID;

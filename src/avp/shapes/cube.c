@@ -69,12 +69,12 @@ SHAPEHEADER CUBE_header={
 };
 
 SHAPEINSTR CUBE_instructions[]={
-	I_ShapePoints,8,&CUBE_points[0],
-	I_ShapeNormals,6,&CUBE_normals[0],
-	I_ShapeProject,8,&CUBE_points[0],
-	I_ShapeVNormals,8,&CUBE_vnormals[0],
-	I_ShapeItems,6,&CUBE_items[0],
-	I_ShapeEnd,0,0
+    {I_ShapePoints,8,&CUBE_points[0]},
+    {I_ShapeNormals,6,&CUBE_normals[0]},
+    {I_ShapeProject,8,&CUBE_points[0]},
+    {I_ShapeVNormals,8,&CUBE_vnormals[0]},
+    {I_ShapeItems,6,&CUBE_items[0]},
+    {I_ShapeEnd,0,0}
 };
 
 int *CUBE_points[]={

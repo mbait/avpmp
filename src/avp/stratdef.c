@@ -16,6 +16,7 @@
 #include "bh_corpse.h"
 #include "bh_debri.h"
 #include "pldnet.h"
+#include "maths.h"
 /* 
 	this attaches runtime and precompiled object
 	strategyblocks

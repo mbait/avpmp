@@ -5,15 +5,13 @@
 
 #include "avp_userprofile.h"
 #include "avp_menus.h"
+#include "cheatmodes.h"
 
 int CheatMode_Active=0;
 int CheatMode_Species=0;
 int CheatMode_Environment=0;
 
 
-extern void CheatMode_GetNextAllowedSpecies(int *speciesPtr, int searchForward);
-extern void CheatMode_GetNextAllowedEnvironment(int *environmentPtr, int searchForward);
-extern void CheatMode_CheckOptionsAreValid(void);
 static int ThereIsAnAllowedEnvironment(void);
 static int EnvironmentPlayableBySpecies(int environment);
 

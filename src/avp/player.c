@@ -19,6 +19,9 @@ so player.c is looking a bit bare at the moment. */
 #include "particle.h"
 #include "scream.h"
 #include "savegame.h"
+#include "game_statistics.h"
+#include "pfarlocs.h"
+#include "bh_ais.h"
 #if SupportWindows95
 	#include "rebmenus.hpp"
 #endif
@@ -112,7 +115,9 @@ void InitPlayer(STRATEGYBLOCK* sbPtr, int sb_type)
 	* and fills in some initial values.                                                       *
 	**************************************************************************************KJL*/
 
+#if 0
 	SECTION *root_section;
+#endif
 	PLAYER_STATUS *psPtr = &PlayerStatusBlock;
 	GLOBALASSERT(psPtr);
  	GLOBALASSERT(sbPtr);
@@ -1346,7 +1351,9 @@ void DeInitialisePlayer(void) {
 	/* I thought it would be logical to put it here... */
 	
   	int slot = MAX_NO_OF_WEAPON_SLOTS;
+#if 0
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
+#endif
 
     do {
 		TXACTRLBLK *txactrl,*txactrl_next;

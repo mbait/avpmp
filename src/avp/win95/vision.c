@@ -9,6 +9,7 @@
 #include "gamedef.h"
 #include "bh_types.h"
 #include "huddefs.h"
+#include "opengl.h"
 
 /* patrick's sound include */
 #include "psnd.h"
@@ -30,7 +31,7 @@
 ****************************************************************************************KJL*/
 enum VISION_MODE_ID CurrentVisionMode;
 
-static visionModeDebounced=0;
+static int visionModeDebounced=0;
 
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 int predOVision_SoundHandle;

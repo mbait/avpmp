@@ -636,7 +636,7 @@ static int RenderSmallFontString(char *textPtr,int sx,int sy,int alpha, int red,
 }
 
 
-extern void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
+extern void RenderSmallFontString_Wrapped(const char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
 {
 	DDSURFACEDESC ddsdimage;
    	unsigned short *destPtr;

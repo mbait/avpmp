@@ -249,6 +249,7 @@
 	void Alien_GoToApproach(STRATEGYBLOCK *sbPtr);
 	void Alien_Awaken(STRATEGYBLOCK *sbPtr);
 	int AlienIsCrawling(STRATEGYBLOCK *sbPtr);
+    void DoAlienLimbLossSound(VECTORCH *position);
 
 	#ifdef __cplusplus
 

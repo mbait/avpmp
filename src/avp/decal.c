@@ -23,6 +23,7 @@
 #include "paintball.h"
 #include "detaillevels.h"
 #include "savegame.h"
+#include "decal.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

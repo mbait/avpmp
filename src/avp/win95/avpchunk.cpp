@@ -329,7 +329,7 @@ AVP_Generator_Extended_Settings_Chunk::AVP_Generator_Extended_Settings_Chunk(Chu
 	CHUNK_EXTRACT(spare2,int)
     	
 	
-	size_t size=max(*(int*) data,sizeof(AVP_Generator_Weighting));
+	size_t size=max(*(int*) data,(int)sizeof(AVP_Generator_Weighting));
 
 	weights=(AVP_Generator_Weighting*)new unsigned char[size];
 	memset(weights,0,sizeof(AVP_Generator_Weighting));
@@ -704,7 +704,7 @@ AVP_Decal_Chunk::AVP_Decal_Chunk(Chunk_With_Children* parent,const char* data,si
 	int loaded_decal_size=*(int*)data;
 	data+=4;
 
-	decal_size=max(loaded_decal_size,sizeof(AVP_Decal));
+	decal_size=max(loaded_decal_size,(int)sizeof(AVP_Decal));
 
 	//allocate buffer for decals , and initialise to zero
 	decal_buffer=new char[num_decals*decal_size];
@@ -720,7 +720,7 @@ AVP_Decal_Chunk::AVP_Decal_Chunk(Chunk_With_Children* parent,const char* data,si
 
 	//only allow access to the decals if the loaded structure size is less than or equal
 	//to the current stucture size
-	if(loaded_decal_size<=sizeof(AVP_Decal))
+	if(loaded_decal_size<=(int)sizeof(AVP_Decal))
 	{
 		decals=(AVP_Decal*)decal_buffer;
 	}

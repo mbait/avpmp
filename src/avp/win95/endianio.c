@@ -20,7 +20,7 @@ DWORD GetLittleDword(FILE *fp)
   unsigned char c3 = fgetc(fp);
   unsigned char c4 = fgetc(fp);
 
-  return c1 + (c2 + (c3 + (c4 << 8) << 8) << 8);
+  return c1 + ((c2 + ((c3 + (c4 << 8)) << 8)) << 8);
 }
 
 VOID PutByte(BYTE v, FILE *fp)

@@ -7,6 +7,8 @@
 
 #include "kzsort.h"
 #include "kshape.h"
+#include "pldnet.h"
+#include "avpview.h"
 
 #include "d3d_render.h"
 #define UseLocalAssert Yes
@@ -31,20 +33,24 @@ extern int NumVertices;
 extern int WireFrameMode;
 extern int DrawingAReflection;
 
-struct KItem KItemList[maxpolyptrs]={0,};
-static struct KItem KItemList2[maxpolyptrs]={0,};
+struct KItem KItemList[maxpolyptrs];
+#if 0
+static struct KItem KItemList2[maxpolyptrs];
+#endif
 
-static struct KObject VisibleModules[MAX_NUMBER_OF_VISIBLE_MODULES]={0,};
-static struct KObject VisibleModules2[MAX_NUMBER_OF_VISIBLE_MODULES]={0,};
+static struct KObject VisibleModules[MAX_NUMBER_OF_VISIBLE_MODULES];
+static struct KObject VisibleModules2[MAX_NUMBER_OF_VISIBLE_MODULES];
 static struct KObject *SortedModules;
-static struct KObject VisibleObjects[maxobjects]={0,};
+static struct KObject VisibleObjects[maxobjects];
 
+static int PointIsInModule(VECTORCH *pointPtr,MODULE *modulePtr);
 
 /*KJL*****************************
 * externs for new shape function *
 *****************************KJL*/
 int *MorphedObjectPointsPtr=0;
 
+#if 0
 static void MergeItems(struct KItem *src1, int n1, struct KItem *src2, int n2, struct KItem *dest)
 {
 	/* merge the 2 sorted lists: at src1, length n1, and at src2, length n2, into dest */
@@ -84,6 +90,7 @@ static void MergeItems(struct KItem *src1, int n1, struct KItem *src2, int n2, s
 	   }
 	}
 }
+#endif
 
 static void MergeObjects(struct KObject *src1, int n1, struct KObject *src2, int n2, struct KObject *dest)
 {
@@ -306,7 +313,6 @@ void SortModules(unsigned int noOfItems)
 /* KJL 12:21:51 02/11/97 - This routine is too big and ugly. Split & clean up required! */
 void KRenderItems(VIEWDESCRIPTORBLOCK *VDBPtr)
 {
-	extern int NumActiveBlocks;
 	extern int NumOnScreenBlocks;
 	extern DISPLAYBLOCK *OnScreenBlockList[];
 	int numOfObjects = NumOnScreenBlocks;
@@ -737,6 +743,7 @@ void KRenderItems(VIEWDESCRIPTORBLOCK *VDBPtr)
 	}
 }
 
+#if 0
 static int ObjectIsInModule(DISPLAYBLOCK *objectPtr,MODULE *modulePtr)
 {
 	int objectSize = objectPtr->ObRadius;
@@ -757,6 +764,8 @@ static int ObjectIsInModule(DISPLAYBLOCK *objectPtr,MODULE *modulePtr)
 	return 0;
 
 }
+#endif
+
 static int PointIsInModule(VECTORCH *pointPtr,MODULE *modulePtr)
 {
 	VECTORCH position = *pointPtr;

@@ -5,7 +5,13 @@
 #include "stratdef.h"
 #include "gamedef.h"
 #include "bh_types.h"
+#include "bh_marin.h"
+#include "game.h"
 #include "gameplat.h"
+#include "lighting.h"
+#include "messagehistory.h"
+#include "particle.h"
+#include "pldnet.h"
 #define UseLocalAssert Yes
 #include "ourasert.h"
 
@@ -461,13 +467,13 @@ void InitCharacter()
 	
 	
 	if(alien_weapon_rif!=INVALID_RIFFHANDLE)
-		copy_rif_data(alien_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET+CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
+		copy_rif_data(alien_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET|CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
 
 	if(marine_weapon_rif!=INVALID_RIFFHANDLE)
-		copy_rif_data(marine_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET+CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
+		copy_rif_data(marine_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET|CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
 
 	if(predator_weapon_rif!=INVALID_RIFFHANDLE)
-		copy_rif_data(predator_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET+CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
+		copy_rif_data(predator_weapon_rif,CCF_LOAD_AS_HIERARCHY_IF_EXISTS|CCF_IMAGEGROUPSET|CCF_DONT_INITIALISE_TEXTURES,PBAR_HUD_START+PBAR_HUD_INTERVAL*.5,PBAR_HUD_INTERVAL*.25);
 
 	Set_Progress_Bar_Position(PBAR_HUD_START+PBAR_HUD_INTERVAL);
 	//copy_chunks_from_environment(0);

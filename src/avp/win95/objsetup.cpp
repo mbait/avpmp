@@ -139,8 +139,8 @@ void setup_track_sound(Indexed_Sound_Chunk* s_chunk,TRACK_SOUND** ts)
 		TRACK_SOUND* sound=(TRACK_SOUND*)PoolAllocateMem(sizeof(TRACK_SOUND));
 
 		sound->sound_loaded=ls;
-		sound->inner_range=s_chunk->inner_range*local_scale;
-		sound->outer_range=s_chunk->outer_range*local_scale;
+		sound->inner_range=(unsigned)(s_chunk->inner_range*local_scale);
+		sound->outer_range=(unsigned)(s_chunk->outer_range*local_scale);
 		sound->pitch=s_chunk->pitch;
 		sound->max_volume=s_chunk->max_volume;
 		sound->activ_no=SOUND_NOACTIVEINDEX;
@@ -195,8 +195,8 @@ void setup_track_sound(Object_Chunk* oc,TRACK_SOUND** start_sound,TRACK_SOUND** 
 			TRACK_SOUND* sound=(TRACK_SOUND*)PoolAllocateMem(sizeof(TRACK_SOUND));
 
 			sound->sound_loaded=ls;
-			sound->inner_range=otsc->inner_range*local_scale;
-			sound->outer_range=otsc->outer_range*local_scale;
+			sound->inner_range=(unsigned)(otsc->inner_range*local_scale);
+			sound->outer_range=(unsigned)(otsc->outer_range*local_scale);
 			sound->pitch=otsc->pitch;
 			sound->max_volume=otsc->max_volume;
 			sound->activ_no=SOUND_NOACTIVEINDEX;
@@ -619,7 +619,7 @@ void deallocate_behaviour_list()
 					MISSION_COMPLETE_TOOLS_TEMPLATE* mctt=(MISSION_COMPLETE_TOOLS_TEMPLATE*)bbd->bhdata;
 					if(mctt->mission_objective_ptr)
 					{
-						delete mctt->mission_objective_ptr;
+						delete (MissionObjective *)(mctt->mission_objective_ptr);
 					}
 					
 				}
@@ -828,9 +828,9 @@ static void add_default_object(Object_Chunk * ob, int list_pos)
 
 	TOOLS_DATA_INANIMATEOBJECT* tdio =(TOOLS_DATA_INANIMATEOBJECT*) PoolAllocateMem(sizeof(TOOLS_DATA_INANIMATEOBJECT));
 	
-	tdio->position.vx = ob->object_data.location.x * local_scale;
-	tdio->position.vy = ob->object_data.location.y * local_scale;
-	tdio->position.vz = ob->object_data.location.z * local_scale;
+	tdio->position.vx = (int)(ob->object_data.location.x * local_scale);
+	tdio->position.vy = (int)(ob->object_data.location.y * local_scale);
+	tdio->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -873,9 +873,9 @@ static void add_trackobject(Object_Chunk* ob, int list_pos,AVP_Strategy_Chunk* a
 	
 	*(ObjectID*)&tott->nameID[0]=ob->object_data.ID;
 
-	tott->position.vx = ob->object_data.location.x * local_scale;
-	tott->position.vy = ob->object_data.location.y * local_scale;
-	tott->position.vz = ob->object_data.location.z * local_scale;
+	tott->position.vx = (int)(ob->object_data.location.x * local_scale);
+	tott->position.vy = (int)(ob->object_data.location.y * local_scale);
+	tott->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -978,8 +978,8 @@ void add_placed_hierarchy(Placed_Hierarchy_Chunk* phc,const char* fname,const ch
 			Indexed_Sound_Chunk* isc=(Indexed_Sound_Chunk*)chlif();
 			PLACED_HIERARCHY_SOUND* phs=&phtt->sounds[isc->index];
 
-			phs->inner_range=isc->inner_range*local_scale;
-			phs->outer_range=isc->outer_range*local_scale;
+			phs->inner_range=(unsigned)(isc->inner_range*local_scale);
+			phs->outer_range=(unsigned)(isc->outer_range*local_scale);
 			phs->pitch=isc->pitch;
 			phs->max_volume=isc->max_volume;
 			phs->playing=0;
@@ -1015,7 +1015,7 @@ void add_placed_hierarchy(Placed_Hierarchy_Chunk* phc,const char* fname,const ch
 
 		ph_seq->sequence_no=phsc->sequence;
 		ph_seq->sub_sequence_no=phsc->sub_sequence;
-		ph_seq->time=((float)phsc->time*(float)ONE_FIXED)/1000.0;
+		ph_seq->time=(int)(((float)phsc->time*(float)ONE_FIXED)/1000.0);
 		ph_seq->loop=((phsc->flags & HierarchySequenceFlag_Loop)!=0);
 
 		if(phsc->flags & HierarchySequenceFlag_InitialSequence)
@@ -1100,9 +1100,9 @@ void add_placed_hierarchy(Placed_Hierarchy_Chunk* phc,const char* fname,const ch
 
 	*(ObjectID*) &phtt->nameID[0]=data->id;
 
-	phtt->position.vx = data->location.x * local_scale;
-	phtt->position.vy = data->location.y * local_scale;
-	phtt->position.vz = data->location.z * local_scale;
+	phtt->position.vx = (int)(data->location.x * local_scale);
+	phtt->position.vy = (int)(data->location.y * local_scale);
+	phtt->position.vz = (int)(data->location.z * local_scale);
 
 	QUAT q;
 
@@ -1173,9 +1173,9 @@ static void add_fan(Object_Chunk* ob, int list_pos,AVP_Strategy_Chunk* asc)
 	
 	*(ObjectID*)&ftt->nameID[0]=ob->object_data.ID;
 
-	ftt->position.vx = ob->object_data.location.x * local_scale;
-	ftt->position.vy = ob->object_data.location.y * local_scale;
-	ftt->position.vz = ob->object_data.location.z * local_scale;
+	ftt->position.vx = (int)(ob->object_data.location.x * local_scale);
+	ftt->position.vy = (int)(ob->object_data.location.y * local_scale);
+	ftt->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -1229,9 +1229,9 @@ static void add_linkswitch(const char* name,AVP_Strategy_Chunk* asc,const Object
 	
 	if(oc) //switch has a shape
 	{
-		lstt->position.vx = oc->object_data.location.x * local_scale;
-		lstt->position.vy = oc->object_data.location.y * local_scale;
-		lstt->position.vz = oc->object_data.location.z * local_scale;
+		lstt->position.vx = (int)(oc->object_data.location.x * local_scale);
+		lstt->position.vy = (int)(oc->object_data.location.y * local_scale);
+		lstt->position.vz = (int)(oc->object_data.location.z * local_scale);
 	
 
 		QUAT q;
@@ -1315,9 +1315,9 @@ static void add_multitarget_linkswitch(const char* name,AVP_Strategy_Chunk* asc,
 	
 	if(oc) //switch has a shape
 	{
-		lstt->position.vx = oc->object_data.location.x * local_scale;
-		lstt->position.vy = oc->object_data.location.y * local_scale;
-		lstt->position.vz = oc->object_data.location.z * local_scale;
+		lstt->position.vx = (int)(oc->object_data.location.x * local_scale);
+		lstt->position.vy = (int)(oc->object_data.location.y * local_scale);
+		lstt->position.vz = (int)(oc->object_data.location.z * local_scale);
 	
 
 		QUAT q;
@@ -1431,9 +1431,9 @@ static void add_binswitch (const char* name,AVP_Strategy_Chunk* asc,const Object
 	
 	if(oc)//switch has a shape
 	{
-		bstt->position.vx = oc->object_data.location.x * local_scale;
-		bstt->position.vy = oc->object_data.location.y * local_scale;
-		bstt->position.vz = oc->object_data.location.z * local_scale;
+		bstt->position.vx = (int)(oc->object_data.location.x * local_scale);
+		bstt->position.vy = (int)(oc->object_data.location.y * local_scale);
+		bstt->position.vz = (int)(oc->object_data.location.z * local_scale);
 
 	
 		bstt->trigger_volume_min.vx=bstt->trigger_volume_max.vx=0;
@@ -1522,9 +1522,9 @@ static void add_multiswitch (const char* name,AVP_Strategy_Chunk* asc,const Obje
 	
 	if(oc) //switch has a shape
 	{
-		bstt->position.vx = oc->object_data.location.x * local_scale;
-		bstt->position.vy = oc->object_data.location.y * local_scale;
-		bstt->position.vz = oc->object_data.location.z * local_scale;
+		bstt->position.vx = (int)(oc->object_data.location.x * local_scale);
+		bstt->position.vy = (int)(oc->object_data.location.y * local_scale);
+		bstt->position.vz = (int)(oc->object_data.location.z * local_scale);
 
 			
 		QUAT q;
@@ -1618,9 +1618,9 @@ static void add_platlift (Object_Chunk * ob, int list_pos, AVP_Strategy_Chunk * 
 
 	PLATFORMLIFT_TOOLS_TEMPLATE* ptt=(PLATFORMLIFT_TOOLS_TEMPLATE*) PoolAllocateMem(sizeof(PLATFORMLIFT_TOOLS_TEMPLATE));
 	
-	ptt->position.vx = ob->object_data.location.x * local_scale;
-	ptt->position.vy = ob->object_data.location.y * local_scale;
-	ptt->position.vz = ob->object_data.location.z * local_scale;
+	ptt->position.vx = (int)(ob->object_data.location.x * local_scale);
+	ptt->position.vy = (int)(ob->object_data.location.y * local_scale);
+	ptt->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -1645,7 +1645,7 @@ static void add_platlift (Object_Chunk * ob, int list_pos, AVP_Strategy_Chunk * 
 	{
 		if(otc->num_sections==1)
 		{
-			ptt->travel=(otc->sections[0].pivot_end.y-otc->sections[0].pivot_start.y)*local_scale;
+			ptt->travel=(int)((otc->sections[0].pivot_end.y-otc->sections[0].pivot_start.y)*local_scale);
 		}
 	}
 	else
@@ -1740,9 +1740,9 @@ static void add_placed_light(Object_Chunk* ob,int list_pos,AVP_Strategy_Chunk* a
 
 	TOOLS_DATA_PLACEDLIGHT* pltd=(TOOLS_DATA_PLACEDLIGHT*) PoolAllocateMem(sizeof(TOOLS_DATA_PLACEDLIGHT));
 	
-	pltd->position.vx = ob->object_data.location.x * local_scale;
-	pltd->position.vy = ob->object_data.location.y * local_scale;
-	pltd->position.vz = ob->object_data.location.z * local_scale;
+	pltd->position.vx = (int)(ob->object_data.location.x * local_scale);
+	pltd->position.vy = (int)(ob->object_data.location.y * local_scale);
+	pltd->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -2060,9 +2060,9 @@ static void add_videoscreen(Object_Chunk * ob, int list_pos, AVP_Strategy_Chunk 
 	
 	TOOLS_DATA_VIDEO_SCREEN* tdvs=(TOOLS_DATA_VIDEO_SCREEN*) PoolAllocateMem(sizeof(TOOLS_DATA_VIDEO_SCREEN));
 	
-	tdvs->position.vx = ob->object_data.location.x * local_scale;
-	tdvs->position.vy = ob->object_data.location.y * local_scale;
-	tdvs->position.vz = ob->object_data.location.z * local_scale;
+	tdvs->position.vx = (int)(ob->object_data.location.x * local_scale);
+	tdvs->position.vy = (int)(ob->object_data.location.y * local_scale);
+	tdvs->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -2113,9 +2113,9 @@ static void add_newsimpleobject(Object_Chunk * ob, int list_pos, AVP_Strategy_Ch
 	
 	TOOLS_DATA_INANIMATEOBJECT* tdio=(TOOLS_DATA_INANIMATEOBJECT*) PoolAllocateMem(sizeof(TOOLS_DATA_INANIMATEOBJECT));
 	
-	tdio->position.vx = ob->object_data.location.x * local_scale;
-	tdio->position.vy = ob->object_data.location.y * local_scale;
-	tdio->position.vz = ob->object_data.location.z * local_scale;
+	tdio->position.vx = (int)(ob->object_data.location.x * local_scale);
+	tdio->position.vy = (int)(ob->object_data.location.y * local_scale);
+	tdio->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -2206,9 +2206,9 @@ static void add_simpleobject(Object_Chunk * ob, int list_pos, AVP_Strategy_Chunk
 	
 	TOOLS_DATA_INANIMATEOBJECT* tdio=(TOOLS_DATA_INANIMATEOBJECT*) PoolAllocateMem(sizeof(TOOLS_DATA_INANIMATEOBJECT));
 	
-	tdio->position.vx = ob->object_data.location.x * local_scale;
-	tdio->position.vy = ob->object_data.location.y * local_scale;
-	tdio->position.vz = ob->object_data.location.z * local_scale;
+	tdio->position.vx = (int)(ob->object_data.location.x * local_scale);
+	tdio->position.vy = (int)(ob->object_data.location.y * local_scale);
+	tdio->position.vz = (int)(ob->object_data.location.z * local_scale);
 
 	QUAT q;
 
@@ -2350,9 +2350,9 @@ static void add_alien(AVP_Generator_Chunk * agc)
 {
 
 	TOOLS_DATA_ALIEN* tda=(TOOLS_DATA_ALIEN*) PoolAllocateMem(sizeof(TOOLS_DATA_ALIEN));
-	tda->position.vx = agc->location.x * local_scale;
-	tda->position.vy = agc->location.y * local_scale;
-	tda->position.vz = agc->location.z * local_scale;
+	tda->position.vx = (int)(agc->location.x * local_scale);
+	tda->position.vy = (int)(agc->location.y * local_scale);
+	tda->position.vz = (int)(agc->location.z * local_scale);
 	
 	//tda->shapeIndex = GetLoadedShapeMSL("Alien");
 	tda->shapeIndex = 0;
@@ -2424,9 +2424,9 @@ static void add_marine(AVP_Generator_Chunk * agc)
 {
 	TOOLS_DATA_MARINE* tdm=(TOOLS_DATA_MARINE*) PoolAllocateMem(sizeof(TOOLS_DATA_MARINE));
 
-	tdm->position.vx = agc->location.x * local_scale;
-	tdm->position.vy = agc->location.y * local_scale;
-	tdm->position.vz = agc->location.z * local_scale;
+	tdm->position.vx = (int)(agc->location.x * local_scale);
+	tdm->position.vy = (int)(agc->location.y * local_scale);
+	tdm->position.vz = (int)(agc->location.z * local_scale);
 	
 	EULER euler;
 	euler.EulerX=0;
@@ -2578,9 +2578,9 @@ static void add_predator(AVP_Generator_Chunk * agc)
 {
 
 	TOOLS_DATA_PREDATOR* tdp=(TOOLS_DATA_PREDATOR*) PoolAllocateMem(sizeof(TOOLS_DATA_PREDATOR));
-	tdp->position.vx = agc->location.x * local_scale;
-	tdp->position.vy = agc->location.y * local_scale;
-	tdp->position.vz = agc->location.z * local_scale;
+	tdp->position.vx = (int)(agc->location.x * local_scale);
+	tdp->position.vy = (int)(agc->location.y * local_scale);
+	tdp->position.vz = (int)(agc->location.z * local_scale);
 	
 	#if 0
 	switch (agc->textureID)
@@ -2715,9 +2715,9 @@ static void add_queen(AVP_Generator_Chunk * agc)
 {
 	
 	TOOLS_DATA_QUEEN* tdq=(TOOLS_DATA_QUEEN*) PoolAllocateMem(sizeof(TOOLS_DATA_QUEEN));
-	tdq->position.vx = agc->location.x * local_scale;
-	tdq->position.vy = agc->location.y * local_scale;
-	tdq->position.vz = agc->location.z * local_scale;
+	tdq->position.vx = (int)(agc->location.x * local_scale);
+	tdq->position.vy = (int)(agc->location.y * local_scale);
+	tdq->position.vz = (int)(agc->location.z * local_scale);
 
 	tdq->shapeIndex = 0;
 
@@ -2766,9 +2766,9 @@ static void add_hugger(AVP_Generator_Chunk * agc)
 
 	TOOLS_DATA_FACEHUGGER* tdfh =(TOOLS_DATA_FACEHUGGER*) PoolAllocateMem(sizeof(TOOLS_DATA_FACEHUGGER));
 
-	tdfh->position.vx = agc->location.x * local_scale;
-	tdfh->position.vy = agc->location.y * local_scale;
-	tdfh->position.vz = agc->location.z * local_scale;
+	tdfh->position.vx = (int)(agc->location.x * local_scale);
+	tdfh->position.vy = (int)(agc->location.y * local_scale);
+	tdfh->position.vz = (int)(agc->location.z * local_scale);
 
 	//tdfh->shapeIndex = GetLoadedShapeMSL("Facehug");
 	tdfh->shapeIndex = 0;
@@ -2817,9 +2817,9 @@ static void add_hugger(AVP_Generator_Chunk * agc)
 static void add_autogun(AVP_Generator_Chunk * agc)
 {
 	AUTOGUN_TOOLS_TEMPLATE* att=(AUTOGUN_TOOLS_TEMPLATE*) PoolAllocateMem(sizeof(AUTOGUN_TOOLS_TEMPLATE));
-	att->position.vx = agc->location.x * local_scale;
-	att->position.vy = agc->location.y * local_scale;
-	att->position.vz = agc->location.z * local_scale;
+	att->position.vx = (int)(agc->location.x * local_scale);
+	att->position.vy = (int)(agc->location.y * local_scale);
+	att->position.vz = (int)(agc->location.z * local_scale);
 	
 	att->shapenum = 0;
 
@@ -2876,9 +2876,9 @@ static void add_xenoborg(AVP_Generator_Chunk * agc)
 	
 	TOOLS_DATA_XENO* tdx=(TOOLS_DATA_XENO*) PoolAllocateMem(sizeof(TOOLS_DATA_XENO));
 	
-	tdx->position.vx = agc->location.x * local_scale;
-	tdx->position.vy = agc->location.y * local_scale;
-	tdx->position.vz = agc->location.z * local_scale;
+	tdx->position.vx = (int)(agc->location.x * local_scale);
+	tdx->position.vy = (int)(agc->location.y * local_scale);
+	tdx->position.vz = (int)(agc->location.z * local_scale);
 
 	tdx->shapeIndex = 0;
 
@@ -3068,9 +3068,9 @@ void setup_generators (Environment_Data_Chunk * envd)
 						GENERATOR_BLOCK* tdg = (GENERATOR_BLOCK*) PoolAllocateMem(sizeof(GENERATOR_BLOCK));
 						memset(tdg,0,sizeof(GENERATOR_BLOCK));
 						
-						tdg->Position.vx = agc->location.x * local_scale;
-						tdg->Position.vy = agc->location.y * local_scale;
-						tdg->Position.vz = agc->location.z * local_scale;
+						tdg->Position.vx = (int)(agc->location.x * local_scale);
+						tdg->Position.vy = (int)(agc->location.y * local_scale);
+						tdg->Position.vz = (int)(agc->location.z * local_scale);
 						tdg->Active=!(agc->flags & AVPGENFLAG_GENERATORINACTIVE);
 
 						tdg->GenerationRate=1;
@@ -3232,9 +3232,9 @@ void setup_generators (Environment_Data_Chunk * envd)
 				}
 
 				MULTIPLAYER_START start_pos;
-				start_pos.location.vx = agc->location.x * local_scale;
-				start_pos.location.vy = agc->location.y * local_scale;
-				start_pos.location.vz = agc->location.z * local_scale;
+				start_pos.location.vx = (int)(agc->location.x * local_scale);
+				start_pos.location.vy = (int)(agc->location.y * local_scale);
+				start_pos.location.vz = (int)(agc->location.z * local_scale);
 
 				start_pos.orientation.EulerX=0;
 				start_pos.orientation.EulerY=agc->orientation & 4095;
@@ -3383,19 +3383,19 @@ void setup_light_data (LIGHTBLOCK * lPtr, Light_Chunk * lc)
 
 	lPtr->LightType = LightType_PerVertex;
 
-	lPtr->LightWorld.vx = lc->light.location.x * local_scale;
-	lPtr->LightWorld.vy = lc->light.location.y * local_scale;
-	lPtr->LightWorld.vz = lc->light.location.z * local_scale;
+	lPtr->LightWorld.vx = (int)(lc->light.location.x * local_scale);
+	lPtr->LightWorld.vy = (int)(lc->light.location.y * local_scale);
+	lPtr->LightWorld.vz = (int)(lc->light.location.z * local_scale);
 	
-	lPtr->LightBright = lc->light.brightness * 1.0;
-	lPtr->LightBrightStore = lc->light.brightness * 1.0;
+	lPtr->LightBright = (int)(lc->light.brightness * 1.0);
+	lPtr->LightBrightStore = (int)(lc->light.brightness * 1.0);
 
 	/* KJL 10:57:57 9/24/97 - colour scales - these take the values 0 to 65536 */
 	lPtr->RedScale = ((lc->light.colour>>16)&255)*257;
 	lPtr->GreenScale = ((lc->light.colour>>8)&255)*257;
 	lPtr->BlueScale = ((lc->light.colour)&255)*257;
 
-	lPtr->LightRange = (lc->light.range * 1.0) * local_scale;
+	lPtr->LightRange = (int)((lc->light.range * 1.0) * local_scale);
 
 	if (lc->light.local_light_flags & LOFlag_NoPreLight)
 	{
@@ -3423,15 +3423,15 @@ void setup_placed_light_data (LIGHTBLOCK * lPtr, Placed_Object_Light_Chunk * lc)
 	lPtr->LightWorld.vy = 0;
 	lPtr->LightWorld.vz = 0;
 	
-	lPtr->LightBright = lc->light.brightness * 1.0;
-	lPtr->LightBrightStore = lc->light.brightness * 1.0;
+	lPtr->LightBright = (int)(lc->light.brightness * 1.0);
+	lPtr->LightBrightStore = (int)(lc->light.brightness * 1.0);
 
 	/* KJL 10:57:57 9/24/97 - colour scales - these take the values 0 to 65536 */
 	lPtr->RedScale = ((lc->light.up_colour>>16)&255)*257;
 	lPtr->GreenScale = ((lc->light.up_colour>>8)&255)*257;
 	lPtr->BlueScale = ((lc->light.up_colour)&255)*257;
 
-	lPtr->LightRange = (lc->light.range * 1.0) * local_scale;
+	lPtr->LightRange = (int)((lc->light.range * 1.0) * local_scale);
 	
 }
 
@@ -3711,12 +3711,12 @@ void setup_sounds (Environment_Data_Chunk * envd)
 			Sound_Object_Chunk * snd = (Sound_Object_Chunk *) cli();
 			SOUND_TOOLS_TEMPLATE* stt =(SOUND_TOOLS_TEMPLATE*) PoolAllocateMem(sizeof(SOUND_TOOLS_TEMPLATE));
 			
-			stt->position.vx = snd->position.x * local_scale;
-			stt->position.vy = snd->position.y * local_scale;
-			stt->position.vz = snd->position.z * local_scale;
+			stt->position.vx = (int)(snd->position.x * local_scale);
+			stt->position.vy = (int)(snd->position.y * local_scale);
+			stt->position.vz = (int)(snd->position.z * local_scale);
 			
-			stt->inner_range = snd->inner_range * local_scale;
-			stt->outer_range = snd->outer_range * local_scale;
+			stt->inner_range = (unsigned)(snd->inner_range * local_scale);
+			stt->outer_range = (unsigned)(snd->outer_range * local_scale);
 			stt->max_volume = snd->max_volume;
 			stt->pitch = snd->pitch;
 			
@@ -3757,9 +3757,9 @@ void setup_cables(Environment_Data_Chunk * envd)
 
 		POWER_CABLE_TOOLS_TEMPLATE* tdpc=(POWER_CABLE_TOOLS_TEMPLATE*) PoolAllocateMem(sizeof(POWER_CABLE_TOOLS_TEMPLATE));
 
-		tdpc->position.vx = appc->location.x * local_scale;
-		tdpc->position.vy = appc->location.y * local_scale;
-		tdpc->position.vz = appc->location.z * local_scale;
+		tdpc->position.vx = (int)(appc->location.x * local_scale);
+		tdpc->position.vy = (int)(appc->location.y * local_scale);
+		tdpc->position.vz = (int)(appc->location.z * local_scale);
 
 		if(appc->flags & PowerCableFlag_UseDefaultSettings)
 		{
@@ -3798,9 +3798,9 @@ void setup_particle_generators(Environment_Data_Chunk * envd)
 
 		PARTICLE_GENERATOR_TOOLS_TEMPLATE* part_temp=(PARTICLE_GENERATOR_TOOLS_TEMPLATE*) PoolAllocateMem(sizeof(PARTICLE_GENERATOR_TOOLS_TEMPLATE));
 
-		part_temp->position.vx = data_chunk->location.x * local_scale;
-		part_temp->position.vy = data_chunk->location.y * local_scale;
-		part_temp->position.vz = data_chunk->location.z * local_scale;
+		part_temp->position.vx = (int)(data_chunk->location.x * local_scale);
+		part_temp->position.vy = (int)(data_chunk->location.y * local_scale);
+		part_temp->position.vz = (int)(data_chunk->location.z * local_scale);
 
 		*(ObjectID*)&part_temp->nameID[0]=data_chunk->id;
 		*(ObjectID*)&part_temp->parentID[0]=data_chunk->parent_id;

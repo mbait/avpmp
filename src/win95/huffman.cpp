@@ -236,7 +236,7 @@ static int HuffDepthsAdjust(int *depth, int maxdepth)
     unsigned int promotions, excess, hi;
 
     goal = 1 << maxdepth;
-    for (n = 0, sum = 0, items = 0; n <= maxdepth; n++)
+    for (n = 0, sum = 0, items = 0; n <= (unsigned int)maxdepth; n++)
     {
         items += depth[n];
         sum   += (goal >> n) * depth[n];
@@ -249,7 +249,7 @@ static int HuffDepthsAdjust(int *depth, int maxdepth)
         {
             gain             = (1 << (maxdepth - n)) - 1;
             busts            = (sum - goal + gain - 1) / gain;
-            busts            = depth[n] < busts ? depth[n] : busts;
+            busts            = (unsigned int)depth[n] < busts ? depth[n] : busts;
             depth[n]        -= busts;
             depth[maxdepth] += busts;
             sum             -= busts * gain;
@@ -259,7 +259,7 @@ static int HuffDepthsAdjust(int *depth, int maxdepth)
     for (n = 0; excess; n++)
     {
         hi = 1 << (maxdepth - n);
-        for (m = n + 1; m <= maxdepth; m++)
+        for (m = n + 1; m <= (unsigned int)maxdepth; m++)
         {
             gain = hi - (1 << (maxdepth - m));
             if (excess < gain)
@@ -267,7 +267,7 @@ static int HuffDepthsAdjust(int *depth, int maxdepth)
             if (depth[m])
             {
                 promotions  = excess / gain;
-                promotions  = depth[m] > promotions ? promotions : depth[m];
+                promotions  = (unsigned int)depth[m] > promotions ? promotions : depth[m];
                 depth[n]   += promotions;
                 depth[m]   -= promotions;
                 excess     -= promotions * gain;

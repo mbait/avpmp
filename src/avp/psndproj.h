@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#include "equipmnt.h"
+
 /* Andy 12/6/97 --------------------------------------------------------------
   Some background sound defines
 ----------------------------------------------------------------------------*/
@@ -371,6 +373,7 @@ extern void MenuChangeSound(void);
 extern void MenuSelectSound(void);
 extern void MenuNotAvailableSound(int *handlePtr);
 extern void MenuSliderBarSound(int *handlePtr);
+void PlayWeaponClickingNoise(enum WEAPON_ID weaponIDNumber);
               
 
 /* Patrick 5/6/97 -------------------------------------------------------------

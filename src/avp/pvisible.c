@@ -32,6 +32,11 @@
 #include "bh_dummy.h"
 #include "bh_videoscreen.h"
 #include "bh_plift.h"
+#include "bh_light.h"
+#include "weapons.h"
+#include "bh_agun.h"
+#include "bh_corpse.h"
+#include "chnkload.h"
 
 #if SupportWindows95
 /* for win95 net game support */
@@ -73,8 +78,8 @@ MODULEMAPBLOCK VisibilityDefaultObjectMap =
 {
         MapType_Default,
         I_ShapeCube, /* this is a default value */
-        0,0,0,
-        0,0,0,
+        {0,0,0},
+        {0,0,0},
         #if StandardStrategyAndCollisions
         ObFlag_Dynamic|ObFlag_NewtonMovement|ObFlag_MatMul,
         #else
@@ -96,14 +101,16 @@ MODULEMAPBLOCK VisibilityDefaultObjectMap =
         0,                                                      
         0,0,0,                                  
         #endif
-        0,0,0,                                  
+        {0,0,0},
         0,                                               
         0,                                               
         #if StandardStrategyAndCollisions
         0,                                               
         0,
         #endif                                           
-        0,0,0,                                  
+        0,
+        0,
+        {0,0,0}
 };
 
 
@@ -683,7 +690,7 @@ of reasons, eg: an object is blown out of the visible part of the
 environment, or an npc falls out...
 NB returns 0 if relocation failed.
 --------------------------------------------------------------------*/
-static EmergRelocCalls = 0;
+static int EmergRelocCalls = 0;
 static int EmergencyRelocateObject(STRATEGYBLOCK *sbPtr)
 {
 
