@@ -44,15 +44,19 @@ static char *FixFilename(const char *filename, const char *prefix, int force)
 {
 	char *f, *ptr;
 	int flen;
+	int plen;
 	
-	flen = strlen(filename) + strlen(prefix) + 2;
+	plen = strlen(prefix) + 1;
+	flen = strlen(filename) + plen + 1;
 	
 	f = (char *)malloc(flen);
 	strcpy(f, prefix);
 	strcat(f, DIR_SEPARATOR);
 	strcat(f, filename);
 	
-	ptr = f;
+	/* only the filename part needs to be modified */
+	ptr = &f[plen+1];
+	
 	while (*ptr) {
 		if ((*ptr == '/') || (*ptr == '\\') || (*ptr == ':')) {
 			*ptr = DIR_SEPARATOR[0];
@@ -60,8 +64,9 @@ static char *FixFilename(const char *filename, const char *prefix, int force)
 			*ptr = 0;
 			break;
 		} else {
-			if (force)
+			if (force) {
 				*ptr = tolower(*ptr);
+			}
 		}
 		ptr++;
 	}
