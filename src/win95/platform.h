@@ -33,7 +33,12 @@ extern "C"  {
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
+#define stricmp	strcasecmp
+
 /* Types */
+
+typedef int GUID;
+typedef int DPID;
 
 typedef int BOOL;
 

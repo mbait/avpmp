@@ -10,13 +10,12 @@
 
 #include "kshape.h"
 #include "kzsort.h"
-#include "frustrum.h"
+#include "frustum.h"
 #include "krender.h"
 #include "vision.h"
 #include "lighting.h"
 #include "weapons.h"
 #include "sfx.h"
-#include "smacker.h"
 /* character extents data so you know where the player's eyes are */
 #include "extents.h"
 #include "avp_userprofile.h"
@@ -43,7 +42,8 @@ extern int ScanDrawMode;
 extern int DrawMode;
 extern int ZBufferMode;
 
-extern DPID MultiplayerObservedPlayer;
+//extern DPID MultiplayerObservedPlayer;
+extern int MultiplayerObservedPlayer;
 
 #if SupportMorphing
 MORPHDISPLAY MorphDisplay;
