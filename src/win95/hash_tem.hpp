@@ -432,24 +432,24 @@ class _base_HashTable
 				// remove the current entry pointed to, advancing to the next
 				void Remove()
 				{
-					if (!nEntriesRemaining)
+					if (!ConstIterator::nEntriesRemaining)
 					{
 						HT_FAIL("HTT: Tried to Remove() via an iterator which was Done()");
 					}
-					Node * oldP = *nodePP;
-					*nodePP = oldP->nextP;
+					Node * oldP = *ConstIterator::nodePP;
+					*ConstIterator::nodePP = oldP->nextP;
 					delete oldP;
-					if (!*nodePP)
+					if (!*ConstIterator::nodePP)
 					{
 						do
 						{
-							++ chainPP;
-							-- nChainsRemaining;
+							++ ConstIterator::chainPP;
+							-- ConstIterator::nChainsRemaining;
 						}
-						while (nChainsRemaining && !*chainPP);
-						nodePP = chainPP;
+						while (ConstIterator::nChainsRemaining && !*ConstIterator::chainPP);
+						ConstIterator::nodePP = ConstIterator::chainPP;
 					}
-					-- nEntriesRemaining;
+					-- ConstIterator::nEntriesRemaining;
 					-- *tableNEntriesP;
 				}
 
@@ -702,7 +702,7 @@ inline _base_HashTable<TYPE,ARG_TYPE,CMP_ARG_TYPE>::_base_HashTable(_base_HashTa
 
 	
 //	for(HashTable<TYPE>::ConstIterator it(ht); !it.Done(); it.Next() )
-	for (_base_HashTable::ConstIterator it(ht); !it.Done(); it.Next() )
+	for (typename _base_HashTable::ConstIterator it(ht); !it.Done(); it.Next() )
 	{
 		AddRegardless( it.Get() );
 	}
