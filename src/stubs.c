@@ -78,14 +78,12 @@ void StartMenuBackgroundBink()
 	fprintf(stderr, "StartMenuBackgroundBink()\n");
 }
 
-#if 0
 int PlayMenuBackgroundBink()
 {
 	fprintf(stderr, "PlayMenuBackgroundBink()\n");
 	
 	return 0;
 }
-#endif
 
 void EndMenuBackgroundBink()
 {
@@ -281,7 +279,22 @@ void UnlockSurface()
 
 void ReleaseDDSurface(void* DDSurface)
 {
+/*	
 	fprintf(stderr, "ReleaseDDSurface(%p)\n", DDSurface);
+*/
+	D3DTexture *t = (D3DTexture *)DDSurface;
+	
+	if (t->id > 0) {
+		fprintf(stderr, "ReleaseDDSurface(%p) - OpenGL Object (tex = %d, %d, %d)\n", DDSurface, t->id, t->w, t->h);
+	} else {
+		if (t->buf) {
+			free(t->buf);
+		} else {
+			fprintf(stderr, "ReleaseDDSurface(%p) - What is This? (tex = %d, %d, %d)\n", DDSurface, t->id, t->w, t->h);
+		}
+	}
+	
+	free(t);			
 }
 
 BOOL ChangeDirectDrawObject()

@@ -3521,7 +3521,6 @@ int New_GetAvoidanceDirection(STRATEGYBLOCK *sbPtr, NPC_AVOIDANCEMANAGER *manage
                         {
                                 // What follows is an attempt to make sure we don't jump off any cliffs...
                                 VECTORCH test_location;
-                                int test_distance = this_distance / 2;
                                 testDirn.vx *= this_distance;
                                 testDirn.vy *= this_distance;
                                 testDirn.vz *= this_distance;

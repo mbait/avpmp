@@ -23,6 +23,7 @@ namespace AwTl {
 		bool palettizedB : 1;
 		bool alphaB : 1;
 		bool validB : 1;
+		bool texB : 1;
 		
 		unsigned bitsPerPixel;
 		unsigned redLeftShift;

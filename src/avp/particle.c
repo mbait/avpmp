@@ -5290,7 +5290,6 @@ extern void RenderParticlesInMirror(void)
 		while(numOfObjects)
 		{
 			DISPLAYBLOCK *objectPtr = OnScreenBlockList[--numOfObjects];
-			STRATEGYBLOCK *sbPtr = objectPtr->ObStrategyBlock;
 
 			if (!objectPtr->ObShape && objectPtr->SfxPtr)
 			{

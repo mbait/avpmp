@@ -19,6 +19,8 @@ typedef DIRECTDRAWSURFACE DDSurface;
 
 typedef struct DIRECT3DTEXTURE
 {
+	unsigned char *buf;
+	
 	int id;
 	
 	int w;

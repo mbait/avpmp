@@ -26,6 +26,8 @@ extern void ThisFramesRenderingHasFinished(void);
 extern int AAFontImageNumber;
 extern int FadingGameInAfterLoading;
 extern void RenderBriefingText(int centreY, int brightness);
+
+extern void InGameFlipBuffers();
 };
 
 static int CurrentPosition=0;
@@ -179,7 +181,8 @@ void Start_Progress_Bar()
 #endif
 		ThisFramesRenderingHasFinished();
 
-		FlipBuffers();	
+/*		FlipBuffers();	*/
+		InGameFlipBuffers();
 	}
 
 #if 0 /* TODO: disabled for port */
@@ -217,7 +220,8 @@ void Set_Progress_Bar_Position(int pos)
 #if 0 /* TODO: disabled for port */
 		if (LoadingBarFull) lpDDSBack->Blt(&LoadingBarFull_DestRect,LoadingBarFull,&LoadingBarFull_SrcRect,DDBLT_WAIT,0);
 #endif
-		FlipBuffers();	
+/*		FlipBuffers();	*/
+		InGameFlipBuffers();
 
 		/*
 		If this is a network game , then check the received network messages from 
@@ -264,7 +268,7 @@ void Game_Has_Loaded(void)
 		CheckForWindowsMessages();
 		ReadUserInput();
 	
-//		FlipBuffers();
+//		InGameFlipBuffers();
 
 		ColourFillBackBufferQuad
 		(
@@ -305,7 +309,9 @@ void Game_Has_Loaded(void)
 			ThisFramesRenderingHasFinished();
 		}
 
-		FlipBuffers();	
+/*		FlipBuffers();	 */
+		InGameFlipBuffers();
+		
 		FrameCounterHandler();
 
 

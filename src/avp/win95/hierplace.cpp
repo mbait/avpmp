@@ -293,4 +293,3 @@ size_t Placed_Hierarchy_Sequence_Chunk::size_chunk()
 	chunk_size+=4+4*num_extra_data;
 	return chunk_size;
 }
-

@@ -54,6 +54,10 @@ static D3DTexture *CurrentlyBoundTexture = NULL;
 #define TA_MAXVERTICES		2048
 #define TA_MAXTRIANGLES		2048
 
+#if GL_EXT_secondary_color
+extern PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
+#endif
+
 typedef struct VertexArray
 {
 	GLfloat v[4];
@@ -80,8 +84,6 @@ static VertexArray *svarr = &varr[TA_MAXVERTICES], *svarrp = &varr[TA_MAXVERTICE
 static TriangleArray *starr = &tarr[TA_MAXTRIANGLES], *starrp = &tarr[TA_MAXTRIANGLES];
 static int svarrc, starrc;
 
-static int haslocked = 0;
-
 /* Do not call this directly! */
 static void SetTranslucencyMode(enum TRANSLUCENCY_TYPE mode)
 {		
@@ -90,8 +92,7 @@ static void SetTranslucencyMode(enum TRANSLUCENCY_TYPE mode)
 			if (TRIPTASTIC_CHEATMODE||MOTIONBLUR_CHEATMODE) {
 				glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 			} else {
-				//glDisable(GL_BLEND);
-				glBlendFunc(GL_ONE, GL_ZERO); /* this *should* be optimized */
+				glBlendFunc(GL_ONE, GL_ZERO);
 			}
 			break;
 		case TRANSLUCENCY_NORMAL:
@@ -116,9 +117,6 @@ static void SetTranslucencyMode(enum TRANSLUCENCY_TYPE mode)
 			fprintf(stderr, "RenderPolygon.TranslucencyMode: invalid %d\n", RenderPolygon.TranslucencyMode);
 			return;
 	}
-	
-	//if (mode != TRANSLUCENCY_OFF && CurrentTranslucencyMode == TRANSLUCENCY_OFF)
-	//	glEnable(GL_BLEND);		
 }
 
 /* 
@@ -126,25 +124,58 @@ A few things:
 - Vertices with a specular color are done twice.
   Might want to try spitting apart the three arrays and using the same vertex
   array for both passes.
+- Fix code for separate color support.
 */
+
+void InitOpenGL()
+{
+	CurrentTranslucencyMode = TRANSLUCENCY_OFF;
+	glBlendFunc(GL_ONE, GL_ZERO);
+	
+	CurrentFilteringMode = FILTERING_BILINEAR_OFF;
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                        
+	CurrentlyBoundTexture = NULL;
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(4, GL_FLOAT, sizeof(varr[0]), varr[0].v);
+		
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(varr[0]), varr[0].t);
+		
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(varr[0]), varr[0].c);
+
+#if 0		
+#if GL_EXT_secondary_color
+		if (useseparate) {
+			glEnableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
+			pglSecondaryColorPointerEXT(4, GL_UNSIGNED_BYTE, sizeof(svarr[0]), svarr[0].c);
+		} else {
+			glDisableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
+		}
+#endif
+#endif
+
+	tarrc = 0;
+	tarrp = tarr;
+		
+	varrc = 0;
+	varrp = varr;
+	
+	starrc = 0;
+	starrp = starr;
+		
+	svarrc = 0;
+	svarrp = svarr;
+}
 
 static void FlushTriangleBuffers(int backup)
 {
 	int i;
-	
-	if (haslocked == 0) {
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(4, GL_FLOAT, sizeof(varr[0]), varr[0].v);
-		
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(varr[0]), varr[0].t);
-		
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(varr[0]), varr[0].c);
-		
-		haslocked = 1;
-	}
-	
+
 	if (tarrc) {
 #if 1
 		glBegin(GL_TRIANGLES);
@@ -242,6 +273,7 @@ static void CheckBoundTextureIsCorrect(D3DTexture *tex)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			default:
+				break;
 		}
 		
 		tex->filter = CurrentFilteringMode;
@@ -267,6 +299,7 @@ static void CheckFilteringModeIsCorrect(enum FILTERING_MODE_ID filter)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			default:
+				break;
 		}
 		
 		CurrentlyBoundTexture->filter = CurrentFilteringMode;
@@ -1717,8 +1750,6 @@ if (stringPtr == NULL) return;
 
 void RenderString(char *stringPtr, int x, int y, int colour)
 {
-if (stringPtr == NULL) return;
-
 	D3D_RenderHUDString(stringPtr,x,y,colour);
 }
 
@@ -1726,8 +1757,6 @@ void RenderStringCentred(char *stringPtr, int centreX, int y, int colour)
 {
 	int length = 0;
 	char *ptr = stringPtr;
-	
-if (stringPtr == NULL) return;
 
 	while(*ptr)
 	{
@@ -1741,8 +1770,6 @@ void RenderStringVertically(char *stringPtr, int centreX, int bottomY, int colou
 	struct VertexTag quadVertices[4];
 	int y = bottomY;
 
-if (stringPtr == NULL) return;
- 
 	quadVertices[0].X = centreX - (HUD_FONT_HEIGHT/2) - 1;
 	quadVertices[1].X = quadVertices[0].X;
 	quadVertices[2].X = quadVertices[0].X+2+HUD_FONT_HEIGHT*1;
@@ -2355,7 +2382,7 @@ void ColourFillBackBuffer(int FillColour)
 	g = ((FillColour >> 8)  & 0xFF) / 255.0f;
 	r = ((FillColour >> 16) & 0xFF) / 255.0f;
 	a = ((FillColour >> 24) & 0xFF) / 255.0f;
-	
+
 	glClearColor(r, g, b, a);
 	
 	glClear(GL_COLOR_BUFFER_BIT);

@@ -92,22 +92,14 @@ void SetupShapePipeline(void);
 void ShapePipeline(SHAPEHEADER *shapePtr);
 
 static void GouraudPolygon_Construct(POLYHEADER *polyPtr);
-static void GouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr);
-
-static void TexturedPolygon_Construct(POLYHEADER *polyPtr);
-static void TexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr);
-
 
 static void GouraudTexturedPolygon_Construct(POLYHEADER *polyPtr);
 
 static void (*VertexIntensity)(RENDERVERTEX *renderVertexPtr);
-static void VertexIntensity_Hierarchical(RENDERVERTEX *renderVertexPtr);
-static void VertexIntensity_PreLit(RENDERVERTEX *renderVertexPtr);
 static void VertexIntensity_Pred_Thermal(RENDERVERTEX *renderVertexPtr);
 static void VertexIntensity_Pred_SeeAliens(RENDERVERTEX *renderVertexPtr);
 static void VertexIntensity_Pred_SeePredatorTech(RENDERVERTEX *renderVertexPtr);
 static void VertexIntensity_ImageIntensifier(RENDERVERTEX *renderVertexPtr);
-static void VertexIntensity_Standard(RENDERVERTEX *renderVertexPtr);
 static void VertexIntensity_Alien_Sense(RENDERVERTEX *renderVertexPtr);
 
 static void VertexIntensity_Standard_Opt(RENDERVERTEX *renderVertexPtr);
@@ -157,7 +149,7 @@ VECTORCH Global_LightVector={1,};
  Global variables and arrays
 */
 
-VECTORCH RotatedPts[maxrotpts]={1,};
+VECTORCH RotatedPts[maxrotpts]={{1,}};
 int ItemColour=1;
 
 
@@ -180,9 +172,9 @@ static COLOURINTENSITIES ColourIntensityArray[maxrotpts];
 														
 
 
-RENDERPOLYGON RenderPolygon={1,};
-RENDERVERTEX VerticesBuffer[9]={1,};
-static RENDERVERTEX TriangleVerticesBuffer[3]={1,};
+RENDERPOLYGON RenderPolygon;
+RENDERVERTEX VerticesBuffer[9]={{1,}};
+static RENDERVERTEX TriangleVerticesBuffer[3]={{1,}};
 
 static int *VertexNumberPtr=(int*)1;
 
@@ -5875,7 +5867,7 @@ void RenderSmokeTest(void)
 				{45300,0+ 1000, 26000+-1000},
 					
 			};
-			extern int CurrentLightAtPlayer;
+
 			int i;
 
 			if (image) a = 255-a;
@@ -6501,7 +6493,6 @@ void RenderLightFlare(VECTORCH *positionPtr, unsigned int colour)
 //	int particleSize = particlePtr->Size;
 	z=ONE_FIXED;
 	{
-		extern int SmartTargetSightX, SmartTargetSightY;
 		extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 		centreX = DIV_FIXED(point.vx,point.vz);
 		centreY = DIV_FIXED(point.vy,point.vz);

@@ -381,10 +381,12 @@ int PlatPlaySound(int activeIndex)
 	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_BUFFER,
 		   GameSounds[si].dsBufferP);
 
+#if 1 /* PLEASE REMOVE IFDEF! */
 	if (ActiveSounds[activeIndex].loop)
 		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
 	else
 		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
+#endif
 
 	if (1 || ActiveSounds[activeIndex].pitch != GameSounds[si].pitch) {
 		PlatChangeSoundPitch(activeIndex, ActiveSounds[activeIndex].pitch);
@@ -539,12 +541,12 @@ int PlatDo3dSound(int activeIndex)
 	if (ActiveSounds[activeIndex].paused) {
 		if (distance < (ActiveSounds[activeIndex].threedeedata.outer_range + SOUND_DEACTIVATERANGE)) {
 			PlatStopSound (activeIndex);
-			
+#if 1 /* PLEASE REMOVE IFDEF! */			
 			if (ActiveSounds[activeIndex].loop)
 				alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
 			else								
 				alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
-			
+#endif			
 			alSourcePlay (ActiveSounds[activeIndex].ds3DBufferP);
 			newVolume = 0;
 			ActiveSounds[activeIndex].paused = 0;
@@ -697,8 +699,9 @@ void PlatEndGameSound(SOUNDINDEX index)
 
 unsigned int PlatMaxHWSounds()
 {
+/*
 	printf("PlatMaxHWSounds()\n");
-	
+*/	
 	return 32;
 }
 

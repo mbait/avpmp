@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
+#include <GL/glext.h>
 
 #include "fixer.h"
 
@@ -42,7 +44,29 @@ extern unsigned char KeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
 extern unsigned char GotAnyKey;
 extern int NormalFrameTime;
 
-static SDL_Surface *surface;
+SDL_Surface *surface;
+
+#if GL_EXT_secondary_color
+PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
+#endif
+
+/* ** */
+
+int CheckToken(const char *str, const char *item)
+{
+	const char *p;
+	int len = strlen(item);
+	
+	p = str;
+	while ((p = strstr(p, item)) != NULL) {
+		char x = *(p + len);
+		if ( (x == 0) || (isspace(x)) )
+			return 1;
+		p += len;
+	}
+	
+	return 0;
+}
 
 /* ** */
 
@@ -63,6 +87,7 @@ void ReadJoysticks()
 unsigned char *GetScreenShot24(int *width, int *height)
 {
 	unsigned char *buf;
+//	Uint16 redtable[256], greentable[256], bluetable[256];
 	
 	if (surface == NULL) {
 		return NULL;
@@ -79,7 +104,21 @@ unsigned char *GetScreenShot24(int *width, int *height)
 	
 	*width = surface->w;
 	*height = surface->h;
-	
+
+#if 0	
+	if (SDL_GetGammaRamp(redtable, greentable, bluetable) != -1) {
+		unsigned char *ptr;
+		int i;
+		
+		ptr = buf;
+		for (i = 0; i < surface->w*surface->h; i++) {
+			ptr[i*3+0] = redtable[ptr[i*3+0]];
+			ptr[i*3+1] = greentable[ptr[i*3+1]];
+			ptr[i*3+2] = bluetable[ptr[i*3+2]];
+			ptr += 3;
+		}
+	}
+#endif	
 	return buf;
 }
 
@@ -109,7 +148,7 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	}
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, Depth, SDL_SWSURFACE|SDL_DOUBLEBUF)) == NULL) {
-		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		fprintf(stderr, "(Software) SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
@@ -149,16 +188,18 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	return 0;	
 }
 
+
 int SetOGLVideoMode(int Width, int Height)
 {
 	SDL_GrabMode isgrab;
 	int isfull;
+	char *ext;
 	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
 	
 	if (surface != NULL) {
-		isfull = (surface->flags & SDL_FULLSCREEN);
+		isfull = (surface->flags & SDL_FULLSCREEN) ? 1 : 0;
 		isgrab = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 
 		SDL_FreeSurface(surface);
@@ -166,7 +207,9 @@ int SetOGLVideoMode(int Width, int Height)
 		isfull = 0;
 		isgrab = SDL_GRAB_OFF;
 	}
-	
+
+fprintf(stderr, "SDL: isfull = %d, isgrab = %d\n", isfull, isgrab);
+
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
@@ -174,7 +217,7 @@ int SetOGLVideoMode(int Width, int Height)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, 0, SDL_OPENGL)) == NULL) {
-		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		fprintf(stderr, "(OpenGL) SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
@@ -189,13 +232,15 @@ int SetOGLVideoMode(int Width, int Height)
 //	SDL_WM_ToggleFullScreen(surface);
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
-	
+
+fprintf(stderr, "SDL: before %08X\n", surface->flags);	
 	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
+fprintf(stderr, "SDL: doing the fullscreen toggle\n");	
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
 			SDL_ShowCursor(0);
 	}
-	
+fprintf(stderr, "SDL: after %08X\n", surface->flags);
 	if (isgrab == SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
@@ -213,6 +258,7 @@ int SetOGLVideoMode(int Width, int Height)
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
 	glDepthRange(0.0, 1.0);
 	
 	glEnable(GL_TEXTURE_2D);
@@ -235,6 +281,29 @@ int SetOGLVideoMode(int Width, int Height)
 	ScreenDescriptorBlock.SDB_ClipRight = Width;
 	ScreenDescriptorBlock.SDB_ClipUp    = 0;
 	ScreenDescriptorBlock.SDB_ClipDown  = Height;
+	
+	ext = (char *)glGetString(GL_EXTENSIONS);
+	
+	printf("OpenGL Extensions: %s\n", ext);
+	
+#if GL_EXT_secondary_color
+	pglSecondaryColorPointerEXT = NULL;
+	
+	if (CheckToken(ext, "GL_EXT_seconary_color")) {
+		printf("Found GL_EXT_seconary_color... ");
+		
+		pglSecondaryColorPointerEXT = SDL_GL_GetProcAddress("glSecondaryColorPointerEXT");
+		if (pglSecondaryColorPointerEXT == NULL) {
+			printf("but the driver lied...\n");
+		} else {
+			printf("and it's good!\n");
+		}
+	} else {
+		printf("GL_EXT_seconary_color not found...\n");
+	}
+#endif
+
+	InitOpenGL();
 	
 	return 0;
 }
@@ -631,7 +700,7 @@ void CheckForWindowsMessages()
 	
 	if ((KeyboardInput[KEY_LEFTALT]||KeyboardInput[KEY_RIGHTALT]) && DebouncedKeyboardInput[KEY_CR]) {
 		SDL_GrabMode gm;
-		
+printf("SDL: before %08X (toggle)\n", surface->flags);		
 		SDL_WM_ToggleFullScreen(surface);
 		
 		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
@@ -639,6 +708,7 @@ void CheckForWindowsMessages()
 			SDL_ShowCursor(1);
 		else
 			SDL_ShowCursor(0);
+printf("SDL: after %08X (toggle)\n", surface->flags);			
 	}
 
 	if (KeyboardInput[KEY_LEFTCTRL] && DebouncedKeyboardInput[KEY_G]) {
@@ -668,7 +738,7 @@ void InGameFlipBuffers()
 
 void FlipBuffers()
 {
-	SDL_GL_SwapBuffers();
+	SDL_Flip(surface);
 }
 
 int ExitWindowsSystem()
@@ -715,15 +785,14 @@ int InitSDL()
 }
 
 int main(int argc, char *argv[])
-{
-	
-	
+{	
 	InitSDL();
 		
 	LoadCDTrackList();
 	
 	SetFastRandom();
 	
+/*	WeWantAnIntro(); */
 	GetPathFromRegistry();
 #if 0
 {
@@ -741,7 +810,8 @@ int main(int argc, char *argv[])
 #endif
 	InitGame();
 
-	SetOGLVideoMode(640, 480);
+	SetSoftVideoMode(640, 480, 16);
+//	SetOGLVideoMode(640, 480);
 	
 	InitialVideoMode();
 
@@ -977,7 +1047,8 @@ while(AvP_MainMenus())
 	
 	ClearMemoryPool();
 	
-	SetOGLVideoMode(640, 480);	
+	SetSoftVideoMode(640, 480, 16);	
+//	SetOGLVideoMode(640, 480);
 }
 
 	SoundSys_StopAll();

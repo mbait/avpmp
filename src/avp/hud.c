@@ -2070,7 +2070,6 @@ static void DrawAlienTeeth(void)
 
 	if (AlienTeethOffset)
 	{
-		extern int CloakingPhase;
 		int offsetY;
 
 	   	DISPLAYBLOCK displayblock;

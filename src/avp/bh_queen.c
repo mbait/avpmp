@@ -4860,7 +4860,6 @@ static BOOL TargetIsFiringFlamethrowerAtQueen(STRATEGYBLOCK *sbPtr)
 static void MakeNonFragable_Recursion(SECTION_DATA *this_section_data)
 {
 	SECTION_DATA *sdptr;
-	int health_increment;
 
 	sdptr=NULL;
 

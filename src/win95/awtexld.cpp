@@ -500,6 +500,7 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 		
 		pixelFormat.alphaB = 1;
 		pixelFormat.validB = 1;
+		pixelFormat.texB = 1;
 		pixelFormat.bitsPerPixel = 32;
 		pixelFormat.redLeftShift = 0;
 		pixelFormat.greenLeftShift = 8;
@@ -513,6 +514,7 @@ void AwBackupTexture::ChoosePixelFormat(AwTl::CreateTextureParms const & _parmsR
 
 extern "C" {
 extern int CreateOGLTexture(D3DTexture *, unsigned char *);
+extern int CreateIMGSurface(D3DTexture *, unsigned char *);
 };
 
 AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & _parmsR)
@@ -520,8 +522,11 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 	using namespace AwTl;
 	
 //	fprintf(stderr, "AwBackupTexture::CreateTexture(...) This is where we could convert the image to RGB/RGBA, and so on\n");
+
+	if (_parmsR.originalWidthP) *_parmsR.originalWidthP = m_nWidth;
+	if (_parmsR.originalHeightP) *_parmsR.originalHeightP = m_nHeight;	
 	
-	D3DTexture *Tex = new D3DTexture;
+	D3DTexture *Tex = (D3DTexture *)malloc(sizeof(D3DTexture));
 	
 			unsigned char *buf = (unsigned char *)malloc(m_nWidth * m_nHeight * 4);
 			
@@ -571,9 +576,15 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 /* temp junk */
 	Tex->w = m_nWidth;
 	Tex->h = m_nHeight;
-	CreateOGLTexture(Tex, buf); /* this will set the id */
-	free(buf);
-			
+	if (pixelFormat.texB) {
+		Tex->buf = NULL; /* not used */
+		CreateOGLTexture(Tex, buf); /* this will set the id */
+		free(buf);
+	} else {
+		Tex->buf = buf; /* hey, I need this! */
+		CreateIMGSurface(Tex, buf); 
+	}
+				
 	return static_cast<SurfUnion>(Tex);
 #if 0
 	
@@ -2154,6 +2165,7 @@ DDSurface * AwCreateSurface(char const * _argFormatS, ...)
 	
 	pixelFormat.alphaB = 1;
 	pixelFormat.validB = 1;
+	pixelFormat.texB = 0;
 	pixelFormat.bitsPerPixel = 32;
 	pixelFormat.redLeftShift = 0;
 	pixelFormat.greenLeftShift = 8;

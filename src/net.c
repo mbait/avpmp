@@ -21,9 +21,6 @@ int QuickStartMultiplayer=1;
 DPNAME AVPDPplayerName;
 int glpDP; /* directplay object */
 
-static pthread_t NetThread;
-static pthread_mutex_t NetMutex;
-
 BOOL DpExtInit(DWORD cGrntdBufs, DWORD cBytesPerBuf, BOOL bErrChcks)
 {
 	fprintf(stderr, "DpExtInit(%d, %d, %d)\n", cGrntdBufs, cBytesPerBuf, bErrChcks);

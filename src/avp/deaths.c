@@ -1726,7 +1726,9 @@ ATTACK_DATA Alien_Attacks[] = {
 		0,						/* Multiplayer_Code	 */
 		0,	 				/* Unique_Code	 */
 		0,						/* wound_flags		 */
-		AMMO_NONE,				/* damage_type		 */
+        {
+            AMMO_NONE				/* damage_type		 */
+        },
 		0,						/* Crouching		 */
 		0,						/* Pouncing			 */
 	},
@@ -1807,7 +1809,9 @@ ATTACK_DATA Wristblade_Attacks[] = {
 		0,						/* Multiplayer_Code	 */
 		0,		 				/* Unique_Code	 */
 		0,						/* wound_flags		 */
-		AMMO_NONE,				/* damage_type		 */
+        {
+            AMMO_NONE				/* damage_type		 */
+        },
 		0,						/* Crouching		 */
 		0,						/* Pouncing			 */
 	},
@@ -1904,7 +1908,9 @@ ATTACK_DATA PredStaff_Attacks[] = {
 		0,						/* Multiplayer_Code	 */
 		0,		 				/* Unique_Code	 */
 		0,						/* wound_flags		 */
-		AMMO_NONE,				/* damage_type		 */
+        {
+            AMMO_NONE    		/* damage_type		 */
+        },
 		0,						/* Crouching		 */
 		0,						/* Pouncing			 */
 	},

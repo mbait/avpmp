@@ -73,7 +73,7 @@ MODULEMAPBLOCK VisibilityDefaultObjectMap =
 {
         MapType_Default,
         I_ShapeCube, /* this is a default value */
-    0,0,0,
+        0,0,0,
         0,0,0,
         #if StandardStrategyAndCollisions
         ObFlag_Dynamic|ObFlag_NewtonMovement|ObFlag_MatMul,

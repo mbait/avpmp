@@ -41,6 +41,3 @@ typedef struct lift_door_tools_template
 
 extern void* LiftDoorBehaveInit(void* bhdata, STRATEGYBLOCK* sbptr);
 extern void LiftDoorBehaveFun(STRATEGYBLOCK* sbptr);
-
-
-

@@ -1702,7 +1702,6 @@ extern void ThrowAFlare(void)
 	
 	if (NumberOfFlaresActive<4)
 	{
-		extern VECTORCH CentreOfMuzzleOffset;
 		extern VIEWDESCRIPTORBLOCK *ActiveVDBList[];
 		VIEWDESCRIPTORBLOCK *VDBPtr = ActiveVDBList[0];
  		MATRIXCH mat = VDBPtr->VDB_Mat;

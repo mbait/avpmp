@@ -1271,5 +1271,3 @@ int TriangleWithinFrustrum(void)
 	/* yes, we need to draw poly */
 	return 1;
 }
-
-  

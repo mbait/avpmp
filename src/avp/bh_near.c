@@ -830,7 +830,6 @@ static void AlienNearState_Approach(STRATEGYBLOCK *sbPtr)
  	
  	/* target acquisition ? */
 	{
-		extern DISPLAYBLOCK *Player;
 		if(VectorDistance(&(alienStatusPointer->Target->DynPtr->Position),&(dynPtr->Position)) < ALIEN_CURVETOPLAYERDIST)		  
 		{
 			curveToPlayer = 1;	
@@ -1327,7 +1326,6 @@ static void AlienNearState_Wander(STRATEGYBLOCK *sbPtr)
 {
 	ALIEN_STATUS_BLOCK *alienStatusPointer;    
 	DYNAMICSBLOCK *dynPtr;
-	int approachingAirDuct = 0;
 	VECTORCH velocityDirection = {0,0,0};
 
 	LOCALASSERT(sbPtr);
@@ -1604,7 +1602,6 @@ static void AlienNearState_Retreat(STRATEGYBLOCK *sbPtr)
 {
 	ALIEN_STATUS_BLOCK *alienStatusPointer;    
 	DYNAMICSBLOCK *dynPtr;
-	int approachingAirDuct = 0;
 	VECTORCH velocityDirection = {0,0,0};
 
 	LOCALASSERT(sbPtr);

@@ -364,8 +364,6 @@ static STRATEGYBLOCK* InitialiseFrisbeeBehaviour_ForLoad() {
 	DISPLAYBLOCK *dispPtr;
 	DYNAMICSBLOCK *dynPtr;
   	FRISBEE_BEHAV_BLOCK *bblk;
-	int a;
-	
 		
 	/* make displayblock with correct shape, etc */
 	dispPtr = MakeObject(I_BehaviourFrisbee,&zeroVect);
@@ -3103,8 +3101,6 @@ static STRATEGYBLOCK* InitialiseDiscBehaviour_ForLoad() {
 	DISPLAYBLOCK *dispPtr;
 	DYNAMICSBLOCK *dynPtr;
   	PC_PRED_DISC_BEHAV_BLOCK *bblk;
-	int a;
-	
 		
 	/* make displayblock with correct shape, etc */
 	dispPtr = MakeObject(I_BehaviourPredatorDisc_SeekTrack,&zeroVect);

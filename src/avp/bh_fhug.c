@@ -776,8 +776,6 @@ void PlotFaceHugger(STRATEGYBLOCK *sbPtr) {
 
 static void Execute_FHNS_Attack(STRATEGYBLOCK *sbPtr)
 {
-	extern VIEWDESCRIPTORBLOCK *ActiveVDBList[];
-
 	DYNAMICSBLOCK *dynPtr;
 	FACEHUGGER_STATUS_BLOCK *facehuggerStatusPointer;    
 	

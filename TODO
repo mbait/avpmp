@@ -1,19 +1,23 @@
 [DONE] [08/24/01] Finish OpenGL code.
 [DONE] [08/26/01] Fix sound code.
+[DONE] [11/10/01] Save/Load Game support.
+[DONE] [11/25/01] CD Audio.
 * Menus.
+* Progress bar.
+* Make vidmodes work.
 * Debug "pure virtual method called"
 * Proper file loading/saving (ignore case, search certain directories) and
   config handling (~/.avp/{ge, re, ad, md, pd}/?)
 * Command line options.
-* CD Audio.
 * Joystick support.
-* Save/Load Game support.
-* Revisit sound code.
+* GL_EXT_secondary_color
+* Revisit sound code. (Try AL_PITCH support, etc)
 * Try to get demos and regular edition to work.
 * See what FOX/Rebellion has to say (if anything) about redistribution of the
   demos and if its possible to create an installer for regular/gold edition
   CDs.
 * Do something with the ingame movies. Might just leave as-is.
+* Disable Mutliplayer in the Main Menu.
 * Possible Idea: implement demos?
 * See if the build process can be made easier for those who download the
   source.
@@ -28,5 +32,15 @@
   etc.)
 * Release new version. And fix bugs, and release new version, and so on.
 ----
+* Command line:
+      [-h | --help]           Display this help message
+      [-v | --version]        Display the game version
+      [-f | --fullscreen]     Run the game fullscreen
+      [-w | --windowed]       Run the game in a window
+      [-s | --nosound]        Do not access the soundcard
+      [-c | --nocdrom]        Do not access the CD-ROM
+--debug   enable debug mode
 * Debug, verify, and reimplant the inline functions in mathline.c to
   inline.h
+* Remove unused files.
+* Squelch any unnecessary debug output

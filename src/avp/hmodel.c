@@ -1388,8 +1388,6 @@ void Process_Section(HMODELCONTROLLER *controller,SECTION_DATA *this_section_dat
 		&&(render)) {
 		/* Unreal things don't get plotted, either. */
 	
-		extern MATRIXCH IdentityMatrix;
-
 		DISPLAYBLOCK dummy_displayblock;
 		SHAPEHEADER *shape_to_use;
 
@@ -2118,8 +2116,6 @@ static void HMTimer_Kernel(HMODELCONTROLLER *controller) {
 
 void DoHModel(HMODELCONTROLLER *controller, DISPLAYBLOCK *dptr) {
 
-	extern int NormalFrameTime;
-
 	GLOBALASSERT(controller);
 	GLOBALASSERT(dptr);
 
@@ -2244,8 +2240,6 @@ void DoHModelTimer_Recursion(HMODELCONTROLLER *controller,SECTION_DATA *this_sec
 }
 
 void DoHModelTimer(HMODELCONTROLLER *controller) {
-
-	extern int NormalFrameTime;
 
 	/* Be VERY careful with this function - it can put the timer and the
 	position computations out of step.  Once you've called this, call NO
