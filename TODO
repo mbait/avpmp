@@ -1,6 +1,5 @@
 [DONE] [08/24/01] Finish OpenGL code.
 * Fix sound code.
-* See if RGT will respond.
 * Menus.
 * Proper file loading/saving (ignore case, search certain directories) and
   config handling (~/.avp/{ge, re, ad, md, pd}/?)
@@ -11,7 +10,7 @@
 * See what FOX/Rebellion has to say (if anything) about redistribution of the
   demos and if its possible to create an installer for regular/gold edition
   CDs.
-* Put together a workaround if RGT plan fails. Might just leave as-is.
+* Do something with the ingame movies. Might just leave as-is.
 * See if the build process can be made easier for those who download the
   source.
 * Write documentation.
