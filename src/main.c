@@ -38,7 +38,8 @@ PROCESSORTYPES ReadProcessorType()
 int InitialiseWindowsSystem()
 {
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
-	
+
+#if 1	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -65,7 +66,7 @@ int InitialiseWindowsSystem()
 
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-		
+#endif		
 	return 0;
 }
 
@@ -109,6 +110,7 @@ static void handle_keypress(int keysym, int press)
 
 void CheckForWindowsMessages()
 {
+#if 1
 	SDL_Event event;
 	
 	GotAnyKey = 0;
@@ -131,18 +133,23 @@ void CheckForWindowsMessages()
 			}
 		} while (SDL_PollEvent(&event));
 	}
+#endif	
 }
         
 void InGameFlipBuffers()
 {
+#if 1
 	SDL_GL_SwapBuffers();
+#endif	
 }
 
 void ThisFramesRenderingHasBegun()
 {
 	fprintf(stderr, "ThisFramesRenderingHasBegun()\n");
-	
+
+#if 1	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#endif	
 }
 
 void ThisFramesRenderingHasFinished()
@@ -152,8 +159,9 @@ void ThisFramesRenderingHasFinished()
                 
 int ExitWindowsSystem()
 {
+#if 1
 	SDL_Quit();
-	
+#endif	
 	return 0;
 }
 

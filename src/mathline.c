@@ -20,8 +20,10 @@ int WideMulNarrowDiv(int a, int b, int c);
 void RotateVector_ASM(VECTORCH *v, MATRIXCH *m);
 void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m);
 
+#if 0
 int FloatToInt(float);
 #define f2i(a, b) { a = FloatToInt(b); }
+#endif
 
 void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 {
@@ -568,9 +570,9 @@ int SqRoot32(int A)
 */
 
 __asm__("finit				\n\t"
-	"fild	sqrt_temp1		\n\t"
+	"fildl	sqrt_temp1		\n\t"
 	"fsqrt				\n\t"
-	"fistp	sqrt_temp2		\n\t"
+	"fistpl	sqrt_temp2		\n\t"
 	"fwait				\n\t"
 	:
 	:
@@ -600,6 +602,21 @@ __asm__("finit				\n\t"
 extern float fti_fptmp;
 extern int fti_itmp;
 
+void FloatToInt()
+{
+#if 1
+__asm__("fld	fti_fptmp		\n\t"
+	"fistpl	fti_itmp		\n\t"
+	:
+	:
+	: "memory", "cc"
+	);
+#else
+	fti_itmp = (int)fti_fptmp;	
+#endif
+}
+
+#if 0
 int FloatToInt(float fptmp)
 {
 #if 1
@@ -623,6 +640,7 @@ __asm__("fld	fti_fptmp		\n\t"
 	return fptmp;
 #endif	
 }
+#endif
 
 void TranslatePoint(float *source, float *dest, float *matrix)
 {

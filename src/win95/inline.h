@@ -1132,8 +1132,20 @@ int WideMulNarrowDiv(int a, int b, int c);
 void RotateVector_ASM(VECTORCH *v, MATRIXCH *m);
 void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m);
 
+/*
 int FloatToInt(float);
 #define f2i(a, b) { a = FloatToInt(b); }
+*/
+
+int SqRoot32(int A);
+void FloatToInt();
+extern float fti_fptmp;
+extern int fti_itmp;
+
+#define f2i(a, b) { \
+fti_fptmp = (b); \
+FloatToInt(); \
+a = fti_itmp;}
 
 #else /* inline stuff */
 
@@ -1868,6 +1880,16 @@ __asm__("fld	fti_fptmp		\n\t"
 #define f2i(a, b) { \
 a = FloatToInt(b); \
 }
+
+
+#if 0
+int SqRoot32(int A);
+void FloatToInt();
+#define f2i(a, b) { \
+fti_fptmp = (b); \
+FloatToInt(); \
+a = fti_itmp;}
+#endif
 
 #endif 
 

@@ -27,6 +27,7 @@ static void *CurrTextureHandle;
 
 void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
 {
+#if 1
 	int texoffset;
 	void *TextureHandle;
 	int i;
@@ -41,9 +42,9 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		TextureHandle = CurrTextureHandle;
 	}
 	
-	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
-	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
+//	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
+//	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
+//	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
 
 switch(RenderPolygon.TranslucencyMode)
 {
@@ -81,35 +82,23 @@ switch(RenderPolygon.TranslucencyMode)
 /* this is just random garbage */
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-//		x = vertices->X;
-//		y = vertices->Y;
 		x = x1;
 		y = y1;
 						
-//		x = x/32768.0;
-//		y = y/32768.0;
-//		x = (x - 32768.0)/32768.0;
-//		y = (y - 32768.0)/32768.0;
-		x = (x - 320.0)/320.0;
-		y = (y - 240.0)/240.0;
+		x =  (x - 320.0)/320.0;
+		y = -(y - 240.0)/240.0;
 		
-//		z = vertices->Z*16;
-//		z = -z/65536;
-
 		zvalue = 65536 - vertices->Z+HeadUpDisplayZOffset;
 		zvalue = 1.0 - ZNear/zvalue;
 		z = -zvalue;
 		
-//		x *= 16.0;
-//		y *= 16.0;
-//		z *= 16.0;
-		
 		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
 		glVertex3f(x, y, z);
-		fprintf(stderr, "Vertex %d: (%f, %f, %f)\n\t[%d, %d, %d]->[%d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, x1, y1, vertices->R, vertices->G, vertices->B, vertices->A);
-		fprintf(stderr, "znear = %f, zvalue = %f, z = %f\n", ZNear, zvalue, z);
+//		fprintf(stderr, "Vertex %d: (%f, %f, %f)\n\t[%d, %d, %d]->[%d, %d] (%d, %d, %d, %d)\n", i, x, y, z, vertices->X, vertices->Y, vertices->Z, x1, y1, vertices->R, vertices->G, vertices->B, vertices->A);
+//		fprintf(stderr, "znear = %f, zvalue = %f, z = %f\n", ZNear, zvalue, z);
 	}
 	glEnd();
 	
 	CurrTextureHandle = TextureHandle;
+#endif	
 }
