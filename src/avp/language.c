@@ -34,6 +34,7 @@ static char *TextBufferPtr;
 
 void InitTextStrings(void)
 {
+	char *filename;
 	char *textPtr;
 	int i;
 
@@ -42,17 +43,27 @@ void InitTextStrings(void)
 	GLOBALASSERT(AvP.Language<I_MAX_NO_OF_LANGUAGES);
 	
 #if MARINE_DEMO
-	TextBufferPtr = LoadTextFile("menglish.txt");
+	filename = "menglish.txt";
 #elif ALIEN_DEMO
-	TextBufferPtr = LoadTextFile("aenglish.txt");
+	filename = "aenglish.txt";
 #elif USE_LANGUAGE_TXT
-	TextBufferPtr = LoadTextFile("language.txt");
+	filename = "language.txt";
 #else
-	TextBufferPtr = LoadTextFile(LanguageFilename[AvP.Language]);
+	filename = LanguageFilename[AvP.Language];
 #endif
+	TextBufferPtr = LoadTextFile(filename);
+		
+	if (TextBufferPtr == NULL) {
+		/* NOTE:
+		   if this load fails, then most likely the game is not 
+		   installed correctly. 
+		   SBF
+		  */ 
+		fprintf(stderr, "ERROR: unable to load %s language text file\n",
+			 filename);
+		exit(1);
+	}
 	
-	LOCALASSERT(TextBufferPtr);
-
 	if (!strncmp (TextBufferPtr, "REBCRIF1", 8))
 	{
 		textPtr = (char*)HuffmanDecompress((HuffmanPackage*)(TextBufferPtr)); 		

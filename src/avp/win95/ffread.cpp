@@ -1,7 +1,12 @@
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <errno.h>
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-//#include <windows.h>
 #include <stdio.h>
 
 #include "ffread.hpp"
@@ -28,7 +33,7 @@ void ReportError(char const * mesg1, char const * mesg2)
 	}
 	else
 	{
-#if 0
+#ifdef WIN32
 		char * lpMsgBuf;
 
 		err = GetLastError();
@@ -51,10 +56,15 @@ void ReportError(char const * mesg1, char const * mesg2)
 		
 		// Free the buffer.
 		LocalFree( lpMsgBuf );
-#endif
-		mesg = new char [strlen(mesg1)+32];
+#else
+		mesg2 = strerror(errno);
+		
+		mesg = new char [strlen(mesg1)+32+strlen(mesg2)+1];
 		strcpy(mesg, mesg1);
-		strcat(mesg, "\n\nReportError: I have no clue!\n");
+		strcat(mesg, "\n\nReportError: ");
+		strcat(mesg, mesg2);
+		strcat(mesg, "\n");
+#endif
 	}
 	
 	// Display the string.

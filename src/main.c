@@ -182,6 +182,7 @@ unsigned char *GetScreenShot24(int *width, int *height)
 	buf = (unsigned char *)malloc(surface->w * surface->h * 3);
 	
 	if (surface->flags & SDL_OPENGL) {
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, buf);
 	} else {
