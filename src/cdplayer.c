@@ -108,8 +108,25 @@ void CDDA_Play(int CDDATrack)
 	if (cdrom == NULL)
 		return;
 		
-	if (CD_INDRIVE(SDL_CDStatus(cdrom)))
-		SDL_CDPlayTracks(cdrom, CDDATrack-1, 0, 1, 0);
+	if (CD_INDRIVE(SDL_CDStatus(cdrom))) {
+		int track = CDDATrack - 1;
+		int i;
+		
+		if (cdrom->numtracks == 0)
+			return;
+		
+		track %= cdrom->numtracks;
+		
+		for (i = 0; i < cdrom->numtracks; i++) {
+			if (cdrom->track[track].type == SDL_AUDIO_TRACK) {
+				SDL_CDPlayTracks(cdrom, track, 0, 1, 0);
+				return;
+			}
+			
+			track++;
+			track %= cdrom->numtracks;			
+		}
+	}
 }
 
 void CDDA_PlayLoop(int CDDATrack)
