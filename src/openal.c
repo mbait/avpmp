@@ -727,7 +727,9 @@ void InitialiseBaseFrequency(SOUNDINDEX soundNum)
 
 void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
 {
+/*
 	printf("PlatSetEnvironment(%d, %f)\n", env_index, reverb_mix);
+*/	
 }
 
 void UpdateSoundFrequencies()

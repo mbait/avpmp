@@ -22,72 +22,34 @@ BOOL KeepMainRifFile = FALSE;
 int HWAccel = 1;
 int VideoModeNotAvailable=0;
 
-
-/* videomodes.cpp */
-void LoadDeviceAndVideoModePreferences()
-{
-	fprintf(stderr, "LoadDeviceAndVideoModePreferences()\n");
-}
-
-void SaveDeviceAndVideoModePreferences()
-{
-	fprintf(stderr, "SaveDeviceAndVideoModePreferences()\n");
-}
-
-void PreviousVideoMode2()
-{
-	fprintf(stderr, "PreviousVideoMode2()\n");
-}
-
-void NextVideoMode2()
-{
-	fprintf(stderr, "NextVideoMode2()\n");
-}
-
-char *GetVideoModeDescription2()
-{
-	fprintf(stderr, "GetVideoModeDescription2()\n");
-	
-	return "";
-}
-
-char *GetVideoModeDescription3()
-{
-	fprintf(stderr, "GetVideoModeDescription3()\n");
-	
-	return "";
-}
-
-
-/* cd_player.cpp */
-int CDPlayerVolume;
-
-void CheckCDVolume()
-{
-	fprintf(stderr, "CheckCDVolume()\n");
-}
-
 /* bink.c */
 void PlayBinkedFMV(char *filenamePtr)
 {
+/*
 	fprintf(stderr, "PlayBinkedFMV(%s)\n", filenamePtr);
+*/
 }
 
 void StartMenuBackgroundBink()
 {
+/*
 	fprintf(stderr, "StartMenuBackgroundBink()\n");
+*/
 }
 
 int PlayMenuBackgroundBink()
 {
+/*
 	fprintf(stderr, "PlayMenuBackgroundBink()\n");
-	
+*/	
 	return 0;
 }
 
 void EndMenuBackgroundBink()
 {
+/*
 	fprintf(stderr, "EndMenuBackgroundBink()\n");
+*/
 }
 
 
@@ -101,32 +63,44 @@ int SmackerSoundVolume;
 
 void GetFMVInformation(int *messageNumberPtr, int *frameNumberPtr)
 {
+/*
 	fprintf(stderr, "GetFMVInformation(%p, %p)\n", messageNumberPtr, frameNumberPtr);
+*/	
 }
 
 void InitialiseTriggeredFMVs()
 {
+/*
 	fprintf(stderr, "InitialiseTriggeredFMVs()\n");
+*/	
 }
 
 void StartFMVAtFrame(int number, int frame)
 {
+/*
 	fprintf(stderr, "StartFMVAtFrame(%d, %d)\n", number, frame);
+*/	
 }
 
 void StartTriggerPlotFMV(int number)
 {
+/*
 	fprintf(stderr, "StartTriggerPlotFMV(%d)\n", number);
+*/	
 }
 
 void UpdateAllFMVTextures()
 {
+/*
 	fprintf(stderr, "UpdateAllFMVTextures()\n");
+*/	
 }
 
 void EndMenuMusic()
 {
+/*
 	fprintf(stderr, "EndMenuMusic()\n");
+*/	
 }
 
 
@@ -165,8 +139,9 @@ extern char * SecondSoundDir;
 /* d3_func.cpp */
 int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
 {
+/*
 	fprintf(stderr, "GetTextureHandle(%p)\n", imageHeaderPtr);
-	
+*/	
 	return 1;
 }
 
@@ -245,13 +220,6 @@ void MinimizeAllDDGraphics()
 long BackBufferPitch;
 int VideoModeColourDepth;
 
-int ChangePalette (unsigned char* NewPalette)
-{
-	fprintf(stderr, "ChangePalette(%p)\n", NewPalette);
-	
-	return 0;
-}
-
 void BlitWin95Char(int x, int y, unsigned char toprint)
 {
 	fprintf(stderr, "BlitWin95Char(%d, %d, %d)\n", x, y, toprint);
@@ -325,20 +293,44 @@ int use_mmx_math = 0;
 /* dxlog.c */
 void dx_str_log(char const * str, int line, char const * file)
 {
-	fprintf(stderr, "dx_str_log: %s/%d: %s\n", file, line, str);
+	FILE *fp;
+	
+	fp = fopen("dx_error.log", "a");
+	if (fp == NULL)
+		fp = stderr;
+		
+	fprintf(fp, "dx_str_log: %s/%d: %s\n", file, line, str);
+	
+	if (fp != stderr) fclose(fp);
 }
 
 void dx_strf_log(char const * fmt, ... )
 {
 	va_list ap;
+	FILE *fp;
+	
+	fp = fopen("dx_error.log", "a");
+	if (fp == NULL)
+		fp = stderr;
+        
         va_start(ap, fmt);
-        fprintf(stderr, "dx_strf_log: ");
-	vfprintf(stderr,fmt,ap);
-	fprintf(stderr, "\n");
+        fprintf(fp, "dx_strf_log: ");
+	vfprintf(fp, fmt,ap);
+	fprintf(fp, "\n");
         va_end(ap);
+        
+        if (fp != stderr) fclose(fp);
 }
 
 void dx_line_log(int line, char const * file)
 {
-	fprintf(stderr, "dx_line_log: %s/%d\n", file, line);
+	FILE *fp;
+	
+	fp = fopen("dx_error.log", "a");
+	if (fp == NULL)
+		fp = stderr;	
+	
+	fprintf(fp, "dx_line_log: %s/%d\n", file, line);
+	
+	if (fp != stderr) fclose(fp);
 }

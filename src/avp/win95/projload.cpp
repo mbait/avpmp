@@ -2815,10 +2815,7 @@ BOOL copy_rif_data (RIFFHANDLE h, int flags,int progress_start,int progress_inte
 		local_scale=env_scale;
 	
 		while (random_marine_texturings.size())random_marine_texturings.delete_first_entry();
-		while (random_civilian_texturings.size())random_civilian_texturings.delete_first_entry();
-		
-		ChangePalette(TestPalette);
-   		/*ConvertToDDPalette(TestPalette, LPTestPalette, palch->width, 0);*/
+		while (random_civilian_texturings.size())random_civilian_texturings.delete_first_entry();		
 	}
 
 	//reset sound diretory pointer

@@ -10,6 +10,20 @@
 static int HaveCDROM = 0;
 static SDL_CD *cdrom = NULL;
 
+/* ** */
+
+/* cd_player.cpp */
+int CDPlayerVolume;
+
+void CheckCDVolume()
+{
+/*
+	fprintf(stderr, "CheckCDVolume()\n");
+*/
+}
+
+/* ** */
+
 void CDDA_Start()
 {
 /*

@@ -25,9 +25,6 @@
 #include "cdtrackselection.h"
 #include "gammacontrol.h"
 
-#define MyWidth		800
-#define MyHeight	600
-
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
 int DebouncedGotAnyKey;
@@ -158,6 +155,197 @@ PROCESSORTYPES ReadProcessorType()
 	return PType_PentiumMMX;
 }
 
+/* ** */
+
+typedef struct VideoModeStruct
+{
+	int w;
+	int h;
+	int available;
+} VideoModeStruct;
+VideoModeStruct VideoModeList[] = {
+{ 	512, 	384,	0	},
+{	640,	480,	0	},
+{	800,	600,	0	},
+{	1024,	768,	0	},
+{	1152,	864,	0	},
+{	1280,	1024,	0	},
+{	1600,	1200,	0	}
+};
+
+int CurrentVideoMode;
+const int TotalVideoModes = sizeof(VideoModeList) / sizeof(VideoModeList[0]);
+
+void LoadDeviceAndVideoModePreferences()
+{
+/*
+	fprintf(stderr, "LoadDeviceAndVideoModePreferences()\n");
+*/	
+	FILE *fp;
+	int mode;
+	
+	fp = fopen("AvP_TempVideo.cfg", "r");
+	
+	if (fp != NULL) {
+	 	if (fscanf(fp, "%d", &mode) == 1) {
+			fclose(fp);
+		
+			if (mode >= 0 && mode < TotalVideoModes && VideoModeList[mode].available) {
+				CurrentVideoMode = mode;
+				return;
+			}
+		} else {
+			fclose(fp);
+		}
+	}
+	
+	/* No, or invalid, mode found */
+	
+	/* Try 640x480 first */
+	if (VideoModeList[1].available) {
+		CurrentVideoMode = 1;
+	} else {
+		int i;
+		
+		for (i = 0; i < TotalVideoModes; i++) {
+			if (VideoModeList[i].available) {
+				CurrentVideoMode = i;
+				break;
+			}
+		}
+	}
+}
+
+void SaveDeviceAndVideoModePreferences()
+{
+/*
+	fprintf(stderr, "SaveDeviceAndVideoModePreferences()\n");
+*/
+	FILE *fp;
+	
+	fp = fopen("AvP_TempVideo.cfg", "w");
+	if (fp != NULL) {
+		fprintf(fp, "%d\n", CurrentVideoMode);
+		fclose(fp);
+	}
+}
+
+void PreviousVideoMode2()
+{
+/*
+	fprintf(stderr, "PreviousVideoMode2()\n");
+*/
+	int cur = CurrentVideoMode;
+
+	do {
+		if (cur == 0)
+			cur = TotalVideoModes;	
+		cur--;
+		if (cur == CurrentVideoMode)
+			return;
+	} while(!VideoModeList[cur].available);
+	
+	CurrentVideoMode = cur;
+}
+
+void NextVideoMode2()
+{
+/*
+	fprintf(stderr, "NextVideoMode2()\n");
+*/
+	int cur = CurrentVideoMode;
+
+	do {
+		cur++;
+		if (cur == TotalVideoModes)
+			cur = 0;
+
+		if (cur == CurrentVideoMode)
+			return;
+	} while(!VideoModeList[cur].available);
+	
+	CurrentVideoMode = cur;
+}
+
+char *GetVideoModeDescription2()
+{
+/*
+	fprintf(stderr, "GetVideoModeDescription2()\n");
+*/	
+	return "SDL";
+}
+
+char *GetVideoModeDescription3()
+{
+/*
+	fprintf(stderr, "GetVideoModeDescription3()\n");
+*/	
+	static char buf[64];
+	
+	snprintf(buf, 64, "%dx%d", VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
+
+	return buf;
+}
+
+int InitSDL()
+{
+	SDL_Rect **SDL_AvailableVideoModes;
+	
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	SDL_AvailableVideoModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
+	if (SDL_AvailableVideoModes == NULL)
+		return -1;
+	
+	if (SDL_AvailableVideoModes != (SDL_Rect **)-1) {
+		int i, j, foundit;
+		
+		foundit = 0;
+		for (i = 0; i < TotalVideoModes; i++) {
+			SDL_Rect **modes = SDL_AvailableVideoModes;
+			
+			for (j = 0; modes[j]; j++) {
+				if (modes[j]->w >= VideoModeList[i].w &&
+				    modes[j]->h >= VideoModeList[i].h) {
+					if (SDL_VideoModeOK(VideoModeList[i].w, VideoModeList[i].h, 16, SDL_FULLSCREEN | SDL_OPENGL)) {
+						/* assume SDL isn't lying to us */
+						VideoModeList[i].available = 1;
+						
+						foundit = 1;
+					}
+					break;
+				}
+			}			
+		}		
+		if (foundit == 0)
+			return -1;
+	} else {
+		int i, foundit;
+		
+		foundit = 0;
+		for (i = 0; i < TotalVideoModes; i++) {
+			if (SDL_VideoModeOK(VideoModeList[i].w, VideoModeList[i].h, 16, SDL_FULLSCREEN | SDL_OPENGL)) {
+				/* assume SDL isn't lying to us */
+				VideoModeList[i].available = 1;
+				
+				foundit = 1;
+			}
+		}
+		
+		if (foundit == 0)
+			return -1;
+	}
+	
+	surface = NULL;
+	
+	return 0;
+}
+
+/* ** */
+
 int SetSoftVideoMode(int Width, int Height, int Depth)
 {
 	SDL_GrabMode isgrab;
@@ -217,7 +405,6 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	return 0;	
 }
 
-
 int SetOGLVideoMode(int Width, int Height)
 {
 	SDL_GrabMode isgrab;
@@ -236,8 +423,6 @@ int SetOGLVideoMode(int Width, int Height)
 		isfull = 0;
 		isgrab = SDL_GRAB_OFF;
 	}
-
-fprintf(stderr, "SDL: isfull = %d, isgrab = %d\n", isfull, isgrab);
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -262,14 +447,12 @@ fprintf(stderr, "SDL: isfull = %d, isgrab = %d\n", isfull, isgrab);
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
 
-fprintf(stderr, "SDL: before %08X\n", surface->flags);	
 	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
-fprintf(stderr, "SDL: doing the fullscreen toggle\n");	
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
 			SDL_ShowCursor(0);
 	}
-fprintf(stderr, "SDL: after %08X\n", surface->flags);
+
 	if (isgrab == SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
@@ -312,9 +495,9 @@ fprintf(stderr, "SDL: after %08X\n", surface->flags);
 	ScreenDescriptorBlock.SDB_ClipDown  = Height;
 	
 	ext = (char *)glGetString(GL_EXTENSIONS);
-	
+/*	
 	printf("OpenGL Extensions: %s\n", ext);
-	
+*/	
 #if GL_EXT_secondary_color
 	pglSecondaryColorPointerEXT = NULL;
 	
@@ -729,7 +912,7 @@ void CheckForWindowsMessages()
 	
 	if ((KeyboardInput[KEY_LEFTALT]||KeyboardInput[KEY_RIGHTALT]) && DebouncedKeyboardInput[KEY_CR]) {
 		SDL_GrabMode gm;
-printf("SDL: before %08X (toggle)\n", surface->flags);		
+
 		SDL_WM_ToggleFullScreen(surface);
 		
 		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
@@ -737,7 +920,6 @@ printf("SDL: before %08X (toggle)\n", surface->flags);
 			SDL_ShowCursor(1);
 		else
 			SDL_ShowCursor(0);
-printf("SDL: after %08X (toggle)\n", surface->flags);			
 	}
 
 	if (KeyboardInput[KEY_LEFTCTRL] && DebouncedKeyboardInput[KEY_G]) {
@@ -777,45 +959,13 @@ int ExitWindowsSystem()
 	return 0;
 }
 
-int InitSDL()
-{
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-
-#if 0
-	if ((surface = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE|SDL_DOUBLEBUF)) == NULL) {
-		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
-		SDL_Quit();
-		exit(EXIT_FAILURE);
-	}
-	
-	SDL_FreeSurface(surface);
-	
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	
-	if ((surface = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL)) == NULL) {
-		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
-		SDL_Quit();
-		exit(EXIT_FAILURE);
-	}	
-	
-	SDL_FreeSurface(surface);
-#endif
-	
-	surface = NULL;
-	
-	return 0;
-}
-
 int main(int argc, char *argv[])
 {	
-	InitSDL();
+	if (InitSDL() == -1) {
+		fprintf(stderr, "Could not find a sutable resolution!\n");
+		fprintf(stderr, "At least 512x384 is needed.  Does OpenGL work?\n");
+		exit(EXIT_FAILURE);
+	}
 		
 	LoadCDTrackList();
 	
@@ -840,7 +990,6 @@ int main(int argc, char *argv[])
 	InitGame();
 
 	SetSoftVideoMode(640, 480, 16);
-//	SetOGLVideoMode(640, 480);
 	
 	InitialVideoMode();
 
@@ -850,24 +999,7 @@ int main(int argc, char *argv[])
 	InitialiseSystem();
 	InitialiseRenderer();
 	
-	RequestedGammaSetting = 128;
-	
-//	LoadDefaultPrimaryConfigs(); /* load the configs! yes! */
-	MarineInputPrimaryConfig = DefaultMarineInputPrimaryConfig;
-	PredatorInputPrimaryConfig = DefaultPredatorInputPrimaryConfig;
-	AlienInputPrimaryConfig = DefaultAlienInputPrimaryConfig;
-	MarineInputSecondaryConfig = DefaultMarineInputSecondaryConfig;
-	PredatorInputSecondaryConfig = DefaultPredatorInputSecondaryConfig;
-	AlienInputSecondaryConfig = DefaultAlienInputSecondaryConfig;
-	
-	ControlMethods = DefaultControlMethods; /* raise the default sensitivity for now */
-	ControlMethods.MouseXSensitivity = DEFAULT_MOUSEX_SENSITIVITY*2;
-	ControlMethods.MouseYSensitivity = DEFAULT_MOUSEY_SENSITIVITY*2;
-		
 	LoadKeyConfiguration();
-	
-	CheatMode_Active = CHEATMODE_NONACTIVE;
-	
 	
 	SoundSys_Start();
 	CDDA_Start();
@@ -926,7 +1058,7 @@ while(AvP_MainMenus())
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
-	SetOGLVideoMode(MyWidth, MyHeight);
+	SetOGLVideoMode(VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
 	
 	InitialiseGammaSettings(RequestedGammaSetting);
 	
@@ -1077,7 +1209,6 @@ while(AvP_MainMenus())
 	ClearMemoryPool();
 	
 	SetSoftVideoMode(640, 480, 16);	
-//	SetOGLVideoMode(640, 480);
 }
 
 	SoundSys_StopAll();

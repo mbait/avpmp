@@ -850,7 +850,6 @@ int FindAndLoadWavFile(int soundNum,char* wavFileName)
 	static char sound_name[200];
 	sprintf (sound_name, "%s%s", FirstSoundDir,wavFileName);
 
-printf("FindAndLoadWavFile: %d, %s\n", soundNum, wavFileName);
 #if LOAD_SOUND_FROM_FAST_FILE
 	//first look in fast file
 	{

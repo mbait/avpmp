@@ -35,9 +35,9 @@ size_t _mbclen(const unsigned char *s)
 HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags2, int z)
 {
 	int fd;
-	
+/*	
 	fprintf(stderr, "CreateFile(%s, %d, %d, %d, %d, %d, %d)\n", file, mode, x, y, flags, flags2, z);
-
+*/
 	switch(mode) {
 		case GENERIC_READ:
 			if (flags != OPEN_EXISTING) {
@@ -62,7 +62,6 @@ HANDLE CreateFile(const char *file, int mode, int x, int y, int flags, int flags
 			}
 			break;
 		case GENERIC_READ|GENERIC_WRITE:
-//			break;
 		default:
 			fprintf(stderr, "CreateFile: unknown mode %d\n", mode);
 			exit(EXIT_FAILURE);
@@ -79,9 +78,9 @@ HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int fla
 int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *byteswritten, int x)
 {
 	unsigned long *bw;
-	
+/*	
 	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, x);
-
+*/
 	bw = (unsigned long *)byteswritten;
 	
 	*bw = write(file, data, len);
@@ -92,9 +91,9 @@ int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *
 int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x)
 {
 	unsigned long *br;
-	
+/*	
 	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, x);
-
+*/
 	br = (unsigned long *)bytesread;
 	
 	*br = read(file, data, len);
@@ -105,9 +104,9 @@ int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesre
 int GetFileSize(HANDLE file, int x)
 {
 	struct stat buf;
-	
+/*	
 	fprintf(stderr, "GetFileSize(%d, %d)\n", file, x);
-	
+*/	
 	if (fstat(file, &buf) == -1)
 		return -1;
 	return buf.st_size;
@@ -115,8 +114,9 @@ int GetFileSize(HANDLE file, int x)
 
 int CloseHandle(HANDLE file)
 {
+/*
 	fprintf(stderr, "CloseHandle(%d)\n", file);
-	
+*/	
 	close(file);
 	
 	return 0;
