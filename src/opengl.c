@@ -178,10 +178,10 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		{
 			int r, g, b, a;
 	
-			r = (particlePtr->Colour >> 24) & 0xFF000000;
-			g = (particlePtr->Colour >> 16) & 0x00FF0000;
-			b = (particlePtr->Colour >> 8)  & 0x0000FF00;
-			a = (particlePtr->Colour >> 0)  & 0x000000FF;
+			r = (particlePtr->Colour >> 24) & 0xFF;
+			g = (particlePtr->Colour >> 16) & 0xFF;
+			b = (particlePtr->Colour >> 8)  & 0xFF;
+			a = (particlePtr->Colour >> 0)  & 0xFF;
 	
 			glColor4ub(
 				MUL_FIXED(intensity,r),
@@ -200,10 +200,10 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 	} else {
 		int r, g, b, a;
 		
-		r = (particlePtr->Colour >> 24) & 0xFF000000;
-		g = (particlePtr->Colour >> 16) & 0x00FF0000;
-		b = (particlePtr->Colour >> 8)  & 0x0000FF00;
-		a = (particlePtr->Colour >> 0)  & 0x000000FF;
+		r = (particlePtr->Colour >> 24) & 0xFF;
+		g = (particlePtr->Colour >> 16) & 0xFF;
+		b = (particlePtr->Colour >> 8)  & 0xFF;
+		a = (particlePtr->Colour >> 0)  & 0xFF;
 		
 		glColor4ub(r, g, b, a);
 	}
