@@ -27,15 +27,21 @@ void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour
 
 
 /* indexfnt.cpp */
-#if 1
-IndexedFont* IndexedFont::GetFont(FontIndex I_Font_ToGet)
-{
-	fprintf(stderr, "IndexedFont::GetFont(%d)\n", I_Font_ToGet);
-//	return pIndexedFont[ I_Font_ToGet ];
+IndexedFont* IndexedFont :: pIndexedFont[ IndexedFonts_MAX_NUMBER_OF_FONTS ];
 
-	return NULL;
+IndexedFont::IndexedFont(FontIndex I_Font_New)
+{
+	fprintf(stderr, "IndexedFont::IndexedFont(%d)\n", I_Font_New);
+	
+	I_Font_Val = I_Font_New;
+	                
+	pIndexedFont[ I_Font_New ] = this;	                                
 }
-#endif
+
+IndexedFont::~IndexedFont()
+{
+	fprintf(stderr, "IndexedFont::~IndexedFont()\n");
+}
 
 void IndexedFont::UnloadFont(FontIndex I_Font_ToGet)
 {
@@ -52,16 +58,6 @@ OurBool IndexedFont::bCanRenderFully(ProjChar* pProjCh)
 void IndexedFont_Proportional_PF::PFUnLoadHook(FontIndex I_Font_ToGet)
 {
 	fprintf(stderr, "IndexedFont_Proportional_PF::PFUnLoadHook(%d)\n", I_Font_ToGet);
-}
-
-IndexedFont::IndexedFont(FontIndex I_Font_New)
-{
-	fprintf(stderr, "IndexedFont::IndexedFont(%d)\n", I_Font_New);
-}
-
-IndexedFont::~IndexedFont()
-{
-	fprintf(stderr, "IndexedFont::~IndexedFont()\n");
 }
 
 IndexedFont_HUD::IndexedFont_HUD(FontIndex I_Font_New) : IndexedFont(I_Font_New)

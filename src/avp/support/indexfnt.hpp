@@ -44,10 +44,6 @@
 	{
 	public:
 		static IndexedFont* GetFont( FontIndex I_Font_ToGet );
-//		static IndexedFont* GetFont( FontIndex I_Font_ToGet )
-//		{
-//			return pIndexedFont[ I_Font_ToGet ];
-//		}
 		// can return NULL if no font loaded in that slot
 
 		static void UnloadFont( FontIndex I_Font_ToGet );
@@ -164,21 +160,12 @@
 		static IndexedFont* pIndexedFont[ IndexedFonts_MAX_NUMBER_OF_FONTS ];
 
 	};
-#if 0 /* moved elsewhere because of GCC! */
 	// Inline methods:
-		/*inline*/ /* static */ IndexedFont* IndexedFont::GetFont( FontIndex I_Font_ToGet )
+		inline /* static */ IndexedFont* IndexedFont::GetFont( FontIndex I_Font_ToGet )
 		{
 			return pIndexedFont[ I_Font_ToGet ];
 		}
-#endif
 
-	#if 0
-	class IndexedFont_FixedSpace : public IndexedFont
-	{
-	public:
-	private:
-	};
-	#endif
 	/*
 	   KJL 17:20:10 15/04/98 - May God have mercy on my soul
 	   fixed space HUD font

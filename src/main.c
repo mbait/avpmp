@@ -14,10 +14,10 @@
 #include "avp_envinfo.h"
 #include "cdtrackselection.h"
 
-char LevelName[] = {"predbit6\0QuiteALongNameActually"};
-static ELO ELOLevelToLoad = {&LevelName};
+char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
 extern int ScanDrawMode; /* to fix image loading */
+extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock; /* this should be put in a header file */
 
 PROCESSORTYPES ReadProcessorType()
 {
@@ -38,8 +38,6 @@ int ExitWindowsSystem()
 
 int main(int argc, char *argv[])
 {
-	int level_to_load = I_Num_Environments;
-	
 	LoadCDTrackList();
 	
 	SetFastRandom();
@@ -57,8 +55,9 @@ int main(int argc, char *argv[])
 
 	InitialVideoMode();
 
-	Env_List[0] = &(ELOLevelToLoad);
-	level_to_load = 0;
+	/* Env_List can probably be removed */
+//	Env_List[0]->main = &(ELOLevelToLoad); /* overwrite the first entry of crappy env_list with LevelName */
+	Env_List[0]->main = LevelName;
 	
 	InitialiseSystem();
 	InitialiseRenderer();
@@ -78,13 +77,25 @@ int main(int argc, char *argv[])
 	AvP.LevelCompleted = 0;
 	LoadSounds("PLAYER");
 
-	AvP.CurrentEnv = AvP.StartingEnv = 0; /* ??? */
+	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
 	SetLevelToLoad(AVP_ENVIRONMENT_INVASION); /* because the menus aren't implemented */
 	 
 // while(AvP_MainMenus()) {
 
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
+	
+	/* this was in windows SetGameVideoMode: */
+	ScreenDescriptorBlock.SDB_Width     = 640;
+	ScreenDescriptorBlock.SDB_Height    = 480;
+	ScreenDescriptorBlock.SDB_CentreX   = 640/2;
+	ScreenDescriptorBlock.SDB_CentreY   = 480/2;
+	ScreenDescriptorBlock.SDB_ProjX     = 640/2;
+	ScreenDescriptorBlock.SDB_ProjY     = 480/2;
+	ScreenDescriptorBlock.SDB_ClipLeft  = 0;
+	ScreenDescriptorBlock.SDB_ClipRight = 640;
+	ScreenDescriptorBlock.SDB_ClipUp    = 0;
+	ScreenDescriptorBlock.SDB_ClipDown  = 480;
 	
 	// GetCorrectDirectDrawObject();
 	
@@ -130,6 +141,9 @@ int main(int argc, char *argv[])
 		break; /* TODO -- remove when loop works */
 	}
 		
-// }		
+// }
+
+	fprintf(stderr, "Now exiting Aliens vs Predator!  At least it didn't crash!\n");
+	
 	return 0;
 }

@@ -5,3 +5,5 @@ win95/awtexld.hpp line 79:
 ========
 Changed filenames:
 avp/win95/system.c (avp_load_rif calls)
+========
+is AvP.CurrentEnv and StartingEnv used?
