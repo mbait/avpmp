@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 #include "fixer.h"
 #include "win95/cd_player.h"
@@ -35,7 +35,7 @@ void CDDA_Start()
 	
 	if (!HaveCDROM) {
 		HaveCDROM = 1;
-		SDL_Init(SDL_INIT_CDROM);
+		SDL_InitSubSystem(SDL_INIT_CDROM);
 	}
 	
 	if (cdrom != NULL)

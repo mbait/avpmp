@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 

@@ -9,11 +9,12 @@ CFLAGS = -g -Wall -pipe -O2 -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -
 #CFLAGS = -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentiumpro -mcpu=pentiumpro -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
 CXXFLAGS = $(CFLAGS)
 
-CFLAGS += `sdl-config --cflags`
-LDLIBS = -L/usr/X11R6/lib -lX11 -lXext -lGL `sdl-config --libs` -lopenal
+CFLAGS += $(shell sdl-config --cflags)
+#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext -lGL $(shell sdl-config --libs) -lopenal
+LDLIBS = $(shell sdl-config --libs) -lGL -lopenal
 
 # Debian SDL+NVIDIA workaround (change /usr/lib to the real location of the files)
-#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext /usr/lib/libGL.so.1 `sdl-config --libs` -lopenal -lm
+#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext /usr/lib/libGL.so.1 $(shell sdl-config --libs) -lopenal -lm
 
 # required for gcc-3.0
 #LDLIBS += -lstdc++
