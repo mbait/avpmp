@@ -18,6 +18,7 @@ extern "C"
 
 void Start_Progress_Bar();
 void Set_Progress_Bar_Position(int pos);
+void Game_Has_Loaded(void);
 
 #ifdef __cplusplus
 };

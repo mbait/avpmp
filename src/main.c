@@ -36,6 +36,9 @@
 #include "player.h"
 #include "mempool.h"
 #include "avpview.h"
+#include "consbind.hpp"
+#include "progress_bar.h"
+#include "scrshot.hpp"
 #include "version.h"
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
@@ -61,7 +64,9 @@ SDL_Surface *surface;
 static int WantFullscreen = 1;
 int WantSound = 1;
 static int WantCDRom = 1;
+#if 0
 static int WantJoystick = 1;
+#endif
 
 #if GL_EXT_secondary_color
 PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
@@ -366,25 +371,25 @@ int InitSDL()
 int SetSoftVideoMode(int Width, int Height, int Depth)
 {
 	SDL_GrabMode isgrab;
-	int isfull;
+	int flags;
 	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
 	
+	flags = SDL_SWSURFACE|SDL_DOUBLEBUF;
 	if (surface != NULL) {
-		isfull = (surface->flags & SDL_FULLSCREEN);
+	 	if (surface->flags & SDL_FULLSCREEN)
+	 		flags |= SDL_FULLSCREEN;
 		isgrab = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 
 		SDL_FreeSurface(surface);
 	} else {
 		if (WantFullscreen)
-			isfull = 1;
-		else
-			isfull = 0;
+			flags |= SDL_FULLSCREEN;
 		isgrab = SDL_GRAB_OFF;
 	}
 	
-	if ((surface = SDL_SetVideoMode(Width, Height, Depth, SDL_SWSURFACE|SDL_DOUBLEBUF)) == NULL) {
+	if ((surface = SDL_SetVideoMode(Width, Height, Depth, flags)) == NULL) {
 		fprintf(stderr, "(Software) SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
@@ -396,16 +401,13 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	SDL_EnableUNICODE(1); /* toggle it to ON */
       
-	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
-		SDL_WM_ToggleFullScreen(surface);
-		if (surface->flags & SDL_FULLSCREEN)
-			SDL_ShowCursor(0);
-	}
-	
-	if (isgrab == SDL_GRAB_ON) {
+	if (isgrab == SDL_GRAB_ON)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
-	}
-	
+
+	if ((surface->flags & SDL_FULLSCREEN) || 
+	    (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON))
+		SDL_ShowCursor(0);
+
 	ScreenDescriptorBlock.SDB_Width     = Width;
 	ScreenDescriptorBlock.SDB_Height    = Height;
 	ScreenDescriptorBlock.SDB_CentreX   = Width/2;
@@ -423,22 +425,22 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 int SetOGLVideoMode(int Width, int Height)
 {
 	SDL_GrabMode isgrab;
-	int isfull;
+	int flags;
 	char *ext;
 	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
 	
+	flags = SDL_OPENGL;
 	if (surface != NULL) {
-		isfull = (surface->flags & SDL_FULLSCREEN) ? 1 : 0;
+		if (surface->flags & SDL_FULLSCREEN)
+			flags |= SDL_FULLSCREEN;
 		isgrab = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 
 		SDL_FreeSurface(surface);
 	} else {
 		if (WantFullscreen)
-			isfull = 1;
-		else
-			isfull = 0;
+			flags |= SDL_FULLSCREEN;
 		isgrab = SDL_GRAB_OFF;
 	}
 
@@ -448,7 +450,7 @@ int SetOGLVideoMode(int Width, int Height)
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
-	if ((surface = SDL_SetVideoMode(Width, Height, 0, SDL_OPENGL)) == NULL) {
+	if ((surface = SDL_SetVideoMode(Width, Height, 0, flags)) == NULL) {
 		fprintf(stderr, "(OpenGL) SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
@@ -460,15 +462,12 @@ int SetOGLVideoMode(int Width, int Height)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	SDL_EnableUNICODE(1); /* toggle it to ON */
       
-	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
-		SDL_WM_ToggleFullScreen(surface);
-		if (surface->flags & SDL_FULLSCREEN)
-			SDL_ShowCursor(0);
-	}
-
-	if (isgrab == SDL_GRAB_ON) {
+	if (isgrab == SDL_GRAB_ON)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
-	}
+
+	if ((surface->flags & SDL_FULLSCREEN) || 
+	    (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON))
+		SDL_ShowCursor(0);	
 	
 	glViewport(0, 0, Width, Height);
 	

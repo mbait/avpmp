@@ -161,6 +161,7 @@ extern AVP_USER_PROFILE *GetNextUserProfile(void);
 extern int SaveUserProfile(AVP_USER_PROFILE *profilePtr);
 extern void DeleteUserProfile(int number);
 
+extern void FixCheatModesInUserProfile(AVP_USER_PROFILE *profilePtr);
 
 extern void GetSettingsFromUserProfile(void);
 extern void SaveSettingsToUserProfile(AVP_USER_PROFILE *profilePtr);
