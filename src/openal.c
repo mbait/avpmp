@@ -31,6 +31,8 @@ ALCdevice *AvpSoundDevice;
 ALvoid *AvpSoundContext;
 int AvpFrequency = 44100;
 
+static int SoundActivated = 0;
+
 /*
 openal.c TODO:
 1. AL_PITCH code does not work.
@@ -40,6 +42,7 @@ openal.c TODO:
 4. Restarting sound system may or may not work.
 5. Doppler (if it was originally used) isn't currently used.
    Probably also broken in OpenAL (see 1).
+6. Better Error Handling (device not avail, etc).
 */
 int PlatStartSoundSys()
 {
@@ -61,12 +64,18 @@ int PlatStartSoundSys()
 	attrlist[3] = AL_FALSE;
 	attrlist[4] = 0;
 	
+	SoundActivated = 0;
+	
 	snprintf(buf, sizeof(buf), "'( (sampling-rate %d ))\n", AvpFrequency);
 	
 	AvpSoundDevice = alcOpenDevice(buf);
+	if (AvpSoundDevice == NULL)
+		return 0;
+		
 	AvpSoundContext = alcCreateContext(AvpSoundDevice, attrlist);
-//	AvpSoundDevice = alcOpenDevice(NULL);
-//	AvpSoundContext = alcCreateContext(AvpSoundDevice, NULL);
+	if (AvpSoundContext == NULL) /* TODO: destroy sound device */
+		return 0;
+		
 	alcMakeContextCurrent(AvpSoundContext);
 	
 	alListenerfv(AL_POSITION, pos);
@@ -110,6 +119,8 @@ int PlatStartSoundSys()
 		alSourcef(p, AL_ROLLOFF_FACTOR, 0.01f);
 		alSourcef(p, AL_REFERENCE_DISTANCE, 1.0f);
 	}
+	
+	SoundActivated = 1;
 	
 	return 1;
 }
@@ -367,6 +378,9 @@ int PlatPlaySound(int activeIndex)
 {
 	int si;
 	
+	if (!SoundActivated)
+		return 0;
+		
 	if ((activeIndex < 0) || (activeIndex >= SOUND_MAXACTIVE))
 		return 0;
 	si = ActiveSounds[activeIndex].soundIndex;
@@ -434,6 +448,9 @@ void PlatStopSound(int activeIndex)
 {
 /*	printf("PlatStopSound(%d)\n", activeIndex); */
 	
+	if (!SoundActivated)
+		return 0;
+
 //	if (ActiveSounds[activeIndex].paused)
 //		alSourcePause (ActiveSounds[activeIndex].ds3DBufferP);
 //	else
@@ -467,6 +484,9 @@ static float vol_to_gain_table[] = {
 
 int PlatChangeGlobalVolume(int volume)
 {
+	if (!SoundActivated)
+		return 0;
+
 	alListenerf(AL_GAIN, vol_to_gain_table[volume]);
 
 	return 1;
@@ -474,6 +494,9 @@ int PlatChangeGlobalVolume(int volume)
 
 int PlatChangeSoundVolume(int activeIndex, int volume)
 {
+	if (!SoundActivated)
+		return 0;
+
 	alSourcef(ActiveSounds[activeIndex].ds3DBufferP,
 		AL_GAIN, vol_to_gain_table[volume]);
 
@@ -483,7 +506,10 @@ int PlatChangeSoundVolume(int activeIndex, int volume)
 int PlatChangeSoundPitch(int activeIndex, int pitch)
 {
 	float frequency;
-	
+
+	if (!SoundActivated)
+		return 0;	
+
 	if ((pitch < PITCH_MIN) || (pitch >= PITCH_MAX))
 		return 0;
 	
@@ -508,6 +534,10 @@ int PlatSoundHasStopped(int activeIndex)
 /*
 	printf("PlatSoundHasStopped(%d)\n", activeIndex);
 */
+
+	if (!SoundActivated)
+		return 0;
+
 	alGetSourceiv (ActiveSounds[activeIndex].ds3DBufferP, 
 			AL_SOURCE_STATE, &val);
 
@@ -525,6 +555,9 @@ int PlatDo3dSound(int activeIndex)
 	int distance;
 	VECTORCH relativePosn;
 	int newVolume;
+
+	if (!SoundActivated)
+		return 0;
 
 	if (ActiveSounds[activeIndex].threedee == 0)
 		return 1;
@@ -622,6 +655,9 @@ void PlatUpdatePlayer()
 {
 	ALfloat vel[3], or[6], pos[3];
 
+	if (!SoundActivated)
+		return 0;
+
 	if (Global_VDB_Ptr) {	
 		extern int NormalFrameTime;
 		extern int DopplerShiftIsOn;
@@ -672,7 +708,10 @@ void PlatUpdatePlayer()
 void PlatEndGameSound(SOUNDINDEX index)
 {
 	int i;
-		
+
+	if (!SoundActivated)
+		return 0;		
+
 	if((index<0)||(index>=SID_MAXIMUM)) return; /* no such sound */
 	
 	for (i = 0; i < SOUND_MAXACTIVE; i++) {
@@ -712,7 +751,7 @@ void InitialiseBaseFrequency(SOUNDINDEX soundNum)
 	int frequency;
 	
 	printf("FREQ InitialiseBaseFrequency(%d) [%d]\n", soundNum, GameSounds[soundNum].pitch==PITCH_DEFAULTPLAT);
-	
+
 	if(GameSounds[soundNum].pitch>PITCH_MAXPLAT) GameSounds[soundNum].pitch=PITCH_MAXPLAT;
 	if(GameSounds[soundNum].pitch<PITCH_MINPLAT) GameSounds[soundNum].pitch=PITCH_MINPLAT;
 	
@@ -739,8 +778,11 @@ void UpdateSoundFrequencies()
 	int i;
 	
 /*	printf("FREQ UpdateSoundFreqncies()\n"); */
+
+	if (!SoundActivated)
+		return 0;	
 	
-	if (!SoundSwitchedOn)
+	if (!SoundSwitchedOn) /* TODO: maybe I should have used this var.. */
 		return;
 	
 	for (i = 0; i < SOUND_MAXACTIVE; i++) {
@@ -771,6 +813,10 @@ int LoadWavFile(int soundNum, char * wavFileName)
 /*	
 	printf("LoadWavFile(%d, %s) - sound\n", soundNum, wavFileName);
 */
+
+	if (!SoundActivated)
+		return 0;
+
 	alutLoadWAV (wavFileName, &data, &format, &size, &bits, &freq);
 	alGenBuffers (1, &(GameSounds[soundNum].dsBufferP));
 	alBufferData (GameSounds[soundNum].dsBufferP, format, data, size, freq);
@@ -808,6 +854,8 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 	int slen;
 		
 /* printf("ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr); */
+	if (!SoundActivated)
+		return 0;
 
 	slen = strlen (bufferPtr) + 1;
 	GameSounds[soundIndex].wavName = (char *)AllocateMem (slen);
@@ -877,6 +925,9 @@ int LoadWavFromFastFile(int soundNum, char * wavFileName)
 	unsigned int len = 0;
 	
 /*	printf("LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName); */
+
+	if (!SoundActivated)
+		return 0;
 
 	if ((fp = ffopen (wavFileName, "rb")) != NULL) {
 		ffseek (fp, 0, SEEK_END);
