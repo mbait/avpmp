@@ -22,6 +22,15 @@
 
 extern int AAFontImageNumber;
 
+int PlayMenuBackgroundBink()
+{
+	fprintf(stderr, "PlayMenuBackgroundBink()\n");
+
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	return 0;
+}
+                
 AVPMENUGFX AvPMenuGfxStorage[MAX_NO_OF_AVPMENUGFXS] =
 {
 	{"Menus\\fractal.rim"},
@@ -118,17 +127,16 @@ int LengthOfMenuText(char *textPtr)
 
 int RenderMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format)
 {
-	fprintf(stderr, "RenderMenuText(%s, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format);
+
 	return Hardware_RenderSmallMenuText(textPtr, x, y, alpha, format);
-/*
+	
 	fprintf(stderr, "RenderMenuText(%s, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format);
 
 	return 0;
-*/	
 }
 
 int RenderMenuText_Clipped(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int topY, int bottomY)
-{
+{	
 	fprintf(stderr, "RenderMenuText_Clipped(%s, %d, %d, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format, topY, bottomY);
 
 	return 0;
@@ -136,40 +144,40 @@ int RenderMenuText_Clipped(char *textPtr, int x, int y, int alpha, enum AVPMENUF
 
 int RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format)
 {
+
 	return Hardware_RenderSmallMenuText(textPtr, x, y, alpha, format);
-/*
+
 	fprintf(stderr, "RenderSmallMenuText(%s, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format);
 
 	return 0;
-*/	
 }
 
 int RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AVPMENUFORMAT_ID format, int red, int green, int blue)
 {
+
 	return Hardware_RenderSmallMenuText_Coloured(textPtr, x, y, alpha, format, red, green, blue);
-/*
+
 	fprintf(stderr, "RenderSmallMenuText_Coloured(%s, %d, %d, %d, %d, %d, %d, %d)\n", textPtr, x, y, alpha, format, red, green, blue);
 	
-	return 0;
-*/	
+	return 0;	
 }
 
 void RenderKeyConfigRectangle(int alpha)
 {
+
 	void Hardware_RenderKeyConfigRectangle(int alpha);
 	Hardware_RenderKeyConfigRectangle(alpha);
-/*	
-	fprintf(stderr, "RenderKeyConfigRectangle(%d)\n", alpha);
-*/	
+	
+	fprintf(stderr, "RenderKeyConfigRectangle(%d)\n", alpha);	
 }
 
 void RenderHighlightRectangle(int x1, int y1, int x2, int y2, int r, int g, int b)
 {
+
 	void Hardware_RenderHighlightRectangle(int x1,int y1,int x2,int y2,int r, int g, int b);
 	Hardware_RenderHighlightRectangle(x1, y1, x2, y2, r, g, b);
-/*
+
 	fprintf(stderr, "RenderHighlightRectangle(%d, %d, %d, %d, %d, %d, %d)\n", x1, y1, x2, y2, r, g, b);
-*/
 }
 
 void RenderSmallFontString_Wrapped(char *textPtr,RECT* area,int alpha,int* output_x,int* output_y)
@@ -191,7 +199,7 @@ void LoadAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID)
 	/* TODO: make sure this doesn't cause a leak */
 	InitialiseTextures();
 	CL_GetImageFileName(buffer, 100, gfxPtr->FilenamePtr, LIO_RELATIVEPATH);
-	
+
 	pFastFileData = ffreadbuf(buffer, &fastFileLength);
 	
 	if (pFastFileData) {
@@ -273,7 +281,7 @@ void InitialiseMenuGfx()
 		AvPMenuGfxStorage[i].ImagePtr = NULL;
 	}
 	
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	

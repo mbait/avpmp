@@ -37,7 +37,7 @@ int MouseVelX;
 int MouseVelY;
 
 extern int ScanDrawMode; /* to fix image loading */
-extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock; /* this should be put in a header file */
+extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern unsigned char KeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
 extern unsigned char GotAnyKey;
 extern int NormalFrameTime;
@@ -65,19 +65,89 @@ PROCESSORTYPES ReadProcessorType()
 	return PType_PentiumMMX;
 }
 
-int SetVideoMode(int Width, int Height)
+int SetSoftVideoMode(int Width, int Height, int Depth)
 {
+	SDL_GrabMode isgrab;
+	int isfull;
+	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
+	
+	if (surface != NULL) {
+		isfull = (surface->flags & SDL_FULLSCREEN);
+		isgrab = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+
+		SDL_FreeSurface(surface);
+	} else {
+		isfull = 0;
+		isgrab = SDL_GRAB_OFF;
+	}
+	
+	if ((surface = SDL_SetVideoMode(Width, Height, Depth, SDL_SWSURFACE|SDL_DOUBLEBUF)) == NULL) {
+		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		SDL_Quit();
+		exit(EXIT_FAILURE);
+	}
+	
+	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
+
+	/* this is for supporting keyboard input processing with little hassle */
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+	SDL_EnableUNICODE(1); /* toggle it to ON */
+      
+	/* -w will disable first fullscreen, -f will turn it on */
+//	SDL_WM_ToggleFullScreen(surface);
+//	SDL_WM_GrabInput(SDL_GRAB_ON);
+//	SDL_ShowCursor(0);	
+	
+	if (isfull) {
+		SDL_WM_ToggleFullScreen(surface);
+		if (surface->flags & SDL_FULLSCREEN)
+			SDL_ShowCursor(0);
+	}
+	
+	if (isgrab == SDL_GRAB_ON) {
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+		SDL_WM_ToggleFullScreen(surface);	
+	}
+	
+	ScreenDescriptorBlock.SDB_Width     = Width;
+	ScreenDescriptorBlock.SDB_Height    = Height;
+	ScreenDescriptorBlock.SDB_CentreX   = Width/2;
+	ScreenDescriptorBlock.SDB_CentreY   = Height/2;
+	ScreenDescriptorBlock.SDB_ProjX     = Width/2;
+	ScreenDescriptorBlock.SDB_ProjY     = Height/2;
+	ScreenDescriptorBlock.SDB_ClipLeft  = 0;
+	ScreenDescriptorBlock.SDB_ClipRight = Width;
+	ScreenDescriptorBlock.SDB_ClipUp    = 0;
+	ScreenDescriptorBlock.SDB_ClipDown  = Height;
+	
+	return 0;	
+}
+
+int SetOGLVideoMode(int Width, int Height)
+{
+	SDL_GrabMode isgrab;
+	int isfull;
+	
+	ScanDrawMode = ScanDrawD3DHardwareRGB;
+	GotMouse = 1;
+	
+	if (surface != NULL) {
+		isfull = (surface->flags & SDL_FULLSCREEN);
+		isgrab = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+
+		SDL_FreeSurface(surface);
+	} else {
+		isfull = 0;
+		isgrab = SDL_GRAB_OFF;
+	}
 	
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	
-	if (surface != NULL)
-		SDL_FreeSurface(surface);
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, 0, SDL_OPENGL)) == NULL) {
 		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
@@ -91,11 +161,22 @@ int SetVideoMode(int Width, int Height)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	SDL_EnableUNICODE(1); /* toggle it to ON */
       
-	/* -w will disable to first fullscreen, -f will turn it on */
+	/* -w will disable first fullscreen, -f will turn it on */
 //	SDL_WM_ToggleFullScreen(surface);
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
 //	SDL_ShowCursor(0);	
-	                
+	
+	if (isfull) {
+		SDL_WM_ToggleFullScreen(surface);
+		if (surface->flags & SDL_FULLSCREEN)
+			SDL_ShowCursor(0);
+	}
+	
+	if (isgrab == SDL_GRAB_ON) {
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+		SDL_WM_ToggleFullScreen(surface);	
+	}
+	
 	glViewport(0, 0, Width, Height);
 	
 	glMatrixMode(GL_PROJECTION);
@@ -402,8 +483,10 @@ static void handle_keypress(int key, int unicode, int press)
 				RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_KEYDOWN(VK_TAB);
 				break;
 			default:
-				if (unicode && !(unicode & 0xFF80))
+				if (unicode && !(unicode & 0xFF80)) {
 					RE_ENTRANT_QUEUE_WinProc_AddMessage_WM_CHAR(unicode);
+					KeyboardEntryQueue_Add(unicode);
+				}
 				break;
 		}
 	}
@@ -551,16 +634,49 @@ int ExitWindowsSystem()
 	return 0;
 }
 
+int InitSDL()
+{
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+#if 0
+	if ((surface = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE|SDL_DOUBLEBUF)) == NULL) {
+		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		SDL_Quit();
+		exit(EXIT_FAILURE);
+	}
+	
+	SDL_FreeSurface(surface);
+	
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	
+	if ((surface = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL)) == NULL) {
+		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		SDL_Quit();
+		exit(EXIT_FAILURE);
+	}	
+	
+	SDL_FreeSurface(surface);
+#endif
+	
+	surface = NULL;
+	
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	int menusActive = 0;
 	int thisLevelHasBeenCompleted = 0;
 	
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
-		exit(EXIT_FAILURE);
-	}
-	
+	InitSDL();
+		
 	LoadCDTrackList();
 	
 	SetFastRandom();
@@ -581,7 +697,7 @@ int main(int argc, char *argv[])
 #endif
 	InitGame();
 
-	SetVideoMode(640, 480);
+	SetOGLVideoMode(640, 480);
 	
 	InitialVideoMode();
 
@@ -667,20 +783,7 @@ while(AvP_MainMenus()) {
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
 	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
-	SetVideoMode(MyWidth, MyHeight);
-#if 0	
-	/* this was in windows SetGameVideoMode: */
-	ScreenDescriptorBlock.SDB_Width     = MyWidth;
-	ScreenDescriptorBlock.SDB_Height    = MyHeight;
-	ScreenDescriptorBlock.SDB_CentreX   = MyWidth/2;
-	ScreenDescriptorBlock.SDB_CentreY   = MyHeight/2;
-	ScreenDescriptorBlock.SDB_ProjX     = MyWidth/2;
-	ScreenDescriptorBlock.SDB_ProjY     = MyHeight/2;
-	ScreenDescriptorBlock.SDB_ClipLeft  = 0;
-	ScreenDescriptorBlock.SDB_ClipRight = MyWidth;
-	ScreenDescriptorBlock.SDB_ClipUp    = 0;
-	ScreenDescriptorBlock.SDB_ClipDown  = MyHeight;
-#endif	
+	SetOGLVideoMode(MyWidth, MyHeight);
 	
 	InitialiseGammaSettings(RequestedGammaSetting);
 	
@@ -821,7 +924,7 @@ while(AvP_MainMenus()) {
 	
 	ClearMemoryPool();
 	
-	SetVideoMode(640, 480);	
+	SetOGLVideoMode(640, 480);	
 }
 
 	SoundSys_StopAll();

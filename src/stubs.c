@@ -127,12 +127,14 @@ void StartMenuBackgroundBink()
 	fprintf(stderr, "StartMenuBackgroundBink()\n");
 }
 
+#if 0
 int PlayMenuBackgroundBink()
 {
 	fprintf(stderr, "PlayMenuBackgroundBink()\n");
 	
 	return 0;
 }
+#endif
 
 void EndMenuBackgroundBink()
 {
