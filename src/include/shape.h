@@ -36,38 +36,6 @@
 
 /*
 
- Maximum number shading tables.
-
- This equate might have to be moved to "system.h"
-
-*/
-
-#define MaxShadingTables 4096
-
-
-
-/*
-
- Palette Creation Function Structure
-
-*/
-
-typedef struct palcreationdata {
-
-	unsigned char** PCD_ArrayPtr;
-	int PCD_NumHues;
-	int PCD_ShadesPerHue;
-	int PCD_NumColsUsed;
-
-} PALCREATIONDATA;
-
-
-
-
-
-
-/*
-
  Shape Item Function Array Indices
 
 */

@@ -1,4 +1,5 @@
 #ifndef SYSTEM_INCLUDED
+#define SYSTEM_INCLUDED
 
 /*   AVP - WIN95
 
@@ -31,9 +32,9 @@ extern "C" {
 #define SuppressWarnings 	Yes
 							
 #define SupportWindows95	Yes
-#define Saturn						No
-#define PSX								No
-#define platform_pc 			Yes
+#define Saturn			No
+#define PSX			No
+#define platform_pc 		Yes
 #define InterfaceEngine		No
 
 #define Term -1
@@ -43,7 +44,7 @@ extern "C" {
 /********************  General *****************************/
 
 #define SupportFPMathsFunctions				Yes
-#define SupportFPSquareRoot					Yes
+#define SupportFPSquareRoot				Yes
 
 #define GlobalScale 1
 
@@ -128,8 +129,6 @@ typedef struct oc_entry {
 #define Texture2dClamping  No
 #define Texture3dSubdivide No
 
-#define SaturnHazing No
-
 /***************** Angles  and VALUES ******************/
 
 #define deg10 114
@@ -205,17 +204,10 @@ extern int maxshapes;
 
 #define pc_backdrops						No
 
-#define flic_player							Yes
-
-#define SaturnCDQueueSystem					No
-
 #define DynamicAdaptationToFrameRate		No
 
 
 /***************** DRAW SORT *******************/
-
-
-
 
 #define SupportTrackOptimisation			No
 
@@ -224,9 +216,6 @@ extern int maxshapes;
 
 #define SupportZBuffering				Yes
 #define ZBufferTest							No
-
-
-
 
 
 /***************** SHAPE DATA DEFINES************/
@@ -247,7 +236,6 @@ extern int maxshapes;
 /* Default Scale for Shape Vertices */
 
 #define pscale 1
-
 
 
 /***************** COLLISION DEFINES*************/
@@ -320,9 +308,6 @@ extern int maxshapes;
 #define SupportGouraud3dTextures  			Yes
 
 
-
-
-
 /*************************** WINDOWS 95 *********************/
 
 #define SUPPORT_MMX 0
@@ -334,20 +319,11 @@ extern int maxshapes;
 #define optimiseblit Yes /* unstable at present */
 
 
-
-/******************** PLAYSTATION ********************/
-
-
-
-
-
 #ifdef __cplusplus
 	
 	};
 
 #endif
 
-#define SYSTEM_INCLUDED
 
 #endif
-

@@ -15,17 +15,6 @@
 
 #undef textprint
 
-
-#if SupportTLTFiles
-#define Output_TLT_File				No
-#endif
-
-#define Output_VEA_File				No
-
-#define Proper_8Bit_MIP No
-
-#define DontLet222ColoursGoToBlack Yes
-
 #define textprintOn Yes
 
 #define DHMtextprint Yes
@@ -70,7 +59,6 @@
 
 */
 
-extern SCENE Global_Scene;
 extern SHAPEHEADER **mainshapelist;
 extern SHAPEHEADER *testpaletteshapelist[];
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
@@ -110,15 +98,10 @@ extern IMAGEHEADER ImageHeaderArray[]; /* Array of Image Headers */
 
 */
 
-	int DrawMode = DrawPerVDB;
-/* Win95 default ought to be per frame */
-
 /* Timer */
    long lastTickCount;
 
 	unsigned char *ScreenBuffer    = 0;		/* Ensure initialised to Null */
-	unsigned char *ScreenBuffer2   = 0;
-
 
 	unsigned char LPTestPalette[1024]; /* to cast to lp*/
 	
@@ -141,10 +124,8 @@ extern IMAGEHEADER ImageHeaderArray[]; /* Array of Image Headers */
 
 	unsigned char *PaletteRemapTable = 0;
 
-	int **ShadingTableArray = 0;
 	int NumShadingTables    = 0;
 
-	unsigned char **PaletteShadingTableArray = 0;
 	int NumPaletteShadingTables              = 0;
 
 	int FrameRate;
@@ -293,63 +274,6 @@ void GetDOSFilename(char *fnameptr)
 	}
 
 }
-
-
-/*
-
- Compare two strings.
-
- Return Yes if they're the same, else No.
-
-*/
-
-/*
-	       IMPORTANT!!!
-	This function is not ideal!!! It is used
-	here because this is only an initialisation
-	stage, but if you want to compare strings
-	elsewhere you should either use the C library
-	function or (if there's a problem with that)
-	write your own.
-*/
-
-int CompareStringCH(char *string1, char *string2)
-
-{
-
-	char *srtmp;
-	char *srtmp2;
-	int slen1 = 0;
-	int slen2 = 0;
-	int i;
-
-
-	srtmp = string1;
-
-	while(*srtmp++ != 0)
-		slen1++;
-
-	srtmp = string2;
-
-	while(*srtmp++ != 0)
-		slen2++;
-
-	if(slen1 != slen2) return No;
-
-	else {
-
-		srtmp = string1;
-		srtmp2 = string2;
-
-		for(i=slen1; i!=0; i--)
-			if(*srtmp++ != *srtmp2++) return No;
-
-		return Yes;
-
-	}
-
-}
-
 
 /*
 
@@ -839,19 +763,6 @@ void (*UpdateScreen[]) (void) = {
 
 };
 
-
-/*
-	Not supported in Windows 95 !!!
-*/
-
-
-void PlotPixelTest(int x, int y, unsigned char col)
-
-{
-
-}
-
-
 /*
 
  Wait for Return Key
@@ -963,11 +874,6 @@ void GetProjectFilename(char *fname, char *image)
 }
 
 
-
-
-
-
-
 /*
 
  Attempts to load the image file.
@@ -987,13 +893,6 @@ TEXTURE* LoadImageCH(char *fname, IMAGEHEADER *iheader)
 {
 	return 0;
 }	
-
-
-
-
-
-
-
 
 
 void ConvertToDDPalette(unsigned char* src, unsigned char* dst, int length, int flags)
@@ -1943,5 +1842,3 @@ void ConvertDDToInternalPalette(unsigned char* src, unsigned char* dst, int leng
 		 *dst++ = (*src++) >> 2;
 		}
 }	
-
-
