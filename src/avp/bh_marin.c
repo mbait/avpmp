@@ -33,7 +33,7 @@
 #include "pldghost.h"
 #include "pldnet.h"
 #include "psndplat.h"
-#include "AI_Sight.h"
+#include "ai_sight.h"
 #include "los.h"
 #include "bh_corpse.h"
 #include "bh_dummy.h"
@@ -45,9 +45,9 @@
 #include "ourasert.h"
 
 #include "sequnces.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "extents.h"
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 
 #define ALL_PULSERIFLES 0
 #define MOTIONTRACKERS 0

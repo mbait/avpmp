@@ -1,6 +1,9 @@
 #ifndef PLATFORM_INCLUDED
 #define PLATFORM_INCLUDED
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdint.h> // int64_t
 
 #include "shape.h" // struct imageheader
@@ -33,12 +36,20 @@ extern "C"  {
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
-#define stricmp	strcasecmp
+#define	TRUE	1
+#define FALSE	0
+
+#define stricmp		strcasecmp
+#define _stricmp	strcasecmp
 
 /* Types */
 
+/* windows junk */
 typedef int GUID;
 typedef int DPID;
+typedef int HINSTANCE;
+typedef int WPARAM;
+typedef int LPARAM;
 
 typedef int BOOL;
 

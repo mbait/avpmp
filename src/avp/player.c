@@ -35,8 +35,8 @@ so player.c is looking a bit bare at the moment. */
 #include "pldghost.h"
 #include "dp_func.h"
 #endif
-#include "ShowCmds.h"
-#include "BonusAbilities.h"
+#include "showcmds.h"
+#include "bonusabilities.h"
 
 #define PLAYER_HMODEL 0
 

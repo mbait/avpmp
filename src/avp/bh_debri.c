@@ -32,7 +32,7 @@
 #include "pldghost.h"
 #endif
 
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 #include "savegame.h"
 
 #include <math.h>

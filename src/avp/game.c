@@ -23,13 +23,13 @@
 #include "particle.h"
 #include "sfx.h"
 #include "version.h"
-#include "bh_RubberDuck.h"
+#include "bh_rubberduck.h"
 #include "bh_marin.h"
 #include "dxlog.h"
 #include "avp_menus.h"
 #include "avp_userprofile.h"
 #include "davehook.h"
-#include "CDTrackSelection.h"
+#include "cdtrackselection.h"
 #include "savegame.h"
 	// Added 18/11/97 by DHM: all hooks for my code
 

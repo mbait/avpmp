@@ -16,8 +16,8 @@
 #define UseLocalAssert Yes
 #include "ourasert.h"
 
-#include "AvP_EnvInfo.h"
-#include "AvP_UserProfile.h"
+#include "avp_envinfo.h"
+#include "avp_userprofile.h"
 
 #define FIXED_MINUTE (ONE_FIXED*60)
 

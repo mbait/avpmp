@@ -15,7 +15,7 @@
 #include "gameplat.h"
 
 #include "debuglog.hpp"
-#include "ConsoleLog.hpp"
+#include "consolelog.hpp"
 
 #include "bh_types.h"
 #include "inventry.h"

@@ -30,6 +30,7 @@ extern struct DEBUGGINGTEXTOPTIONS ShowDebuggingText;
 	#define DEBUGGING_TEXT_ON 0
 #endif
 
+#if 0 /* stupid defines */
 #if DEBUGGING_TEXT_ON
 extern int PrintDebuggingText(const char* t, ...);
 #else
@@ -41,3 +42,7 @@ extern int ReleasePrintDebuggingText(const char* t, ...);
 #else
 #define PrintDebuggingText(ignore)
 #endif
+#endif /* ... */
+
+extern int PrintDebuggingText(const char* t, ...);
+extern int ReleasePrintDebuggingText(const char* t, ...);

@@ -31,10 +31,10 @@
 
 #include "particle.h"
 #include "sfx.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "savegame.h"
 #include "los.h"
-#include "DetailLevels.h"
+#include "detaillevels.h"
 
 #if SupportWindows95
 /* for win95 net game support */

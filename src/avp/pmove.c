@@ -34,7 +34,7 @@
 #include "los.h"
 #include "krender.h"
 #include "pldnet.h"
-#include "BonusAbilities.h"
+#include "bonusabilities.h"
 #include "avp_menus.h"
 #include "lighting.h"
 #include "scream.h"

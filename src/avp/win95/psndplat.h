@@ -26,7 +26,8 @@ typedef struct soundsampledata
 	int activeInstances;	 
 	int volume;		
 	int pitch;					
-	LPDIRECTSOUNDBUFFER dsBufferP;
+//	LPDIRECTSOUNDBUFFER dsBufferP;
+
 	unsigned int flags;
 	int dsFrequency;
 	char * wavName;
@@ -57,9 +58,9 @@ typedef struct activesoundsample
 	unsigned int reverb_off :1;
 	SOUND3DDATA threedeedata;
 	
-	LPDIRECTSOUNDBUFFER dsBufferP;
-	LPDIRECTSOUND3DBUFFER ds3DBufferP;
-	LPKSPROPERTYSET	PropSetP;
+//	LPDIRECTSOUNDBUFFER dsBufferP;
+//	LPDIRECTSOUND3DBUFFER ds3DBufferP;
+//	LPKSPROPERTYSET	PropSetP;
 	
 }ACTIVESOUNDSAMPLE;
 

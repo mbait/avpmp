@@ -23,7 +23,7 @@
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "sfx.h"
 
 #define HUGGER_STATE_PRINT	0

@@ -4,11 +4,11 @@ extern "C"
 #include "ourasert.h"
 #include "psndplat.h"
 #include "dxlog.h"
-#include "CD_player.h"
+#include "cd_player.h"
 #include "avp_menus.h"
 #include "gamedef.h"
 
-#include "AvP_EnvInfo.h"
+#include "avp_envinfo.h"
 #include "dxlog.h"
 };
 

@@ -25,10 +25,10 @@
 #include "psnd.h"
 #include "equipmnt.h"
 #include "los.h"
-#include "AI_Sight.h"
+#include "ai_sight.h"
 #include "targeting.h"
 #include "dxlog.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

@@ -68,11 +68,7 @@
 #define DB_H_INCLUDED
 
 /* I N C L U D E D S ************************************************** */
-#include "advwin32.h"
-#ifndef DB_NOWINDOWS
-//	#include <windows.h>
-	#include "advwin32.h"
-#endif
+//#include "advwin32.h"
 
 /* Permit use in a C++ source file. */
 #ifdef __cplusplus

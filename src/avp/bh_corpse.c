@@ -32,7 +32,7 @@
 #include "pldghost.h"
 #include "pldnet.h"
 #include "psndplat.h"
-#include "AI_Sight.h"
+#include "ai_sight.h"
 #include "los.h"
 #include "bh_corpse.h"
 
@@ -42,7 +42,7 @@
 #include "ourasert.h"
 
 #include "sequnces.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "extents.h"
 
 extern int NormalFrameTime;

@@ -30,6 +30,7 @@
 /* Macros ***************************************************************/
 
 /* Type definitions *****************************************************/
+
 	class ConsoleSymbol
 	{
 		friend class TextInputState;
@@ -63,7 +64,8 @@
 
 
 	private:
-		static List <ConsoleSymbol*> List_pConsoleSym;
+		
+		static List <ConsoleSymbol *> List_pConsoleSym;
 	};	// suggested naming: "ConsoleSym"
 
 /* Exported globals *****************************************************/

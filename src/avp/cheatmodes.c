@@ -3,8 +3,8 @@
 #include "module.h"
 #include "stratdef.h"
 
-#include "AvP_UserProfile.h"
-#include "AvP_Menus.h"
+#include "avp_userprofile.h"
+#include "avp_menus.h"
 
 int CheatMode_Active=0;
 int CheatMode_Species=0;

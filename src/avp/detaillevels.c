@@ -1,4 +1,4 @@
-#include "DetailLevels.h"
+#include "detaillevels.h"
 
 DETAIL_LEVELS LocalDetailLevels;
 MENU_DETAIL_LEVEL_OPTIONS MenuDetailLevelOptions;

@@ -36,7 +36,7 @@
 #define UseLocalAssert Yes
 #include "ourasert.h"
 #include "pldnet.h"
-#include "AvP_UserProfile.h"
+#include "avp_userprofile.h"
 
 /* external global variables used in this file */
 extern int ModuleArraySize;

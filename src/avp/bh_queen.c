@@ -26,7 +26,7 @@
 #include "weapons.h"
 #include "extents.h"
 #include "sequnces.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "targeting.h"
 #include "dxlog.h"
 #include <math.h>

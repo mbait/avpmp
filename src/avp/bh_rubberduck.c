@@ -18,7 +18,7 @@
 #include "particle.h"
 
 #include "bh_types.h"
-#include "bh_RubberDuck.h"			   
+#include "bh_rubberduck.h"			   
 #include "bh_weap.h"
 #include "sfx.h"
 

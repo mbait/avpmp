@@ -27,15 +27,15 @@
 #include "dxlog.h"
 #include "avp_menus.h"
 #include "pheromon.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 #include "pfarlocs.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
 
 #include "game_statistics.h"
-#include "AvP_EnvInfo.h"
-#include "AvP_UserProfile.h"
+#include "avp_envinfo.h"
+#include "avp_userprofile.h"
 
 extern "C"
 {

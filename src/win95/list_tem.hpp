@@ -18,7 +18,7 @@
 #ifndef list_template_hpp
 #define list_template_hpp
 
-#pragma once
+//#pragma once
 
 #include <stdio.h>
 

@@ -23,7 +23,7 @@
 #include "ourasert.h"
 
 #include "huddefs.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 
 /* externs for this file */
 extern int NormalFrameTime;

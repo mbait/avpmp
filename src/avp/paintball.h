@@ -2,7 +2,7 @@
 #ifndef _included_paintball_h_ /* Is this your first time? */
 #define _included_paintball_h_ 1
 
-#include "Decal.h"
+#include "decal.h"
 
 typedef struct
 {

@@ -22,7 +22,7 @@
 #include "pvisible.h"
 #include "bh_marin.h"
 #include "weapons.h"
-#include "ShowCmds.h"
+#include "showcmds.h"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"

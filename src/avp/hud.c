@@ -31,7 +31,7 @@
 #include "gadget.h"
 #include "lighting.h"
 #include "d3d_hud.h"
-#include "frustrum.h"
+#include "frustum.h"
 #include "pldghost.h"
 
 #include "d3d_render.h"
@@ -42,7 +42,7 @@
 #include "ourasert.h"
 
 #include "vision.h"
-#include "BonusAbilities.h"
+#include "bonusabilities.h"
 #include "avp_menus.h"
 #include "showcmds.h"
 #include "game_statistics.h"
