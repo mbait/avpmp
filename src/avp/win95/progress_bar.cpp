@@ -324,8 +324,11 @@ void Game_Has_Loaded(void)
 		}
 		
 	}
+#if 0 /* TODO: disabled for port */
 	while(!DebouncedGotAnyKey);
-
+#endif
+	while (0);
+	
 	FadingGameInAfterLoading=ONE_FIXED;
 
 #if 0 /* TODO: disabled for port */	

@@ -18,6 +18,7 @@
 #include "kshape.h"
 #include "prototyp.h"
 #include "d3d_hud.h"
+#include "hud_layout.h"
 #include "avp_userprofile.h"
 #include "aw.h"
 
@@ -26,8 +27,13 @@ extern IMAGEHEADER ImageHeaderArray[];
 extern VIEWDESCRIPTORBLOCK *Global_VDB_Ptr;
 extern unsigned char GammaValues[256];
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
+
 extern int SpecialFXImageNumber;
 extern int StaticImageNumber;
+extern int HUDFontsImageNumber;
+
+extern int HUDScaleFactor;
+extern int CloakingPhase;
 
 static D3DTexture *CurrTextureHandle;
 
@@ -667,6 +673,68 @@ void DrawNoiseOverlay(int tr)
 	glDepthFunc(GL_LEQUAL);
 }
 
+void D3D_ScreenInversionOverlay()
+{
+	D3DTexture *tex;
+	int theta[2];
+	int i;
+	
+	theta[0] = (CloakingPhase/8)&4095;
+	theta[1] = (800-CloakingPhase/8)&4095;
+		
+	tex = ImageHeaderArray[SpecialFXImageNumber].D3DTexture;
+	
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
+//	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
+	CheckBoundTextureIsCorrect(tex->id);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	for (i = 0; i < 2; i++) {
+		GLfloat x[4], y[4], s[4], t[4];
+		
+		float sin = (GetSin(theta[i]))/65536.0f/16.0f;
+		float cos = (GetCos(theta[i]))/65536.0f/16.0f;
+		
+		x[0] = -1.0f;
+		y[0] = -1.0f;
+		s[0] = 0.375f + (cos*(-1) - sin*(-1));
+		t[0] = 0.375f + (sin*(-1) + cos*(-1));
+		x[1] =  1.0f;
+		y[1] = -1.0f;
+		s[1] = 0.375f + (cos*(+1) - sin*(-1));
+		t[1] = 0.375f + (sin*(+1) + cos*(-1));
+		x[2] =  1.0f;
+		y[2] =  1.0f;
+		s[2] = 0.375f + (cos*(+1) - sin*(+1));
+		t[2] = 0.375f + (sin*(+1) + cos*(+1));
+		x[3] = -1.0f;
+		y[3] =  1.0f;
+		s[3] = 0.375f + (cos*(-1) - sin*(+1));
+		t[3] = 0.375f + (sin*(-1) + cos*(+1));
+
+		SelectPolygonBeginType(3); /* triangles */
+		
+		glTexCoord2f(s[0], t[0]);
+		glVertex3f(x[0], y[0], 1.0f);
+		glTexCoord2f(s[1], t[1]);
+		glVertex3f(x[1], y[1], 1.0f);
+		glTexCoord2f(s[3], t[3]);
+		glVertex3f(x[3], y[3], 1.0f);
+	
+		glTexCoord2f(s[1], t[1]);
+		glVertex3f(x[1], y[1], 1.0f);
+		glTexCoord2f(s[2], t[2]);
+		glVertex3f(x[2], y[2], 1.0f);
+		glTexCoord2f(s[3], t[3]);
+		glVertex3f(x[3], y[3], 1.0f);
+	
+		glEnd();
+		
+		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_COLOUR);
+	}
+}
+
 void D3D_PredatorScreenInversionOverlay()
 {
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
@@ -755,4 +823,55 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 	glVertex3f(x[3], y[3], -1.0f);
 	
 	glEnd();
+}
+
+void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
+{
+	struct VertexTag quadVertices[4];
+	int noOfDigits=3;
+	int h = MUL_FIXED(HUDScaleFactor,HUD_DIGITAL_NUMBERS_HEIGHT);
+	int w = MUL_FIXED(HUDScaleFactor,HUD_DIGITAL_NUMBERS_WIDTH);
+	
+	quadVertices[0].Y = y;
+	quadVertices[1].Y = y;
+	quadVertices[2].Y = y + h;
+	quadVertices[3].Y = y + h;
+	
+	x += (3*w)/2;
+	
+//	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
+	
+	do {
+		int topLeftU, topLeftV;
+		
+		int digit = number%10;
+		number/=10;
+		
+		if (digit<8) {
+			topLeftU = 1+(digit)*16;
+			topLeftV = 1;
+		} else {
+			topLeftU = 1+(digit-8)*16;
+			topLeftV = 1+24;
+		}
+		if (AvP.PlayerType == I_Marine) topLeftV+=80;
+		
+		quadVertices[0].U = topLeftU;
+		quadVertices[0].V = topLeftV;
+		quadVertices[1].U = topLeftU + HUD_DIGITAL_NUMBERS_WIDTH;
+		quadVertices[1].V = topLeftV;
+		quadVertices[2].U = topLeftU + HUD_DIGITAL_NUMBERS_WIDTH;
+		quadVertices[2].V = topLeftV + HUD_DIGITAL_NUMBERS_HEIGHT;
+		quadVertices[3].U = topLeftU;
+		quadVertices[3].V = topLeftV + HUD_DIGITAL_NUMBERS_HEIGHT;
+		
+		x -= 1+w;
+		quadVertices[0].X = x;
+		quadVertices[3].X = x;
+		quadVertices[1].X = x + w;
+		quadVertices[2].X = x + w;
+		
+		D3D_HUDQuad_Output(HUDFontsImageNumber, quadVertices, colour);
+		
+	} while (--noOfDigits);
 }

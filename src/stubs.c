@@ -495,11 +495,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVertices
 	fprintf(stderr, "D3D_SkyPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 }
 
-void D3D_ScreenInversionOverlay()
-{
-	fprintf(stderr, "D3D_ScreenInversionOverlay()\n");
-}
-
 void D3D_PlayerOnFireOverlay()
 {
 	fprintf(stderr, "D3D_PlayerOnFireOverlay()\n");
@@ -540,7 +535,11 @@ void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVer
 	fprintf(stderr, "D3D_BackdropPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 }
 
-
+void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour)
+{
+	fprintf(stderr, "D3D_RenderHUDString_Centred(%s, %d, %d, %d)\n", stringPtr, centreX, y, colour);
+}
+        
 /* dd_func.cpp */
 long BackBufferPitch;
 int VideoModeColourDepth;

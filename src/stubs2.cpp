@@ -15,17 +15,6 @@ void r2rect::AlphaFill(unsigned char R, unsigned char G, unsigned char B, unsign
 	fprintf(stderr, "r2rect::AlphaFill(%d, %d, %d, %d)\n", R, G, B, translucency);
 }
 
-void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
-{
-	fprintf(stderr, "D3D_RenderHUDNumber_Centred(%d, %d, %d, %d)\n", number, x, y, colour);
-}
-
-void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour)
-{
-	fprintf(stderr, "D3D_RenderHUDString_Centred(%s, %d, %d, %d)\n", stringPtr, centreX, y, colour);
-}
-
-
 /* indexfnt.cpp */
 IndexedFont* IndexedFont :: pIndexedFont[ IndexedFonts_MAX_NUMBER_OF_FONTS ];
 

@@ -29,6 +29,8 @@ extern "C" {
 #include "language.h"
 
 
+extern void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour);
+extern void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour);
 
 extern "C++" 									  
 {
@@ -36,9 +38,6 @@ extern "C++"
 #include "pcmenus.h"
 //#include "projload.hpp" // c++ header which ignores class definitions/member functions if __cplusplus is not defined ?
 #include "chnkload.hpp" // c++ header which ignores class definitions/member functions if __cplusplus is not defined ?
-extern void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour);
-extern void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour);
-
 };
 
 #include "d3d_hud.h"
