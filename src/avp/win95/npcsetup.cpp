@@ -13,8 +13,6 @@
 #include "avp_menus.h"
 
 
-/* TODO: dir separator */
-
 #if ALIEN_DEMO
 #define DIRECTORY_FOR_RIFS "alienavp_huds/"
 #else
@@ -321,10 +319,9 @@ void InitNPCs(RIFFHANDLE h)
 				DefaultGeneratorEnemy=HNPC_Marine;
 				break;					
 			default :
+				DefaultGeneratorEnemy=HNPC_Marine;
 				GLOBALASSERT("Invalid enemy type"==0);
-				
 		}
-
 	}
 	else
 	{

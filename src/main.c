@@ -305,6 +305,8 @@ int InitSDL()
 		exit(EXIT_FAILURE);
 	}
 
+	atexit(SDL_Quit);
+	
 	SDL_AvailableVideoModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
 	if (SDL_AvailableVideoModes == NULL)
 		return -1;
@@ -393,7 +395,7 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, Depth, flags)) == NULL) {
 		fprintf(stderr, "(Software) SDL SetVideoMode failed: %s\n", SDL_GetError());
-		SDL_Quit();
+		/* SDL_Quit(); */
 		exit(EXIT_FAILURE);
 	}
 	
@@ -454,7 +456,7 @@ int SetOGLVideoMode(int Width, int Height)
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, 0, flags)) == NULL) {
 		fprintf(stderr, "(OpenGL) SDL SetVideoMode failed: %s\n", SDL_GetError());
-		SDL_Quit();
+		/* SDL_Quit(); */
 		exit(EXIT_FAILURE);
 	}
 	
@@ -547,7 +549,10 @@ int ExitWindowsSystem()
 		SDL_JoystickClose(joy);
 	}
 #endif	
-	SDL_Quit();
+	/* SDL_Quit(); */
+	if (surface)
+		SDL_FreeSurface(surface);
+	surface = NULL;
 
 	return 0;
 }
