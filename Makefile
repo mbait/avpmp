@@ -9,15 +9,12 @@ CFLAGS = -g -Wall -pipe -O2
 #CFLAGS = -DNDEBUG -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentiumpro -mcpu=pentiumpro
 
 CFLAGS += -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+CFLAGS += $(shell sdl-config --cflags)
 CXXFLAGS = $(CFLAGS)
 
-CFLAGS += $(shell sdl-config --cflags)
 LDLIBS = $(shell sdl-config --libs) -lGL -lopenal
 
-# Debian SDL+NVIDIA workaround (change /usr/lib to the real location of the files)
-#LDLIBS = -L/usr/X11R6/lib -lX11 -lXext /usr/lib/libGL.so.1 $(shell sdl-config --libs) -lopenal -lm
-
-# required for gcc-3.0
+# required for gcc-3
 #LDLIBS += -lstdc++
 
 AFLAGS = -g -w+macro-params -w+orphan-labels -w+number-overflow
@@ -61,16 +58,13 @@ OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(SUPPORTOBJ) $(AVPWIN95OBJ) $(FRONTENDO
 
 all: AvP
 
-AvP: depend $(OBJ)
+AvP: $(OBJ) # depend $(OBJ)
 	$(CC) -o AvP $(OBJ) $(LDLIBS)
 
 compile: $(OBJ)
 
 .asm.o:
 	$(NASM) $(AFLAGS) -f elf -o $@ $<
-
-tester:
-	echo $(OBJ)
 
 clean:
 	-rm -rf depend depend.bak $(OBJ) AvP
@@ -81,14 +75,14 @@ distclean: clean
 # I wish I knew how to do dependencies correctly...
 
 #depend: Makefile $(SRC)
-#	$(CC) $(CFLAGS) -MM $(SRC) > depend
-
+#	$(CC) $(CFLAGS) -MM $(SRC) > depend.out
+#
 # insert makefile dependencies here
 # -include depend
-
-depend: Makefile # $(SRC)
-	touch depend
-	makedepend -fdepend -- $(CFLAGS) -- $(SRC)
-
--include depend
+#
+#depend: Makefile # $(SRC)
+#	touch depend.out
+#	makedepend -fdepend.out -- $(CFLAGS) -- $(SRC)
+#
+#-include depend.out
 # DO NOT DELETE THIS LINE -- make depend depends on it.

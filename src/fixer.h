@@ -75,7 +75,12 @@ typedef struct RECT
 
 typedef RECT RECT_AVP;
 
+#if !defined(__INTEL_COMPILER)
 typedef int64_t __int64;
+#else
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#endif
 
 typedef time_t FILETIME;
 

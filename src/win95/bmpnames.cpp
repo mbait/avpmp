@@ -129,7 +129,7 @@ Chunk_With_BMPs::Chunk_With_BMPs (Chunk_With_Children * parent, const char * con
 
 	bdata += 4;
 	
-	for (int i=0; i<num; i++)
+	for (int j=0; j<num; j++)
 	{
 		int f,i,d1,d2,d3;
 	

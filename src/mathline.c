@@ -41,16 +41,16 @@ void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
-
-__asm__("movl	0(%%esi), %%eax		\n\t"
-	"movl	4(%%esi), %%edx		\n\t"
-	"addl	0(%%edi), %%eax		\n\t"
-	"adcl	4(%%edi), %%edx		\n\t"
-	"movl	%%eax, 0(%%ebx)		\n\t"
-	"movl	%%edx, 4(%%ebx)		\n\t"
-	: 
+int dummy1, dummy2;
+__asm__("movl	0(%%esi), %0		\n\t"
+	"movl	4(%%esi), %1		\n\t"
+	"addl	0(%%edi), %0		\n\t"
+	"adcl	4(%%edi), %1		\n\t"
+	"movl	%0, 0(%%ebx)		\n\t"
+	"movl	%1, 4(%%ebx)		\n\t"
+	: "=&r" (dummy1), "=&r" (dummy2)
 	: "S" (a), "D" (b), "b" (c)
-	: "%eax", "%edx", "memory", "cc"
+	: "memory", "cc"
 	);
 
 /*
@@ -74,18 +74,19 @@ void ADD_LL_PP(LONGLONGCH *c, LONGLONGCH *a)
 		mov edi,c
 		mov esi,a
 		mov	eax,[esi]
-		mov	edx,[esi+4]
+	 	mov	edx,[esi+4]
 		add	[edi],eax
 		adc	[edi+4],edx
 	}
 */
-__asm__("movl	0(%%esi), %%eax		\n\t"
-	"movl	4(%%esi), %%edx		\n\t"
-	"addl	%%eax, 0(%%edi)		\n\t"
-	"adcl	%%edx, 4(%%edi)		\n\t"
-	:
+int dummy1, dummy2;
+__asm__("movl	0(%%esi), %0		\n\t"
+	"movl	4(%%esi), %1		\n\t"
+	"addl	%0, 0(%%edi)		\n\t"
+	"adcl	%1, 4(%%edi)		\n\t"
+	: "=&r" (dummy1), "=&r" (dummy2)
 	: "D" (c), "S" (a)
-	: "%eax", "%edx", "memory", "cc"
+	: "memory", "cc"
 	);
 }
 
@@ -107,15 +108,16 @@ void SUB_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
-__asm__("movl	0(%%esi), %%eax		\n\t"
-	"movl	4(%%esi), %%edx		\n\t"
-	"subl	0(%%edi), %%eax		\n\t"
-	"sbbl	4(%%edi), %%edx		\n\t"
-	"movl	%%eax, 0(%%ebx)		\n\t"
-	"movl	%%edx, 4(%%ebx)		\n\t"
-	:
+int dummy1, dummy2;
+__asm__("movl	0(%%esi), %0		\n\t"
+	"movl	4(%%esi), %1		\n\t"
+	"subl	0(%%edi), %0		\n\t"
+	"sbbl	4(%%edi), %1		\n\t"
+	"movl	%0, 0(%%ebx)		\n\t"
+	"movl	%1, 4(%%ebx)		\n\t"
+	: "=&r" (dummy1), "=&r" (dummy2)
 	: "S" (a), "D" (b), "b" (c)
-	: "%eax", "%edx", "memory", "cc"
+	: "memory", "cc"
 	);
 }
 
@@ -134,13 +136,14 @@ void SUB_LL_MM(LONGLONGCH *c, LONGLONGCH *a)
 		sbb	[edi+4],edx
 	}
 */
-__asm__("movl	0(%%esi), %%eax		\n\t"
-	"movl	4(%%esi), %%edx		\n\t"
-	"subl	%%eax, 0(%%edi)		\n\t"
-	"sbbl	%%edx, 4(%%edi)		\n\t"
-	:
+int dummy1, dummy2;
+__asm__("movl	0(%%esi), %0		\n\t"
+	"movl	4(%%esi), %1		\n\t"
+	"subl	%0, 0(%%edi)		\n\t"
+	"sbbl	%1, 4(%%edi)		\n\t"
+	: "=&r" (dummy1), "=&r" (dummy2)
 	: "D" (c), "S" (a)
-	: "%eax", "%edx", "memory", "cc"
+	: "memory", "cc"
 	);
 }
 
@@ -164,12 +167,13 @@ void MUL_I_WIDE(int a, int b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
-__asm__("imull	%%edx			\n\t"
+unsigned int d1;
+__asm__("imull	%3			\n\t"
 	"movl	%%eax, 0(%%ebx)		\n\t"
 	"movl	%%edx, 4(%%ebx)		\n\t"
-	:
-	: "a" (a), "b" (c), "d" (b)
-	: "memory", "cc"
+	: "=a" (d1)
+	: "0" (a), "b" (c), "m" (b)
+	: "%edx", "memory", "cc"
 	);
 }
 
@@ -315,15 +319,17 @@ void ASR_LL(LONGLONGCH *a, int shift)
 		asrdn:
 	}
 */
-__asm__("andl	%%eax, %%eax		\n\t"
+unsigned int d1;
+__asm__ volatile
+	("andl	%0, %0			\n\t"
 	"jle	0			\n" /* asrdn */
 "1:					\n\t" /* asrlp */
 	"sarl	$1, 4(%%esi)		\n\t"
 	"rcrl	$1, 0(%%esi)		\n\t"
-	"decl	%%eax			\n\t"
+	"decl	%0			\n\t"
 	"jne	1			\n"
 "0:					\n\t"
-	:
+	: "=&r" (d1)
 	: "S" (a), "a" (shift)
 	: "memory", "cc"
 	);
@@ -349,11 +355,10 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	"cdq				\n\t"
 	"movl	%%eax, 0(%%edi)		\n\t"
 	"movl	%%edx, 4(%%edi)		\n\t"
-	:
+	: 
 	: "S" (b), "D" (a)
 	: "%eax", "%edx", "memory", "cc"
 	);
-
 }
 
 /*
@@ -394,11 +399,11 @@ int MUL_FIXED(int a, int b)
 		mov retval,eax
 	}
 */
-__asm__("imull	%%edx			\n\t"
+__asm__("imull	%2			\n\t"
 	"shrdl	$16, %%edx, %%eax	\n\t"
 	: "=a" (retval)
-	: "a" (a), "d" (b)
-	: "cc"
+	: "0" (a), "m" (b)
+	: "%edx", "cc"
 	);
 	return retval;
 }
@@ -412,6 +417,8 @@ __asm__("imull	%%edx			\n\t"
 int DIV_FIXED(int a, int b)
 {
 	int retval;
+
+	if (b == 0) printf("DEBUG THIS: a = %d, b = %d\n", a, b);	
 	
 	if (b == 0) return 0; /* TODO: debug this! (start with alien on ferarco) */
 /*
@@ -430,9 +437,9 @@ __asm__("cdq				\n\t"
 	"roll	$16, %%eax		\n\t"
 	"mov	%%ax, %%dx		\n\t"
 	"xor	%%ax, %%ax		\n\t"
-	"idivl	%%ebx			\n\t"
+	"idivl	%2			\n\t"
 	: "=a" (retval)
-	: "a" (a), "b" (b)
+	: "0" (a), "m" (b)
 	: "%edx", "cc"
 	);
 	return retval;
@@ -476,9 +483,9 @@ int NarrowDivide(LONGLONGCH *a, int b)
 */
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"movl	4(%%esi), %%edx		\n\t"
-	"idivl	%%ebx			\n\t"
+	"idivl	%2			\n\t"
 	: "=a" (retval)
-	: "S" (a), "b" (b)
+	: "S" (a), "m" (b)
 	: "%edx", "cc"
 	);
 	return retval;
@@ -504,10 +511,10 @@ int WideMulNarrowDiv(int a, int b, int c)
 		mov retval,eax
 	}
 */
-__asm__("imull	%%ebx			\n\t"
-	"idivl	%%ecx			\n\t"
+__asm__("imull	%2			\n\t"
+	"idivl	%3			\n\t"
 	: "=a" (retval)
-	: "a" (a), "b" (b), "c" (c)
+	: "0" (a), "m" (b), "m" (c)
 	: "%edx", "cc"
 	);	
 	return retval;
@@ -567,13 +574,10 @@ typedef struct matrixch {
 
 */
 
-extern int sqrt_temp1;
-extern int sqrt_temp2;
+extern volatile int sqrt_temp;
 
 int SqRoot32(int A)
 {
-#if 1
-	sqrt_temp1 = A;
 /*
 	_asm
 	{
@@ -585,28 +589,19 @@ int SqRoot32(int A)
 	}
 */
 
-__asm__("finit				\n\t"
-	"fildl	sqrt_temp1		\n\t"
+__asm__ volatile
+	("finit				\n\t"
+	"fildl	%0			\n\t"
 	"fsqrt				\n\t"
-	"fistpl	sqrt_temp2		\n\t"
+	"fistpl	sqrt_temp		\n\t"
 	"fwait				\n\t"
 	:
-	:
+	: "m" (A)
 	: "memory", "cc"
 	);
 	
-	return sqrt_temp2;
-#else
-{ /* TODO: clean this please */
-	double x = A;
-	double retvald = sqrt(x);
-	int retval = retvald;
-	return retval;
+	return sqrt_temp;
 }
-#endif
-}
-
-
 
 /*
 
@@ -615,13 +610,14 @@ __asm__("finit				\n\t"
 
 */
 
-extern float fti_fptmp;
-extern int fti_itmp;
+extern volatile float fti_fptmp;
+extern volatile int fti_itmp;
 
 void FloatToInt()
 {
 #if 1
-__asm__("fld	fti_fptmp		\n\t"
+__asm__ volatile
+	("flds	fti_fptmp		\n\t"
 	"fistpl	fti_itmp		\n\t"
 	:
 	:

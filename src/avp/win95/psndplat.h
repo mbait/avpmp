@@ -209,7 +209,7 @@ extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern SOUNDSAMPLEDATA BlankGameSound;
 extern ACTIVESOUNDSAMPLE BlankActiveSound;
 
-
+void UpdateSoundFrequencies(void);
 
 #ifdef __cplusplus
 }

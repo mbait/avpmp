@@ -18,8 +18,7 @@
 #endif
 
 /* globals from inline.h */
-int sqrt_temp1;
-int sqrt_temp2;
+int sqrt_temp;
 float fti_fptmp;
 int fti_itmp;
 
