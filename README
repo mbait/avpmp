@@ -40,6 +40,21 @@ to get this to work.  Currently wine does not work because it fails the CD
 Check.
 
 
+Currently, all AvP files and directories need to be lowercase, and the
+program ran from the directory with all the game data (language.txt,
+avp_huds, avp_rifs, fastfile).
+
+
+Apparantly AvP Gold is no longer available at most places.  I had ordered my
+copy May 2001 from http://www.dragon.ca, but they no longer list it. 
+Someone did mention in an avpnews forum post (see below) that 
+http://www.qvc.com does have AvP Gold, so you may want to try there.
+
+What are the differences between AvP and AvP Gold?
+http://www.aliensvpredator.com/ubb/Forum2/HTML/001635.html
+http://www.aliensvpredator.com/ubb/Forum2/HTML/001680.html
+
+
 The full motion sequences cannot be played because they are encoded with
 proprietary codecs (Bink and Smacker).  But I do not think they will be
 greatly missed.
