@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include "oglfunc.h"
 
 #include "fixer.h"
 
@@ -55,10 +54,8 @@ static D3DTexture *CurrentlyBoundTexture = NULL;
 #define TA_MAXVERTICES		2048
 #define TA_MAXTRIANGLES		2048
 
-#if 0 /* NVIDIA header problem */
 #if GL_EXT_secondary_color
 extern PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
-#endif
 #endif
 
 typedef struct VertexArray
@@ -93,28 +90,28 @@ static void SetTranslucencyMode(enum TRANSLUCENCY_TYPE mode)
 	switch(mode) {
 		case TRANSLUCENCY_OFF:
 			if (TRIPTASTIC_CHEATMODE||MOTIONBLUR_CHEATMODE) {
-				glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+				pglBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 			} else {
-				glBlendFunc(GL_ONE, GL_ZERO);
+				pglBlendFunc(GL_ONE, GL_ZERO);
 			}
 			break;
 		case TRANSLUCENCY_NORMAL:
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			break;
 		case TRANSLUCENCY_COLOUR:
-			glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+			pglBlendFunc(GL_ZERO, GL_SRC_COLOR);
 			break;
 		case TRANSLUCENCY_INVCOLOUR:
-			glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+			pglBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 			break;
 		case TRANSLUCENCY_GLOWING:
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 		case TRANSLUCENCY_DARKENINGCOLOUR:
-			glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+			pglBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 			break;
 		case TRANSLUCENCY_JUSTSETZ:
-			glBlendFunc(GL_ZERO, GL_ONE);
+			pglBlendFunc(GL_ZERO, GL_ONE);
 			break;
 		default:
 			fprintf(stderr, "RenderPolygon.TranslucencyMode: invalid %d\n", RenderPolygon.TranslucencyMode);
@@ -133,31 +130,31 @@ A few things:
 void InitOpenGL()
 {
 	CurrentTranslucencyMode = TRANSLUCENCY_OFF;
-	glBlendFunc(GL_ONE, GL_ZERO);
+	pglBlendFunc(GL_ONE, GL_ZERO);
 	
 	CurrentFilteringMode = FILTERING_BILINEAR_OFF;
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                         
 	CurrentlyBoundTexture = NULL;
-	glBindTexture(GL_TEXTURE_2D, 0);
+	pglBindTexture(GL_TEXTURE_2D, 0);
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(4, GL_FLOAT, sizeof(varr[0]), varr[0].v);
+	pglEnableClientState(GL_VERTEX_ARRAY);
+	pglVertexPointer(4, GL_FLOAT, sizeof(varr[0]), varr[0].v);
 		
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(varr[0]), varr[0].t);
+	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	pglTexCoordPointer(2, GL_FLOAT, sizeof(varr[0]), varr[0].t);
 		
-	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(varr[0]), varr[0].c);
+	pglEnableClientState(GL_COLOR_ARRAY);
+	pglColorPointer(4, GL_UNSIGNED_BYTE, sizeof(varr[0]), varr[0].c);
 
 #if 0		
 #if GL_EXT_secondary_color
 		if (useseparate) {
-			glEnableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
+			pglEnableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
 			pglSecondaryColorPointerEXT(4, GL_UNSIGNED_BYTE, sizeof(svarr[0]), svarr[0].c);
 		} else {
-			glDisableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
+			pglDisableClientState(GL_SEPARATE_COLOR_ARRAY_EXT);
 		}
 #endif
 #endif
@@ -181,15 +178,15 @@ static void FlushTriangleBuffers(int backup)
 
 	if (tarrc) {
 #if 1
-		glBegin(GL_TRIANGLES);
+		pglBegin(GL_TRIANGLES);
 		for (i = 0; i < tarrc; i++) {
-			glArrayElement(tarr[i].a);
-			glArrayElement(tarr[i].b);
-			glArrayElement(tarr[i].c);
+			pglArrayElement(tarr[i].a);
+			pglArrayElement(tarr[i].b);
+			pglArrayElement(tarr[i].c);
 		}
-		glEnd();
+		pglEnd();
 #else		
-		glDrawElements(GL_TRIANGLES, tarrc*3, GL_UNSIGNED_INT, tarr);
+		pglDrawElements(GL_TRIANGLES, tarrc*3, GL_UNSIGNED_INT, tarr);
 #endif
 		
 		tarrc = 0;
@@ -202,36 +199,36 @@ static void FlushTriangleBuffers(int backup)
 	if (starrc) {
 		if (CurrentlyBoundTexture != NULL) {
 			if (!backup) CurrentlyBoundTexture = NULL;
-			glBindTexture(GL_TEXTURE_2D, 0);
+			pglBindTexture(GL_TEXTURE_2D, 0);
 		}
 		
 		if (CurrentTranslucencyMode != TRANSLUCENCY_GLOWING) {
 			if (!backup) CurrentTranslucencyMode = TRANSLUCENCY_GLOWING;
 			SetTranslucencyMode(TRANSLUCENCY_GLOWING);
 			//if (CurrentTranslucencyMode == TRANSLUCENCY_OFF)
-			//	glEnable(GL_BLEND);
+			//	pglEnable(GL_BLEND);
 			//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		}
 
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 #if 1		
-		glBegin(GL_TRIANGLES);
+		pglBegin(GL_TRIANGLES);
 		for (i = 0; i < starrc; i++) {
-			glArrayElement(starr[i].a);
-			glArrayElement(starr[i].b);
-			glArrayElement(starr[i].c);
+			pglArrayElement(starr[i].a);
+			pglArrayElement(starr[i].b);
+			pglArrayElement(starr[i].c);
 		}
-		glEnd();
+		pglEnd();
 #else
-		glDrawElements(GL_TRIANGLES, starrc*3, GL_UNSIGNED_INT, starr);
+		pglDrawElements(GL_TRIANGLES, starrc*3, GL_UNSIGNED_INT, starr);
 #endif
 		
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		
 		if (backup) {
 			if (CurrentlyBoundTexture)
-				glBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture->id);
+				pglBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture->id);
 			if (CurrentTranslucencyMode != TRANSLUCENCY_GLOWING)
 				SetTranslucencyMode(CurrentTranslucencyMode);
 		} else {
@@ -256,24 +253,24 @@ static void CheckBoundTextureIsCorrect(D3DTexture *tex)
 	FlushTriangleBuffers(1);
 	
 	if (tex == NULL) {
-		glBindTexture(GL_TEXTURE_2D, 0);
+		pglBindTexture(GL_TEXTURE_2D, 0);
 		
 		CurrentlyBoundTexture = NULL;
 		
 		return;
 	} 
 	
-	glBindTexture(GL_TEXTURE_2D, tex->id);
+	pglBindTexture(GL_TEXTURE_2D, tex->id);
 
 	if (tex->filter != CurrentFilteringMode) {
 		switch(CurrentFilteringMode) {
 			case FILTERING_BILINEAR_OFF:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				break;
 			case FILTERING_BILINEAR_ON:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			default:
 				break;
@@ -294,12 +291,12 @@ static void CheckFilteringModeIsCorrect(enum FILTERING_MODE_ID filter)
 		
 		switch(CurrentFilteringMode) {
 			case FILTERING_BILINEAR_OFF:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				break;
 			case FILTERING_BILINEAR_ON:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			default:
 				break;
@@ -430,14 +427,14 @@ static void SelectPolygonBeginType(int points)
 		
 	switch(points) {
 		case 3:
-			glBegin(GL_TRIANGLES);
+			pglBegin(GL_TRIANGLES);
 			break;
 		case 4:
 		case 5:
 		case 6:
 		case 7:
 		case 8:
-			glBegin(GL_TRIANGLE_FAN);
+			pglBegin(GL_TRIANGLE_FAN);
 			break;
 		default:
 			fprintf(stderr, "SelectPolygonBeginType: points = %d\n", points);
@@ -451,24 +448,24 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	
 	FlushTriangleBuffers(1);
 	
-	glGenTextures(1, &h);
+	pglGenTextures(1, &h);
 
-	glBindTexture(GL_TEXTURE_2D, h);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	pglBindTexture(GL_TEXTURE_2D, h);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+	pglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 	
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
 	tex->id = h;
 	tex->filter = FILTERING_BILINEAR_ON;
 
 	if (CurrentlyBoundTexture)
-		glBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture->id); /* restore current */
+		pglBindTexture(GL_TEXTURE_2D, CurrentlyBoundTexture->id); /* restore current */
 	
 	return h;
 }
@@ -477,7 +474,7 @@ void ReleaseD3DTexture(void *tex)
 {
 	D3DTexture *TextureHandle = (D3DTexture *)tex;
 	
-	glDeleteTextures(1, &(TextureHandle->id));
+	pglDeleteTextures(1, &(TextureHandle->id));
 	
 	free(TextureHandle);
 }
@@ -500,34 +497,34 @@ void ThisFramesRenderingHasFinished()
 
 void FlushD3DZBuffer()
 {
-	glClear(GL_DEPTH_BUFFER_BIT);
+	pglClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void SecondFlushD3DZBuffer()
 {
 	FlushTriangleBuffers(0);
 	
-	glClear(GL_DEPTH_BUFFER_BIT);
+	pglClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void D3D_DecalSystem_Setup()
 {
 	FlushTriangleBuffers(0);
 	
-	glDepthMask(GL_FALSE);
+	pglDepthMask(GL_FALSE);
 
 	/* this does stop zfighting with bulletmarks on walls... */
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(-8.0, -8.0);
+	pglEnable(GL_POLYGON_OFFSET_FILL);
+	pglPolygonOffset(-8.0, -8.0);
 }
 
 void D3D_DecalSystem_End()
 {
 	FlushTriangleBuffers(0);
 	
-	glDepthMask(GL_TRUE);
+	pglDepthMask(GL_TRUE);
 	
-	glDisable(GL_POLYGON_OFFSET_FILL);
+	pglDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 /* ** */
@@ -542,7 +539,7 @@ void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a)
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	CheckBoundTextureIsCorrect(NULL);
 	
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 
 	x[0] = x0;
 	x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
@@ -566,15 +563,15 @@ void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a)
 
 	SelectPolygonBeginType(3); /* triangles */
 	
-	glVertex3f(x[0], y[0], -1.0f);
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[0], y[0], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[2], y[2], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[2], y[2], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();
+	pglEnd();
 }
 
 /* ** */
@@ -1097,7 +1094,7 @@ void D3D_PlayerOnFireOverlay()
 	CheckBoundTextureIsCorrect(TextureHandle);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 	
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 	
 	u = (FastRandom()&255)/256.0f;
 	v = (FastRandom()&255)/256.0f;
@@ -1121,21 +1118,21 @@ void D3D_PlayerOnFireOverlay()
 	
 	SelectPolygonBeginType(3); /* triangles */
 	
-	glTexCoord2f(s[0], t[0]);
-	glVertex3f(x[0], y[0], -1.0f);
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], -1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglTexCoord2f(s[0], t[0]);
+	pglVertex3f(x[0], y[0], -1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], -1.0f);
-	glTexCoord2f(s[2], t[2]);
-	glVertex3f(x[2], y[2], -1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglTexCoord2f(s[2], t[2]);
+	pglVertex3f(x[2], y[2], -1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();
+	pglEnd();
 }
 
 void D3D_PlayerDamagedOverlay(int intensity)
@@ -1174,7 +1171,7 @@ void D3D_PlayerDamagedOverlay(int intensity)
 	r = (colour >> 16) & 0xFF;
 	a = (colour >> 24) & 0xFF;
 	
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_INVCOLOUR);
 	for (i = 0; i < 2; i++) {
@@ -1202,21 +1199,21 @@ void D3D_PlayerDamagedOverlay(int intensity)
 	
 		SelectPolygonBeginType(3); /* triangles */
 	
-		glTexCoord2f(s[0], t[0]);
-		glVertex3f(x[0], y[0], -1.0f);
-		glTexCoord2f(s[1], t[1]);
-		glVertex3f(x[1], y[1], -1.0f);
-		glTexCoord2f(s[3], t[3]);
-		glVertex3f(x[3], y[3], -1.0f);
+		pglTexCoord2f(s[0], t[0]);
+		pglVertex3f(x[0], y[0], -1.0f);
+		pglTexCoord2f(s[1], t[1]);
+		pglVertex3f(x[1], y[1], -1.0f);
+		pglTexCoord2f(s[3], t[3]);
+		pglVertex3f(x[3], y[3], -1.0f);
 	
-		glTexCoord2f(s[1], t[1]);
-		glVertex3f(x[1], y[1], -1.0f);
-		glTexCoord2f(s[2], t[2]);
-		glVertex3f(x[2], y[2], -1.0f);
-		glTexCoord2f(s[3], t[3]);
-		glVertex3f(x[3], y[3], -1.0f);
+		pglTexCoord2f(s[1], t[1]);
+		pglVertex3f(x[1], y[1], -1.0f);
+		pglTexCoord2f(s[2], t[2]);
+		pglVertex3f(x[2], y[2], -1.0f);
+		pglTexCoord2f(s[3], t[3]);
+		pglVertex3f(x[3], y[3], -1.0f);
 	
-		glEnd();
+		pglEnd();
 	
 		colour = baseColour + (intensity<<24);
 		
@@ -1225,7 +1222,7 @@ void D3D_PlayerDamagedOverlay(int intensity)
 		r = (colour >> 16) & 0xFF;
 		a = (colour >> 24) & 0xFF;
 	
-		glColor4ub(r, g, b, a);
+		pglColor4ub(r, g, b, a);
 	
 		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	}
@@ -1249,7 +1246,7 @@ void DrawNoiseOverlay(int tr)
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
-	glDepthFunc(GL_ALWAYS);
+	pglDepthFunc(GL_ALWAYS);
 	
 	u = FastRandom()&255;
 	v = FastRandom()&255;
@@ -1272,25 +1269,25 @@ void DrawNoiseOverlay(int tr)
 	t[3] = (v + size) / 256.0f;
 	
 	SelectPolygonBeginType(3); /* triangles */
-	glColor4ub(r, g, b, tr);
+	pglColor4ub(r, g, b, tr);
 		
-	glTexCoord2f(s[0], t[0]);
-	glVertex3f(x[0], y[0], 1.0f);
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], 1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], 1.0f);
+	pglTexCoord2f(s[0], t[0]);
+	pglVertex3f(x[0], y[0], 1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], 1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], 1.0f);
 	
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], 1.0f);
-	glTexCoord2f(s[2], t[2]);
-	glVertex3f(x[2], y[2], 1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], 1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], 1.0f);
+	pglTexCoord2f(s[2], t[2]);
+	pglVertex3f(x[2], y[2], 1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], 1.0f);
 	
-	glEnd();
+	pglEnd();
 	
-	glDepthFunc(GL_LEQUAL);
+	pglDepthFunc(GL_LEQUAL);
 }
 
 void D3D_ScreenInversionOverlay()
@@ -1308,7 +1305,7 @@ void D3D_ScreenInversionOverlay()
 	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
 
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	pglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
 	for (i = 0; i < 2; i++) {
 		GLfloat x[4], y[4], s[4], t[4];
@@ -1335,21 +1332,21 @@ void D3D_ScreenInversionOverlay()
 
 		SelectPolygonBeginType(3); /* triangles */
 		
-		glTexCoord2f(s[0], t[0]);
-		glVertex3f(x[0], y[0], 1.0f);
-		glTexCoord2f(s[1], t[1]);
-		glVertex3f(x[1], y[1], 1.0f);
-		glTexCoord2f(s[3], t[3]);
-		glVertex3f(x[3], y[3], 1.0f);
+		pglTexCoord2f(s[0], t[0]);
+		pglVertex3f(x[0], y[0], 1.0f);
+		pglTexCoord2f(s[1], t[1]);
+		pglVertex3f(x[1], y[1], 1.0f);
+		pglTexCoord2f(s[3], t[3]);
+		pglVertex3f(x[3], y[3], 1.0f);
 	
-		glTexCoord2f(s[1], t[1]);
-		glVertex3f(x[1], y[1], 1.0f);
-		glTexCoord2f(s[2], t[2]);
-		glVertex3f(x[2], y[2], 1.0f);
-		glTexCoord2f(s[3], t[3]);
-		glVertex3f(x[3], y[3], 1.0f);
+		pglTexCoord2f(s[1], t[1]);
+		pglVertex3f(x[1], y[1], 1.0f);
+		pglTexCoord2f(s[2], t[2]);
+		pglVertex3f(x[2], y[2], 1.0f);
+		pglTexCoord2f(s[3], t[3]);
+		pglVertex3f(x[3], y[3], 1.0f);
 	
-		glEnd();
+		pglEnd();
 		
 		CheckTranslucencyModeIsCorrect(TRANSLUCENCY_COLOUR);
 	}
@@ -1359,22 +1356,22 @@ void D3D_PredatorScreenInversionOverlay()
 {
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_DARKENINGCOLOUR);
 	CheckBoundTextureIsCorrect(NULL);
-	glDepthFunc(GL_ALWAYS);
+	pglDepthFunc(GL_ALWAYS);
 	
 	SelectPolygonBeginType(3); /* triangles */
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	pglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	glVertex3f(-1.0f, -1.0f, 1.0f);
-	glVertex3f( 1.0f, -1.0f, 1.0f);
-	glVertex3f(-1.0f,  1.0f, 1.0f);
+	pglVertex3f(-1.0f, -1.0f, 1.0f);
+	pglVertex3f( 1.0f, -1.0f, 1.0f);
+	pglVertex3f(-1.0f,  1.0f, 1.0f);
 	
-	glVertex3f( 1.0f, -1.0f, 1.0f);
-	glVertex3f( 1.0f,  1.0f, 1.0f);
-	glVertex3f(-1.0f,  1.0f, 1.0f);
+	pglVertex3f( 1.0f, -1.0f, 1.0f);
+	pglVertex3f( 1.0f,  1.0f, 1.0f);
+	pglVertex3f(-1.0f,  1.0f, 1.0f);
 	
-	glEnd();
+	pglEnd();
 	
-	glDepthFunc(GL_LEQUAL);
+	pglDepthFunc(GL_LEQUAL);
 }
 
 void DrawScanlinesOverlay(float level)
@@ -1390,7 +1387,7 @@ void DrawScanlinesOverlay(float level)
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 	CheckBoundTextureIsCorrect(tex);
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_ON);
-	glDepthFunc(GL_ALWAYS);
+	pglDepthFunc(GL_ALWAYS);
 	
 	c = 255;
 	a = 64.0f+level*64.0f;
@@ -1398,7 +1395,7 @@ void DrawScanlinesOverlay(float level)
 	v = 128.0f;
 	size = 128.0f*(1.0f-level*0.8f);
 	
-	glColor4ub(c, c, c, a);
+	pglColor4ub(c, c, c, a);
 
 	x[0] = -1.0f;
 	y[0] = -1.0f;
@@ -1419,22 +1416,22 @@ void DrawScanlinesOverlay(float level)
 	
 	SelectPolygonBeginType(3); /* triangles */
 		
-	glTexCoord2f(s[0], t[0]);
-	glVertex3f(x[0], y[0], 1.0f);
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], 1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], 1.0f);
+	pglTexCoord2f(s[0], t[0]);
+	pglVertex3f(x[0], y[0], 1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], 1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], 1.0f);
 	
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], 1.0f);
-	glTexCoord2f(s[2], t[2]);
-	glVertex3f(x[2], y[2], 1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], 1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], 1.0f);
+	pglTexCoord2f(s[2], t[2]);
+	pglVertex3f(x[2], y[2], 1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], 1.0f);
 	
-	glEnd();	
-	glDepthFunc(GL_LEQUAL);
+	pglEnd();	
+	pglDepthFunc(GL_LEQUAL);
 }
 
 void D3D_FadeDownScreen(int brightness, int colour)
@@ -1454,7 +1451,7 @@ void D3D_FadeDownScreen(int brightness, int colour)
 	r = (colour >> 16) & 0xFF;
 	a = (colour >> 24) & 0xFF;
 	
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 	
 	x[0] = -1.0f;
 	y[0] = -1.0f;
@@ -1467,15 +1464,15 @@ void D3D_FadeDownScreen(int brightness, int colour)
 	
 	SelectPolygonBeginType(3); /* triangles */
 	
-	glVertex3f(x[0], y[0], -1.0f);
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[0], y[0], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[2], y[2], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[2], y[2], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();
+	pglEnd();
 }
 
 void D3D_HUD_Setup()
@@ -1484,7 +1481,7 @@ void D3D_HUD_Setup()
 	
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
 	
-	glDepthFunc(GL_LEQUAL);	
+	pglDepthFunc(GL_LEQUAL);	
 }
 
 void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsigned int colour)
@@ -1519,7 +1516,7 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 	r = (colour >> 16) & 0xFF;
 	a = (colour >> 24) & 0xFF;
 		
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 	
 	for (i = 0; i < 4; i++) {
 		x[i] = quadVerticesPtr[i].X;
@@ -1533,21 +1530,21 @@ void D3D_HUDQuad_Output(int imageNumber, struct VertexTag *quadVerticesPtr, unsi
 	
 	SelectPolygonBeginType(3); /* triangles */
 	
-	glTexCoord2f(s[0], t[0]);
-	glVertex3f(x[0], y[0], -1.0f);
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], -1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglTexCoord2f(s[0], t[0]);
+	pglVertex3f(x[0], y[0], -1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glTexCoord2f(s[1], t[1]);
-	glVertex3f(x[1], y[1], -1.0f);
-	glTexCoord2f(s[2], t[2]);
-	glVertex3f(x[2], y[2], -1.0f);
-	glTexCoord2f(s[3], t[3]);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglTexCoord2f(s[1], t[1]);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglTexCoord2f(s[2], t[2]);
+	pglVertex3f(x[2], y[2], -1.0f);
+	pglTexCoord2f(s[3], t[3]);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();
+	pglEnd();
 }
 
 void D3D_RenderHUDNumber_Centred(unsigned int number,int x,int y,int colour)
@@ -2339,7 +2336,7 @@ void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale
 		unsigned int c;
 		
 		c = GammaValues[i];
-		glColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
 		
 		x[0] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
 		x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
@@ -2353,7 +2350,7 @@ void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale
 		
 		i++;
 		c = GammaValues[i];
-		glColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
 		x[2] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
 		x[2] =  (x[2] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 		y[2] = yBottom;
@@ -2365,16 +2362,16 @@ void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale
 		y[3] = -(y[3] - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
 		
 		
-		glVertex3f(x[0], y[0], -1.0f);
-		glVertex3f(x[1], y[1], -1.0f);
-		glVertex3f(x[3], y[3], -1.0f);
+		pglVertex3f(x[0], y[0], -1.0f);
+		pglVertex3f(x[1], y[1], -1.0f);
+		pglVertex3f(x[3], y[3], -1.0f);
 	
-		glVertex3f(x[1], y[1], -1.0f);
-		glVertex3f(x[2], y[2], -1.0f);
-		glVertex3f(x[3], y[3], -1.0f);
+		pglVertex3f(x[1], y[1], -1.0f);
+		pglVertex3f(x[2], y[2], -1.0f);
+		pglVertex3f(x[3], y[3], -1.0f);
 	}
 	
-	glEnd();
+	pglEnd();
 }
 
 void ColourFillBackBuffer(int FillColour)
@@ -2386,9 +2383,9 @@ void ColourFillBackBuffer(int FillColour)
 	r = ((FillColour >> 16) & 0xFF) / 255.0f;
 	a = ((FillColour >> 24) & 0xFF) / 255.0f;
 
-	glClearColor(r, g, b, a);
+	pglClearColor(r, g, b, a);
 	
-	glClear(GL_COLOR_BUFFER_BIT);
+	pglClear(GL_COLOR_BUFFER_BIT);
 }
 
 void ColourFillBackBufferQuad(int FillColour, int x0, int y0, int x1, int y1)
@@ -2407,7 +2404,7 @@ void ColourFillBackBufferQuad(int FillColour, int x0, int y0, int x1, int y1)
 	r = ((FillColour >> 16) & 0xFF);
 	a = ((FillColour >> 24) & 0xFF);	
 
-	glColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, a);
 
 	x[0] = x0;
 	x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
@@ -2431,15 +2428,15 @@ void ColourFillBackBufferQuad(int FillColour, int x0, int y0, int x1, int y1)
 
 	SelectPolygonBeginType(3); /* triangles */
 	
-	glVertex3f(x[0], y[0], -1.0f);
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[0], y[0], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glVertex3f(x[1], y[1], -1.0f);
-	glVertex3f(x[2], y[2], -1.0f);
-	glVertex3f(x[3], y[3], -1.0f);
+	pglVertex3f(x[1], y[1], -1.0f);
+	pglVertex3f(x[2], y[2], -1.0f);
+	pglVertex3f(x[3], y[3], -1.0f);
 	
-	glEnd();
+	pglEnd();
 }
 
 void D3D_DrawBackdrop()
@@ -2509,30 +2506,30 @@ void BltImage(RECT *dest, DDSurface *image, RECT *src)
 	height = dest->bottom - dest->top + 1;
 	height1 = src->bottom - src->top + 1;
 	
-	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_PIXEL_MODE_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT);
-	glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+	pglPushAttrib(GL_COLOR_BUFFER_BIT | GL_PIXEL_MODE_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT);
+	pglPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 	
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
+	pglDisable(GL_BLEND);
+	pglDisable(GL_DEPTH_TEST);
+	pglDisable(GL_TEXTURE_2D);
 		
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, image->w);
-	glPixelZoom((double)width/(double)width1, (double)height/(double)height1);
+	pglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	pglPixelStorei(GL_UNPACK_ROW_LENGTH, image->w);
+	pglPixelZoom((double)width/(double)width1, (double)height/(double)height1);
 	
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
+	pglMatrixMode(GL_PROJECTION);
+	pglPushMatrix();
+	pglLoadIdentity();
 	
-	glOrtho(0.0, ScreenDescriptorBlock.SDB_Width, 0.0, ScreenDescriptorBlock.SDB_Height, -1.0, 1.0);
-	glRasterPos2i(dest->left, ScreenDescriptorBlock.SDB_Height-dest->bottom);
+	pglOrtho(0.0, ScreenDescriptorBlock.SDB_Width, 0.0, ScreenDescriptorBlock.SDB_Height, -1.0, 1.0);
+	pglRasterPos2i(dest->left, ScreenDescriptorBlock.SDB_Height-dest->bottom);
 	
-	glDrawPixels(width1, height1, GL_RGBA, GL_UNSIGNED_BYTE, image->buf);
+	pglDrawPixels(width1, height1, GL_RGBA, GL_UNSIGNED_BYTE, image->buf);
 		
-	glPopMatrix();
+	pglPopMatrix();
 	
-	glPopClientAttrib();
-	glPopAttrib();;
+	pglPopClientAttrib();
+	pglPopAttrib();;
 }
 
 /* ** */
@@ -2696,7 +2693,7 @@ void PostLandscapeRendering()
 //			CheckTranslucencyModeIsCorrect(TRANSLUCENCY_NORMAL);
 			
 			FlushTriangleBuffers(1);
-			glDepthMask(GL_FALSE);
+			pglDepthMask(GL_FALSE);
 
 			WaterFallBase = 109952;
 			
@@ -2709,7 +2706,7 @@ void PostLandscapeRendering()
 //			D3D_DrawWaterPatch(-100000, WaterFallBase, 538490);
 			
 			FlushTriangleBuffers(1);
-			glDepthMask(GL_TRUE);
+			pglDepthMask(GL_TRUE);
 		}
 		if (drawStream)
 		{
@@ -4881,7 +4878,7 @@ void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 	CurrTextureHandle = NULL;
 	CheckBoundTextureIsCorrect(NULL);
 	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
-	glDepthMask(GL_FALSE);
+	pglDepthMask(GL_FALSE);
 
 	MeshXScale = 4096/16;
 	MeshZScale = 4096/16;
@@ -4967,5 +4964,5 @@ void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 	}	
 	}
 	
-	glDepthMask(GL_TRUE);
+	pglDepthMask(GL_TRUE);
 }

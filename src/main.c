@@ -6,10 +6,11 @@
 #include <assert.h>
 
 #include "SDL.h"
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include "oglfunc.h"
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include <getopt.h>
               
 #include "fixer.h"
@@ -71,11 +72,8 @@ int WantSound = 1;
 static int WantCDRom = 1;
 static int WantJoystick = 1;
 
-#if 0 /* NVIDIA gl.h breaks this */
-#if GL_EXT_secondary_color
-PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
-#endif
-#endif
+static const char * opengl_library = "/usr/lib/libGL.so.1";
+static const char * opengl_library_tls = "/usr/lib/tls/libGL.so.1";
 
 /* ** */
 
@@ -184,9 +182,9 @@ unsigned char *GetScreenShot24(int *width, int *height)
 	buf = (unsigned char *)malloc(surface->w * surface->h * 3);
 	
 	if (surface->flags & SDL_OPENGL) {
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, buf);
+		pglPixelStorei(GL_PACK_ALIGNMENT, 1);
+		pglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		pglReadPixels(0, 0, surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, buf);
 	} else {
 		unsigned char *ptrd;
 		unsigned short int *ptrs;
@@ -451,6 +449,20 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	SDL_GrabMode isgrab;
 	int flags;
 	
+	load_ogl_functions(0);
+	
+	/* 
+	  let sdl try loading the opengl library, to see if it is even available 
+	  this is definitely not enough, but it's a start...
+	*/
+	if (!surface || !(surface->flags & SDL_OPENGL))
+	if (SDL_GL_LoadLibrary(opengl_library) < 0) {
+		if (!opengl_library_tls || SDL_GL_LoadLibrary(opengl_library_tls) < 0) {
+			fprintf(stderr, "unable to initialize opengl library: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
+	}
+	
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
 	
@@ -469,7 +481,6 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, Depth, flags)) == NULL) {
 		fprintf(stderr, "(Software) SDL SetVideoMode failed: %s\n", SDL_GetError());
-		/* SDL_Quit(); */
 		exit(EXIT_FAILURE);
 	}
 	
@@ -509,6 +520,8 @@ int SetOGLVideoMode(int Width, int Height)
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	GotMouse = 1;
 	
+	load_ogl_functions(0);
+	
 	flags = SDL_OPENGL;
 	if (surface != NULL) {
 		if (surface->flags & SDL_FULLSCREEN)
@@ -517,11 +530,20 @@ int SetOGLVideoMode(int Width, int Height)
 
 		SDL_FreeSurface(surface);
 	} else {
-		if (WantFullscreen)
+		if (WantFullscreen) {
 			flags |= SDL_FULLSCREEN;
+		}
+		
 		isgrab = SDL_GRAB_OFF;
 	}
 
+	if (SDL_GL_LoadLibrary(opengl_library) < 0) {
+		if (!opengl_library_tls || SDL_GL_LoadLibrary(opengl_library_tls) < 0) {
+			fprintf(stderr, "unable to initialize opengl library: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
+	}
+		
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
@@ -530,9 +552,10 @@ int SetOGLVideoMode(int Width, int Height)
 	
 	if ((surface = SDL_SetVideoMode(Width, Height, 0, flags)) == NULL) {
 		fprintf(stderr, "(OpenGL) SDL SetVideoMode failed: %s\n", SDL_GetError());
-		/* SDL_Quit(); */
 		exit(EXIT_FAILURE);
 	}
+	
+	load_ogl_functions(1);
 	
 	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
 
@@ -547,30 +570,30 @@ int SetOGLVideoMode(int Width, int Height)
 	    (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON))
 		SDL_ShowCursor(0);	
 	
-	glViewport(0, 0, Width, Height);
+	pglViewport(0, 0, Width, Height);
 	
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	pglMatrixMode(GL_PROJECTION);
+	pglLoadIdentity();
+	pglMatrixMode(GL_MODELVIEW);
+	pglLoadIdentity();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	pglEnable(GL_BLEND);
+	pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
+	pglEnable(GL_DEPTH_TEST);
+	pglDepthFunc(GL_LEQUAL);
+	pglDepthMask(GL_TRUE);
+	pglDepthRange(0.0, 1.0);
 	
-	glEnable(GL_TEXTURE_2D);
+	pglEnable(GL_TEXTURE_2D);
 
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_FILL);
-	glDisable(GL_CULL_FACE);
+	pglPolygonMode(GL_FRONT, GL_FILL);
+	pglPolygonMode(GL_BACK, GL_FILL);
+	pglDisable(GL_CULL_FACE);
 	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	pglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	pglHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	
 	ScreenDescriptorBlock.SDB_Width     = Width;
 	ScreenDescriptorBlock.SDB_Height    = Height;
@@ -583,28 +606,9 @@ int SetOGLVideoMode(int Width, int Height)
 	ScreenDescriptorBlock.SDB_ClipUp    = 0;
 	ScreenDescriptorBlock.SDB_ClipDown  = Height;
 	
-	ext = (char *)glGetString(GL_EXTENSIONS);
-/*	
-	printf("OpenGL Extensions: %s\n", ext);
-*/	
-#if 0 /* NVIDIA header problem */
-#if GL_EXT_secondary_color
-	pglSecondaryColorPointerEXT = NULL;
+	ext = (char *) pglGetString(GL_EXTENSIONS);
 	
-	if (CheckToken(ext, "GL_EXT_secondary_color")) {
-		printf("Found GL_EXT_secondary_color... ");
-		
-		pglSecondaryColorPointerEXT = SDL_GL_GetProcAddress("glSecondaryColorPointerEXT");
-		if (pglSecondaryColorPointerEXT == NULL) {
-			printf("but the driver lied...\n");
-		} else {
-			printf("and it's good!\n");
-		}
-	} else {
-		printf("GL_EXT_secondary_color not found...\n");
-	}
-#endif
-#endif
+	load_ogl_functions(1);
 
 	InitOpenGL();
 	
@@ -622,9 +626,12 @@ int ExitWindowsSystem()
 		SDL_JoystickClose(joy);
 	}
 
-	/* SDL_Quit(); */
-	if (surface)
+	load_ogl_functions(0);
+	
+	if (surface) {
 		SDL_FreeSurface(surface);
+	}
+	
 	surface = NULL;
 
 	return 0;
@@ -1246,7 +1253,7 @@ void InitGameDirectories(char *argv0)
 	DeleteGameFile("dx_error.log");
 }
 
-static struct option getopt_long_options[] = {
+static const struct option getopt_long_options[] = {
 { "help",	0,	NULL,	'h' },
 { "version",	0,	NULL,	'v' },
 { "fullscreen",	0,	NULL,	'f' },
@@ -1255,6 +1262,7 @@ static struct option getopt_long_options[] = {
 { "nocdrom",	0,	NULL,	'c' },
 { "nojoy",	0,	NULL,	'j' },
 { "debug",	0,	NULL,	'd' },
+{ "withgl",	1,	NULL,	'g' },
 /*
 { "loadrifs",	1,	NULL,	'l' },
 { "server",	0,	someval,	1 },
@@ -1273,6 +1281,7 @@ static const char *usage_string =
 "      [-s | --nosound]        Do not access the soundcard\n"
 "      [-c | --nocdrom]        Do not access the CD-ROM\n"
 "      [-j | --nojoy]          Do not access the joystick\n"
+"      [-g | --withgl] [x]     Use [x] instead of /usr/lib/libGL.so.1 for OpenGL\n"
 ;
          
 int main(int argc, char *argv[])
@@ -1280,7 +1289,7 @@ int main(int argc, char *argv[])
 	int c;
 	
 	opterr = 0;
-	while ((c = getopt_long(argc, argv, "hvfwscd", getopt_long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hvfwscdg:", getopt_long_options, NULL)) != -1) {
 		switch(c) {
 			case 'h':
 				printf("%s", usage_string);
@@ -1307,6 +1316,10 @@ int main(int argc, char *argv[])
 				extern int DebuggingCommandsActive;
 				DebuggingCommandsActive = 1;
 				}
+				break;
+			case 'g':
+				opengl_library = optarg;
+				opengl_library_tls = NULL;
 				break;
 			default:
 				printf("%s", usage_string);
