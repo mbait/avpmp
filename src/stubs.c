@@ -271,11 +271,6 @@ void InitForceField()
 	fprintf(stderr, "InitForceField()\n");
 }
 
-void PostLandscapeRendering()
-{
-	fprintf(stderr, "PostLandscapeRendering()\n");
-}
-
 void SetFogDistance(int fogDistance)
 {
 	fprintf(stderr, "SetFontDistance(%d)\n", fogDistance);
@@ -339,24 +334,9 @@ BOOL EndD3DScene()
 	return FALSE;
 }
 
-void D3D_DrawWaterTest(MODULE *testModulePtr)
-{
-	fprintf(stderr, "D3D_DrawWaterTest(%p)\n", testModulePtr);
-}
-
-void D3D_DrawParticle_Rain(PARTICLE *particlePtr,VECTORCH *prevPositionPtr)
-{
-	fprintf(stderr, "D3D_DrawParticle_Rain(%p, %p)\n", particlePtr, prevPositionPtr);
-}
-
 void D3D_DrawCable(VECTORCH *centrePtr, MATRIXCH *orientationPtr)
 {
 	fprintf(stderr, "D3D_DrawCable(%p, %p)\n", centrePtr, orientationPtr);
-}
-
-void D3D_BackdropPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)
-{
-	fprintf(stderr, "D3D_BackdropPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
 }
 
         

@@ -624,10 +624,12 @@ int main(int argc, char *argv[])
 #else		
 //	AvP.PlayerType = I_Alien;
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
+//	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
 	
 	AvP.PlayerType = I_Marine;
-	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-
+//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+	SetLevelToLoad(AVP_ENVIRONMENT_COLONY);
+	
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
