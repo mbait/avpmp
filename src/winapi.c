@@ -205,8 +205,6 @@ unsigned int timeGetTime()
 		secs--;
 	}
 
-printf("Ticks = %u\n", secs * 1000 + (usecs / 1000));
-
 	return secs * 1000 + (usecs / 1000);
 }
 

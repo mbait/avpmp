@@ -474,31 +474,6 @@ BOOL ChangeDirectDrawObject()
 }
 
 
-/* di_func.cpp */
-unsigned char DebouncedGotAnyKey;
-unsigned char DebouncedKeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
-int GotJoystick;
-int GotMouse;
-int JoystickEnabled;
-int MouseVelX;
-int MouseVelY;
-
-void DirectReadKeyboard()
-{
-//	fprintf(stderr, "DirectReadKeyboard()\n");
-}
-
-void DirectReadMouse()
-{
-//	fprintf(stderr, "DirectReadMouse()\n");
-}
-
-void ReadJoysticks()
-{
-//	fprintf(stderr, "ReadJoysticks()\n");
-}
-
-
 /* dx_proj.cpp */
 int use_mmx_math = 0;
 

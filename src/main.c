@@ -9,6 +9,7 @@
 
 #include "3dc.h"
 #include "platform.h"
+#include "inline.h"
 #include "gamedef.h"
 #include "gameplat.h"
 #include "ffstdio.h"
@@ -27,12 +28,33 @@
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
+int DebouncedGotAnyKey;
+unsigned char DebouncedKeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
+int GotJoystick;
+int GotMouse;
+int JoystickEnabled;
+int MouseVelX;
+int MouseVelY;
+
 extern int ScanDrawMode; /* to fix image loading */
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock; /* this should be put in a header file */
-extern unsigned char DebouncedKeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
 extern unsigned char KeyboardInput[MAX_NUMBER_OF_INPUT_KEYS];
-extern int DebouncedGotAnyKey;
 extern unsigned char GotAnyKey;
+extern int NormalFrameTime;
+
+static SDL_Surface *surface;
+
+void DirectReadKeyboard()
+{
+}
+
+void DirectReadMouse()
+{
+}
+
+void ReadJoysticks()
+{
+}
 
 PROCESSORTYPES ReadProcessorType()
 {
@@ -42,8 +64,8 @@ PROCESSORTYPES ReadProcessorType()
 int InitialiseWindowsSystem()
 {
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
+	GotMouse = 1;
 
-#if 1	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -55,15 +77,18 @@ int InitialiseWindowsSystem()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
-	if (SDL_SetVideoMode(MyWidth, MyHeight, 0, SDL_OPENGL) == NULL) {
+	if ((surface = SDL_SetVideoMode(MyWidth, MyHeight, 0, SDL_OPENGL)) == NULL) {
 		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
 		SDL_Quit();
 		exit(EXIT_FAILURE);
 	}
 	
 	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
-	        
-//	SDL_ShowCursor(0);
+
+	/* -w will disable to first fullscreen, -f will turn it on */
+	SDL_WM_ToggleFullScreen(surface);
+	SDL_WM_GrabInput(SDL_GRAB_ON);
+	SDL_ShowCursor(0);	
 	                
 	glViewport(0, 0, MyWidth, MyHeight);
 	
@@ -82,7 +107,6 @@ int InitialiseWindowsSystem()
 /*	
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 */	
-#endif		
 	return 0;
 }
 
@@ -311,10 +335,8 @@ static int KeySymToKey(int keysym)
 	}
 }
 
-static void handle_keypress(int keysym, int press)
-{
-	int key = KeySymToKey(keysym);
-	
+static void handle_keypress(int key, int press)
+{	
 	if (key == -1)
 		return;
 
@@ -329,8 +351,8 @@ static void handle_keypress(int keysym, int press)
 
 void CheckForWindowsMessages()
 {
-#if 1
 	SDL_Event event;
+	int x, y, buttons;
 	
 	GotAnyKey = 0;
 	DebouncedGotAnyKey = 0;
@@ -340,19 +362,51 @@ void CheckForWindowsMessages()
 		do {
 			switch(event.type) {
 				case SDL_KEYDOWN:
-					handle_keypress(event.key.keysym.sym, 1);
+					handle_keypress(KeySymToKey(event.key.keysym.sym), 1);
 					break;
 				case SDL_KEYUP:
-					handle_keypress(event.key.keysym.sym, 0);
+					handle_keypress(KeySymToKey(event.key.keysym.sym), 0);
 					break;
 				case SDL_QUIT:
-					SDL_Quit();
-					exit(17); /* TODO tempy! */
+//					SDL_Quit();
+//					exit(17); /* TODO tempy! */
+					AvP.MainLoopRunning = 0; /* TODO */
 					break;
 			}
 		} while (SDL_PollEvent(&event));
 	}
-#endif	
+	
+	buttons = SDL_GetRelativeMouseState(&x, &y);
+	if (buttons & SDL_BUTTON(1))
+		handle_keypress(KEY_LMOUSE, 1);
+	else
+		handle_keypress(KEY_LMOUSE, 0);
+	if (buttons & SDL_BUTTON(2))
+		handle_keypress(KEY_MMOUSE, 1);
+	else
+		handle_keypress(KEY_MMOUSE, 0);
+	if (buttons & SDL_BUTTON(3))
+		handle_keypress(KEY_RMOUSE, 1);
+	else
+		handle_keypress(KEY_RMOUSE, 0);
+	MouseVelX = DIV_FIXED(x, NormalFrameTime);
+	MouseVelY = DIV_FIXED(y, NormalFrameTime);
+	
+	if (KeyboardInput[KEY_LEFTALT] && DebouncedKeyboardInput[KEY_CR]) {
+		SDL_WM_ToggleFullScreen(surface);
+	}
+
+	if (KeyboardInput[KEY_LEFTCTRL] && DebouncedKeyboardInput[KEY_G]) {
+		SDL_GrabMode gm;
+		
+		gm = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+		SDL_WM_GrabInput((gm == SDL_GRAB_ON) ? SDL_GRAB_OFF : SDL_GRAB_ON);
+	}
+	
+	if (DebouncedKeyboardInput[KEY_ESCAPE])
+		AvP.MainLoopRunning = 0;
+
+	/* ctrl-z for iconify window? */
 }
         
 void InGameFlipBuffers()
@@ -370,9 +424,7 @@ void ThisFramesRenderingHasBegun()
 /*	fprintf(stderr, "ThisFramesRenderingHasBegun()\n"); */
 
 /* TODO: this should be in D3D_DrawBackdrop */
-#if 1	
 	glClear(GL_COLOR_BUFFER_BIT);
-#endif	
 }
 
 void ThisFramesRenderingHasFinished()
@@ -431,6 +483,10 @@ int main(int argc, char *argv[])
 	MarineInputSecondaryConfig = DefaultMarineInputSecondaryConfig;
 	PredatorInputSecondaryConfig = DefaultPredatorInputSecondaryConfig;
 	AlienInputSecondaryConfig = DefaultAlienInputSecondaryConfig;
+	
+	ControlMethods = DefaultControlMethods; /* raise the default sensitivity for now */
+	ControlMethods.MouseXSensitivity = DEFAULT_MOUSEX_SENSITIVITY*2;
+	ControlMethods.MouseYSensitivity = DEFAULT_MOUSEY_SENSITIVITY*2;
 		
 	LoadKeyConfiguration();
 	
