@@ -122,6 +122,11 @@ extern void LoadCommonTextures(void);
 ****************************************************************************************KJL*/
 
 
+void LoadDDGraphic(struct DDGraphicTag *DDGfxPtr, char *Filename)
+{
+	fprintf(stderr, "LoadDDGraphic(%p, %s)\n", DDGfxPtr, Filename);
+}
+
 /****************************************
 *          SETTING UP THE HUD           *
 ****************************************/
@@ -136,8 +141,6 @@ void PlatformSpecificInitMarineHUD(void)
 	}
 	
 	//SelectGenTexDirectory(ITI_TEXTURE);
-
-	extern unsigned char *ScreenBuffer;
 
 	/* set game mode: different, though for multiplayer game */
 	if(AvP.Network==I_No_Network)
@@ -605,6 +608,8 @@ extern void BLTMarineNumericsToHUD(enum MARINE_HUD_DIGIT digitsToDraw)
     }
     while(digit--);
 }	
+
+#if 0 /* TODO: remove */
 static void BLTDigitToHUD(char digit, int x, int y, int font)
 {
 //	HRESULT ddrval;
@@ -674,7 +679,7 @@ static void BLTDigitToHUD(char digit, int x, int y, int font)
 */
 	fprintf(stderr, "BLTDigitToHUD(%d, %d, %d, %d)\n", digit, x, y, font);	
 }		  
-
+#endif
 
 
 void BLTGunSightToScreen(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsightShape)
@@ -685,6 +690,10 @@ void BLTGunSightToScreen(int screenX, int screenY, enum GUNSIGHT_SHAPE gunsightS
 		return;
 	}
 }
+
+
+#if 0 /* TODO: remove this directdraw code */
+
 
 /*KJL************************
 * PREDATOR DRAWING ROUTINES *
@@ -1187,8 +1196,6 @@ void BLTGraphicToScreen(HUDGRAPHIC* hgptr)
 
 
 
-
-
 /************************** FONTS *************************/
 /**********************************************************/
 /**********************************************************/
@@ -1415,7 +1422,7 @@ int BLTFontOffsetToHUD(PFFONT* font , int xdest, int ydest, int offset)
 
 
 
-
+#endif
 
 
 

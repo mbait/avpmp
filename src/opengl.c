@@ -173,32 +173,11 @@ static void DrawTriangles_T2F_C4UB_V4F()
 		case 3:
 			OUTPUT_TRIANGLE(0, 2, 1);
 			break;
-#if 0			
-		case 4:
-			OUTPUT_TRIANGLE(0, 1, 2);
-			OUTPUT_TRIANGLE(0, 2, 3);
-			break;
-#endif			
 		case 5:
 			OUTPUT_TRIANGLE(0, 1, 4);
 			OUTPUT_TRIANGLE(1, 3, 4);
 			OUTPUT_TRIANGLE(1, 2, 3);
 			break;
-#if 0			
-		case 6:
-			OUTPUT_TRIANGLE(0, 4, 5);
-			OUTPUT_TRIANGLE(0, 3, 4);
-			OUTPUT_TRIANGLE(0, 2, 3);
-			OUTPUT_TRIANGLE(0, 1, 2);
-			break;
-		case 7:
-			OUTPUT_TRIANGLE(0, 5, 6);
-			OUTPUT_TRIANGLE(0, 4, 5);
-			OUTPUT_TRIANGLE(0, 3, 4);
-			OUTPUT_TRIANGLE(0, 2, 3);
-			OUTPUT_TRIANGLE(0, 1, 2);
-			break;
-#endif			
 		case 8:
 			OUTPUT_TRIANGLE(0, 6, 7);
 		case 7:
@@ -208,11 +187,100 @@ static void DrawTriangles_T2F_C4UB_V4F()
 			OUTPUT_TRIANGLE(0, 3, 4);
 		case 4:
 			OUTPUT_TRIANGLE(0, 2, 3);
-			OUTPUT_TRIANGLE(0, 1, 2);
-			
+			OUTPUT_TRIANGLE(0, 1, 2);			
 			break;
 		default:
 			fprintf(stderr, "DrawTriangles_T2F_C4UB_V4F: tarr.elements = %d\n", tarr.elements);
+	}
+	glEnd();
+	
+#undef OUTPUT_TRIANGLE	
+#undef OUTPUT_VERTEX
+}
+
+static void DrawTriangles_T2F_V4F()
+{
+	
+#define OUTPUT_VERTEX(d) \
+{ \
+	glTexCoord2fv	(&tarr.t[(d) * 4]);	\
+	glVertex4fv	(&tarr.v[(d) * 4]);	\
+}
+#define OUTPUT_TRIANGLE(a, b, c) \
+{ \
+	OUTPUT_VERTEX((a));	\
+	OUTPUT_VERTEX((b));	\
+	OUTPUT_VERTEX((c));	\
+}
+
+	glBegin(GL_TRIANGLES);
+	switch(tarr.elements) {
+		case 3:
+			OUTPUT_TRIANGLE(0, 2, 1);
+			break;
+		case 5:
+			OUTPUT_TRIANGLE(0, 1, 4);
+			OUTPUT_TRIANGLE(1, 3, 4);
+			OUTPUT_TRIANGLE(1, 2, 3);
+			break;
+		case 8:
+			OUTPUT_TRIANGLE(0, 6, 7);
+		case 7:
+			OUTPUT_TRIANGLE(0, 5, 6);
+		case 6:
+			OUTPUT_TRIANGLE(0, 4, 5);
+			OUTPUT_TRIANGLE(0, 3, 4);
+		case 4:
+			OUTPUT_TRIANGLE(0, 2, 3);
+			OUTPUT_TRIANGLE(0, 1, 2);			
+			break;
+		default:
+			fprintf(stderr, "DrawTriangles_T2F_V4F: tarr.elements = %d\n", tarr.elements);
+	}
+	glEnd();
+	
+#undef OUTPUT_TRIANGLE	
+#undef OUTPUT_VERTEX
+}
+
+static void DrawTriangles_C4UB_V4F()
+{
+	
+#define OUTPUT_VERTEX(d) \
+{ \
+	glColor4ubv	(&tarr.c[(d) * 4]);	\
+	glVertex4fv	(&tarr.v[(d) * 4]);	\
+}
+#define OUTPUT_TRIANGLE(a, b, c) \
+{ \
+	OUTPUT_VERTEX((a));	\
+	OUTPUT_VERTEX((b));	\
+	OUTPUT_VERTEX((c));	\
+}
+
+	glBegin(GL_TRIANGLES);
+	switch(tarr.elements) {
+		case 3:
+			OUTPUT_TRIANGLE(0, 2, 1);
+			break;
+		case 5:
+			OUTPUT_TRIANGLE(0, 1, 4);
+			OUTPUT_TRIANGLE(1, 3, 4);
+			OUTPUT_TRIANGLE(1, 2, 3);
+			break;
+		case 8:
+			OUTPUT_TRIANGLE(0, 6, 7);
+		case 7:
+			OUTPUT_TRIANGLE(0, 5, 6);
+		case 6:
+			OUTPUT_TRIANGLE(0, 4, 5);
+			OUTPUT_TRIANGLE(0, 3, 4);
+		case 4:
+			OUTPUT_TRIANGLE(0, 2, 3);
+			OUTPUT_TRIANGLE(0, 1, 2);			
+			break;
+		default:
+			fprintf(stderr, "DrawTriangles_C4UB_V4F: tarr.elements = %d\n", tarr.elements);
 	}
 	glEnd();
 	
@@ -355,6 +423,8 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
 	if (texoffset) {
 		TextureHandle = (void *)ImageHeaderArray[texoffset].D3DTexture;
+		
+		CurrTextureHandle = TextureHandle;
 	} else {
 		TextureHandle = CurrTextureHandle;
 	}
@@ -366,7 +436,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	
 	CheckBoundTextureIsCorrect(TextureHandle->id);
 	
-//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
@@ -379,10 +448,10 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 
 //		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
 //			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
-			
+
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -394,29 +463,16 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		} else if (y1>Global_VDB_Ptr->VDB_ClipDown) {
 			y1=Global_VDB_Ptr->VDB_ClipDown;
 		}
-#endif
+
 		x = x1;
 		y = y1;
 						
-		x =  (x - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
-		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
+		x =  (x - (float)ScreenDescriptorBlock.SDB_CentreX - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreX - 0.5f);
+		y = -(y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
 
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 
-#if 0
-		glColor4ub(GammaValues[vertices->R], GammaValues[vertices->G], GammaValues[vertices->B], vertices->A);
-
-	/* they both work. */
-#if 0		
-		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
-		glVertex3f(x, y, z);
-#else
-		glTexCoord2f(s, t);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif
-
-#endif
 		
 		tarr.v[4*i+0] = x/rhw;
 		tarr.v[4*i+1] = y/rhw;
@@ -431,12 +487,23 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		tarr.c[4*i+2] = GammaValues[vertices->B];
 		tarr.c[4*i+3] = vertices->A;
 	}
-//	glEnd();
 
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_C4UB_V4F();
+
+	CheckBoundTextureIsCorrect(0);
 		
-	CurrTextureHandle = TextureHandle;
+	CheckTranslucencyModeIsCorrect(TRANSLUCENCY_GLOWING);
+	
+	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
+		RENDERVERTEX *vertices = &renderVerticesPtr[i];
+		
+		tarr.c[4*i+0] = GammaValues[vertices->SpecularR];
+		tarr.c[4*i+1] = GammaValues[vertices->SpecularG];
+		tarr.c[4*i+2] = GammaValues[vertices->SpecularB];
+		tarr.c[4*i+3] = 255;
+	}
+	DrawTriangles_C4UB_V4F();
 }
 
 void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
@@ -447,7 +514,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 	GLfloat ZNear;
 	float RecipW, RecipH;
 
-		
 	ZNear = (GLfloat) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
 	
 	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
@@ -464,7 +530,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 	
 	CheckBoundTextureIsCorrect(TextureHandle->id);
 	
-//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
@@ -480,7 +545,7 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -503,18 +568,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 //		z = 1.0 - 2*ZNear/zvalue;
 		z = 1.0f;
 
-#if 0		
-		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
-
-	/* they both work. */
-#if 0		
-		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
-		glVertex3f(x, y, z);
-#else
-		glTexCoord2f(s, t);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif
-#endif
 		tarr.v[4*i+0] = x/rhw;
 		tarr.v[4*i+1] = y/rhw;
 		tarr.v[4*i+2] = z/rhw;
@@ -528,7 +581,6 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 		tarr.c[4*i+2] = vertices->B;
 		tarr.c[4*i+3] = vertices->A;		
 	}
-//	glEnd();
 
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_C4UB_V4F();
@@ -570,7 +622,6 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		RecipH = 1.0f / height;
 	}
 	
-//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);                
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -588,7 +639,7 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 			
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -610,18 +661,6 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 
-#if 0
-		glColor4ub(vertices->R, vertices->G, vertices->B, vertices->A);
-
-	/* they both work. */
-#if 0		
-		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
-		glVertex3f(x, y, z);
-#else
-		glTexCoord2f(s, t);
-		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif
-#endif		
 		tarr.v[4*i+0] = x/rhw;
 		tarr.v[4*i+1] = y/rhw;
 		tarr.v[4*i+2] = z/rhw;
@@ -635,7 +674,6 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		tarr.c[4*i+2] = vertices->B;
 		tarr.c[4*i+3] = vertices->A;
 	}
-//	glEnd();
 
 	tarr.elements = RenderPolygon.NumberOfVertices;
 	DrawTriangles_T2F_C4UB_V4F();
@@ -655,7 +693,7 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 	int r, g, b, a;
 	
 	ZNear = (float) (Global_VDB_Ptr->VDB_ClipZ * GlobalScale);
-	
+
 	CheckTranslucencyModeIsCorrect(decalDescPtr->TranslucencyType);
 	
 	if (decalPtr->DecalID == DECAL_FMV) {
@@ -723,7 +761,7 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -814,7 +852,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 			g = (particlePtr->Colour >> 8)  & 0xFF;
 			b = (particlePtr->Colour >> 16) & 0xFF;
 			a = (particlePtr->Colour >> 24) & 0xFF;
-	
+
 			glColor4ub(
 				MUL_FIXED(intensity,r),
 				MUL_FIXED(intensity,g),
@@ -843,7 +881,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		glColor4ub(FastRandom()&255, FastRandom()&255, FastRandom()&255, particleDescPtr->Alpha);
 	}
 
-	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);	
+//	SelectPolygonBeginType(RenderPolygon.NumberOfVertices);	
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
@@ -859,7 +897,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
 
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -880,22 +918,34 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		y = -(y - ScreenDescriptorBlock.SDB_CentreY)/ScreenDescriptorBlock.SDB_CentreY;
 		
 		if (particleDescPtr->IsDrawnInFront) {
-			z = -1.0f;
+			z = -0.999f; /* ... */
 		} else if (particleDescPtr->IsDrawnAtBack) {
-			z = 1.0f;
+			z = 0.999f;
 		} else {
-			z = 1.0 - 2*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
+			z = 1.0 - 2.0*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
 		}
 
+#if 0
 #if 0		
 		glTexCoord4f(s*rhw, t*rhw, 0, rhw);
 		glVertex3f(x, y, z);
 #else
 		glTexCoord2f(s, t);
 		glVertex4f(x/rhw, y/rhw, z/rhw, 1/rhw);
-#endif		
+#endif
+#endif
+		tarr.v[4*i+0] = x/rhw;
+		tarr.v[4*i+1] = y/rhw;
+		tarr.v[4*i+2] = z/rhw;
+		tarr.v[4*i+3] = 1/rhw;
+		
+		tarr.t[4*i+0] = s;
+		tarr.t[4*i+1] = t;
 	}
-	glEnd();
+//	glEnd();
+
+	tarr.elements = RenderPolygon.NumberOfVertices;
+	DrawTriangles_T2F_V4F();
 }
 
 void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
@@ -917,7 +967,7 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {
@@ -972,7 +1022,7 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		
 		x1 = (vertices->X*(Global_VDB_Ptr->VDB_ProjX+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreX;
 		y1 = (vertices->Y*(Global_VDB_Ptr->VDB_ProjY+1))/vertices->Z+Global_VDB_Ptr->VDB_CentreY;
-#if 0
+#if 1
 		if (x1<Global_VDB_Ptr->VDB_ClipLeft) {
 			x1=Global_VDB_Ptr->VDB_ClipLeft;
 		} else if (x1>Global_VDB_Ptr->VDB_ClipRight) {

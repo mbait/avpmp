@@ -37,7 +37,7 @@ void EmptyCDTrackList()
 	}
 }
 
-#define CDTrackFileName "CD Tracks.txt"
+#define CDTrackFileName "cd tracks.txt"
 
 
 static void ExtractTracksForLevel(char* & buffer,List<int> & track_list)

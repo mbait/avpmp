@@ -28,8 +28,6 @@
 
 #include "iofocus.h"
 
-//#include "statpane.h"
-
 #include "font.h"
 
 #include "hudgadg.hpp"
@@ -39,7 +37,6 @@
 
 #include "missions.hpp"
 
-#include "rebmenus.hpp"
 #include "indexfnt.hpp"
 	// Includes for console variables:
 	#include "textexp.hpp"
@@ -61,10 +58,6 @@
 /* Version settings ************************************************/
 
 /* Constants *******************************************************/
-	#define DEFAULT_KEY_STATUS_PANEL_WEAPONS ( KEY_TAB )
-	#define DEFAULT_KEY_STATUS_PANEL_INVENTORY ( KEY_V )
-	#define DEFAULT_KEY_STATUS_PANEL_OBJECTIVES ( KEY_O )
-	#define DEFAULT_KEY_STATUS_PANEL_GAMESTATS ( KEY_G )
 
 /* Macros **********************************************************/
 
@@ -85,19 +78,6 @@
 		extern int bEnableTextprintXY;
 		extern signed int HUDTranslucencyLevel;
 
-
-		#if 0
-		extern OurBool			DaveDebugOn;
-		extern FDIEXTENSIONTAG	FDIET_Dummy;
-		extern IFEXTENSIONTAG	IFET_Dummy;
-		extern FDIQUAD			FDIQuad_WholeScreen;
-		extern FDIPOS			FDIPos_Origin;
-		extern FDIPOS			FDIPos_ScreenCentre;
-		extern IFOBJECTLOCATION IFObjLoc_Origin;
-		extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-		extern IFCOLOUR			IFColour_Dummy;
- 		extern IFVECTOR			IFVec_Zero;
-		#endif
 #ifdef __cplusplus
 	};
 #endif
@@ -122,8 +102,6 @@
 		void DumpRefCounts(void);
 		void DumpVideoMode(void);
 	};
-
-	static void davehook_HandleStatusPanelControls(void);
 
 	static int bFirstFrame = No;
 
@@ -323,7 +301,7 @@
 
 void DAVEHOOK_Init(void)
 {
-	SCString* pSCString_TestLeak = new SCString("this is a test memory leak");
+	static SCString* pSCString_TestLeak = new SCString("this is a test memory leak");
 
 	MissionHacks :: TestInit();
 
@@ -342,21 +320,10 @@ void DAVEHOOK_Init(void)
 	ConsoleCommand :: CreateAll();
 	#endif
 
-	#if 0//UseRebMenus
-	{
-		RebMenus :: Init();
-	}
-	#endif
-
 }
 
 void DAVEHOOK_UnInit(void)
 {
-	#if 0//UseRebMenus
-	{
-		RebMenus :: UnInit();
-	}
-	#endif
 	IndexedFont :: UnloadFont(DATABASE_MESSAGE_FONT);
 
 	GADGET_UnInit();
@@ -379,10 +346,6 @@ void DAVEHOOK_Maintain(void)
 	// Hacked in input support:
 	#if SupportWindows95
 	{
-		#if EnableStatusPanels
-		davehook_HandleStatusPanelControls();
-		#endif
-
 		#if 0
 		if ( KeyboardInput[ KEY_J ] )
 		{
@@ -427,14 +390,6 @@ void DAVEHOOK_Maintain(void)
 //		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
 	}
 	#endif // SupportWindows95
-
-	/* KJL 20:14:23 28/03/98 - for now I've disabled the calls to the menus while in-game */
-	#if 0//UseRebMenus
-	{
-		RebMenus :: Maintain();
-		RebMenus :: Render();
-	}
-	#endif
 }
 
 void DAVEHOOK_ScreenModeChange_Setup(void)
@@ -445,10 +400,6 @@ void DAVEHOOK_ScreenModeChange_Cleanup(void)
 {
 	R2BASE_ScreenModeChange_Cleanup();
 	GADGET_ScreenModeChange_Cleanup();
-
-	#if 0
-	LoadPFFont(MENU_FONT_1);
-	#endif
 
 	bFirstFrame = Yes;
 		// to ensure a flush without processing of messages in first frame, so as to
@@ -524,73 +475,3 @@ void Testing :: DumpVideoMode(void)
 	pSCString_Feedback -> SendToScreen();
 	pSCString_Feedback -> R_Release();
 }
-
-#if EnableStatusPanels
-static void davehook_HandleStatusPanelControls(void)
-{
-	/*
-		DHM 27/1/98:
-		------------
-		This code ought to be rewritten in terms of the PLAYER_INPUT_CONFIGURATION
-		code in USR_IO.C
-
-		I've done it as a bit of a hack here to avoid messing up people's saved
-		control config files, and because there's no more room on the control config
-		screen for redefining these keys.
-
-		It will depend on whether the status panels stay in the final version.
-	*/
-	if ( IOFOCUS_AcceptControls())
-	{
-		if
-		(
-			KeyboardInput[ DEFAULT_KEY_STATUS_PANEL_WEAPONS ]
-		)
-		{
-			STATPANE_RequestStatusPanel
-			(
-				I_StatusPanel_Weapons
-			);
-			return;
-		}
-
-		if
-		(
-			KeyboardInput[ DEFAULT_KEY_STATUS_PANEL_INVENTORY ]
-		)
-		{
-			STATPANE_RequestStatusPanel
-			(
-				I_StatusPanel_Inventory
-			);
-			return;
-		}
-
-		if
-		(
-			KeyboardInput[ DEFAULT_KEY_STATUS_PANEL_OBJECTIVES ]
-		)
-		{
-			STATPANE_RequestStatusPanel
-			(
-				I_StatusPanel_Objectives
-			);
-			return;
-		}
-
-		if
-		(
-			KeyboardInput[ DEFAULT_KEY_STATUS_PANEL_GAMESTATS ]
-		)
-		{
-			STATPANE_RequestStatusPanel
-			(
-				I_StatusPanel_GameStats
-			);
-			return;
-		}
-	}
-
-	STATPANE_NoRequestedPanel();
-}
-#endif // EnableStatusPanels

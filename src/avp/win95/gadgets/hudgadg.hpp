@@ -43,10 +43,6 @@
 			#endif
 		#endif
 
-		#ifndef _statpane_h
-		#include "statpane.h"
-		#endif
-
 	class TextReportGadget; // fully declared in TREPGADG.HPP
 
 	// HUD Gadget is an abstract base class for 3 types of HUD; one for each species

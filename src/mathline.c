@@ -636,32 +636,6 @@ __asm__("fld	fti_fptmp		\n\t"
 #endif
 }
 
-#if 0
-int FloatToInt(float fptmp)
-{
-#if 1
-	fti_fptmp = fptmp;
-/*
-	_asm
-	{
-		fld fptmp
-		fistp itmp
-	}
-*/
-__asm__("fld	fti_fptmp		\n\t"
-	"fistp	fti_itmp		\n\t"
-	:
-	:
-	: "memory", "cc"
-	);
-
-	return fti_itmp;
-#else
-	return fptmp;
-#endif	
-}
-#endif
-
 void TranslatePoint(float *source, float *dest, float *matrix)
 {
 //      fprintf(stderr, "TranslatePoint(%f, %f, %f)\n");

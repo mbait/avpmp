@@ -257,7 +257,6 @@ int AVP_ChangeDisplayMode
 	/* JH 3/6/97 - don't quit kill off the images - still keep buffers in system memory
 	   that are not linked to direct draw */
     MinimizeAllImages();
-	MinimizeAllDDGraphics();
     ReleaseDirect3DNotDDOrImages();
 
     finiObjectsExceptDD();

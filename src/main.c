@@ -89,6 +89,10 @@ int InitialiseWindowsSystem()
 	
 	SDL_WM_SetCaption("Aliens vs Predator", "Aliens vs Predator");
 
+	/* this is for supporting keyboard input processing with little hassle */
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+	SDL_EnableUNICODE(1); /* toggle it to ON */
+      
 	/* -w will disable to first fullscreen, -f will turn it on */
 //	SDL_WM_ToggleFullScreen(surface);
 //	SDL_WM_GrabInput(SDL_GRAB_ON);
@@ -105,6 +109,7 @@ int InitialiseWindowsSystem()
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0, 1.0);
 	
 	glEnable(GL_TEXTURE_2D);
 
@@ -588,12 +593,15 @@ int main(int argc, char *argv[])
 //	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
 	
 	AvP.PlayerType = I_Marine;
-	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
+//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
 
 //	AvP.PlayerType = I_Predator;
 //	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
 
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
+//	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);
+	
+//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_COOP); /* coop/skirmish */
 
 //	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
