@@ -1436,7 +1436,7 @@ void CreateMarineBot(VECTORCH *Position, int weapon)
 		}
 		
 		{
-			MOVEMENT_DATA *movementData;
+			const MOVEMENT_DATA *movementData;
 
 			marineStatus->speedConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
 			marineStatus->accelerationConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
@@ -1734,7 +1734,7 @@ void InitMarineBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		marineStatus->roundsForThisTarget=0;
 
 		{
-			MOVEMENT_DATA *movementData;
+			const MOVEMENT_DATA *movementData;
 
 			marineStatus->speedConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
 			marineStatus->accelerationConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
@@ -2058,7 +2058,7 @@ void CreateMarineDynamic(STRATEGYBLOCK *Generator,MARINE_NPC_WEAPONS weapon_for_
 		}
 		
 		{
-			MOVEMENT_DATA *movementData;
+			const MOVEMENT_DATA *movementData;
 
 			marineStatus->speedConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
 			marineStatus->accelerationConstant=(ONE_FIXED-8192)+(FastRandom()&16383);
@@ -8728,7 +8728,7 @@ static void HandleMovingAnimations(STRATEGYBLOCK *sbPtr) {
 	MARINE_STATUS_BLOCK *marineStatusPointer;    
 	MARINE_MOVEMENT_STYLE style;
 	MARINE_BHSTATE baseState;
-	MOVEMENT_DATA *movementData;
+	const MOVEMENT_DATA *movementData;
 	VECTORCH offset;
 	int can_mooch_bored;
 	int can_mooch_alert;

@@ -209,7 +209,7 @@ extern int New_NPC_IsObstructed(STRATEGYBLOCK *sbPtr, NPC_AVOIDANCEMANAGER *mana
 extern void Initialise_AvoidanceManager(STRATEGYBLOCK *sbPtr, NPC_AVOIDANCEMANAGER *manager);
 extern AVOIDANCE_RETURN_CONDITION AllNewAvoidanceKernel(STRATEGYBLOCK *sbPtr,NPC_AVOIDANCEMANAGER *manager);
 /* All New Avoidance Code! */
-extern MOVEMENT_DATA *GetThisMovementData(MOVEMENT_DATA_INDEX index);
+extern const MOVEMENT_DATA *GetThisMovementData(MOVEMENT_DATA_INDEX index);
 extern void AlignVelocityToGravity(STRATEGYBLOCK *sbPtr,VECTORCH *velocity);
 
 extern int NPC_targetIsPlayer; 
