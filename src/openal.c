@@ -12,6 +12,7 @@
 
 #include "3dc.h"
 #include "platform.h"
+#include "inline.h"
 #include "psndplat.h"
 #include "gamedef.h"
 #include "avpview.h"
@@ -112,13 +113,13 @@ int PlatPlaySound(int activeIndex)
 	if (!PlatSoundHasStopped(activeIndex))		
 		PlatStopSound (activeIndex);
 		
-//	if (ActiveSounds[activeIndex].loop)
-//		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
-//	else
-		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
-
 	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_BUFFER,
 		   GameSounds[si].dsBufferP);
+
+	if (ActiveSounds[activeIndex].loop)
+		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_TRUE);
+	else
+		alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING, AL_FALSE);
 
 
 	if (ActiveSounds[activeIndex].pitch != GameSounds[si].pitch) {
@@ -453,13 +454,17 @@ fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 	} 
 	
 	if ((rfmt == AUDIO_S16LSB) || (rfmt == AUDIO_S16MSB)) {
+		int bps;
+		
 		if (rchan == 2) {
 			rfmt = AL_FORMAT_STEREO16;
-			seclen = len / (rfreq * 2 * 2);
+			bps = rfreq * 2 * 2;
 		} else if (rchan == 1) {
 			rfmt = AL_FORMAT_MONO16;
-			seclen = len / (rfreq * 2);
+			bps = rfreq * 2 * 1;
 		}
+		
+		seclen = DIV_FIXED(len, bps);
 	} else
 		return (unsigned char *)0;
 	

@@ -113,8 +113,9 @@ void SoundSys_Management(void)
 		if(ActiveSounds[i].soundIndex==SID_NOSOUND) continue; /* empty slot */
 		numActive++;
 
-		if(PlatSoundHasStopped(i)!=0 && !ActiveSounds[i].paused)
+		if(PlatSoundHasStopped(i) && !ActiveSounds[i].paused)
 		{
+printf("SoundSys_Management: %d\n", i);
 			Sound_Stop(i);
 			continue;			
 		}
@@ -343,7 +344,6 @@ void Sound_Play(SOUNDINDEX soundNumber, char *format, ...)
 	int reverb_off = 0;
 	int soundStartPosition = 0;
 
-printf("1 Play: %d\n", soundNumber);
 	{
 		extern int PlaySounds;
 		if (!PlaySounds) return;
@@ -351,16 +351,11 @@ printf("1 Play: %d\n", soundNumber);
 
 	if(!SoundSwitchedOn) return;
 
-printf("2 Play\n");
 
 	/* check soundIndex for bounds, whether it has been loaded, and number of instances */
 	if((soundNumber<0)||(soundNumber>=SID_MAXIMUM)) return;
-printf("A Play: %s\n", GameSounds[soundNumber].wavName);	
 	if(!(GameSounds[soundNumber].loaded)) return;
-printf("B Play\n");	
 	if(!(GameSounds[soundNumber].activeInstances<SOUND_MAXINSTANCES)) return;
-
-printf("3 Play\n");
 
 	db_logf5(("About to play sound %i", soundNumber));
 
@@ -452,8 +447,6 @@ printf("3 Play\n");
 		return;
 	}
 
-printf("4 Play\n");
-
 	/* Deal with resource allocation. */
 	{
 		/* Range of active buffers to search. */
@@ -496,6 +489,7 @@ printf("4 Play\n");
 				db_log3("Failed to find a lower priority sound.");
 				return; /* give up */
 			}
+printf("Play We cannot be here already: %d!\n", newIndex);			
 			/* remove it, and use it's slot */
 			db_log3("Stopping a lower priority sound.");
 			Sound_Stop(newIndex);
@@ -517,7 +511,8 @@ printf("4 Play\n");
 	ActiveSounds[newIndex].reverb_off=reverb_off;
 	if(loop) ActiveSounds[newIndex].loop = 1;
 	else ActiveSounds[newIndex].loop = 0;
-printf("Play: new = %d.  num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
+//printf("Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
+printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].wavName, loop);
 	if(worldPosn) 
 	{
 		VECTORCH zeroPosn = {0,0,0};
@@ -588,8 +583,11 @@ void Sound_Stop(int activeSoundNumber)
 		*(ActiveSounds[activeSoundNumber].externalRef) = SOUND_NOACTIVEINDEX;      
 			
 	/* stop the sound: it may have already stopped, of course, but never mind */
+	
 	PlatStopSound(activeSoundNumber);
-
+	
+printf("Stop: %d %d %s\n", activeSoundNumber, soundNo, GameSounds[soundNo].wavName);
+	
 	/* release the active sound slot */
 	{	/* CEM - FIXME: hack */
 		int buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
