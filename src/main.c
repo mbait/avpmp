@@ -7,6 +7,9 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#define _GNU_SOURCE
+#include <getopt.h>
+              
 #include "fixer.h"
 
 #include "3dc.h"
@@ -43,6 +46,10 @@ extern unsigned char GotAnyKey;
 extern int NormalFrameTime;
 
 SDL_Surface *surface;
+
+static int WantFullscreen = 1;
+static int WantSound = 1;
+static int WantCDRom = 1;
 
 #if GL_EXT_secondary_color
 PFNGLSECONDARYCOLORPOINTEREXTPROC pglSecondaryColorPointerEXT;
@@ -291,7 +298,7 @@ char *GetVideoModeDescription3()
 int InitSDL()
 {
 	SDL_Rect **SDL_AvailableVideoModes;
-	
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -363,7 +370,10 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 
 		SDL_FreeSurface(surface);
 	} else {
-		isfull = 0;
+		if (WantFullscreen)
+			isfull = 1;
+		else
+			isfull = 0;
 		isgrab = SDL_GRAB_OFF;
 	}
 	
@@ -379,11 +389,6 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	SDL_EnableUNICODE(1); /* toggle it to ON */
       
-	/* -w will disable first fullscreen, -f will turn it on */
-//	SDL_WM_ToggleFullScreen(surface);
-//	SDL_WM_GrabInput(SDL_GRAB_ON);
-//	SDL_ShowCursor(0);	
-	
 	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
@@ -423,7 +428,10 @@ int SetOGLVideoMode(int Width, int Height)
 
 		SDL_FreeSurface(surface);
 	} else {
-		isfull = 0;
+		if (WantFullscreen)
+			isfull = 1;
+		else
+			isfull = 0;
 		isgrab = SDL_GRAB_OFF;
 	}
 
@@ -445,11 +453,6 @@ int SetOGLVideoMode(int Width, int Height)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	SDL_EnableUNICODE(1); /* toggle it to ON */
       
-	/* -w will disable first fullscreen, -f will turn it on */
-//	SDL_WM_ToggleFullScreen(surface);
-//	SDL_WM_GrabInput(SDL_GRAB_ON);
-//	SDL_ShowCursor(0);	
-
 	if (isfull && !(surface->flags & SDL_FULLSCREEN)) {
 		SDL_WM_ToggleFullScreen(surface);
 		if (surface->flags & SDL_FULLSCREEN)
@@ -468,7 +471,6 @@ int SetOGLVideoMode(int Width, int Height)
 	glLoadIdentity();
 
 	glEnable(GL_BLEND);
-//	glBlendFunc(GL_ONE, GL_ONE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	
 	glEnable(GL_DEPTH_TEST);
@@ -962,11 +964,69 @@ int ExitWindowsSystem()
 	return 0;
 }
 
-int main(int argc, char *argv[])
-{	
+static struct option getopt_long_options[] = {
+{ "help",	0,	NULL,	'h' },
+{ "version",	0,	NULL,	'v' },
+{ "fullscreen",	0,	NULL,	'f' },
+{ "windowed",	0,	NULL,	'w' },
+{ "nosound",	0,	NULL,	's' },
+{ "nocdrom",	0,	NULL,	'c' },
+{ "debug",	0,	NULL,	'd' },
 /*
-	printf("%s", AvPVersionString);
-*/	
+{ "loadrifs",	0,	NULL,	'l' },
+{ "server",	0,	someval,	1 },
+{ "client",	1,	someval,	2 },
+*/
+{ NULL,		0,	NULL,	0 },
+};
+
+static const char *usage_string =
+"Aliens vs Predator Linux - http://www.icculus.org/avp/\n"
+"Based on Rebellion Developments AvP Gold source\n"
+"      [-h | --help]           Display this help message\n"
+"      [-v | --version]        Display the game version\n"
+"      [-f | --fullscreen]     Run the game fullscreen\n"
+"      [-w | --windowed]       Run the game in a window\n"
+"      [-s | --nosound]        Do not access the soundcard\n"
+"      [-c | --nocdrom]        Do not access the CD-ROM\n"
+;
+         
+int main(int argc, char *argv[])
+{			
+	int c;
+	
+	opterr = 0;
+	while ((c = getopt_long(argc, argv, "hvfwscd", getopt_long_options, NULL)) != -1) {
+		switch(c) {
+			case 'h':
+				printf("%s", usage_string);
+				exit(EXIT_SUCCESS);
+			case 'v':
+				printf("%s", AvPVersionString);
+				exit(EXIT_SUCCESS);
+			case 'f':
+				WantFullscreen = 1;
+				break;
+			case 'w':
+				WantFullscreen = 0;
+				break;
+			case 's':
+				WantSound = 0;
+				break;
+			case 'c':
+				WantCDRom = 0;
+				break;
+			case 'd': {
+				extern int DebuggingCommandsActive;
+				DebuggingCommandsActive = 1;
+				}
+				break;
+			default:
+				printf("%s", usage_string);
+				exit(EXIT_FAILURE);	
+		}
+	}
+
 	if (InitSDL() == -1) {
 		fprintf(stderr, "Could not find a sutable resolution!\n");
 		fprintf(stderr, "At least 512x384 is needed.  Does OpenGL work?\n");
@@ -977,14 +1037,8 @@ int main(int argc, char *argv[])
 	
 	SetFastRandom();
 	
-/*	WeWantAnIntro(); */
+	WeWantAnIntro();
 	GetPathFromRegistry();
-#if 0
-{
-	extern int DebuggingCommandsActive;
-	DebuggingCommandsActive = 1;
-}
-#endif
 
 #if MARINE_DEMO
 	ffInit("fastfile/mffinfo.txt","fastfile/");
@@ -1007,8 +1061,8 @@ int main(int argc, char *argv[])
 	
 	LoadKeyConfiguration();
 	
-	SoundSys_Start();
-	CDDA_Start();
+	if (WantSound) SoundSys_Start();
+	if (WantCDRom) CDDA_Start();
 	
 	InitTextStrings();
 	
@@ -1018,8 +1072,9 @@ int main(int argc, char *argv[])
 	AvP.LevelCompleted = 0;
 	LoadSounds("PLAYER");
 
-	AvP.CurrentEnv = AvP.StartingEnv = 0; /* are these even used? */
-	
+	/* is this still neccessary? */
+	AvP.CurrentEnv = AvP.StartingEnv = 0;
+
 #if ALIEN_DEMO
 	AvP.PlayerType = I_Alien;
 	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
@@ -1029,26 +1084,6 @@ int main(int argc, char *argv[])
 #elif MARINE_DEMO
 	AvP.PlayerType = I_Marine;
 	SetLevelToLoad(AVP_ENVIRONMENT_INVASION);
-#else		
-//	AvP.PlayerType = I_Alien;
-//	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE); /* starting alien level */
-//	SetLevelToLoad(AVP_ENVIRONMENT_INVASION_A);
-	
-	AvP.PlayerType = I_Marine;
-//	SetLevelToLoad(AVP_ENVIRONMENT_DERELICT); /* starting marine level */
-//	SetLevelToLoad(AVP_ENVIRONMENT_COLONY);
-	
-//	AvP.PlayerType = I_Predator;
-//	SetLevelToLoad(AVP_ENVIRONMENT_WATERFALL); /* starting predator level */
-//	SetLevelToLoad(AVP_ENVIRONMENT_TEMPLE_P);
-
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_MP); /* multiplayer */
-//	SetLevelToLoad(AVP_ENVIRONMENT_SUBWAY_MP);
-	
-//	SetLevelToLoad(AVP_ENVIRONMENT_LEADWORKS_COOP); /* coop/skirmish */
-	SetLevelToLoad(AVP_ENVIRONMENT_JOCKEY_COOP);
-		
-//	SetLevelToLoad(AVP_ENVIRONMENT_E3DEMOSP); /* demo level */
 #endif
 
 #if !(ALIEN_DEMO|PREDATOR_DEMO|MARINE_DEMO)	
@@ -1160,8 +1195,6 @@ if (AvP_MainMenus())
 		case I_GM_Menus:
 			AvP.GameMode = I_GM_Playing;
 			break;
-		case I_GM_Paused:
-//			break;
 		default:
 			fprintf(stderr, "AvP.MainLoopRunning: gamemode = %d\n", AvP.GameMode);
 			exit(EXIT_FAILURE);

@@ -6,7 +6,7 @@
 [DONE] [12/05/01] Progress bar.
 [DONE] [12/06/01] Make vidmodes work.
 [DONE] [12/08/01] Debug "pure virtual method called"
-* Command line options.
+[DONE] [12/09/01] Command line options.
 * Proper file loading/saving (ignore case, search certain directories) and
   config handling (~/.avp/{ge, re, ad, md, pd}/?)
 * Joystick support.
@@ -32,14 +32,6 @@
   etc.)
 * Release new version. And fix bugs, and release new version, and so on.
 ----
-* Command line:
-      [-h | --help]           Display this help message
-      [-v | --version]        Display the game version
-      [-f | --fullscreen]     Run the game fullscreen
-      [-w | --windowed]       Run the game in a window
-      [-s | --nosound]        Do not access the soundcard
-      [-c | --nocdrom]        Do not access the CD-ROM
---debug   enable debug mode
 * Debug, verify, and reimplant the inline functions in mathline.c to
   inline.h
 * Remove unused files.

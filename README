@@ -43,7 +43,7 @@ can just use unzip to extract the files from the .exe), add -DALIEN_DEMO to
 the CFLAGS line (the one that's uncommented) in the Makefile. Rename all game 
 files lowercase. Be sure to install SDL 1.2 (http://www.libsdl.org) with
 OpenGL support, nasm 0.98, and the latest OpenAL CVS (http://www.openal.org).
-AvP requires a 3d card with OpenGL support to work.
+AvP requires a 3D card with OpenGL support to work.
 
 Create the MPConfig and User_Profiles directories if they do not exist. 
 (Note: Windows profiles probably do not work in Linux and vice versa)
@@ -80,8 +80,8 @@ Linux Port-specific commands:
 
 
 The source code that was released only works with Aliens vs Predator Gold. 
-In the future I'd like this port to support Gold, Regular and the Alien
-demo.  (The Marine and Predator demos are a bit older and might not work.)
+This port currently supports Gold Edition, Regular, and the Alien demo.
+(The Marine and Predator demos are a bit older and might not work.)
 
 
 At least with the Gold edition, a number of files are encoded on the CD. So
@@ -97,13 +97,12 @@ http://blemished.net/chcase.html for renaming the files.
 
 Apparantly AvP Gold is no longer available at most places.  I had ordered my
 copy May 2001 from http://www.dragon.ca, but they no longer list it. 
-Someone did mention in an avpnews forum post (see below) that 
-http://www.qvc.com does have AvP Gold, so you may want to try there.  Try
-searching the bargin bin at your local computer store.
+Try searching http://www.amazon.com, http://www.ebgames.com, 
+http://www.ebay.com, or the bargin bin at your local computer store.
 
-What are the differences between AvP and AvP Gold?
-http://www.aliensvpredator.com/ubb/Forum2/HTML/001635.html
-http://www.aliensvpredator.com/ubb/Forum2/HTML/001680.html
+
+It is unknown if the Mac Gold Edition will work with this (I'd be interested
+in knowing if it does or not).
 
 
 The full motion sequences cannot be played because they are encoded with
@@ -118,7 +117,8 @@ http://www.avpnews.com.
 Last, but surely not least:
 Thanks go out to Chuck Mason for testing and the OpenAL code, Dan Olson for
 trying the code out with the Regular version, Zachary 'zakk' Slater for
-providing feedback, and Ryan C. Gordon for hosting this project.
+providing tons of feedback, Tim Beckmann for sending patches, and Ryan C. 
+Gordon for hosting this project.
 
 ---
 Steven Fuller <relnev@icculus.org>
