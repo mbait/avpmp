@@ -86,7 +86,7 @@ int *Global_EID_IPtr;
 
 extern float CameraZoomScale;
 extern int CameraZoomLevel;
-extern int AlienBiteAttackInProgress=0;
+int AlienBiteAttackInProgress;
 
 /* phase for cloaked objects */
 int CloakingPhase;
@@ -253,8 +253,42 @@ void LightSourcesInRangeOfObject(DISPLAYBLOCK *dptr)
 			lightElementPtr++;
 		}
 	}
+}
 
+int LightIntensityAtPoint(VECTORCH *pointPtr)
+{
+	int intensity = 0;
+	int i, j;
+	
+	DISPLAYBLOCK **activeBlockListPtr = ActiveBlockList;
+	for(i = NumActiveBlocks; i != 0; i--) {
+		DISPLAYBLOCK *dispPtr = *activeBlockListPtr++;
+		
+		if (dispPtr->ObNumLights) {
+			for(j = 0; j < dispPtr->ObNumLights; j++) {
+				LIGHTBLOCK *lptr = dispPtr->ObLights[j];
+				VECTORCH disp = lptr->LightWorld;
+				int dist;
+				
+				disp.vx -= pointPtr->vx;
+				disp.vy -= pointPtr->vy;
+				disp.vz -= pointPtr->vz;
+				
+				dist = Approximate3dMagnitude(&disp);
+				
+				if (dist<lptr->LightRange) {
+					intensity += WideMulNarrowDiv(lptr->LightBright,lptr->LightRange-dist,lptr->LightRange);
+				}
+			}
+		}
+	}
+	if (intensity>ONE_FIXED) intensity=ONE_FIXED;
+	else if (intensity<GlobalAmbience) intensity=GlobalAmbience;
+	
+	/* KJL 20:31:39 12/1/97 - limit how dark things can be so blood doesn't go green */
+	if (intensity<10*256) intensity = 10*256;
 
+	return intensity;
 }
 
 EULER HeadOrientation = {0,0,0};

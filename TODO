@@ -5,7 +5,7 @@
 [DONE] [12/05/01] Menus.
 [DONE] [12/05/01] Progress bar.
 [DONE] [12/06/01] Make vidmodes work.
-* Debug "pure virtual method called"
+[DONE] [12/08/01] Debug "pure virtual method called"
 * Command line options.
 * Proper file loading/saving (ignore case, search certain directories) and
   config handling (~/.avp/{ge, re, ad, md, pd}/?)

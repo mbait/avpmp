@@ -145,7 +145,34 @@ int GetTextureHandle(IMAGEHEADER *imageHeaderPtr)
 	return 1;
 }
 
-/* d3d_render.cpp -- some of these got mixed in with d3_func.cpp! */
+void ReleaseDirect3DNotDDOrImages()
+{
+/*
+	fprintf(stderr, "ReleaseDirect3DNotDDOrImages()\n");
+*/	
+}
+
+void ReleaseDirect3DNotDD()
+{
+/*
+	fprintf(stderr, "ReleaseDirect3DNotDD()\n");
+*/	
+}
+
+void ReleaseDirect3D()
+{
+/*
+	fprintf(stderr, "ReleaseDirect3D()\n");
+*/
+}
+
+void ReloadImageIntoD3DImmediateSurface(IMAGEHEADER* iheader)
+{
+	fprintf(stderr, "ReloadImageIntoD3DImmediateSurface(%p)\n", iheader);
+}
+
+
+/* d3d_render.cpp */
 int NumberOfLandscapePolygons;
 int FMVParticleColour;
 int WireFrameMode;
@@ -153,12 +180,13 @@ int WaterFallBase;
 
 void InitDrawTest()
 {
+/*
 	fprintf(stderr, "InitDrawTest()\n");
+*/
 }
 
 void CheckWireFrameMode(int shouldBeOn)
 {
-//	fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
 	if (shouldBeOn)
 		fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
 }
@@ -175,29 +203,9 @@ BOOL UnlockExecuteBufferAndPrepareForUse()
 	return FALSE;
 }
 
-void ReloadImageIntoD3DImmediateSurface(IMAGEHEADER* iheader)
-{
-	fprintf(stderr, "ReloadImageIntoD3DImmediateSurface(%p)\n", iheader);
-}
-
-void ReleaseDirect3DNotDDOrImages()
-{
-	fprintf(stderr, "ReleaseDirect3DNotDDOrImages()\n");
-}
-
-void ReleaseDirect3DNotDD()
-{
-	fprintf(stderr, "ReleaseDirect3DNotDD()\n");
-}
-
-void ReleaseDirect3D()
-{
-	fprintf(stderr, "ReleaseDirect3D()\n");
-}
-
 BOOL ExecuteBuffer()
 {
-//	fprintf(stderr, "ExecuteBuffer()\n");
+	fprintf(stderr, "ExecuteBuffer()\n");
 	
 	return FALSE;
 }
@@ -209,10 +217,13 @@ BOOL EndD3DScene()
 	return FALSE;
 }
 
+
 /* ddplat.cpp */
 void MinimizeAllDDGraphics()
 {
+/*
 	fprintf(stderr, "MinimizeAllDDGraphics()\n");
+*/	
 }
 
         
@@ -232,12 +243,16 @@ void LockSurfaceAndGetBufferPointer()
 
 void finiObjectsExceptDD()
 {
+/*
 	fprintf(stderr, "finiObjectsExceptDD()\n");
+*/	
 }
 
 void finiObjects()
 {
+/*
 	fprintf(stderr, "finiObjects()\n");
+*/	
 }
 
 void UnlockSurface()
@@ -267,21 +282,25 @@ void ReleaseDDSurface(void* DDSurface)
 
 BOOL ChangeDirectDrawObject()
 {
+/*
 	fprintf(stderr, "ChangeDirectDrawObject()\n");
-	
+*/	
 	return FALSE;
 }
 
 int SelectDirectDrawObject(void *pGUID)
 {
+/*
 	fprintf(stderr, "SelectDirectDrawObject(%p)\n", pGUID);
-
+*/
 	return 0;
 }
 
 void GenerateDirectDrawSurface()
 {
+/*
 	fprintf(stderr, "GenerateDirectDrawSurface()\n");
+*/	
 }
 
 
