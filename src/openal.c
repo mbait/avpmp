@@ -498,7 +498,8 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 	ALint len, seclen = 0;
 	unsigned char *nb;
 	void *udata;
-	ALushort rfmt, rchan, rfreq, rsize;
+	ALushort rfmt, rchan, rfreq;
+	ALuint rsize;
 		
 	fprintf(stderr, "ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
 
@@ -510,7 +511,7 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
 	}
 	
-	if (acLoadWAV (bufferPtr, (ALuint *) &rsize, &udata, &rfmt,
+	if (acLoadWAV (bufferPtr, &rsize, &udata, &rfmt,
 			&rchan, &rfreq) == NULL) {
 		fprintf (stderr, "Unable to convert data\n");
 		return (unsigned char *)0;

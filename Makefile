@@ -1,12 +1,17 @@
 CC = gcc
+CXX = gcc
+#CC = gcc-3.0
+#CXX = gcc-3.0
 NASM = nasm
 
 CFLAGS = -g -Wall -pipe -O2 -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+#CFLAGS = -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentiumpro -mcpu=pentiumpro -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
 CXXFLAGS = $(CFLAGS)
 LDLIBS = -lm
 
 CFLAGS += `sdl-config --cflags`
 LDLIBS += -L/usr/X11R6/lib -lX11 -lXext -lGL `sdl-config --libs` -lopenal -lm
+#LDLIBS += -lstdc++
 
 AFLAGS = -g -Iinclude/ -w+macro-params -w+orphan-labels -w+number-overflow
 
@@ -50,7 +55,7 @@ OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(SUPPORTOBJ) $(AVPWIN95OBJ) $(FRONTENDO
 all: AvP
 
 AvP: depend $(OBJ)
-	gcc -o AvP $(OBJ) $(LDLIBS)
+	$(CC) -o AvP $(OBJ) $(LDLIBS)
 
 compile: $(OBJ)
 

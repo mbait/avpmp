@@ -21,21 +21,7 @@ extern "C" {
 #define VARARG_DECL
 #endif
 
-#ifdef __GNUC__
-
-#if __GNUC__ >= 2 && __GNUC_MINOR__ >= 5
-extern void
-VARARG_DECL fail (const char * __format, ...)
-     __attribute__ ((noreturn, format (printf, 1, 2)));
-#else
-extern __volatile__ void VARARG_DECL fail (const char * __format, ...);
-#endif
-
-#else
-
 extern void VARARG_DECL fail (const char * __format, ...);
-
-#endif
 
 #ifdef __cplusplus
 }
