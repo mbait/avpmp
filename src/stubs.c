@@ -18,18 +18,9 @@
 #include "d3d_hud.h"
 
 
-extern IMAGEHEADER ImageHeaderArray[];
-
 /* winmain.c */
 BOOL KeepMainRifFile = FALSE;
 int HWAccel = 1;
-
-
-/* win_func.cpp */
-void CheckForWindowsMessages()
-{
-	fprintf(stderr, "CheckForWindowsMessages()\n");
-}
 
 
 /* krender.c -- thought this file was unused */
@@ -476,16 +467,6 @@ BOOL UnlockExecuteBufferAndPrepareForUse()
 	return FALSE;
 }
 
-void ThisFramesRenderingHasBegun()
-{
-	fprintf(stderr, "ThisFramesRenderingHasBegun()\n");
-}
-
-void ThisFramesRenderingHasFinished()
-{
-	fprintf(stderr, "ThisFramesRenderingHasFinished()\n");
-}
-
 void SecondFlushD3DZBuffer()
 {
 	fprintf(stderr, "SecondFlushD3DZBuffer()\n");
@@ -533,26 +514,6 @@ BOOL EndD3DScene()
 	fprintf(stderr, "EndD3DScene()\n");
 	
 	return FALSE;
-}
-
-static void *CurrTextureHandle;
-void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVerticesPtr)
-{
-	int texoffset;
-	void *TextureHandle;
-	
-	texoffset = inputPolyPtr->PolyColour & ClrTxDefn;
-	if (texoffset) {
-		TextureHandle = (void *)ImageHeaderArray[texoffset].D3DHandle;
-	} else {
-		TextureHandle = CurrTextureHandle;
-	}
-	
-	fprintf(stderr, "D3D_ZBufferedGouraudTexturedPolygon_Output(%p, %p)\n", inputPolyPtr, renderVerticesPtr);
-	fprintf(stderr, "\tRenderPolygon.NumberOfVertices = %d\n", RenderPolygon.NumberOfVertices);
-	fprintf(stderr, "\ttexoffset = %d (ptr = %p)\n", texoffset, texoffset ? (void *)ImageHeaderArray[texoffset].D3DHandle : CurrTextureHandle);
-	
-	CurrTextureHandle = TextureHandle;
 }
 
 void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr)

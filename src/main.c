@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <SDL/SDL.h>
+#include <GL/gl.h>
+
 #include "fixer.h"
 
 #include "3dc.h"
@@ -32,11 +35,75 @@ int InitialiseWindowsSystem()
 {
 	ScanDrawMode = ScanDrawD3DHardwareRGB;
 	
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "SDL Init failed: %s\n", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	
+	if (SDL_SetVideoMode(640, 480, 0, SDL_OPENGL) == NULL) {
+		fprintf(stderr, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+		SDL_Quit();
+		exit(EXIT_FAILURE);
+	}
+	
+	glViewport(0, 0, 640, 480);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-1, 1, -1, 1, 1, 1000);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
 	return 0;
 }
 
+void CheckForWindowsMessages()
+{
+	SDL_Event event;
+	
+	if (SDL_PollEvent(&event)) {
+		do {
+			switch(event.type) {
+				case SDL_KEYDOWN:
+					break;
+				case SDL_KEYUP:
+					break;
+				case SDL_QUIT:
+					SDL_Quit();
+					exit(17); /* TODO tempy! */
+					break;
+			}
+		} while (SDL_PollEvent(&event));
+	}
+}
+        
+void InGameFlipBuffers()
+{
+	SDL_GL_SwapBuffers();
+}
+
+void ThisFramesRenderingHasBegun()
+{
+	fprintf(stderr, "ThisFramesRenderingHasBegun()\n");
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void ThisFramesRenderingHasFinished()
+{
+	fprintf(stderr, "ThisFramesRenderingHasFinished()\n");
+}
+                
 int ExitWindowsSystem()
 {
+	SDL_Quit();
+	
 	return 0;
 }
 
@@ -176,9 +243,7 @@ int main(int argc, char *argv[])
 
 			ThisFramesRenderingHasFinished();
 
-/* NOT YET			
 			InGameFlipBuffers();
-*/
 			
 			FrameCounterHandler();
 			{
@@ -209,7 +274,7 @@ int main(int argc, char *argv[])
 			RestartLevel();
 		}
 		
-		break; /* TODO -- remove when loop works */
+//		break; /* TODO -- remove when loop works */
 	}
 	
 	AvP.LevelCompleted = thisLevelHasBeenCompleted;

@@ -126,6 +126,9 @@ int GetFileAttributesA(const char *file);
 int SetFilePointer(HANDLE file, int x, int y, int z);
 int SetEndOfFile(HANDLE file);
 
+unsigned int timeGetTime();
+unsigned int GetTickCount();
+
 #ifdef __cplusplus
 };
 #endif

@@ -1111,7 +1111,7 @@ a = itmp;}
 
 #else
 
-#if 0
+#if 1 /* GCC! */
 void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c);
 void ADD_LL_PP(LONGLONGCH *c, LONGLONGCH *a);
 void SUB_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c);
@@ -1134,9 +1134,11 @@ void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m);
 
 int FloatToInt(float);
 #define f2i(a, b) { a = FloatToInt(b); }
-#endif
+
+#else /* inline stuff */
 
 /* ADD */
+
 
 static __inline__ void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 {
@@ -1319,21 +1321,21 @@ static __inline__ int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 	}
 */
 /* TODO */
-__asm__("xorl	%0, %0			\n\t"
-	"movl	0(%%ebx), %%eax		\n\t"
+__asm__("movl	0(%%ebx), %%eax		\n\t"
 	"movl	4(%%ebx), %%edx		\n\t"
 	"subl	0(%%ecx), %%eax		\n\t"
 	"sbbl	4(%%ecx), %%edx		\n\t"
+	"xorl	%0, %0                  \n\t" /* hopefully it doesn't pick %eax or %edx */
 	"andl	%%edx, %%edx		\n\t"
-	"jne	llnz			\n\t"
+	"jne	0			\n\t" /* llnz */
 	"andl	%%eax, %%eax		\n\t"
-	"je	llgs			\n"
-"llnz:					\n\t"
+	"je	1			\n"   /* llgs */
+"0:					\n\t" /* llnz */
 	"movl	$1, %0			\n\t"
 	"andl	%%edx, %%edx		\n\t"
-	"jge	llgs			\n\t"
+	"jge	1			\n\t" /* llgs */
 	"negl	%0			\n"
-"llgs:					\n\t"
+"1:					\n\t" /* llgs */
 	: "=r" (retval)
 	: "b" (a), "c" (b)
 	: "%eax", "%edx", "memory", "cc"
@@ -1411,13 +1413,13 @@ static __inline__ void ASR_LL(LONGLONGCH *a, int shift)
 	}
 */
 __asm__("andl	%%eax, %%eax		\n\t"
-	"jle	asrdn			\n"
-"asrlp:					\n\t"
+	"jle	0			\n" /* asrdn */
+"1:					\n\t" /* asrlp */
 	"sarl	$1, 4(%%esi)		\n\t"
 	"rcrl	$1, 0(%%esi)		\n\t"
 	"decl	%%eax			\n\t"
-	"jne	asrlp			\n"
-"asrdn:					\n\t"
+	"jne	1			\n"
+"0:					\n\t"
 	:
 	: "S" (a), "a" (shift)
 	: "memory", "cc"
@@ -1589,6 +1591,7 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 
 static __inline__ int WideMulNarrowDiv(int a, int b, int c)
 {
+#if 0 /* TODO: broken? */
 	int retval;
 /*
 	_asm
@@ -1607,6 +1610,8 @@ __asm__("imull	%2			\n\t"
 	: "cc"
 	);	
 	return retval;
+#endif
+	return (a * b) / c;	
 }
 
 /*
@@ -1781,8 +1786,10 @@ static void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m)
 extern int sqrt_temp1;
 extern int sqrt_temp2;
 
+#include <math.h>
 static __inline__ int SqRoot32(int A)
 {
+#if 0
 	sqrt_temp1 = A;
 /*
 	_asm
@@ -1806,6 +1813,13 @@ __asm__("finit				\n\t"
 	);
 	
 	return sqrt_temp2;
+#endif
+{ /* TODO: clean this please */
+	double x = A;
+	double retvald = sqrt(x);
+	int retval = retvald;
+	return retval;
+}
 }
 
 #endif
@@ -1823,6 +1837,7 @@ extern int fti_itmp;
 
 static __inline__ int FloatToInt(float fptmp)
 {
+#if 0
 	fti_fptmp = fptmp;
 /*
 	_asm
@@ -1839,6 +1854,9 @@ __asm__("fld	fti_fptmp		\n\t"
 	);
 
 	return fti_itmp;
+#endif	
+
+	return fptmp;
 }
 
 /*
@@ -1850,6 +1868,8 @@ __asm__("fld	fti_fptmp		\n\t"
 #define f2i(a, b) { \
 a = FloatToInt(b); \
 }
+
+#endif 
 
 #endif
 

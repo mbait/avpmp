@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/time.h>
 
 #include "fixer.h"
 
@@ -182,16 +183,34 @@ int SetEndOfFile(HANDLE file)
 }
 
 /* time in miliseconds */
-int timeGetTime()
+struct timeval tv0;
+
+unsigned int timeGetTime()
 {
-	fprintf(stderr, "timeGetTime()\n");
+	struct timeval tv1;
+	int secs, usecs;
 	
-	return 0;
+	if (tv0.tv_sec == 0) {
+		gettimeofday(&tv0, NULL);
+	
+		return 0;
+	}
+	
+	gettimeofday(&tv1, NULL);
+	
+	secs = tv1.tv_sec - tv0.tv_sec;
+	usecs = tv1.tv_usec - tv0.tv_usec;
+	if (usecs < 0) {
+		usecs += 1000000;
+		secs--;
+	}
+
+printf("Ticks = %u\n", secs * 1000 + (usecs / 1000));
+
+	return secs * 1000 + (usecs / 1000);
 }
 
-int GetTickCount()
+unsigned int GetTickCount()
 {
-	fprintf(stderr, "GetTickCount()\n");
-	
-	return 0;
+	return timeGetTime();
 }

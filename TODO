@@ -1,1 +1,4 @@
+* Debug, verify, and reimplant the inline functions in mathline.c to
+  inline.h
+
 

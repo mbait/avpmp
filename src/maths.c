@@ -1009,7 +1009,7 @@ void MatrixToEuler(MATRIXCH *m, EULER *e)
 		}
 
 		else CosMatrixPitch = 1;
-	
+
 		SineMatrixYaw = WideMulNarrowDiv(
 			#if j_and_r_change
 			m->mat31 >> m2e_scale, ONE_FIXED_S, CosMatrixPitch);
@@ -2090,9 +2090,12 @@ int PointInPolygon(int *point, int *polygon, int c, int ppsize)
   /* go back to first point */
   polyp = polygon;
 
+dx = 0; /* TODO: uninitialized?? */
+
   /* for each point */
   while (0 != c)
   {
+    
     /* is this line straddling the x co-ordinate of the point? */
     /* if not it is not worth testing for intersection with the half-line */
     /* we must be careful to get the strict and non-stict inequalities */
