@@ -246,11 +246,6 @@ void InitDrawTest()
 	fprintf(stderr, "InitDrawTest()\n");
 }
 
-void SetFogDistance(int fogDistance)
-{
-	fprintf(stderr, "SetFontDistance(%d)\n", fogDistance);
-}
-
 void CheckWireFrameMode(int shouldBeOn)
 {
 //	fprintf(stderr, "CheckWireFrameMode(%d)\n", shouldBeOn);
@@ -288,11 +283,6 @@ void ReleaseDirect3DNotDD()
 void ReleaseDirect3D()
 {
 	fprintf(stderr, "ReleaseDirect3D()\n");
-}
-
-void ReleaseD3DTexture(void* D3DTexture)
-{
-	fprintf(stderr, "ReleaseD3DTexture(%p)\n", D3DTexture);
 }
 
 BOOL ExecuteBuffer()

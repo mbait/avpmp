@@ -437,6 +437,15 @@ GLuint CreateOGLTexture(D3DTexture *tex, unsigned char *buf)
 	return h;
 }
 
+void ReleaseD3DTexture(void *tex)
+{
+	D3DTexture *TextureHandle = (D3DTexture *)tex;
+	
+	glDeleteTextures(1, &(TextureHandle->id));
+	
+	free(TextureHandle);
+}
+
 /* ** */
 
 void ThisFramesRenderingHasBegun()
@@ -473,7 +482,7 @@ void D3D_DecalSystem_Setup()
 
 	/* this does stop zfighting with bulletmarks on walls... */
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(-10.0, -10.0);
+	glPolygonOffset(-8.0, -8.0);
 }
 
 void D3D_DecalSystem_End()

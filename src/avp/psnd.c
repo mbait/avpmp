@@ -115,7 +115,6 @@ void SoundSys_Management(void)
 
 		if(PlatSoundHasStopped(i) && !ActiveSounds[i].paused)
 		{
-printf("SoundSys_Management: %d\n", i);
 			Sound_Stop(i);
 			continue;			
 		}
@@ -489,7 +488,7 @@ void Sound_Play(SOUNDINDEX soundNumber, char *format, ...)
 				db_log3("Failed to find a lower priority sound.");
 				return; /* give up */
 			}
-printf("Play We cannot be here already: %d!\n", newIndex);			
+
 			/* remove it, and use it's slot */
 			db_log3("Stopping a lower priority sound.");
 			Sound_Stop(newIndex);
@@ -511,8 +510,10 @@ printf("Play We cannot be here already: %d!\n", newIndex);
 	ActiveSounds[newIndex].reverb_off=reverb_off;
 	if(loop) ActiveSounds[newIndex].loop = 1;
 	else ActiveSounds[newIndex].loop = 0;
-//printf("Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
+
+printf("Play: new = %d. num = %d, p = %d, v = %d, pi = %d, l = %d, mi = %d, rev = %d\n", newIndex, soundNumber, priority, volume, pitch, loop, marine_ignore, reverb_off);
 printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].wavName, loop);
+
 	if(worldPosn) 
 	{
 		VECTORCH zeroPosn = {0,0,0};
@@ -553,19 +554,21 @@ printf("Play: %d %d %s l:%d\n", newIndex, soundNumber, GameSounds[soundNumber].w
 	GameSounds[soundNumber].activeInstances++;
 	if(externalRef) *externalRef = newIndex;
 
+/* only will happen because of savegames */
 //	if(soundStartPosition && ActiveSounds[newIndex].dsBufferP)
 //	{
 //		//sound starts part of the way in
 //		IDirectSoundBuffer_SetCurrentPosition(ActiveSounds[newIndex].dsBufferP,soundStartPosition);
 //	}
 	if (soundStartPosition)
-		printf("Sound_Play: sound starts part of the way in (%d)\n", soundStartPosition);
+		fprintf(stderr, "Sound_Play: sound starts part of the way in (%d)\n", soundStartPosition);
 }
 
 void Sound_Stop(int activeSoundNumber)
 {
 	SOUNDINDEX soundNo;
-
+	int buf;
+	
 	if(!SoundSwitchedOn) return;
 	/* validate argument */
 	if(activeSoundNumber<0) return;
@@ -589,11 +592,9 @@ void Sound_Stop(int activeSoundNumber)
 printf("Stop: %d %d %s\n", activeSoundNumber, soundNo, GameSounds[soundNo].wavName);
 	
 	/* release the active sound slot */
-	{	/* CEM - FIXME: hack */
-		int buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
-		ActiveSounds[activeSoundNumber] = BlankActiveSound;
-		ActiveSounds[activeSoundNumber].ds3DBufferP = buf;
-	}
+	buf = ActiveSounds[activeSoundNumber].ds3DBufferP;
+	ActiveSounds[activeSoundNumber] = BlankActiveSound;
+	ActiveSounds[activeSoundNumber].ds3DBufferP = buf;
 }
 
 void Sound_ChangeVolume(int activeSoundNumber, int volume)
@@ -844,12 +845,13 @@ void Save_SoundState(int* soundHandle)
 		//by Sound_Play
 		block->volume<<=7;
 		block->volume/=VOLUME_PLAT2DSCALE;
-		
+
+/* only for savegames */		
 //		if(sound->dsBufferP)
 //			IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
 //		else
 			block->position = 0;
-printf("Save_SoundState: GetCurrentPosition!\n");
+fprintf(stderr, "Save_SoundState: GetCurrentPosition!\n");
 		
 		strcpy((char*)(block+1),name);
 		
@@ -935,11 +937,12 @@ void Save_SoundsWithNoReference()
 				block->volume<<=7;
 				block->volume/=VOLUME_PLAT2DSCALE;
 
+/* savegames */
 //				if(sound->dsBufferP)
 //					IDirectSoundBuffer_GetCurrentPosition(sound->dsBufferP,(LPDWORD)&block->position,NULL);
 //				else
 					block->position = 0;
-				printf("Save_SoundsWithNoReference: GetCurrentPosition!\n");
+				fprintf(stderr, "Save_SoundsWithNoReference: GetCurrentPosition!\n");
 				
 				strcpy((char*)(block+1),name);
 			}

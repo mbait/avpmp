@@ -471,7 +471,9 @@ void KRenderItems(VIEWDESCRIPTORBLOCK *VDBPtr)
 
 	ProfileStart();
 	{
+#if FOG_ON
 		int fogDistance = 0x7f000000;
+#endif
 
 		int o = numVisObjs;
 		while(o--)
@@ -519,9 +521,10 @@ void KRenderItems(VIEWDESCRIPTORBLOCK *VDBPtr)
 				VisibleObjects[o].DrawBeforeEnvironment = 0;
 			}
 		}
-
+#if FOG_ON
 		if (fogDistance<0) fogDistance=0;
 		SetFogDistance(fogDistance);
+#endif	
 	}
 	ProfileStop("OBJS IN MOD TESTS");
 	DrawingAReflection=0;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -21,7 +22,6 @@
 #include "dynblock.h"
 #include "stratdef.h"
 
- /* psndplat.cpp */
 ACTIVESOUNDSAMPLE ActiveSounds[SOUND_MAXACTIVE];
 ACTIVESOUNDSAMPLE BlankActiveSound = {SID_NOSOUND,ASP_Minimum,0,0,NULL,0,0,0,0,0, { {0,0,0},{0,0,0},0,0 }, 0, 0, { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, NULL, NULL, NULL};
 SOUNDSAMPLEDATA BlankGameSound = {0,0,0,0,0,NULL,0,0,NULL,0};
@@ -30,19 +30,27 @@ SOUNDSAMPLEDATA GameSounds[SID_MAXIMUM];
 ALCdevice *AvpSoundDevice;
 ALvoid *AvpSoundContext;
 
+/*
+TODO
+Three problems:
+1. AL_PITCH code does not work right.
+   a. bug in openal (causes a sound to keep repeating)
+   b. i probably don't give it the right value anyway.
+2. there is currently no stereo separation. either openal or my error.
+3. There is no EAX/Reverb.  But there's probably not much I can do...
+*/
 int PlatStartSoundSys()
 {
 	int i;
 	ALfloat pos[] = { 0.0, 0.0, 0.0 },
-	       vel[] = { 0.0, 0.0, 0.0 },
-	       or[] = { 0.0, 0.0, 1.0, 0.0, -1.0, 0.0 };
+		vel[] = { 0.0, 0.0, 0.0 },
+		or[] = { 0.0, 0.0, 1.0, 0.0, -1.0, 0.0 };
+		
 	int attrlist[] = {
 		ALC_FREQUENCY, 22050,
 		ALC_SYNC, AL_FALSE,
 		0
 	};
-	       
-	fprintf(stderr, "PlatStartSoundSys()\n");
 	
 	AvpSoundDevice = alcOpenDevice ("'( (sampling-rate 22050 ))");
 	AvpSoundContext = alcCreateContext (AvpSoundDevice, attrlist);
@@ -60,8 +68,8 @@ int PlatStartSoundSys()
 	for (i = 0; i < SOUND_MAXACTIVE; i++) {
 		ALuint p;
 		
-		alGenSources (1, &(ActiveSounds[i].ds3DBufferP));
-		p = ActiveSounds[i].ds3DBufferP;
+		alGenSources (1, &p);
+		ActiveSounds[i].ds3DBufferP = p;
 
 		ActiveSounds[i].PropSetP_pos[0] = 0.0;
 		ActiveSounds[i].PropSetP_pos[1] = 0.0;
@@ -75,14 +83,12 @@ int PlatStartSoundSys()
 			return -1;
 		}
 		
-		alSourcef (p, AL_PITCH, 1.0f);
-		alSourcef (p, AL_GAIN, 1.0f);
-		alSourcefv (p, AL_POSITION, ActiveSounds[i].PropSetP_pos);
-		alSourcefv (p, AL_VELOCITY, ActiveSounds[i].PropSetP_vel);
-
-/* these are just guessed values for now */		
-		alSourcef (p, AL_REFERENCE_DISTANCE, 5200.0f);
-		alSourcef (p, AL_ROLLOFF_FACTOR, 2.0f);
+		alSourcef(p, AL_PITCH, 1.0f);
+		alSourcef(p, AL_GAIN, 1.0f);
+		alSourcefv(p, AL_POSITION, ActiveSounds[i].PropSetP_pos);
+		alSourcefv(p, AL_VELOCITY, ActiveSounds[i].PropSetP_vel);
+		
+		alSourcef(p, AL_ROLLOFF_FACTOR, 0);
 	}
 	
 	return 1;
@@ -90,22 +96,14 @@ int PlatStartSoundSys()
 
 void PlatEndSoundSys()
 {
-	fprintf(stderr, "PlatEndSoundSys()\n");
-}
-
-int PlatChangeGlobalVolume(int volume)
-{
-	fprintf(stderr, "PlatChangeGlobalVolume(%d)\n", volume);
-	
-	return 1;
+/* TODO - free everything */
+	printf("PlatEndSoundSys()\n");
 }
 
 int PlatPlaySound(int activeIndex)
 {
 	int si;
 	
-	fprintf(stderr, "PlatPlaySound(%d)\n", activeIndex);
-
 	if ((activeIndex < 0) || (activeIndex >= SOUND_MAXACTIVE))
 		return 0;
 	si = ActiveSounds[activeIndex].soundIndex;
@@ -127,49 +125,37 @@ int PlatPlaySound(int activeIndex)
 
 
 	if (ActiveSounds[activeIndex].pitch != GameSounds[si].pitch) {
-		int ok = PlatChangeSoundPitch (activeIndex, ActiveSounds[activeIndex].pitch);
-		if (ok == SOUND_PLATFORMERROR) {
-			PlatStopSound (activeIndex);
-			return ok;
-		}
+		PlatChangeSoundPitch (activeIndex, ActiveSounds[activeIndex].pitch);
 	}
 	
-	if (ActiveSounds[activeIndex].threedee) {
-			
+	if (ActiveSounds[activeIndex].threedee) {			
 		alSourcei(ActiveSounds[activeIndex].ds3DBufferP, AL_SOURCE_RELATIVE, AL_FALSE);
-		alSourcef(ActiveSounds[activeIndex].ds3DBufferP, AL_GAIN, 1.0f);
-		PlatDo3dSound (activeIndex);		
-
+		
+		PlatDo3dSound (activeIndex);
 	} else {
 		ALfloat zero[3] = { 0.0f, 0.0f, 0.0f };
-		int newVolume, ok;
+		int newVolume;
 		
 		alSourcei(ActiveSounds[activeIndex].ds3DBufferP, AL_SOURCE_RELATIVE, AL_TRUE);
-		alSourcef(ActiveSounds[activeIndex].ds3DBufferP, AL_GAIN, 0.7f);
 		alSourcefv(ActiveSounds[activeIndex].ds3DBufferP, AL_POSITION, zero);
 		alSourcefv(ActiveSounds[activeIndex].ds3DBufferP, AL_VELOCITY, zero);
-		
+			
 		newVolume = ActiveSounds[activeIndex].volume;
 		newVolume = (newVolume * VOLUME_PLAT2DSCALE) >> 7;
 		ActiveSounds[activeIndex].volume = newVolume;
 		
-		ok = PlatChangeSoundVolume (activeIndex, ActiveSounds[activeIndex].volume);
-		if (ok == SOUND_PLATFORMERROR) {
-			PlatStopSound (activeIndex);
-			return ok;
-		}
+		PlatChangeSoundVolume (activeIndex, ActiveSounds[activeIndex].volume);
 	}
-	
 	
 	
 	if (!ActiveSounds[activeIndex].paused) {
 		alSourcePlay (ActiveSounds[activeIndex].ds3DBufferP);
 		
 		if (ActiveSounds[activeIndex].loop) {
-			fprintf (stderr, "Playing sound %i %s looping in slot %i\n",
+			printf("Playing sound %i %s looping in slot %i\n",
 				si, GameSounds[si].wavName, activeIndex);
 		} else {
-			fprintf (stderr, "Playing sound %i %s once in slot %i\n",
+			printf("Playing sound %i %s once in slot %i\n",
 				si, GameSounds[si].wavName, activeIndex);
 		}
 	}
@@ -179,7 +165,7 @@ int PlatPlaySound(int activeIndex)
 
 void PlatStopSound(int activeIndex)
 {
-	fprintf(stderr, "PlatStopSound(%d)\n", activeIndex);
+	printf("PlatStopSound(%d)\n", activeIndex);
 	
 //	if (ActiveSounds[activeIndex].paused)
 //		alSourcePause (ActiveSounds[activeIndex].ds3DBufferP);
@@ -189,18 +175,41 @@ void PlatStopSound(int activeIndex)
 		alSourceStop (ActiveSounds[activeIndex].ds3DBufferP);
 }
 
+/* table generated by:
+   c = -600.0 / log10(.5);
+   x = pow(10, (double)vol_to_atten_table[volume]/c);
+*/   
+static float vol_to_gain_table[] = {
+0.000000f, 0.000011f, 0.000054f, 0.000142f, 0.000279f, 0.000474f, 0.000730f, 0.001052f,
+0.001441f, 0.001904f, 0.002444f, 0.003061f, 0.003764f, 0.004544f, 0.005417f, 0.006382f,
+0.007434f, 0.008579f, 0.009820f, 0.011164f, 0.012604f, 0.014147f, 0.015788f, 0.017538f,
+0.019393f, 0.021369f, 0.023438f, 0.025619f, 0.027937f, 0.030360f, 0.032880f, 0.035526f,
+0.038296f, 0.041187f, 0.044194f, 0.047366f, 0.050649f, 0.054034f, 0.057512f, 0.061143f,
+0.064929f, 0.068869f, 0.072880f, 0.077035f, 0.081428f, 0.085872f, 0.090454f, 0.095171f,
+0.100018f, 0.104991f, 0.110083f, 0.115423f, 0.120882f, 0.126452f, 0.132127f, 0.138057f,
+0.143919f, 0.150205f, 0.156402f, 0.162856f, 0.169576f, 0.176369f, 0.183222f, 0.190342f,
+0.197510f, 0.204948f, 0.212421f, 0.220166f, 0.227931f, 0.235969f, 0.244008f, 0.252613f,
+0.260918f, 0.269496f, 0.278355f, 0.287507f, 0.296616f, 0.306013f, 0.315344f, 0.324960f,
+0.334869f, 0.344681f, 0.355191f, 0.365177f, 0.375877f, 0.386445f, 0.397309f, 0.408479f,
+0.419478f, 0.430773f, 0.442372f, 0.454284f, 0.465978f, 0.477973f, 0.490276f, 0.502896f,
+0.515246f, 0.528509f, 0.541488f, 0.554144f, 0.567752f, 0.581023f, 0.595291f, 0.609205f,
+0.622725f, 0.637280f, 0.651423f, 0.666649f, 0.681444f, 0.695762f, 0.711203f, 0.726986f,
+0.742262f, 0.757858f, 0.773782f, 0.790041f, 0.806642f, 0.823591f, 0.839926f, 0.856584f,
+0.873573f, 0.890899f, 0.908568f, 0.926588f, 0.944965f, 0.962594f, 0.980552f, 1.000000f
+};
+
+int PlatChangeGlobalVolume(int volume)
+{
+	alListenerf(AL_GAIN, vol_to_gain_table[volume]);
+
+	return 1;
+}
+
 int PlatChangeSoundVolume(int activeIndex, int volume)
 {
-//	float nv = 127.0f / (float) volume;
-	
-	fprintf(stderr, "PlatChangeSoundVolume(%d, %d)\n", activeIndex, volume);
-	
-//	if (nv > 1.0)
-//		nv = 1.0;
-		
-//	alSourcef (ActiveSounds[activeIndex].ds3DBufferP, 
-//		   AL_MAX_GAIN, nv);
-		   
+	alSourcef(ActiveSounds[activeIndex].ds3DBufferP,
+		AL_GAIN, vol_to_gain_table[volume]);
+
 	return 1;
 }
 
@@ -208,7 +217,7 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 {
 	float frequency;
 	
-	fprintf(stderr, "PlatChangeSoundPitch(%d, %d)\n", activeIndex, pitch);
+	printf("FREQ PlatChangeSoundPitch(%d, %d)\n", activeIndex, pitch);
 
 	if ((pitch < PITCH_MIN) || (pitch >= PITCH_MAX))
 		return 0;
@@ -219,12 +228,11 @@ int PlatChangeSoundPitch(int activeIndex, int pitch)
 //		SOUNDINDEX gsi = ActiveSounds[activeIndex].soundIndex;
 //		frequency = ToneToFrequency (GameSounds[gsi].dsFrequency,
 //			GameSounds[gsi].pitch, pitch);
-		frequency = (128.0f / ((float)pitch + 127.0));
 	}
 	
 	ActiveSounds[activeIndex].pitch = pitch;
 	
-//	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, frequency);	
+//	alSourcei (ActiveSounds[activeIndex].ds3DBufferP, AL_PITCH, pow(12, (double)pitch/5506.502401107));
 
 	return 1;
 }
@@ -233,7 +241,7 @@ int PlatSoundHasStopped(int activeIndex)
 {
 	ALint val;
 	
-	fprintf(stderr, "PlatSoundHasStopped(%d)\n", activeIndex);
+	printf("PlatSoundHasStopped(%d)\n", activeIndex);
 
 	alGetSourceiv (ActiveSounds[activeIndex].ds3DBufferP, 
 			AL_SOURCE_STATE, &val);
@@ -251,10 +259,8 @@ int PlatDo3dSound(int activeIndex)
 {
 	int distance;
 	VECTORCH relativePosn;
-	int newPan, newVolume;
+	int newVolume;
 
-	fprintf(stderr, "PlatDo3dSound(%d)\n", activeIndex);
-	
 	if (ActiveSounds[activeIndex].threedee == 0)
 		return 1;
 
@@ -265,7 +271,7 @@ int PlatDo3dSound(int activeIndex)
 	relativePosn.vz = ActiveSounds[activeIndex].threedeedata.position.vz - 
 			Global_VDB_Ptr->VDB_World.vz;
 
-	distance = Magnitude (&relativePosn);
+	distance = Magnitude(&relativePosn);
 	
 	if (ActiveSounds[activeIndex].paused) {
 		if (distance < (ActiveSounds[activeIndex].threedeedata.outer_range + SOUND_DEACTIVATERANGE)) {
@@ -313,25 +319,18 @@ int PlatDo3dSound(int activeIndex)
 	if (newVolume < VOLUME_MIN)
 		newVolume = VOLUME_MIN;
 	
+	printf("PlatDo3dSound: idx = %d, volume = %d, distance = %d\n", activeIndex, newVolume, distance);
+	
 	if (PlatChangeSoundVolume (activeIndex, newVolume) == SOUND_PLATFORMERROR) {
 		return SOUND_PLATFORMERROR;
 	}
 	
-	if (1 || distance < ActiveSounds[activeIndex].threedeedata.outer_range) {
-//		ActiveSounds[activeIndex].PropSetP_pos[0] =
-//			relativePosn.vx;
-//		ActiveSounds[activeIndex].PropSetP_pos[1] =
-//			relativePosn.vy;
-//		ActiveSounds[activeIndex].PropSetP_pos[2] =
-//			relativePosn.vz;
-//		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP,
-//			    AL_POSITION, ActiveSounds[activeIndex].PropSetP_pos);
-		alSourcef(ActiveSounds[activeIndex].ds3DBufferP, AL_GAIN, 1.0f);
-		ActiveSounds[activeIndex].PropSetP_pos[0] = ActiveSounds[activeIndex].threedeedata.position.vx;
-		ActiveSounds[activeIndex].PropSetP_pos[1] = ActiveSounds[activeIndex].threedeedata.position.vy;
-		ActiveSounds[activeIndex].PropSetP_pos[2] = ActiveSounds[activeIndex].threedeedata.position.vz;
+	if (distance < ActiveSounds[activeIndex].threedeedata.outer_range) {
+		ActiveSounds[activeIndex].PropSetP_pos[0] = ActiveSounds[activeIndex].threedeedata.position.vx; // 10000.0;
+		ActiveSounds[activeIndex].PropSetP_pos[1] = ActiveSounds[activeIndex].threedeedata.position.vy; // 10000.0;
+		ActiveSounds[activeIndex].PropSetP_pos[2] = ActiveSounds[activeIndex].threedeedata.position.vz; // 10000.0;
 		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP, AL_POSITION, ActiveSounds[activeIndex].PropSetP_pos);
-printf("Sound : (%f, %f, %f) [%d]\n", ActiveSounds[activeIndex].PropSetP_pos[0], ActiveSounds[activeIndex].PropSetP_pos[1], ActiveSounds[activeIndex].PropSetP_pos[2], activeIndex);
+printf("Sound : (%f, %f, %f) [%d] [%d,%d]\n", ActiveSounds[activeIndex].PropSetP_pos[0], ActiveSounds[activeIndex].PropSetP_pos[1], ActiveSounds[activeIndex].PropSetP_pos[2], activeIndex, ActiveSounds[activeIndex].threedeedata.inner_range, ActiveSounds[activeIndex].threedeedata.outer_range);
 
 		ActiveSounds[activeIndex].PropSetP_vel[0] =
 			ActiveSounds[activeIndex].threedeedata.velocity.vx;
@@ -341,36 +340,127 @@ printf("Sound : (%f, %f, %f) [%d]\n", ActiveSounds[activeIndex].PropSetP_pos[0],
 			ActiveSounds[activeIndex].threedeedata.velocity.vz;
 //		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP,
 //			    AL_VELOCITY, ActiveSounds[activeIndex].PropSetP_vel);
-	} else {
-		int angle;
-		Normalise (&relativePosn);
-		angle = ArcTan (relativePosn.vx, relativePosn.vz);
-		if (angle >= Player->ObEuler.EulerY)
-			angle -= Player->ObEuler.EulerY;
-		else
-			angle += (4096 - Player->ObEuler.EulerY);
-		
-		// LOCALASSERT ((angle>=0)&&(angle<=4095))
-		if (angle > 1024) {
-			if (angle < 3072)
-				angle = (2048-angle);
-			else 
-				angle = (angle-4096);
-		}
-		// LOCALASSERT((angle>=-1024)&&(angle<=1024));
-		newPan = (PAN_MAXPLAT * angle) >> 10;
-		
-		if ((distance < ActiveSounds[activeIndex].threedeedata.inner_range) && (newPan != 0)) {
-			newPan = (newPan * distance) / ActiveSounds[activeIndex].threedeedata.inner_range;
-		}
-		
-		if (PlatChangeSoundPan (activeIndex, newPan) == SOUND_PLATFORMERROR) {
-			return SOUND_PLATFORMERROR;
-		}
 	}
 
 	return 1;
 }
+
+
+void PlatUpdatePlayer()
+{
+	ALfloat vel[3], or[6], pos[3];
+
+	if (Global_VDB_Ptr) {	
+		extern int NormalFrameTime;
+		extern int DopplerShiftIsOn;
+		
+		if (AvP.PlayerType != I_Alien) {
+			or[0] = (float) ((Global_VDB_Ptr->VDB_Mat.mat13) / 65536.0F);
+			or[1] = 0.0;
+			or[2] = (float) ((Global_VDB_Ptr->VDB_Mat.mat33) / 65536.0F);
+			or[3] = 0.0;
+			or[4] = 1.0;
+			or[5] = 0.0;
+		} else {
+			or[0] = (float) ((Global_VDB_Ptr->VDB_Mat.mat13) / 65536.0F);
+			or[1] = (float) ((Global_VDB_Ptr->VDB_Mat.mat23) / 65536.0F);
+			or[2] = (float) ((Global_VDB_Ptr->VDB_Mat.mat33) / 65536.0F);
+			or[3] = (float) ((Global_VDB_Ptr->VDB_Mat.mat12) / 65536.0F);
+			or[4] = (float) ((Global_VDB_Ptr->VDB_Mat.mat22) / 65536.0F);
+			or[5] = (float) ((Global_VDB_Ptr->VDB_Mat.mat32) / 65536.0F);
+		}
+
+		if ((AvP.PlayerType == I_Alien && DopplerShiftIsOn && NormalFrameTime)) {
+			DYNAMICSBLOCK *dynPtr = Player->ObStrategyBlock->DynPtr;
+			float invFrameTime = 100000.0f/(float)NormalFrameTime;
+			
+			vel[0] = (float)(dynPtr->Position.vx - dynPtr->PrevPosition.vx) * invFrameTime;
+			vel[1] = (float)(dynPtr->Position.vy - dynPtr->PrevPosition.vy) * invFrameTime;
+			vel[2] = (float)(dynPtr->Position.vz - dynPtr->PrevPosition.vz) * invFrameTime;
+		} else {
+			vel[0] = 0.0;
+			vel[1] = 0.0;
+			vel[2] = 0.0;
+		}
+
+		pos[0] = Global_VDB_Ptr->VDB_World.vx; // 10000.0;
+		pos[1] = Global_VDB_Ptr->VDB_World.vy; // 10000.0;
+		pos[2] = Global_VDB_Ptr->VDB_World.vz; // 10000.0;
+	}
+	
+printf("Player: (%f, %f, %f) (%f, %f, %f %f, %f, %f)\n", pos[0], pos[1], pos[2], or[0], or[1], or[2], or[3], or[4], or[5]);
+
+	// fixme: add reverb check
+	alListenerfv (AL_ORIENTATION, or);
+//	alListenerfv (AL_VELOCITY, vel);
+	alListenerfv (AL_POSITION, pos);
+}
+
+void PlatEndGameSound(SOUNDINDEX index)
+{
+	printf("PlatEndGameSound(%d)\n", index);
+	
+	if((index<0)||(index>=SID_MAXIMUM)) return; /* no such sound */
+	
+	if (GameSounds[index].dsBufferP) {
+		alDeleteBuffers(1, &(GameSounds[index].dsBufferP));
+		GameSounds[index].dsBufferP = 0;
+	}
+	
+	GameSounds[index].loaded = 0;
+	GameSounds[index].dsFrequency = 0;
+	
+	if (GameSounds[index].wavName) {
+		DeallocateMem(GameSounds[index].wavName);
+		GameSounds[index].wavName = NULL;
+	}
+}
+
+unsigned int PlatMaxHWSounds()
+{
+	printf("PlatMaxHWSounds()\n");
+	
+	return 32;
+}
+
+void InitialiseBaseFrequency(SOUNDINDEX soundNum)
+{
+	printf("FREQ InitialiseBaseFrequency(%d) [%d]\n", soundNum, GameSounds[soundNum].pitch==PITCH_DEFAULTPLAT);
+}
+
+void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
+{
+	printf("PlatSetEnvironment(%d, %f)\n", env_index, reverb_mix);
+}
+
+void UpdateSoundFrequencies()
+{
+	extern int SoundSwitchedOn;
+	extern int TimeScale;
+	int i;
+	
+	printf("FREQ UpdateSoundFreqncies()\n");
+	
+	if (!SoundSwitchedOn)
+		return;
+	
+	for (i = 0; i < SOUND_MAXACTIVE; i++) {
+		int gameIndex = ActiveSounds[i].soundIndex;
+		
+		if (gameIndex == SID_NOSOUND)
+			continue;
+		
+		printf("FREQ UpdateSoundFreqncies %d, f = %d\n", i, MUL_FIXED(GameSounds[gameIndex].dsFrequency,TimeScale));
+		
+		if(ActiveSounds[i].pitch != GameSounds[gameIndex].pitch)
+			PlatChangeSoundPitch(i,ActiveSounds[i].pitch);
+	}
+}
+
+
+// In libopenal
+extern void *acLoadWAV (void *data, ALuint *size, void **udata, 
+			ALushort *fmt, ALushort *chan, ALushort *freq);
 
 int LoadWavFile(int soundNum, char * wavFileName)
 {
@@ -378,7 +468,7 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	ALenum format;
 	ALvoid *data;
 	
-	fprintf(stderr, "LoadWavFile(%d, %s) - sound\n", soundNum, wavFileName);
+	printf("LoadWavFile(%d, %s) - sound\n", soundNum, wavFileName);
 
 	alutLoadWAV (wavFileName, &data, &format, &size, &bits, &freq);
 	alGenBuffers (1, &(GameSounds[soundNum].dsBufferP));
@@ -406,92 +496,6 @@ static unsigned char *Force8to16 (unsigned char *buf, int *len)
 	*len *= 2;
 	return nbuf;
 }
-
-void PlatUpdatePlayer()
-{
-	ALfloat vel[3], or[6], pos[3];
-	fprintf(stderr, "PlatUpdatePlayer()\n");
-
-	if (Global_VDB_Ptr) {	
-		extern int NormalFrameTime;
-		extern int DopplerShiftIsOn;
-		
-		if (AvP.PlayerType != I_Alien) {
-			or[0] = (float) ((Global_VDB_Ptr->VDB_Mat.mat13) / 65536.0F);
-			or[1] = 0.0;
-			or[2] = (float) ((Global_VDB_Ptr->VDB_Mat.mat33) / 65536.0F);
-			or[3] = 0.0;
-			or[4] = 1.0;
-			or[5] = 0.0;
-		} else {
-			or[0] = (float) ((Global_VDB_Ptr->VDB_Mat.mat13) / 65536.0F);
-			or[1] = (float) ((Global_VDB_Ptr->VDB_Mat.mat23) / 65536.0F);
-			or[2] = (float) ((Global_VDB_Ptr->VDB_Mat.mat33) / 65536.0F);
-			or[3] = (float) ((Global_VDB_Ptr->VDB_Mat.mat12) / 65536.0F);
-			or[4] = (float) ((Global_VDB_Ptr->VDB_Mat.mat22) / 65536.0F);
-			or[5] = (float) ((Global_VDB_Ptr->VDB_Mat.mat32) / 65536.0F);
-		}
-
-		if (1 || (AvP.PlayerType == I_Alien && DopplerShiftIsOn && NormalFrameTime)) {
-			DYNAMICSBLOCK *dynPtr = Player->ObStrategyBlock->DynPtr;
-			float invFrameTime = 100000.0f/(float)NormalFrameTime;
-			
-			vel[0] = (float)(dynPtr->Position.vx - dynPtr->PrevPosition.vx) * invFrameTime;
-			vel[1] = (float)(dynPtr->Position.vy - dynPtr->PrevPosition.vy) * invFrameTime;
-			vel[2] = (float)(dynPtr->Position.vz - dynPtr->PrevPosition.vz) * invFrameTime;
-		} else {
-			vel[0] = 0.0;
-			vel[1] = 0.0;
-			vel[2] = 0.0;
-		}
-
-		pos[0] = Global_VDB_Ptr->VDB_World.vx;
-		pos[1] = Global_VDB_Ptr->VDB_World.vy;
-		pos[2] = Global_VDB_Ptr->VDB_World.vz;
-	}
-	
-printf("Player: (%f, %f, %f) (%f, %f, %f %f, %f, %f)\n", pos[0], pos[1], pos[2], or[0], or[1], or[2], or[3], or[4], or[5]);
-	// fixme: add reverb check
-	alListenerfv (AL_ORIENTATION, or);
-//	alListenerfv (AL_VELOCITY, vel);
-	alListenerfv (AL_POSITION, pos);
-}
-
-void PlatEndGameSound(SOUNDINDEX index)
-{
-	fprintf(stderr, "PlatEndGameSound(%d)\n", index);
-}
-
-unsigned int PlatMaxHWSounds()
-{
-	fprintf(stderr, "PlatMaxHWSounds()\n");
-	
-	return 256;
-}
-
-void InitialiseBaseFrequency(SOUNDINDEX soundNum)
-{
-	fprintf(stderr, "InitialiseBaseFrequency(%d)\n", soundNum);
-}
-
-void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
-{
-	fprintf(stderr, "PlatSetEnvironment(%d, %f)\n", env_index, reverb_mix);
-}
-
-void UpdateSoundFrequencies()
-{
-	fprintf(stderr, "UpdateSoundFreqncies()\n");
-}
-
-int PlatChangeSoundPan (int activeIndex, int pan)
-{
-	return 1;
-}
-
-// In libopenal
-extern void *acLoadWAV (void *data, ALuint *size, void **udata, 
-			ALushort *fmt, ALushort *chan, ALushort *freq);
 			
 unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 {
@@ -500,25 +504,26 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 	void *udata;
 	ALushort rfmt, rchan, rfreq;
 	ALuint rsize;
+	int slen;
 		
-	fprintf(stderr, "ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
+printf("ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
 
-	{
-		int slen = strlen (bufferPtr) + 1;
-		GameSounds[soundIndex].wavName = (char *)AllocateMem (slen);
-		strcpy (GameSounds[soundIndex].wavName, bufferPtr);
-		bufferPtr += slen;
-fprintf (stderr, "Loaded %s\n", GameSounds[soundIndex].wavName);
-	}
+	slen = strlen (bufferPtr) + 1;
+	GameSounds[soundIndex].wavName = (char *)AllocateMem (slen);
+	strcpy (GameSounds[soundIndex].wavName, bufferPtr);
+	bufferPtr += slen;
+
+printf("Loaded %s\n", GameSounds[soundIndex].wavName);
 	
 	if (acLoadWAV (bufferPtr, &rsize, &udata, &rfmt,
 			&rchan, &rfreq) == NULL) {
-		fprintf (stderr, "Unable to convert data\n");
+		printf("Unable to convert data\n");
 		return (unsigned char *)0;
 	}
 	
 	len = rsize;
 	
+	/* openal conv. 8->16 is not good at all */
 	if ((rfmt == AUDIO_U8)) {
 		nb = Force8to16 (udata, &len);
 		rfmt = AUDIO_S16LSB;
@@ -566,7 +571,7 @@ int LoadWavFromFastFile(int soundNum, char * wavFileName)
 	unsigned char *buf;
 	unsigned int len = 0;
 	
-	fprintf(stderr, "LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName);
+	printf("LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName);
 
 	if ((fp = ffopen (wavFileName, "rb")) != NULL) {
 		ffseek (fp, 0, SEEK_END);
