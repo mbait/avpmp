@@ -72,7 +72,8 @@ int WantSound = 1;
 static int WantCDRom = 1;
 static int WantJoystick = 1;
 
-static const char * opengl_library = "/usr/lib/libGL.so.1:/usr/lib/tls/libGL.so.1:/usr/X11R6/lib/libGL.so";
+/* originally was "/usr/lib/libGL.so.1:/usr/lib/tls/libGL.so.1:/usr/X11R6/lib/libGL.so" */
+static const char * opengl_library = "libGL.so.1";
 
 /* ** */
 
