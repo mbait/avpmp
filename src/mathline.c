@@ -627,16 +627,3 @@ __asm__ volatile
 	fti_itmp = (int)fti_fptmp;	
 #endif
 }
-
-#if 0 // SBF - converted to C in kshape.c 
-void TranslatePoint(float *source, float *dest, float *matrix)
-{
-/* TODO - implement the inline assembly here? */
-/* Moved it to a separate file because I can't figure out the damn syntax! */
-/* This is currently not inlined for testing */
-__asm__("call   TranslatePoint_Asm      \n\t"
-        :
-        : "S" (source), "b" (dest), "D" (matrix)
-        );
-}
-#endif
