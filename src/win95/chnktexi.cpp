@@ -102,7 +102,7 @@ static char * RiffBasename(Chunk_With_Children * pEnvDataChunk)
 #if CL_SUPPORT_FASTFILE
 static inline bool IsFileInFastFile(char const * pszFileName)
 {
-	unsigned nLen;
+	size_t nLen;
 	return ffreadbuf(pszFileName,&nLen) ? true : false;
 }
 #endif
@@ -714,7 +714,7 @@ int CL_LoadImageOnce(char const * pszFileName, unsigned fFlagsEtc)
 		case LIO_DDSURFACE:
 		{
 			#if CL_SUPPORT_FASTFILE
-			unsigned nFastFileLen;
+			size_t nFastFileLen;
 			void const * pFastFileData = ffreadbuf(szBuf,&nFastFileLen);
 			if (pFastFileData)
 			{
@@ -823,7 +823,7 @@ int CL_LoadImageOnce(char const * pszFileName, unsigned fFlagsEtc)
 		{
 			fAwLoad |= AW_TLF_COMPRESS; // required on some cards!!
 			#if CL_SUPPORT_FASTFILE
-			unsigned nFastFileLen;
+			size_t nFastFileLen;
 			void const * pFastFileData = ffreadbuf(szBuf,&nFastFileLen);
 			if (pFastFileData)
 			{

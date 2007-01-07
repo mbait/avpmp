@@ -1,6 +1,6 @@
 #include "3dc.h"
 
-#include <malloc.h>
+#include <stdlib.h>
 
 #define UseLocalAssert  No
 

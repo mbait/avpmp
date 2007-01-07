@@ -209,7 +209,7 @@ int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 		llgs:
 	}
 */
-#if 1
+#if 0
 	int retval;
 
 __asm__("movl	0(%%ebx), %%eax		\n\t"
