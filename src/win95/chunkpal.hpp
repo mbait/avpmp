@@ -7,6 +7,8 @@
 #include "palette.h"
 #endif
 
+class Environment_Data_Chunk;
+
 static const unsigned char * grab_pixel_data(int ssize, unsigned char const * sdata)
 {
 	if (!ssize) return 0;

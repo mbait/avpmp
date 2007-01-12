@@ -11,6 +11,8 @@
 #include "bmpnames.hpp"
 #include "projload.hpp"
 
+class Sprite_Header_Chunk;
+
 #if 0
 extern BOOL copy_to_mainshpl (Shape_Chunk *shape, int list_pos);
 extern BOOL copy_to_mainshpl (Shape_Sub_Shape_Chunk *shape, int list_pos);

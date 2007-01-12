@@ -365,7 +365,7 @@ public:
 	virtual void fill_data_block_for_process(char * data_start);	
 
 
-	Chunk* Chunk_With_Children::DynCreate(const char* data);
+	Chunk* DynCreate(const char* data);
 
 protected:
 

@@ -56,12 +56,12 @@
 			int FixP_Alpha
 		);
 
-		struct r2pos TextReportGadget :: GetPos_Rel
+		struct r2pos GetPos_Rel
 		(
 			const struct r2rect& R2Rect_Parent
 		) const;
 
-		r2size TextReportGadget :: GetSize
+		r2size GetSize
 		(
 			const struct r2rect& R2Rect_Parent
 		) const;

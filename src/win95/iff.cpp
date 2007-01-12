@@ -219,12 +219,14 @@ namespace IFF
 
 } // namespace IFF
 
-inline unsigned HashFunction(IFF::RegEntry const & rEntry)
-{
-	return HashFunction(rEntry.m_idChunk.m_nID);
-}
+
 
 namespace IFF {
+
+	inline unsigned HashFunction(IFF::RegEntry const & rEntry)
+	{
+		return ::HashFunction(rEntry.m_idChunk.m_nID);
+	}
 	
 	static ::HashTable<RegEntry> * g_pRegister = NULL;
 	

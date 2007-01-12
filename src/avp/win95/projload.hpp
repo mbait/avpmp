@@ -10,6 +10,8 @@
 
 #include "hierchnk.hpp"
 
+class File_Chunk;
+
 // project specifc structure contained in rif handle
 struct Project_RifHandle {};
 
