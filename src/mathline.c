@@ -574,7 +574,7 @@ typedef struct matrixch {
 
 */
 
-extern volatile int sqrt_temp;
+volatile int sqrt_temp;
 
 int SqRoot32(int A)
 {
@@ -589,6 +589,7 @@ int SqRoot32(int A)
 	}
 */
 
+#if 0
 __asm__ volatile
 	("finit				\n\t"
 	"fildl	%0			\n\t"
@@ -601,6 +602,9 @@ __asm__ volatile
 	);
 	
 	return sqrt_temp;
+#else
+	return sqrt( (float)A );
+#endif
 }
 
 /*
@@ -610,12 +614,12 @@ __asm__ volatile
 
 */
 
-extern volatile float fti_fptmp;
-extern volatile int fti_itmp;
+volatile float fti_fptmp;
+volatile int fti_itmp;
 
 void FloatToInt()
 {
-#if 1
+#if 0
 __asm__ volatile
 	("flds	fti_fptmp		\n\t"
 	"fistpl	fti_itmp		\n\t"

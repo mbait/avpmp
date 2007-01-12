@@ -17,11 +17,6 @@
 #include "kshape.h"
 #endif
 
-/* globals from inline.h */
-int sqrt_temp;
-float fti_fptmp;
-int fti_itmp;
-
 /*
 
  Platform Specific Functions

@@ -73,7 +73,7 @@ static int WantCDRom = 1;
 static int WantJoystick = 1;
 
 /* originally was "/usr/lib/libGL.so.1:/usr/lib/tls/libGL.so.1:/usr/X11R6/lib/libGL.so" */
-static const char * opengl_library = "libGL.so.1";
+static const char * opengl_library = NULL;
 
 /* ** */
 
@@ -432,11 +432,16 @@ static void load_opengl_library(const char *lib)
 	size_t len, copylen;
 	
 	if (lib == NULL) {
-		fprintf(stderr, "ERROR: no opengl libraries given\n");
-		exit(EXIT_FAILURE);
+		if (SDL_GL_LoadLibrary(NULL) == 0) {
+			/* success */
+			return;
+		}
+		
+		fprintf( stderr, "ERROR: no opengl libraries given\n" );
+		exit( EXIT_FAILURE );
 	}
 	
-	while (*lib) {
+	while (lib != NULL && *lib) {
 		len = strcspn(lib, ":");
 				
 		copylen = min(len, PATH_MAX-1);
@@ -448,7 +453,7 @@ static void load_opengl_library(const char *lib)
 			/* success */
 			return;
 		}
-			
+		
 		lib += len;
 		lib += strspn(lib, ":");
 	}
