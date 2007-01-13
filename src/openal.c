@@ -1001,7 +1001,7 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	fread(data, 1, len, fp);
 	fclose(fp);
 
-	if( !LoadWAV( data, &bufferPtr, &format, &len, &seclen, &freq ) ) {
+	if( !LoadWAV( data, &bufferPtr, &format, &freq, &len, &seclen ) ) {
 		free( data );
 		return 0;
 	}
@@ -1051,7 +1051,7 @@ fprintf(stderr, "OPENAL: ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
 fprintf(stderr, "OPENAL: Loaded %s\n", GameSounds[soundIndex].wavName);
 #endif
 
-	if( LoadWAV( bufferPtr, &udata, &rfmt, &len, &seclen, &rfreq ) ) {
+	if( LoadWAV( bufferPtr, &udata, &rfmt, &rfreq, &len, &seclen ) ) {
 		alGenBuffers (1, &(GameSounds[soundIndex].dsBufferP));
 		alBufferData (GameSounds[soundIndex].dsBufferP,
 			      rfmt, udata, len, rfreq);
@@ -1062,7 +1062,7 @@ fprintf(stderr, "OPENAL: Loaded %s\n", GameSounds[soundIndex].wavName);
 	      GameSounds[soundIndex].dsFrequency = rfreq;
 	      /*	GameSounds[soundIndex].pitch = PITCH_DEFAULTPLAT; */
 	}
-	
+
 	/* read RIFF chunk length and jump past it */
 	return bufferPtr + 8 + 
 		((bufferPtr[4] <<  0) | (bufferPtr[5] << 8) |
