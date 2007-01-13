@@ -8,10 +8,10 @@ CFLAGS = -g -Wall -pipe -O2
 CFLAGS += -DLINUX
 
 CFLAGS += -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
-CFLAGS += $(shell sdl-config --cflags)
+CFLAGS += $(shell sdl-config --cflags) $(shell openal-config --cflags)
 CXXFLAGS = $(CFLAGS)
 
-LDLIBS = $(shell sdl-config --libs) -lopenal
+LDLIBS = $(shell sdl-config --libs) $(shell openal-config --libs)
 
 ROOT = main.c files.c winapi.c stubs.c version.c mathline.c opengl.c oglfunc.c openal.c cdplayer.c menus.c net.c frustum.c kshape.c map.c maths.c md5.c mem3dc.c mem3dcpp.cpp module.c morph.c object.c shpanim.c sphere.c tables.c vdb.c
 AVP = ai_sight.c avpview.c bh_agun.c bh_ais.c bh_alien.c bh_binsw.c bh_cable.c bh_corpse.c bh_deathvol.c bh_debri.c bh_dummy.c bh_fan.c bh_far.c bh_fhug.c bh_gener.c bh_ldoor.c bh_lift.c bh_light.c bh_lnksw.c bh_ltfx.c bh_marin.c bh_mission.c bh_near.c bh_pargen.c bh_plachier.c bh_plift.c bh_pred.c bh_queen.c bh_rubberduck.c bh_selfdest.c bh_snds.c bh_spcl.c bh_swdor.c bh_track.c bh_types.c bh_videoscreen.c bh_waypt.c bh_weap.c bh_xeno.c bonusabilities.c cconvars.cpp cdtrackselection.cpp cheatmodes.c comp_map.c comp_shp.c consolelog.cpp davehook.cpp deaths.c decal.c detaillevels.c dynamics.c dynblock.c equipmnt.c equiputl.cpp extents.c game.c game_statistics.c gamecmds.cpp gamevars.cpp hmodel.c hud.c inventry.c language.c lighting.c load_shp.c los.c maps.c mempool.c messagehistory.c missions.cpp movement.c paintball.c particle.c pfarlocs.c pheromon.c player.c pmove.c psnd.c psndproj.c pvisible.c savegame.c scream.cpp secstats.c sfx.c stratdef.c targeting.c track.c triggers.c weapons.c
@@ -48,15 +48,15 @@ WIN95OBJ =	$(call OBJNAMES,$(WIN95),win95)
 SRC = $(ROOTSRC) $(AVPSRC) $(SHAPESSRC) $(SUPPORTSRC) $(AVPWIN95SRC) $(FRONTENDSRC) $(GADGETSSRC) $(WIN95SRC)
 OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(SUPPORTOBJ) $(AVPWIN95OBJ) $(FRONTENDOBJ) $(GADGETSOBJ) $(WIN95OBJ)
 
-all: AvP
+all: AvP.bin
 
-AvP: $(OBJ) # depend $(OBJ)
-	$(CXX) -o AvP $(OBJ) $(LDLIBS)
+AvP.bin: $(OBJ) # depend $(OBJ)
+	$(CXX) -o AvP.bin $(OBJ) $(LDLIBS)
 
 compile: $(OBJ)
 
 clean:
-	-rm -rf depend depend.bak $(OBJ) AvP
+	-rm -rf depend depend.bak $(OBJ) AvP.bin
 
 distclean: clean
 	-rm -rf `find . -name "*~"`

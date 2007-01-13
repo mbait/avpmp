@@ -5,9 +5,6 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <AL/alut.h>
-
-#include <SDL/SDL_audio.h> // For a few defines (AUDIO_*)
 
 #include "fixer.h"
 
@@ -34,6 +31,112 @@ int AvpFrequency = 44100;
 extern int WantSound;
 
 static int SoundActivated = 0;
+
+/* start simplistic riff wave parsing */
+#define lsb8 (buf, x)  (((unsigned int)buf[(x)+0] <<  0))
+#define lsb16(buf, x)  (((unsigned int)buf[(x)+0] <<  0) | ((unsigned int)buf[(x)+1] <<  8))
+#define lsb32(buf, x)  (((unsigned int)buf[(x)+0] <<  0) | ((unsigned int)buf[(x)+1] <<  8) | ((unsigned int)buf[(x)+2] << 16) | ((unsigned int)buf[(x)+3] << 24))
+
+typedef struct FormatChunk {
+  short          wFormatTag;
+  unsigned short wChannels;
+  unsigned long  dwSamplesPerSec;
+  unsigned long  dwAvgBytesPerSec;
+  unsigned short wBlockAlign;
+  unsigned short wBitsPerSample;
+} FormatChunk;
+
+typedef struct DataChunk {
+  unsigned char* pData;
+  unsigned int   dwLength;
+} DataChunk;
+
+static int ParseWAV( const unsigned char* data, unsigned char** pFmtPtr, unsigned char** pDataPtr )
+{
+  unsigned char* pData;
+  unsigned char* pDataEnd;
+  unsigned char* fmtPtr;
+  int riffLength;
+  int chunkLength;
+ 
+  if( data == NULL || pFmtPtr == NULL || pDataPtr == NULL ) {
+    return 0;
+  }
+
+  /* assuming input data is complete and not corrupt... */
+  
+  pData = (unsigned char*) data;
+
+  /* bytes 0-3 are the RIFF groupId */  
+  if( pData[ 0 ] != 'R' || pData[ 1 ] != 'I' || pData[ 2 ] != 'F' || pData[ 3 ] != 'F' ) {
+    /* bad group id */
+    return 0;
+  }
+  
+  /* bytes 4-7 are the RIFF length. */
+  riffLength = lsb32( pData, 4 );
+  
+  pDataEnd = pData + 8 + riffLength;
+  
+  if( pData[ 8 ] != 'W' || pData[ 9 ] != 'A' || pData[ 10 ] != 'V' || pData[ 11 ] != 'E' ) {
+    /* bad riff type */
+    return 0;
+  }
+  
+  /* all valid wave files have the 'fmt ' chunk before the 'data' chunk. */
+  
+  /* skip passed the initial header. */
+  pData += 12;
+
+  /* look for the 'fmt ' and 'data' chunks. */
+  fmtPtr = NULL;
+  
+  while( pData+8 < pDataEnd ) {
+
+    chunkLength = lsb32( pData, 4 );
+
+    if( fmtPtr == NULL && pData[ 0 ] == 'f' && pData[ 1 ] == 'm' && pData[ 2 ] == 't' && pData[ 3 ] == ' ' ) {
+      fmtPtr = pData;
+    } else if( fmtPtr != NULL && pData[ 0 ] == 'd' && pData[ 1 ] == 'a' && pData[ 2 ] == 't' && pData[ 3 ] == 'a' ) {
+
+      *pFmtPtr  = fmtPtr;
+      *pDataPtr = pData;
+
+      return 1;
+    }
+    
+    pData += 8 + chunkLength;
+  }
+  
+  return 0;
+}
+
+static int SimpleLoadWAV( const unsigned char* data, FormatChunk* pFmtChunk, DataChunk* pDataChunk)
+{
+  unsigned char* fmtPtr;
+  unsigned char* dataPtr;
+  
+  if( data == NULL || pFmtChunk == NULL || pDataChunk == NULL ) {
+  	return 0;
+  }
+  
+  if( !ParseWAV( data, &fmtPtr, &dataPtr ) ) {
+  	return 0;
+  }
+
+  pFmtChunk->wFormatTag       = lsb16( fmtPtr, 8  );
+  pFmtChunk->wChannels        = lsb16( fmtPtr, 10 );
+  pFmtChunk->dwSamplesPerSec  = lsb32( fmtPtr, 12 );
+  pFmtChunk->dwAvgBytesPerSec = lsb32( fmtPtr, 16 );
+  pFmtChunk->wBlockAlign      = lsb16( fmtPtr, 20 );
+  pFmtChunk->wBitsPerSample   = lsb16( fmtPtr, 22 );
+
+  pDataChunk->pData    = &dataPtr[ 8 ];
+  pDataChunk->dwLength = lsb32( dataPtr, 4 );
+  
+  return 1;
+}
+/* end simplistic riff wave parsing */
 
 /*
 openal.c TODO:
@@ -821,28 +924,53 @@ void UpdateSoundFrequencies()
 	}
 }
 
-
-// In libopenal
-extern void *acLoadWAV (void *data, ALuint *size, void **udata, 
-			ALushort *fmt, ALushort *chan, ALushort *freq);
-
-
-static unsigned char *Force8to16 (unsigned char *buf, int *len)
+static int LoadWAV( ALvoid* data, ALvoid** bufferPtr, ALushort* format, ALushort* freq, int* len, int* seclen )
 {
-	unsigned char *nbuf;
-	unsigned int i;
-	
-	nbuf = (unsigned char *) AllocateMem (*len * 2);
-	
-	for (i = 0; i < *len; i++) {
-		short int x = ((buf[i] << 8) | buf[i]) ^ 0x8000;
-		nbuf[i*2+0] = (x & 0x00ff);
-		nbuf[i*2+1] = (x >> 8) & 0xff;
+	FormatChunk fmtChunk;
+	DataChunk   dataChunk;
+
+	if( !SimpleLoadWAV( (unsigned char*)data, &fmtChunk, &dataChunk ) ) {
+printf("WAV DEBUG: file didn't parse\n");
+		return 0;
 	}
 	
-	*len *= 2;
-	return nbuf;
+	if( fmtChunk.wFormatTag != 1 ) {
+printf("WAV DEBUG: got format tag %d\n", fmtChunk.wFormatTag );
+		return 0;
+	}
+	
+	if( fmtChunk.wBitsPerSample == 8 ) {
+		if( fmtChunk.wChannels == 1 ) {
+			*format = AL_FORMAT_MONO8;
+		} else if( fmtChunk.wChannels == 2 ) {
+			*format = AL_FORMAT_STEREO8;
+		} else {
+printf("WAV DEBUG: too many channels\n" );
+			return 0;
+		}
+	} else if( fmtChunk.wBitsPerSample == 16 ) {
+		if( fmtChunk.wChannels == 1 ) {
+			*format = AL_FORMAT_MONO16;
+		} else if( fmtChunk.wChannels == 2 ) {
+			*format = AL_FORMAT_STEREO16;
+		} else {
+printf("WAV DEBUG: too many channels\n" );
+			return 0;
+		}
+	} else {
+printf("WAV DEBUG: bad bit setup\n");
+		return 0;
+	}
+
+	*freq      = fmtChunk.dwSamplesPerSec;
+	*len       = dataChunk.dwLength;
+	*bufferPtr = dataChunk.pData;
+	
+	*seclen = DIV_FIXED( dataChunk.dwLength, fmtChunk.dwAvgBytesPerSec );
+	
+	return 1;
 }
+
 
 int LoadWavFile(int soundNum, char * wavFileName)
 {
@@ -851,7 +979,8 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	ALvoid *data, *bufferPtr;
 	int len, seclen;
 	FILE *fp;
-
+	char* wavname;
+	
 #ifdef OPENAL_DEBUG	
 	fprintf(stderr, "LoadWavFile(%d, %s) - sound\n", soundNum, wavFileName);
 #endif
@@ -872,57 +1001,22 @@ int LoadWavFile(int soundNum, char * wavFileName)
 	fread(data, 1, len, fp);
 	fclose(fp);
 
-	if (acLoadWAV (data, &size, &bufferPtr, &format,
-			&chan, &freq) == NULL) {
-		fprintf(stderr, "LoadWavFile: Unable to convert data\n");
-		free(data);
-		return 0;
-	}
-	
-	free(data);
-	
-	data = bufferPtr;
-	
-	len = size;
-	
-	/* openal conv. 8->16 is not good at all */
-	if (format == AUDIO_U8) {
-		unsigned char *nb = Force8to16 (data, &len);
-		format = AUDIO_S16LSB;
-		
-		free (data);
-		data = nb;
-	}
-	
-	if ((format == AUDIO_S16LSB) || (format == AUDIO_S16MSB)) {
-		int bps;
-		
-		if (chan == 2) {
-			format = AL_FORMAT_STEREO16;
-			bps = freq * 2 * 2;
-		} /* else if (rchan == 1) */ {
-			format = AL_FORMAT_MONO16;
-			bps = freq * 2 * 1;
-		}
-		
-		seclen = DIV_FIXED(len, bps);
-	} else {
-		free(data);
+	if( !LoadWAV( data, &bufferPtr, &format, &len, &seclen, &freq ) ) {
+		free( data );
 		return 0;
 	}
 	
 	alGenBuffers (1, &(GameSounds[soundNum].dsBufferP));
-	alBufferData (GameSounds[soundNum].dsBufferP, format, data, len, freq);
+	alBufferData (GameSounds[soundNum].dsBufferP, format, bufferPtr, len, freq);
 
-{
-	char * wavname = strrchr (wavFileName, '\\');
+	wavname = strrchr (wavFileName, '\\');
 	if (wavname)
 		wavname++;
 	else
 		wavname = wavFileName;
 	GameSounds[soundNum].wavName = (char *)AllocateMem (strlen (wavname) + 1);
 	strcpy (GameSounds[soundNum].wavName, wavname);
-}	
+
 	GameSounds[soundNum].flags = SAMPLE_IN_HW;
 	GameSounds[soundNum].length = (seclen != 0) ? seclen : 1;
 	GameSounds[soundNum].dsFrequency = freq;
@@ -957,58 +1051,22 @@ fprintf(stderr, "OPENAL: ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr);
 fprintf(stderr, "OPENAL: Loaded %s\n", GameSounds[soundIndex].wavName);
 #endif
 
-#if 1 /* TODO: replace with own routine later */	
-	if (acLoadWAV (bufferPtr, &rsize, &udata, &rfmt,
-			&rchan, &rfreq) == NULL) {
-		fprintf(stderr, "ExtractWavFile: Unable to convert data\n");
-		return NULL;
+	if( LoadWAV( bufferPtr, &udata, &rfmt, &len, &seclen, &rfreq ) ) {
+		alGenBuffers (1, &(GameSounds[soundIndex].dsBufferP));
+		alBufferData (GameSounds[soundIndex].dsBufferP,
+			      rfmt, udata, len, rfreq);
+	
+	      /*	GameSounds[soundIndex].loaded = 1; */
+	      GameSounds[soundIndex].flags = SAMPLE_IN_HW;
+	      GameSounds[soundIndex].length = (seclen != 0) ? seclen : 1;
+	      GameSounds[soundIndex].dsFrequency = rfreq;
+	      /*	GameSounds[soundIndex].pitch = PITCH_DEFAULTPLAT; */
 	}
 	
-	len = rsize;
-	
-	/* openal conv. 8->16 is not good at all */
-	if (rfmt == AUDIO_U8) {
-		unsigned char *nb = Force8to16 (udata, &len);
-		rfmt = AUDIO_S16LSB;
-		
-		free (udata);
-		udata = nb;
-	}
-	
-	if ((rfmt == AUDIO_S16LSB) || (rfmt == AUDIO_S16MSB)) {
-		int bps;
-		
-		if (rchan == 2) {
-			rfmt = AL_FORMAT_STEREO16;
-			bps = rfreq * 2 * 2;
-		} /* else if (rchan == 1) */ {
-			rfmt = AL_FORMAT_MONO16;
-			bps = rfreq * 2 * 1;
-		}
-		
-		seclen = DIV_FIXED(len, bps);
-	} else
-		return NULL;
-#endif
-	
-	alGenBuffers (1, &(GameSounds[soundIndex].dsBufferP));
-	alBufferData (GameSounds[soundIndex].dsBufferP,
-		      rfmt, udata, len, rfreq);
-	
-/*	GameSounds[soundIndex].loaded = 1; */
-	GameSounds[soundIndex].flags = SAMPLE_IN_HW;
-	GameSounds[soundIndex].length = (seclen != 0) ? seclen : 1;
-	GameSounds[soundIndex].dsFrequency = rfreq;
-/*	GameSounds[soundIndex].pitch = PITCH_DEFAULTPLAT; */
-
-#if 1 /* TODO: see above */
-	free (udata);
-
 	/* read RIFF chunk length and jump past it */
 	return bufferPtr + 8 + 
 		((bufferPtr[4] <<  0) | (bufferPtr[5] << 8) |
 		 (bufferPtr[6] << 16) | (bufferPtr[7] << 24));
-#endif		 
 }
 
 int LoadWavFromFastFile(int soundNum, char * wavFileName)
