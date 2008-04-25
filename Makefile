@@ -7,7 +7,7 @@ CFLAGS = -m32 -g -Wall -pipe -O2
 
 CFLAGS += -DLINUX
 
-CFLAGS += -Dengine=1 -I. -Iinclude -Iwin95 -Iavp -Iavp/win95 -Iavp/support -Iavp/win95/frontend -Iavp/win95/gadgets
+CFLAGS += -Dengine=1 -Isrc -Isrc/include -Isrc/win95 -Isrc/avp -Isrc/avp/win95 -Isrc/avp/support -Isrc/avp/win95/frontend -Isrc/avp/win95/gadgets
 CFLAGS += $(shell sdl-config --cflags) $(shell openal-config --cflags)
 CXXFLAGS = $(CFLAGS)
 
@@ -26,52 +26,35 @@ WIN95 = animchnk.cpp animobs.cpp awtexld.cpp awbmpld.cpp awiffld.cpp awpnmld.cpp
 
 SRCNAMES =	$(addprefix $(2)/,$(1))
 OBJNAMES =	$(addprefix $(2)/,$(addsuffix .o,$(basename $(1))))
-OBJNAMES1 =	$(addsuffix .o,$(basename $(1)))
 
-ROOTSRC =	$(ROOT)
-ROOTOBJ =	$(call OBJNAMES1,$(ROOT))
-AVPSRC	=	$(call SRCNAMES,$(AVP),avp)
-AVPOBJ	=	$(call OBJNAMES,$(AVP),avp)
-SHAPESSRC =	$(call SRCNAMES,$(SHAPES),avp/shapes)
-SHAPESOBJ =	$(call OBJNAMES,$(SHAPES),avp/shapes)
-SUPPORTSRC =	$(call SRCNAMES,$(SUPPORT),avp/support)
-SUPPORTOBJ =	$(call OBJNAMES,$(SUPPORT),avp/support)
-AVPWIN95SRC =	$(call SRCNAMES,$(AVPWIN95),avp/win95)
-AVPWIN95OBJ =	$(call OBJNAMES,$(AVPWIN95),avp/win95)
-FRONTENDSRC =	$(call SRCNAMES,$(FRONTEND),avp/win95/frontend)
-FRONTENDOBJ =	$(call OBJNAMES,$(FRONTEND),avp/win95/frontend)
-GADGETSSRC =	$(call SRCNAMES,$(GADGETS),avp/win95/gadgets)
-GADGETSOBJ =	$(call OBJNAMES,$(GADGETS),avp/win95/gadgets)
-WIN95SRC =	$(call SRCNAMES,$(WIN95),win95)
-WIN95OBJ =	$(call OBJNAMES,$(WIN95),win95)
+ROOTSRC =	$(call SRCNAMES,$(ROOT),src)
+ROOTOBJ =	$(call OBJNAMES,$(ROOT),src)
+AVPSRC	=	$(call SRCNAMES,$(AVP),src/avp)
+AVPOBJ	=	$(call OBJNAMES,$(AVP),src/avp)
+SHAPESSRC =	$(call SRCNAMES,$(SHAPES),src/avp/shapes)
+SHAPESOBJ =	$(call OBJNAMES,$(SHAPES),src/avp/shapes)
+SUPPORTSRC =	$(call SRCNAMES,$(SUPPORT),src/avp/support)
+SUPPORTOBJ =	$(call OBJNAMES,$(SUPPORT),src/avp/support)
+AVPWIN95SRC =	$(call SRCNAMES,$(AVPWIN95),src/avp/win95)
+AVPWIN95OBJ =	$(call OBJNAMES,$(AVPWIN95),src/avp/win95)
+FRONTENDSRC =	$(call SRCNAMES,$(FRONTEND),src/avp/win95/frontend)
+FRONTENDOBJ =	$(call OBJNAMES,$(FRONTEND),src/avp/win95/frontend)
+GADGETSSRC =	$(call SRCNAMES,$(GADGETS),src/avp/win95/gadgets)
+GADGETSOBJ =	$(call OBJNAMES,$(GADGETS),src/avp/win95/gadgets)
+WIN95SRC =	$(call SRCNAMES,$(WIN95),src/win95)
+WIN95OBJ =	$(call OBJNAMES,$(WIN95),src/win95)
 
 SRC = $(ROOTSRC) $(AVPSRC) $(SHAPESSRC) $(SUPPORTSRC) $(AVPWIN95SRC) $(FRONTENDSRC) $(GADGETSSRC) $(WIN95SRC)
 OBJ = $(ROOTOBJ) $(AVPOBJ) $(SHAPESOBJ) $(SUPPORTOBJ) $(AVPWIN95OBJ) $(FRONTENDOBJ) $(GADGETSOBJ) $(WIN95OBJ)
 
-all: AvP.bin
+all: avp
 
-AvP.bin: $(OBJ) # depend $(OBJ)
-	$(CXX) -o AvP.bin $(OBJ) $(LDLIBS)
-
-compile: $(OBJ)
+avp: $(OBJ)
+	$(CXX) -o avp $(OBJ) $(LDLIBS)
 
 clean:
-	-rm -rf depend depend.bak $(OBJ) AvP.bin
+	-rm -rf $(OBJ) avp
 
 distclean: clean
-	-rm -rf `find . -name "*~"`
-
-# I wish I knew how to do dependencies correctly...
-
-#depend: Makefile $(SRC)
-#	$(CC) $(CFLAGS) -MM $(SRC) > depend.out
-#
-# insert makefile dependencies here
-# -include depend
-#
-#depend: Makefile # $(SRC)
-#	touch depend.out
-#	makedepend -fdepend.out -- $(CFLAGS) -- $(SRC)
-#
-#-include depend.out
-# DO NOT DELETE THIS LINE -- make depend depends on it.
+	-rm -rf `find . \( -not -type d \) -and \
+		\( -name '*~' -or -name '.#*' \) -type f -print`
