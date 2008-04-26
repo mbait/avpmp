@@ -1568,7 +1568,5 @@ if (AvP_MainMenus())
 	CDDA_End();
 	ClearMemoryPool();
 	
-	fprintf(stderr, "Now exiting Aliens vs Predator!  At least it didn't crash!\n");
-	
 	return 0;
 }

@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "3dc.h"
 
 void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c);
@@ -25,6 +27,25 @@ int FloatToInt(float);
 #define f2i(a, b) { a = FloatToInt(b); }
 #endif
 
+#undef ASM386
+
+#if !defined(ASM386)
+static long long ConvertToLongLong(const LONGLONGCH* llch)
+{
+	long long ll;
+	
+	ll = ((long long)llch->hi32 << 32) | ((long long)llch->lo32 << 0);
+	
+	return ll;
+}
+
+static void ConvertFromLongLong(LONGLONGCH* llch, const long long* ll)
+{
+	llch->lo32 = (unsigned int)((*ll>> 0) & 0xffffffff);
+	llch->hi32 = (  signed int)((*ll>>32) & 0xffffffff);	
+}
+#endif
+
 void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 {
 /*
@@ -41,6 +62,7 @@ void ADD_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
+#if defined(ASM386)
 int dummy1, dummy2;
 __asm__("movl	0(%%esi), %0		\n\t"
 	"movl	4(%%esi), %1		\n\t"
@@ -62,6 +84,15 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	: "S" (a), "D" (b)
 	);
 */
+#else
+	long long aa = ConvertToLongLong(a);
+	long long bb = ConvertToLongLong(b);
+	
+	long long cc = aa + bb;
+	
+	ConvertFromLongLong(c, &cc);
+#endif
+
 }
 
 /* ADD ++ */
@@ -79,6 +110,8 @@ void ADD_LL_PP(LONGLONGCH *c, LONGLONGCH *a)
 		adc	[edi+4],edx
 	}
 */
+
+#if defined(ASM386)
 int dummy1, dummy2;
 __asm__("movl	0(%%esi), %0		\n\t"
 	"movl	4(%%esi), %1		\n\t"
@@ -88,6 +121,14 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "D" (c), "S" (a)
 	: "memory", "cc"
 	);
+#else
+	long long cc = ConvertToLongLong(c);
+	long long aa = ConvertToLongLong(a);
+	
+	cc += aa;
+	
+	ConvertFromLongLong(c, &cc);
+#endif
 }
 
 /* SUB */
@@ -108,6 +149,7 @@ void SUB_LL(LONGLONGCH *a, LONGLONGCH *b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
+#if defined(ASM386)
 int dummy1, dummy2;
 __asm__("movl	0(%%esi), %0		\n\t"
 	"movl	4(%%esi), %1		\n\t"
@@ -119,6 +161,14 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "S" (a), "D" (b), "b" (c)
 	: "memory", "cc"
 	);
+#else
+	long long aa = ConvertToLongLong(a);
+	long long bb = ConvertToLongLong(b);
+	
+	long long cc = aa - bb;
+	
+	ConvertFromLongLong(c, &cc);
+#endif
 }
 
 /* SUB -- */
@@ -136,6 +186,7 @@ void SUB_LL_MM(LONGLONGCH *c, LONGLONGCH *a)
 		sbb	[edi+4],edx
 	}
 */
+#if defined(ASM386)
 int dummy1, dummy2;
 __asm__("movl	0(%%esi), %0		\n\t"
 	"movl	4(%%esi), %1		\n\t"
@@ -145,6 +196,14 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "D" (c), "S" (a)
 	: "memory", "cc"
 	);
+#else
+	long long cc = ConvertToLongLong(c);
+	long long aa = ConvertToLongLong(a);
+	
+	cc -= aa;
+	
+	ConvertFromLongLong(c, &cc);
+#endif
 }
 
 /*
@@ -167,6 +226,7 @@ void MUL_I_WIDE(int a, int b, LONGLONGCH *c)
 		mov	[ebx+4],edx
 	}
 */
+#if defined(ASM386)
 unsigned int d1;
 __asm__("imull	%3			\n\t"
 	"movl	%%eax, 0(%%ebx)		\n\t"
@@ -175,6 +235,14 @@ __asm__("imull	%3			\n\t"
 	: "0" (a), "b" (c), "m" (b)
 	: "%edx", "memory", "cc"
 	);
+#else
+	long long aa = (long long) a;
+	long long bb = (long long) b;
+	
+	long long cc = aa * bb;
+	
+	ConvertFromLongLong(c, &cc);
+#endif
 }
 
 /*
@@ -209,7 +277,7 @@ int CMP_LL(LONGLONGCH *a, LONGLONGCH *b)
 		llgs:
 	}
 */
-#if 0
+#if defined(ASM386)
 	int retval;
 
 __asm__("movl	0(%%ebx), %%eax		\n\t"
@@ -262,7 +330,7 @@ void EQUALS_LL(LONGLONGCH *a, LONGLONGCH *b)
 		mov	[edi+4],edx
 	}
 */
-#if 0
+#if defined(ASM386)
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"movl	4(%%esi), %%edx		\n\t"
 	"movl	%%eax, 0(%%edi)		\n\t"
@@ -290,6 +358,7 @@ void NEG_LL(LONGLONGCH *a)
 		adc	dword ptr[esi+4],0
 	}
 */
+#if defined(ASM386)
 __asm__("notl	0(%%esi)		\n\t"
 	"notl	4(%%esi)		\n\t"
 	"addl	$1, 0(%%esi)		\n\t"
@@ -298,6 +367,13 @@ __asm__("notl	0(%%esi)		\n\t"
 	: "S" (a)
 	: "memory", "cc"
 	);
+#else
+	long long aa = ConvertToLongLong(a);
+	
+	aa = -aa;
+	
+	ConvertFromLongLong(a, &aa);
+#endif
 }
 
 /* ASR */
@@ -319,6 +395,7 @@ void ASR_LL(LONGLONGCH *a, int shift)
 		asrdn:
 	}
 */
+#if defined(ASM386)
 unsigned int d1;
 __asm__ volatile
 	("andl	%0, %0			\n\t"
@@ -333,7 +410,13 @@ __asm__ volatile
 	: "S" (a), "a" (shift)
 	: "memory", "cc"
 	);
+#else
+	long long aa = ConvertToLongLong(a);
 	
+	aa >>= shift;
+	
+	ConvertFromLongLong(a, &aa);
+#endif	
 }
 
 /* Convert int to LONGLONGCH */
@@ -351,6 +434,7 @@ void IntToLL(LONGLONGCH *a, int *b)
 		mov	[edi+4],edx
 	}
 */
+#if defined(ASM386)
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"cdq				\n\t"
 	"movl	%%eax, 0(%%edi)		\n\t"
@@ -359,6 +443,11 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	: "S" (b), "D" (a)
 	: "%eax", "%edx", "memory", "cc"
 	);
+#else
+	long long aa = (long long) *b;
+	
+	ConvertFromLongLong(a, &aa);
+#endif
 }
 
 /*
@@ -389,8 +478,8 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 
 int MUL_FIXED(int a, int b)
 {
-	int retval;
 /*
+	int retval;
 	_asm
 	{
 		mov eax,a
@@ -399,6 +488,9 @@ int MUL_FIXED(int a, int b)
 		mov retval,eax
 	}
 */
+
+#if defined(ASM386)
+	int retval;
 __asm__("imull	%2			\n\t"
 	"shrdl	$16, %%edx, %%eax	\n\t"
 	: "=a" (retval)
@@ -406,6 +498,14 @@ __asm__("imull	%2			\n\t"
 	: "%edx", "cc"
 	);
 	return retval;
+#else
+	long long aa = (long long) a;
+	long long bb = (long long) b;
+	
+	long long cc = aa * bb;
+	
+	return (int) ((cc >> 16) & 0xffffffff);
+#endif
 }
 
 /*
@@ -416,12 +516,11 @@ __asm__("imull	%2			\n\t"
 
 int DIV_FIXED(int a, int b)
 {
-	int retval;
-
 	if (b == 0) printf("DEBUG THIS: a = %d, b = %d\n", a, b);	
 	
 	if (b == 0) return 0; /* TODO: debug this! (start with alien on ferarco) */
 /*
+int retval;
 	_asm
 	{
 		mov eax,a
@@ -433,6 +532,8 @@ int DIV_FIXED(int a, int b)
 		mov retval,eax
 	}
 */
+#if defined(ASM386)
+	int retval;
 __asm__("cdq				\n\t"
 	"roll	$16, %%eax		\n\t"
 	"mov	%%ax, %%dx		\n\t"
@@ -443,6 +544,13 @@ __asm__("cdq				\n\t"
 	: "%edx", "cc"
 	);
 	return retval;
+#else
+	long long aa = (long long) a;
+	long long bb = (long long) b;
+	long long cc = (aa << 16) / bb;
+	
+	return (int) (cc & 0xffffffff);
+#endif
 }
 
 /*
@@ -470,8 +578,8 @@ __asm__("cdq				\n\t"
 
 int NarrowDivide(LONGLONGCH *a, int b)
 {
-	int retval;
 /*
+	int retval;
 	_asm
 	{
 		mov esi,a
@@ -481,6 +589,8 @@ int NarrowDivide(LONGLONGCH *a, int b)
 		mov retval,eax
 	}
 */
+#if defined(ASM386)
+	int retval;
 __asm__("movl	0(%%esi), %%eax		\n\t"
 	"movl	4(%%esi), %%edx		\n\t"
 	"idivl	%2			\n\t"
@@ -489,6 +599,14 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	: "%edx", "cc"
 	);
 	return retval;
+#else
+	long long aa = ConvertToLongLong(a);
+	long long bb = (long long) b;
+	
+	long long cc = aa / bb;
+	
+	return (int) (cc & 0xffffffff);
+#endif
 }
 
 /*
@@ -501,8 +619,8 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 
 int WideMulNarrowDiv(int a, int b, int c)
 {
-	int retval;
 /*
+	int retval;
 	_asm
 	{
 		mov eax,a
@@ -511,6 +629,8 @@ int WideMulNarrowDiv(int a, int b, int c)
 		mov retval,eax
 	}
 */
+#if defined(ASM386)
+	int retval;
 __asm__("imull	%2			\n\t"
 	"idivl	%3			\n\t"
 	: "=a" (retval)
@@ -518,53 +638,16 @@ __asm__("imull	%2			\n\t"
 	: "%edx", "cc"
 	);	
 	return retval;
+#else
+	long long aa = (long long) a;
+	long long bb = (long long) b;
+	long long cc = (long long) c;
+	
+	long long dd = (aa * bb) / cc;
+	
+	return (int) (dd & 0xffffffff);
+#endif
 }
-
-/*
-
- Function to rotate a VECTORCH using a MATRIXCH
-
- This is the C function
-
-	x =  MUL_FIXED(m->mat11, v->vx);
-	x += MUL_FIXED(m->mat21, v->vy);
-	x += MUL_FIXED(m->mat31, v->vz);
-
-	y  = MUL_FIXED(m->mat12, v->vx);
-	y += MUL_FIXED(m->mat22, v->vy);
-	y += MUL_FIXED(m->mat32, v->vz);
-
-	z  = MUL_FIXED(m->mat13, v->vx);
-	z += MUL_FIXED(m->mat23, v->vy);
-	z += MUL_FIXED(m->mat33, v->vz);
-
-	v->vx = x;
-	v->vy = y;
-	v->vz = z;
-
- This is the MUL_FIXED inline assembler function
-
-	imul edx
-	shrd eax,edx,16
-
-
-typedef struct matrixch {
-
-	int mat11;	0
-	int mat12;	4
-	int mat13;	8
-
-	int mat21;	12
-	int mat22;	16
-	int mat23;	20
-
-	int mat31;	24
-	int mat32;	28
-	int mat33;	32
-
-} MATRIXCH;
-
-*/
 
 /*
 
@@ -573,8 +656,6 @@ typedef struct matrixch {
  Returns the Square Root of a 32-bit number
 
 */
-
-volatile int sqrt_temp;
 
 int SqRoot32(int A)
 {
@@ -589,7 +670,8 @@ int SqRoot32(int A)
 	}
 */
 
-#if 0
+#if defined(ASM386)
+	static volatile int sqrt_temp;
 __asm__ volatile
 	("finit				\n\t"
 	"fildl	%0			\n\t"
@@ -603,7 +685,7 @@ __asm__ volatile
 	
 	return sqrt_temp;
 #else
-	return sqrt( (float)A );
+	return (int) sqrt( (float)A );
 #endif
 }
 
@@ -619,7 +701,7 @@ volatile int fti_itmp;
 
 void FloatToInt()
 {
-#if 0
+#if defined(ASM386)
 __asm__ volatile
 	("flds	fti_fptmp		\n\t"
 	"fistpl	fti_itmp		\n\t"
