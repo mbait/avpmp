@@ -133,14 +133,6 @@ void FindZFromXYIntersection(VECTORCH *startPtr, VECTORCH *directionPtr, VECTORC
 void AddToTranslucentPolyList(POLYHEADER *inputPolyPtr,RENDERVERTEX *renderVerticesPtr);
 void DrawWaterFallPoly(VECTORCH *v);
 
-#if platform_pc
-extern int sine[];
-extern int cosine[];
-#endif
-
-
-//extern int ItemCount;
-
 
 /*KJL************************************************************************************
 * N.B. All the following global variables have their first elements initialised so that *

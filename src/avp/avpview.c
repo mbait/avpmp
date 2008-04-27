@@ -92,8 +92,6 @@ int AlienBiteAttackInProgress;
 /* phase for cloaked objects */
 int CloakingPhase;
 extern int NormalFrameTime;
-extern int cosine[];
-extern int sine[];
 
 int LeanScale;
 EULER deathTargetOrientation={0,0,0};

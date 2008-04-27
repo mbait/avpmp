@@ -2536,8 +2536,6 @@ void BltImage(RECT *dest, DDSurface *image, RECT *src)
 
 /* Hacked in special effects */
 
-extern int sine[];
-extern int cosine[];
 extern int NormalFrameTime;
 
 void UpdateForceField(void);

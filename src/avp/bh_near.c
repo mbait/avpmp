@@ -32,7 +32,6 @@
 #include "particle.h"
 #include "scream.h"
 
-extern int cosine[], sine[];
 extern int NormalFrameTime;
 extern int ShowHiveState;
 extern ACTIVESOUNDSAMPLE ActiveSounds[];

@@ -59,9 +59,8 @@ extern int ScanDrawMode;
 extern int ZBufferMode;
 extern unsigned char *PaletteRemapTable;
 extern unsigned char **PaletteShadingTableArray;
-extern int cosine[];
 extern int HWAccel;
-#define remap_table_size (1 << (remap_table_rgb_bits * 3))
+
 extern VECTORCH PlayerStartLocation;
 extern MATRIXCH PlayerStartMat;
 

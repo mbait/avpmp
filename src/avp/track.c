@@ -22,13 +22,9 @@ static void LnQuat(QUAT *q);
 static void ExpPurelyImaginaryQuat(QUAT *q);
 extern void MulQuat(QUAT *q1, QUAT *q2, QUAT *output);
 
-
-
 extern int NormalFrameTime;
 extern void QNormalise(QUAT*);
 extern int QDot(QUAT *, QUAT *);
-extern int sine[];
-extern int cosine[];
 
 static void TrackSlerp(TRACK_SECTION_DATA* tsd,int lerp,MATRIXCH* output_mat)
 {

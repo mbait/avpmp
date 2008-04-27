@@ -61,9 +61,6 @@
 extern SHAPEHEADER **mainshapelist;
 extern SHAPEHEADER *testpaletteshapelist[];
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
-extern int sine[];
-extern int cosine[];
-extern int AdaptiveHazingFlag;
 extern int *Global_ShapeNormals;
 extern int *Global_ShapePoints;
 extern int *ItemPointers[];
@@ -390,15 +387,6 @@ int CompareFilenameCH(char *string1, char *string2)
  "GetRemappedPaletteColour()" is an access function for this table
 
 */
-
-
-#define remap_table_size (1 << (remap_table_rgb_bits * 3))
-
-
-#define cprt_info No
-#define cprt_cnt No
-
-
 
 int NearestColour(int rs, int gs, int bs, unsigned char *palette)
 

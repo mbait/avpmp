@@ -10,13 +10,9 @@
 
 */
 
-#if PSX
- int sine[]={};
- int cosine[]={};
-#else
 int oneoversin[4096];
 
-int sine[]={
+const int sine[4096]={
 
 	 0,
 	 100,
@@ -4117,7 +4113,7 @@ int sine[]={
 
 };
 
-int cosine[]={
+const int cosine[4096]={
 
 	 65536,
 	 65535,
@@ -8218,9 +8214,7 @@ int cosine[]={
 
 };
 
-#endif
-
-short ArcCosTable[]={
+const short ArcCosTable[4096]={
 
 	 2047,
 	 2027,
@@ -12321,7 +12315,7 @@ short ArcCosTable[]={
 
 };
 
-short ArcSineTable[]={
+const short ArcSineTable[4096]={
 
 	-1023,
 	-1004,
@@ -16422,7 +16416,7 @@ short ArcSineTable[]={
 
 };
 
-short ArcTanTable[]={
+const short ArcTanTable[256]={
 
 	0,2,5,7,10,12,15,17,
 	20,22,25,27,30,33,35,38,

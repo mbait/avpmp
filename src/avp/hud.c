@@ -66,8 +66,6 @@ extern int ScanDrawMode;
 
 extern DISPLAYBLOCK* Player;
 
-extern int sine[], cosine[]; /* these externs should be with the GetCos GetSin macros!! */
-
 extern int NumActiveBlocks;
 extern DISPLAYBLOCK *ActiveBlockList[];
 extern int NumOnScreenBlocks;
@@ -1947,7 +1945,6 @@ void DrawWristDisplay(void)
 }
 void RotateVertex(VECTOR2D *vertexPtr, int theta)
 {
-	extern int sine[],cosine[];
 	int vx,vy;
 	int sin = GetSin(theta);
 	int cos = GetCos(theta);

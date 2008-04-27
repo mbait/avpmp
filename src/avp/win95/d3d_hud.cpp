@@ -70,7 +70,6 @@ extern void YClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v
 extern void XClipMotionTrackerVertices(struct VertexTag *v1, struct VertexTag *v2);
 /* HUD globals */
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
-extern int sine[],cosine[];
 
 extern enum HUD_RES_ID HUDResolution;
 

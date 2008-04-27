@@ -10,12 +10,12 @@
 
 */
 
-extern int sine[];
-extern int cosine[];
+extern const int sine[4096];
+extern const int cosine[4096];
 
-extern short ArcCosTable[];
-extern short ArcSineTable[];
-extern short ArcTanTable[];
+extern const short ArcCosTable[4096];
+extern const short ArcSineTable[4096];
+extern const short ArcTanTable[256];
 
 extern LONGLONGCH ll_zero;
 

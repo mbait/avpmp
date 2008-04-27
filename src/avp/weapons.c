@@ -3011,7 +3011,6 @@ void PositionPlayersWeaponMuzzleFlash(void)
 	/* rotate flash around in random multiples of 60 degrees */
 	{
 		MATRIXCH mat;
-		extern int cosine[], sine[];
    		int angle = (FastRandom()%6)*683;
  	  	int cos = GetCos(angle);
  	  	int sin = GetSin(angle);

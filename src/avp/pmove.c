@@ -93,7 +93,6 @@ int executeDemo;
 /* Global Externs */
 extern DISPLAYBLOCK* Player;
 extern int NormalFrameTime;
-extern int cosine[], sine[];
 extern int predHUDSoundHandle;
 extern int predOVision_SoundHandle;
 extern int TauntSoundPlayed;

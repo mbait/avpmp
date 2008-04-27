@@ -59,8 +59,6 @@ void Budge_HModel(HMODELCONTROLLER *controller,VECTORCH *offset);
 
 /* external globals */
 extern int NormalFrameTime;
-extern int sine[];
-extern int cosine[];
 extern int GlobalFrameCounter;
 extern VIEWDESCRIPTORBLOCK *Global_VDB_Ptr;
 

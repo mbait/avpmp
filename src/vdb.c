@@ -10,11 +10,6 @@
 
 */
 
-	#if platform_pc
-	extern int sine[];
-	extern int cosine[];
-	#endif
-
     #if SupportWindows95
 	extern int ScanDrawMode;
 	#endif

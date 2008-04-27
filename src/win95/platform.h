@@ -37,9 +37,6 @@ typedef struct LONGLONGCH {
 
 */
 
-extern int sine[];
-extern int cosine[];
-
 #define GetSin(a) sine[a]
 #define GetCos(a) cosine[a]
 

@@ -3799,7 +3799,6 @@ void HandleRipples(void)
 
 int EffectOfRipples(VECTORCH *point)
 {
-	extern int sine[];
 	int offset;
 	int i;
  	offset = GetSin((point->vx+point->vz+CloakingPhase)&4095)>>11;

@@ -1065,8 +1065,6 @@ AIMODULE *FarNPC_GetTargetAIModuleForHunt(STRATEGYBLOCK *sbPtr, int alien)
 /* Patrick 2/7/96: this function returns a module for wandering to */
 AIMODULE *FarNPC_GetTargetAIModuleForWander(STRATEGYBLOCK *sbPtr, AIMODULE *exception, int alien)
 {
-	extern int cosine[], sine[];
-
 	AIMODULE **AdjModuleRefPtr;
 	DYNAMICSBLOCK *dynPtr;
 	AIMODULE* targetModule = (AIMODULE *)0;

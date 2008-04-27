@@ -33,7 +33,6 @@
 extern int ModuleArraySize;
 extern char *ModuleCurrVisArray;
 extern int NormalFrameTime;
-extern int cosine[], sine[];
 
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 

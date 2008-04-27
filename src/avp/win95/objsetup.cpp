@@ -61,7 +61,6 @@
 
 extern "C" {
 #include "3dc.h"
-extern int cosine[];
 extern MAPSETVDB chnk_playcam_vdb;
 extern int GlobalAmbience;
 extern VIEWDESCRIPTORBLOCK *ActiveVDBList[];

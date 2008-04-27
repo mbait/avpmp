@@ -29,13 +29,8 @@
 
 */
 
-
-
-/* Grrr!!  That's the last time these will be missing! */
-/* Oh, CDF 18/12/97 */
-
-extern int sine[];
-extern int cosine[];
+extern const int sine[4096];
+extern const int cosine[4096];
 
 
 typedef struct vectorch {

@@ -40,7 +40,6 @@
   ----------------------------------------------------------------------*/
 extern int NormalFrameTime;
 extern int GlobalFrameCounter;
-extern int cosine[], sine[];
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern DEATH_DATA Alien_Deaths[];
 extern HITLOCATIONTABLE *GetThisHitLocationTable(char *id);

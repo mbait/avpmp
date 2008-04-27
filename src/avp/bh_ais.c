@@ -891,8 +891,6 @@ int NPCSetVelocity(STRATEGYBLOCK *sbPtr, VECTORCH* targetDirn, int in_speed)
   -----------------------------------------------------------------------*/
 int NPCOrientateToVector(STRATEGYBLOCK *sbPtr, VECTORCH *zAxisVector,int turnspeed, VECTORCH *offset)
 {
-        extern int cosine[], sine[];
-
         int maxTurnThisFrame;
         int turnThisFrame;
         VECTORCH localZAxisVector;

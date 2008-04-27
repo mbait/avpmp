@@ -44,7 +44,6 @@ extern "C++"
 
 extern int ScanDrawMode;
 extern int ZBufferMode;
-extern int sine[],cosine[];
 extern IMAGEHEADER ImageHeaderArray[];
 int BackdropImage;
 //#define UseLocalAssert Yes
