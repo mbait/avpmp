@@ -196,7 +196,7 @@
 	(
 		"LISTCMD",
 		"LIST ALL CONSOLE COMMANDS",
-		ListAll
+		ConsoleCommand :: ListAll
 	);
 
 	Make
