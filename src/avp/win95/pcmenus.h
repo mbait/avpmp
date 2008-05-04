@@ -5,8 +5,6 @@
 extern "C" {
 #endif
 
-#include "menugfx.h"
-
 #define ENABLE_SHADING_OPTION 0
 #define ENABLE_MIPMAP_OPTION 0
 
@@ -116,69 +114,9 @@ float GetUVScale(IMAGETYPEIDX);
 #define AMB_MODELESS 0x00000001 /* do not wait for select or blank screen */
 void AvpMessageBox(char const * text, char const * title, int flags);
 
-extern AVP_MENU OptionsMenuData;
-extern AVP_MENU VideoModeOptionsMenu;
-
 #ifdef __cplusplus
 }
 #endif
-
-
-
-
-/*
-	NEW CONTENT 1/4/98 by DHM:
-	--------------------------
-
-	Building the video options page for the new menu system, I need
-	access to various variables declared as static within PCMENUS.CPP
-
-	I've decided to access them through an export variable interface,
-	hoping this will make the code cleaner.
-*/
-#ifdef __cplusplus
-#	ifndef _expvar_hpp
-#		include "expvar.hpp"
-#	endif
-#	ifndef _scstring
-#		include "scstring.hpp"
-#	endif
-
-	namespace RebMenus
-	{
-		class ExportVariable_3dAcceleration : public ExportVariable<OurBool>
-		{
-		public:
-			OurBool Get(void) const;
-			void Set(OurBool NewVal);
-		};
-
-		class ExportVariable_ZBuffering : public ExportVariable<OurBool>
-		{
-		public:
-			OurBool Get(void) const;
-			void Set(OurBool NewVal);
-		};
-
-		class ExportVariable_BilinearFiltering : public ExportVariable<OurBool>
-		{
-		public:
-			OurBool Get(void) const;
-			void Set(OurBool NewVal);
-		};
-
-		class VideoModeSelection
-		{
-		public:
-			static SCString* DescribeCurrentSelection(void);
-			static void Dec(void);
-			static void Inc(void);
-		};
-	};
-
-#endif /* __cplusplus */
-
-
 
 
 #endif /* ! _included_pcmenus_h_ */

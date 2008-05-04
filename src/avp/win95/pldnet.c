@@ -11,7 +11,6 @@
 #include "bh_types.h"
 #include "dynblock.h"
 #include "dynamics.h"
-#include "menugfx.h"
 #include "bh_debri.h"
 #include "pvisible.h"
 #include "bh_plift.h"
