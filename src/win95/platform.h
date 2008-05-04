@@ -15,12 +15,9 @@
 extern "C"  {
 #endif
 
-//#include "fastfile.h"
-
 #define platform_pc Yes
 #define Saturn No
 
-#define Hardware2dTextureClipping No
 
 /* Types */
 
@@ -543,54 +540,6 @@ typedef enum {
 	WinInitChange
 
 } WININITMODES;
-
-/*
-
- Triangle Array Limits etc.
-
-*/
-
-#define maxarrtriangles 7 /* Could be 6 if all shape data in triangles */
-#define trianglesize (1 + 1 + 1 + 1 + (6 * 3) + 1)  /* largest, could be 5*3 if no 3d texturing */
-#define pta_max 9 /* Could be 8 if all shape data in triangles */
-
-/* header + xy + terminator */
-#define item_polygon_trianglesize (1 + 1 + 1 + 1 + (2 * 3) + 1)
-/* header + xyi + terminator */
-#define item_gouraudpolygon_trianglesize (1 + 1 + 1 + 1 + (3 * 3) + 1)
-/* header + xyuv + terminator */
-#define item_2dtexturedpolygon_trianglesize (1 + 1 + 1 + 1 + (4 * 3) + 1)
-/* header + xyuvi + terminator */
-#define item_gouraud2dtexturedpolygon_trianglesize (1 + 1 + 1 + 1 + (5 * 3) + 1)
-/* header + xyuvw + terminator */
-#define item_3dtexturedpolygon_trianglesize (1 + 1 + 1 + 1 + (5 * 3) + 1)
-/* header + xyuvwi + terminator */
-#define item_gouraud3dtexturedpolygon_trianglesize (1 + 1 + 1 + 1 + (6 * 3) + 1)
-
-/*
-
- Vertex sizes
-
- For copying vertices from item list polygons to triangles
-
- e.g.
-
- Vertex 2 (x component) of the quad would be (for Item_Polygon)
-
- q[2 * i_poly_vsize + i_vstart + ix]
-
- WARNING: If the item format changes these MUST be updated
-
-*/
-
-#define vstart          4
-
-#define poly_vsize      2
-#define gpoly_vsize     3
-#define t2poly_vsize    4
-#define gt2poly_vsize   5
-#define t3poly_vsize    5
-#define gt3poly_vsize   6
 
 
 /*
