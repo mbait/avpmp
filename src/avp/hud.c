@@ -21,7 +21,6 @@
 #include "huddefs.h"
 #include "dynblock.h"
 #include "weapons.h"
-#include "hud_map.h"
 
 #include "psnd.h"
 #include "psndplat.h"
@@ -205,10 +204,8 @@ void InitHUD(void)
 	
 	// This should be set elsewhere as well, but just to be sure!!
 	RequestFadeToBlackLevel = 0;
-
-	/* KJL 11:18:36 04/25/97 - initialise HUD map code */
-	//InitHUDMap();
 }
+
 void KillHUD(void)
 {
 	switch(AvP.PlayerType)
@@ -360,7 +357,7 @@ void MaintainHUD(void)
 			case I_Marine:
 			{
 				HandleMarineWeapon();
-//	   			UpdateHUDMap();
+
 	  	 	 	if (CurrentVisionMode==VISION_MODE_NORMAL) DoMotionTracker();
 //	            UpdateMarineStatusValues();
 				CheckWireFrameMode(0);

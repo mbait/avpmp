@@ -20,7 +20,6 @@
 
 #include "pmove.h"
 #include "usr_io.h"
-#include "hud_map.h"
 #include "hud.h"
 #include "messagehistory.h"
 
@@ -1591,30 +1590,6 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 		#endif
 	}
 
-	/* KJL 16:03:06 05/11/97 - Handle map options */
-	#if 0
-	if(KeyboardInput[KEY_NUMPADADD])
-		HUDMapOn();
-	else if(KeyboardInput[KEY_NUMPADSUB])
-		HUDMapOff();
-	if(KeyboardInput[KEY_NUMPAD7])
-		HUDMapZoomIn();
-	else if(KeyboardInput[KEY_NUMPAD9])
-		HUDMapZoomOut();
-	if(KeyboardInput[KEY_NUMPAD1])
-		HUDMapSmaller();
-	else if(KeyboardInput[KEY_NUMPAD3])
-		HUDMapLarger();
-	if(KeyboardInput[KEY_NUMPAD4])
-		HUDMapLeft();
-	else if(KeyboardInput[KEY_NUMPAD6])
-		HUDMapRight();
-	if(KeyboardInput[KEY_NUMPAD8])
-		HUDMapUp();
-	else if(KeyboardInput[KEY_NUMPAD2])
-		HUDMapDown();
-	#endif
-		
 	/* KJL 10:55:22 10/9/97 - HUD transparency */
 	#if 0
 	{
