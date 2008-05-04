@@ -22,9 +22,6 @@ so player.c is looking a bit bare at the moment. */
 #include "game_statistics.h"
 #include "pfarlocs.h"
 #include "bh_ais.h"
-#if SupportWindows95
-	#include "rebmenus.hpp"
-#endif
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -487,13 +484,6 @@ void MaintainPlayer(void)
 	textprint("PlayerLight %d\n",CurrentLightAtPlayer);
 	#endif
 
-	#if SupportWindows95
-	#if 0//UseRebMenus
-	if(playerStatusPtr->Mvt_InputRequests.Flags.Rqst_PauseGame)
-	{
-		REBMENUS_ProcessPauseRequest();
-	}
-	#else
 	if(AvP.Network==I_No_Network)
 	{
 		#if 1
@@ -520,8 +510,7 @@ void MaintainPlayer(void)
 		// go to start menu
 		AvP.MainLoopRunning = 0;
 	}
-	#endif
-	#endif
+
 	//Update the player's invulnerabilty timer
 	if(playerStatusPtr->invulnerabilityTimer>0)
 	{

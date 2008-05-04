@@ -21,7 +21,6 @@
 #include "consbind.hpp"
 
 	#if KeyBindingUses_KEY_ID
-		#include "avpitems.hpp"
 		#include "iofocus.h"
 		#include "scstring.hpp"
 		#include "strtab.hpp"
@@ -63,6 +62,7 @@
 /* Exported globals ************************************************/
 
 /* Internal type definitions ***************************************/
+typedef enum TEXTSTRING_ID TextID;
 
 /* Internal function prototypes ************************************/
 
