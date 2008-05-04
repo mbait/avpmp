@@ -25,76 +25,6 @@ ModuleLink::~ModuleLink()
 
 RIF_IMPLEMENT_DYNCREATE("WAYPOINT",Module_Waypoint_Chunk)
 
-
-#if UseOldChunkLoader
-Module_Waypoint_Chunk::Module_Waypoint_Chunk(Chunk_With_Children* parent,const char* data,size_t datasize)
-:Chunk(parent,"WAYPOINT")
-{
-	NumWaypoints=*(int*)data;
-	data+=4;
-	if(NumWaypoints)
-	   	Waypoints=new ChunkWaypoint[NumWaypoints];
-	else
-		Waypoints=0;
-
-	for(int i=0;i<NumWaypoints;i++)
-	{
-		ChunkWaypoint* cw=&Waypoints[i];
-		cw->index=i;
-
-		cw->min=*(ChunkVector*)data;
-		data+=sizeof(ChunkVector);	
-		cw->max=*(ChunkVector*)data;
-		data+=sizeof(ChunkVector);	
-		cw->centre=*(ChunkVector*)data;
-		data+=sizeof(ChunkVector);	
-		
-		cw->flags=*(int*)data;
-		data+=4;	
-		cw->spare2=*(int*)data;
-		data+=4;	
-		
-		cw->NumWPLinks=*(int*)data;
-		data+=4;
-
-		if(cw->NumWPLinks)
-			cw->WayLinks=new WaypointLink[cw->NumWPLinks];
-		else
-			cw->WayLinks=0;
-		
-		for(int j=0;j<cw->NumWPLinks;j++)
-		{
-			cw->WayLinks[j]=*(WaypointLink*)data;
-			data+=sizeof(WaypointLink);
-		}
-			
-		cw->NumModLinks=*(int*)data;
-		data+=4;
-
-		if(cw->NumModLinks)
-			cw->ModLinks=new ModuleLink[cw->NumModLinks];
-		else
-			cw->ModLinks=0;
-
-		for(j=0;j<cw->NumModLinks;j++)
-		{
-			ModuleLink* ml=&cw->ModLinks[j];
-			ml->module_name=new char[strlen(data)+1];
-			strcpy(ml->module_name,data);
-			data+=(strlen(data)+4)&~3;
-			ml->flags=*(int*)data;
-			data+=4;
-		}
-
-		
-	}
-
-	spare1=*(int*)data;
-	data+=4;
-	spare2=*(int*)data;
-	data+=4;
-}
-#else
 Module_Waypoint_Chunk::Module_Waypoint_Chunk(Chunk_With_Children* parent,const char* data,size_t datasize)
 :Chunk(parent,"WAYPOINT")
 {
@@ -193,7 +123,6 @@ Module_Waypoint_Chunk::Module_Waypoint_Chunk(Chunk_With_Children* parent,const c
 	data+=4;
 
 }
-#endif
 
 Module_Waypoint_Chunk::Module_Waypoint_Chunk(Chunk_With_Children* parent)
 :Chunk(parent,"WAYPOINT")
@@ -493,23 +422,12 @@ Object_Chunk* AI_Module_Master_Chunk::get_my_object_chunk()
 
 RIF_IMPLEMENT_DYNCREATE("AIMODSLA",AI_Module_Slave_Chunk)
 
-#if UseOldChunkLoader
-AI_Module_Slave_Chunk::AI_Module_Slave_Chunk(Object_Module_Data_Chunk* parent,const char* data,size_t)
-:Chunk(parent,"AIMODSLA")
-{
-	MasterModule=0;
-	MasterModuleName=new char[strlen(data)+1];
-	strcpy(MasterModuleName,data);	
-	MasterModuleIndex=0;
-}
-#else
 AI_Module_Slave_Chunk::AI_Module_Slave_Chunk(Chunk_With_Children* parent,const char* data,size_t)
 :Chunk(parent,"AIMODSLA")
 {
 	MasterModule=0;
 	MasterModuleIndex=*(int*)data;
 }
-#endif
 
 AI_Module_Slave_Chunk::AI_Module_Slave_Chunk(Object_Module_Data_Chunk* parent,Object_Chunk* _MasterModule)
 :Chunk(parent,"AIMODSLA")
@@ -520,9 +438,6 @@ AI_Module_Slave_Chunk::AI_Module_Slave_Chunk(Object_Module_Data_Chunk* parent,Ob
 
 AI_Module_Slave_Chunk::~AI_Module_Slave_Chunk()
 {
-	#if UseOldChunkLoader
-	delete [] MasterModuleName;
-	#endif
 }
 
 size_t AI_Module_Slave_Chunk::size_chunk()
@@ -545,7 +460,6 @@ void AI_Module_Slave_Chunk::fill_data_block(char* data_start)
 
 void AI_Module_Slave_Chunk::post_input_processing()
 {
-	#if !UseOldChunkLoader
 	File_Chunk* fc=(File_Chunk*)GetRootChunk();
 	if(!strcmp(fc->identifier,"REBINFF2"))
 	{
@@ -572,7 +486,6 @@ void AI_Module_Slave_Chunk::post_input_processing()
 
 		}
 	}
-	#endif	
 }
 
 Object_Chunk* AI_Module_Slave_Chunk::get_my_object_chunk()

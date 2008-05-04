@@ -135,23 +135,6 @@ void Object_Hierarchy_Data_Chunk::fill_data_block (char *data_start)
 	
 }
 
-#if UseOldChunkLoader
-Object_Hierarchy_Data_Chunk::Object_Hierarchy_Data_Chunk (Object_Hierarchy_Chunk * parent, const char * data_start, size_t /*ssize*/)
-: Chunk (parent, "OBJHIERD"), object(0), ob_name (0)
-{
-	
-	num_extra_data=0;
-	extra_data=0;
-
-	data_start+=40;
-		
-	if (strlen(data_start))
-	{
-		ob_name = new char [strlen(data_start) + 1];
-		strcpy (ob_name, data_start);
-	}
-}
-#else
 Object_Hierarchy_Data_Chunk::Object_Hierarchy_Data_Chunk (Chunk_With_Children * parent, const char * data_start, size_t /*ssize*/)
 : Chunk (parent, "OBJHIERD"), object(0), ob_name (0)
 {
@@ -176,7 +159,6 @@ Object_Hierarchy_Data_Chunk::Object_Hierarchy_Data_Chunk (Chunk_With_Children * 
 		strcpy (ob_name, data_start);
 	}
 }
-#endif
 
 void Object_Hierarchy_Data_Chunk::post_input_processing ()
 {
@@ -574,18 +556,6 @@ size_t Hierarchy_Degradation_Distance_Chunk::size_chunk()
 
 RIF_IMPLEMENT_DYNCREATE("HIERBBOX",Hierarchy_Bounding_Box_Chunk)
 
-#if UseOldChunkLoader
-Hierarchy_Bounding_Box_Chunk::Hierarchy_Bounding_Box_Chunk(Chunk_With_Children* parent,const char* data,size_t datasize)
-:Chunk(parent,"HIERBBOX")
-{
-	assert(datasize==2*sizeof(ChunkVector));
-	
-		
-	min=*(ChunkVector*)data;
-	data+=sizeof(ChunkVector);
-	max=*(ChunkVector*)data;
-}
-#else
 Hierarchy_Bounding_Box_Chunk::Hierarchy_Bounding_Box_Chunk(Chunk_With_Children* parent,const char* data,size_t datasize)
 :Chunk(parent,"HIERBBOX")
 {
@@ -595,7 +565,7 @@ Hierarchy_Bounding_Box_Chunk::Hierarchy_Bounding_Box_Chunk(Chunk_With_Children* 
 	data+=sizeof(ChunkVectorInt);
 	max=*(ChunkVectorInt*)data;
 }
-#endif
+
 void Hierarchy_Bounding_Box_Chunk::fill_data_block(char* data_start)
 {
 	strncpy (data_start, identifier, 8);

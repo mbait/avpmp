@@ -55,40 +55,6 @@ void Object_Animation_Sequence_Frame_Chunk::fill_data_block (char *data_start)
 	
 }
 
-#if UseOldChunkLoader
-Object_Animation_Sequence_Frame_Chunk::Object_Animation_Sequence_Frame_Chunk (Object_Animation_Sequence_Chunk * parent,const char *data_start, size_t)
-: Chunk (parent, "OBASEQFR")
-{
-	orientation.x = -(*(double *) data_start);
-	data_start += 8;
-	orientation.y = -(*(double *) data_start);
-	data_start += 8;
-	orientation.z = -(*(double *) data_start);
-	data_start += 8;
-	orientation.w = (*(double *) data_start);
-	data_start += 8;
-
-	transform.x = *((double *) data_start);
-	data_start += 8;
-	transform.y = *((double *) data_start);
-	data_start += 8;
-	transform.z = *((double *) data_start);
-	data_start += 8;
-
-	at_frame_no = *((int *) data_start);
-	data_start += 4;
-	
-	frame_ref_no = *((int *) data_start);
-	data_start += 4;
-	
-	flags = *((int *) data_start);
-	data_start += 4;
-	
-	num_extra_data=0;
-	extra_data=0;
-	
-}
-#else
 Object_Animation_Sequence_Frame_Chunk::Object_Animation_Sequence_Frame_Chunk (Chunk_With_Children * parent,const char *data_start, size_t)
 : Chunk (parent, "OBASEQFR")
 {
@@ -133,7 +99,6 @@ Object_Animation_Sequence_Frame_Chunk::Object_Animation_Sequence_Frame_Chunk (Ch
 	}
 	
 }
-#endif
 
 void Object_Animation_Sequence_Frame_Chunk::set_sound_index(int ind)
 {
@@ -193,31 +158,6 @@ Object_Animation_Sequence_Header_Chunk::~Object_Animation_Sequence_Header_Chunk(
 		delete extra_data;
 }
 
-
-#if UseOldChunkLoader
-Object_Animation_Sequence_Header_Chunk::Object_Animation_Sequence_Header_Chunk (Chunk_With_Children * parent,const char * data_start, size_t)
-: Chunk (parent, "OBASEQHD"), sequence_name (0)
-{
-	num_frames = *((int *) data_start);
-	data_start += 4;
-
-	sequence_number = *((int *) data_start);
-	data_start += 4;
-
-	sub_sequence_number = *((int *) data_start);
-	data_start += 4;
-
-	num_extra_data=0;
-	extra_data=0;
-	data_start+=40;
-	
-	if (strlen(data_start))
-	{
-		sequence_name = new char [strlen(data_start) + 1];
-		strcpy (sequence_name, data_start);
-	}
-}
-#else
 Object_Animation_Sequence_Header_Chunk::Object_Animation_Sequence_Header_Chunk (Chunk_With_Children * parent,const char * data_start, size_t)
 : Chunk (parent, "OBASEQHD"), sequence_name (0)
 {
@@ -252,9 +192,6 @@ Object_Animation_Sequence_Header_Chunk::Object_Animation_Sequence_Header_Chunk (
 		strcpy (sequence_name, data_start);
 	}
 }
-#endif
-
-
 
 Object_Animation_Sequence_Header_Chunk * Object_Animation_Sequence_Chunk::get_header()
 {

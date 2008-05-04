@@ -95,9 +95,6 @@ class AI_Module_Slave_Chunk : public Chunk
 	Object_Chunk* get_my_object_chunk();
 
 	Object_Chunk* MasterModule;
-	#if UseOldChunkLoader
-	char* MasterModuleName;
-	#endif
 	int MasterModuleIndex;
 };
 

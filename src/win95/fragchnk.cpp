@@ -99,30 +99,6 @@ Fragment_Type_Shape_Chunk::Fragment_Type_Shape_Chunk(Chunk_With_Children* parent
 	pad1=pad2=pad3=0;
 }
 
-#if UseOldChunkLoader
-Fragment_Type_Shape_Chunk::Fragment_Type_Shape_Chunk(Chunk_With_Children* const parent,const char* data,size_t const )
-:Chunk(parent,"FRGTYPSC")
-{
-	int length=strlen(data)+1;
-	name=new char[length];
-	strcpy(name,data);
-	data+=(length+3)&~3;
-
-	num_fragments=*(int*)data;
-	data+=4;
-
-	location=*(ChunkVector*)data;
-	data+=sizeof(ChunkVector);
-
-	
-	pad1=*(int*)data;
-	data+=4;
-	pad2=*(int*)data;
-	data+=4;
-	pad3=*(int*)data;
-	data+=4;
-};
-#else
 Fragment_Type_Shape_Chunk::Fragment_Type_Shape_Chunk(Chunk_With_Children* const parent,const char* data,size_t const )
 :Chunk(parent,"FRGTYPSC")
 {
@@ -145,7 +121,6 @@ Fragment_Type_Shape_Chunk::Fragment_Type_Shape_Chunk(Chunk_With_Children* const 
 	pad3=*(int*)data;
 	data+=4;
 }
-#endif
 
 Fragment_Type_Shape_Chunk::~Fragment_Type_Shape_Chunk()
 {

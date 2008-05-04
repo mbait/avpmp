@@ -58,38 +58,7 @@ size_t AVP_Generator_Chunk::size_chunk ()
 	return(chunk_size);
 	
 }
-#if UseOldChunkLoader
-AVP_Generator_Chunk::AVP_Generator_Chunk (Chunk_With_Children * parent, const char * data, size_t /*size*/)
-: Chunk (parent, "AVPGENER")
-{
-	location = *((ChunkVector *) data);
-	data += sizeof(ChunkVector);
-	
-	orientation = *((int *) data);
-	data += 4;
-	
-	type = *((int *) data);
-	data += 4;
 
-	flags = *((int *) data);
-	data += 4;
-	
-	textureID = *(data);
-	data ++;
-	
-	sub_type = *(data);
-	data ++;
-	
-	extra1 = *(unsigned char*)(data);
-	data ++;
-	
-	extra2 = *(unsigned char*)(data);
-	data ++;
-	
-	name = new char [strlen(data) + 1];
-	strcpy (name, data);
-}
-#else
 AVP_Generator_Chunk::AVP_Generator_Chunk (Chunk_With_Children * parent, const char * data, size_t /*size*/)
 : Chunk (parent, "AVPGENER")
 {
@@ -120,8 +89,6 @@ AVP_Generator_Chunk::AVP_Generator_Chunk (Chunk_With_Children * parent, const ch
 	name = new char [strlen(data) + 1];
 	strcpy (name, data);
 }
-#endif
-
 
 
 AVP_Generator_Chunk::~AVP_Generator_Chunk ()
@@ -461,19 +428,7 @@ AVP_Player_Start_Chunk::AVP_Player_Start_Chunk(Chunk_With_Children* parent)
 	moduleID.id2=0;
 
 }
-#if UseOldChunkLoader
-AVP_Player_Start_Chunk::AVP_Player_Start_Chunk(Chunk_With_Children* parent,const char* data,size_t)
-:Chunk(parent,"AVPSTART")
-{
-	location=*(ChunkVector*)data;
-	data+=sizeof(ChunkVector);
-	orientation=*(ChunkMatrix*)data;
-	data+=sizeof(ChunkMatrix);
-	spare1=*(int*)data;
-	data+=4;	
-	spare2=*(int*)data;
-}
-#else
+
 AVP_Player_Start_Chunk::AVP_Player_Start_Chunk(Chunk_With_Children* parent,const char* data,size_t)
 :Chunk(parent,"AVPSTART")
 {
@@ -481,7 +436,6 @@ AVP_Player_Start_Chunk::AVP_Player_Start_Chunk(Chunk_With_Children* parent,const
 	CHUNK_EXTRACT(orientation,ChunkMatrix)
 	CHUNK_EXTRACT(moduleID,ObjectID)
 }
-#endif
 
 void AVP_Player_Start_Chunk::fill_data_block (char * data)
 {

@@ -396,13 +396,6 @@ File_Chunk::File_Chunk(const char * file_name)
 		return;
 	}	
 
-	#if UseOldChunkLoader
-	if (strncmp (id_buffer, "REBINFLF", 8)) {
-		error_code = CHUNK_FAILED_ON_LOAD_NOT_RECOGNISED;
-		fclose(rif_file);
-		return;
-	}	
-	#else
 	/* KJL 16:46:14 19/09/98 - check for a compressed rif */
 	if (!strncmp (id_buffer, COMPRESSED_RIF_IDENTIFIER, 8))
 	{
@@ -414,7 +407,7 @@ File_Chunk::File_Chunk(const char * file_name)
 		fclose(rif_file);
 		return;
 	}	
-	#endif
+
 	buffer = new char [file_size];
 
 	/* KJL 17:57:44 19/09/98 - if the rif is compressed, we must load the whole
