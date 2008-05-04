@@ -507,11 +507,8 @@ MODULEMAPBLOCK TempModuleMap = \
 	0,                                /* VDB Definition */
 	0,                                /* Interior Type */
 
-#if Saturn
-	LightType_PerObject,               /* MapLightType */
-#else
 	LightType_PerVertex,               /* MapLightType */
-#endif
+
     {0,0,0},                           /* MapOrigin */
 	0,                                 /* MapSimShapes */
 	0,                                 /* MapViewType */

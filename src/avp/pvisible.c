@@ -475,14 +475,14 @@ void DoObjectVisibility(STRATEGYBLOCK *sbPtr)
                                 }
                                 case(I_BehaviourPlatform):
                                 {
-										PLATFORMLIFT_BEHAVIOUR_BLOCK *platformliftdata = (PLATFORMLIFT_BEHAVIOUR_BLOCK *)sbPtr->SBdataptr;
-										//don't make platform lift far if it is currently moving
-										//(otherwise the lift won't be able to move)
-										if(platformliftdata->state!=PLBS_GoingUp &&
-										   platformliftdata->state!=PLBS_GoingDown)
-										{	
-											MakeObjectFar(sbPtr);
-										}
+					PLATFORMLIFT_BEHAVIOUR_BLOCK *platformliftdata = (PLATFORMLIFT_BEHAVIOUR_BLOCK *)sbPtr->SBdataptr;
+					//don't make platform lift far if it is currently moving
+					//(otherwise the lift won't be able to move)
+					if(platformliftdata->state!=PLBS_GoingUp &&
+					   platformliftdata->state!=PLBS_GoingDown)
+					{	
+						MakeObjectFar(sbPtr);
+					}
                                         break;          
                                 }                               
                                 case(I_BehaviourBinarySwitch):
@@ -539,11 +539,7 @@ void DoObjectVisibility(STRATEGYBLOCK *sbPtr)
                                 }
                                 case(I_BehaviourNetGhost):
                                 {
-                                        #if PSX
-                                                GLOBALASSERT(1==2);
-                                        #else
-                                                MakeGhostFar(sbPtr); 
-                                        #endif
+                                        MakeGhostFar(sbPtr); 
                                         break;          
                                 }
                                 case(I_BehaviourTrackObject):
@@ -1092,8 +1088,7 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
         /* set the default inanimate object dynamics template: Inanimate for single player,
         and Static for multiplayer 
         NB some objects are always static, and initialised using
-        the static dynamics template directly
-        NB2 PSX: all objects are static */
+        the static dynamics template directly */
         #if SupportWindows95
 //      if(AvP.Network==I_No_Network) inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_INANIMATE;
 //      else inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_STATIC;

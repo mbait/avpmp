@@ -974,14 +974,6 @@ void KShapeItemsInstr(SHAPEINSTR *shapeinstrptr)
 			if(pheaderPtr->PolyItemType == I_3dTexturedPolygon)
 				pheaderPtr->PolyItemType = I_2dTexturedPolygon;
 
-			/* KJL 12:57:43 05/29/97 - E3DEMO hack to draw everything in 3d */
-			#if PC_E3DEMO
-			pheaderPtr->PolyFlags &= ~iflag_tx2dor3d;
-			if(pheaderPtr->PolyItemType == I_Gouraud2dTexturedPolygon)
-				pheaderPtr->PolyItemType = I_Gouraud3dTexturedPolygon;
-			#endif
-			
-
 			if(ItemOCSBlock.ocs_clipstate == ocs_cs_totally_on)
 			{
 				CreateItemPtsArray[*shapeitemptr](shapeitemptr, &PointsArray[0]);

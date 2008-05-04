@@ -18,19 +18,6 @@
 extern int NormalFrameTime;
 
 
-#if PSX
-
-void * LightFXBehaveInit (void * bhdata, STRATEGYBLOCK* sbptr)
-{
-	
-}	
-void LightFXBehaveFun (STRATEGYBLOCK* sbptr)
-{
-	
-}	
-
-#else
-
 void * LightFXBehaveInit (void * bhdata, STRATEGYBLOCK* sbptr)
 {
 	LIGHT_FX_BEHAV_BLOCK * lfxbb;
@@ -641,4 +628,3 @@ void SaveStrategy_LightFx(STRATEGYBLOCK* sbPtr)
 	COPYELEMENT_SAVE(timer2)
 	COPYELEMENT_SAVE(time_to_next_flicker_state)
 }
-#endif

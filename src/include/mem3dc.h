@@ -12,10 +12,6 @@
 #include <stddef.h>
 
 /* defines */
-#if Saturn
-#define DBGMALLOC 1
-#endif
-
 #if SupportWindows95
 #if 1
 #define DBGMALLOC 0
@@ -47,7 +43,7 @@ a separate copy of the string for each malloc - just store the
 pointer.
 So, on PC this reduces the data size for the malloc records from 1.04Mb to 320K ! */
 
-#if SupportWindows95 || PSX
+#if SupportWindows95
 #define COPY_FILENAME 0 /* new behavior */
 #else
 #define COPY_FILENAME 1 /* previous behavior */

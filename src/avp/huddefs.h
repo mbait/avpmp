@@ -164,8 +164,7 @@ extern void PlatformSpecificInitAlienHUD(void);
 ******************REH*/
 extern void PlatformSpecificExitingHUD(void);
 /*KJL******************************************************************************************
-* This is for the PSX (& possibly Saturn). Use this to pass your list of graphics to be drawn *
-* to your GPU.                                                                                *
+* Use this to pass your list of graphics to be drawn to your GPU.                                                                                *
 ******************************************************************************************KJL*/
 
 extern void PlatformSpecificEnteringHUD(void);

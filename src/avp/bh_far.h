@@ -45,15 +45,8 @@ extern AIMODULE *FarNPC_GetTargetAIModuleForMarineRespond(STRATEGYBLOCK *sbPtr);
 extern void FarNpc_FlipAround(STRATEGYBLOCK *sbPtr);
 
 /* this define to help stop aliens coagulating in the environment */
-#if SupportWindows95
-	#define MAX_GENERATORNPCSPERMODULE	5
-	#define MAX_VISIBLEGENERATORNPCS	8 //12
-#else
-	/* PSX & Saturn*/
-	#define MAX_GENERATORNPCSPERMODULE	5
-	#define MAX_VISIBLEGENERATORNPCS	6
-#endif
-
+#define MAX_GENERATORNPCSPERMODULE	5
+#define MAX_VISIBLEGENERATORNPCS	8 //12
 
 
 #ifdef __cplusplus

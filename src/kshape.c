@@ -139,8 +139,6 @@ void DrawWaterFallPoly(VECTORCH *v);
 * they will end up in high memory on the Saturn.                                        *
 ************************************************************************************KJL*/
 
-VECTORCH Global_LightVector={1,}; 
-
 /*
  Global variables and arrays
 */
@@ -160,10 +158,6 @@ VECTORCH MorphedPts[maxmorphPts];
 #endif	/* SupportMorphing */
 
 					
-#if Saturn
-extern int PolygonSubdivideEntry(POLYHEADER* itemptr);
-#endif
-
 static COLOURINTENSITIES ColourIntensityArray[maxrotpts];
 														
 

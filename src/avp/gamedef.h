@@ -117,8 +117,7 @@ typedef enum environments
   	I_Mps4,
   	I_Surface,
   	I_Entrance,
-#if PSX || Saturn
-#else
+
  	I_Dml1,	// 25- Vertigo.rif for Al
  // #ifndef MPLAYER_DEMO
  	I_Dml2, // KJL 16:59:58 05/1/97 - fruitbat.rif for Al 
@@ -131,7 +130,7 @@ typedef enum environments
  	I_Dml9, // KJL 16:59:58 05/19/97 - mu.rif for Jake 
  	I_Dml10, // KJL 16:59:58 05/19/97 - mu.rif for Jake 
  // #endif
-#endif
+
  	I_Num_Environments  // 34
 
 }I_AVP_ENVIRONMENTS;
@@ -249,39 +248,6 @@ extern int Destroy_CurrentEnvironment();
 extern void LoadGameFromFile();
 extern void SaveGameToFile();
 extern void InitCharacter();
-/*************************************************************/
-
-/* KJL 15:42:46 10/02/96 - Okay, I don't use HUDGRAPHIC on the PC anymore and I suggest
-you don't use it on your platform either 'cos it's a mess. (Sorry Roxby, no offense...) */
-
-/************ HUD GRAPHIC STUFF *********************/
-
-typedef struct 
-{
-   	void*  data;					/* just about anything you feel like points to the file name*/
-	char*	filename;
-	int 	xdest, ydest;		 /*screen x y*/
-	int   width, height;	 /*depth and height of dest incase of shrink*/
-	RECT_AVP  *srcRect;
-	int hg_flags;
-	
-}HUDGRAPHIC;
-
-/* where to put the grahic*/
-
-#define HGflag_NotInVRAM 0x0000001		/*saturn only*/
-#define HGflag_LoadIntoVDP2 0x0000002	/*saturn only*/
-#define HGflag_LoadIntoVDP1	0x0000004	/*saturn only*/
-
-/* how to get the graphic */
-
-#define HGflag_AlwaysLoadOffDisk 0x00000200  /*cd or HD*/
-#define HGflag_LoadedIntoMemory  0x00000400	 /*loaded into memory*/
-
-/* source directory for the graphic */
-
-#define HGflag_MenuDir	0x00010000
-
 
 
 /********************************************************/
@@ -303,9 +269,6 @@ extern int UsingDataBase;
 #define MAXSCREENITEMS 10 
 
 #define NUM_CREDIT_SCREENS 2
-
-extern HUDGRAPHIC Menu[];
-extern HUDGRAPHIC CreditScreen[];
 
 typedef enum
 {
@@ -337,6 +300,3 @@ extern volatile char StillFading;
 #define GAMEDEF_INCLUDED
 
 #endif
-
-
-

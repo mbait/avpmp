@@ -239,7 +239,6 @@ private:
 
 };
 
-#define PSXLightMode 0
 //details of how light data should be altered for different platforms.
 //currently just playstation
 class Light_Scale_Chunk : public Chunk

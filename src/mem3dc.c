@@ -46,13 +46,9 @@
 
 #include "ourasert.h"
 
-#if PSX || Saturn
-	#define MAXMALLOCS        600
-#else
-	#define MAXMALLOCS	2500000
-		/* assertion fires if max exceeded */
-		/* changed to 1000000 by DHM 7/4/98; was 70001 */
-#endif
+#define MAXMALLOCS	2500000
+	/* assertion fires if max exceeded */
+	/* changed to 1000000 by DHM 7/4/98; was 70001 */
 
 #define MALLOC_FILL_VALUE 0x21
 #define FREE_FILL_VALUE   0x89
@@ -113,15 +109,7 @@ extern int textprint(const char* string, ...);
 extern void ExitSystem(void);
 extern void WaitForReturn(void);
 
-/* textprint on psx impacts frame rate massively if not
-used just for error messages, so it is often turned off.
-Hence the use of textprint2 below */
-
-#if PSX
-#define textprint2 printf
-#else
 #define textprint2 textprint
-#endif
 
 /* function declarations */
 #if COPY_FILENAME
@@ -173,148 +161,6 @@ void record_free(void *ptr, char const * string, unsigned long lineno)
   return;
 }
 
-#if PSX || Saturn 
-
-#if COPY_FILENAME
-static int AdjustMallocRecord(unsigned long addr, long size, char string[], unsigned long lineno)
-#else
-static int AdjustMallocRecord(unsigned long addr, long size, char const * string, unsigned long lineno)
-#endif
-
-{
-
-  int i=0;
-  char *ptr = (char *)addr;
-  static int no_record_init = 1;
-  MALLOC_RECORD *recordPtr = MallocRecord;
-
-  if(no_record_init)
-  {
-    InitMallocRecords();
-    no_record_init = 0;
-  }
-
-
-  if(size==FREEING_MEMORY) /* must be freeing memory */
-  {
-    GLOBALASSERT(addr); /* ensure not null addr */
-
-    while(i<MAXMALLOCS)
-    {
-       if(recordPtr->addr==addr)
-       {
-          TotalMallocNum--;
-
-          size = recordPtr->size;
-
-          while (size--)
-          {
-            *ptr++ = FREE_FILL_VALUE;
-          }
-		  #ifdef OVERRUN_SIZE
-		  {
-			char const * overrun_ptr = overrun_code;
-			int ov_cnt = OVERRUN_SIZE(recordPtr->size);
-			do /* a memcmp - dunno if its supported on all platforms */
-			{
-				if (!*overrun_ptr) overrun_ptr = overrun_code; /* repeat */
-				if (*overrun_ptr++ != *ptr++)
-				{
-			        textprint2("\nOut of Bounds!\n%lu bytes allocated to %p\nat %s, line %lu\n", recordPtr->size,(void *)recordPtr->addr,recordPtr->filename,recordPtr->linenum);
-					GLOBALASSERT(!"OUT OF BOUNDS detected in FREE");
-				}
-			}
-			while (--ov_cnt);
-		  }
-		  #endif
-
-          recordPtr->addr = 0;
-          TotalMemAllocated -= recordPtr->size;
-          recordPtr->size = 0;
-		  #if COPY_FILENAME
-          recordPtr->filename[0] = 0;
-		  #else
-          recordPtr->filename = "";
-		  #endif
-          recordPtr->linenum = 0;  
-          break; /* exit while loop */
-       }
-      i++;
-      recordPtr++;
-     }
-
-     if(i>=MAXMALLOCS)
-     {
-        textprint2("\n\n\n\nFree Error! %s, line %d\n", string, (int)lineno);
-        GLOBALASSERT(0); 
-        return(0);
-     } 
-
-   }
-
-   else /* must be mallocing memory */
-   {
-    TotalMallocNum++;
-    GLOBALASSERT(TotalMallocNum<MAXMALLOCS); /* just increase MAXMALLOCS define above if this fires */
-
-
-	// RWH chack to see that this address isn't already in use
-	i = 0;
-	recordPtr = MallocRecord;
-    while(i<MAXMALLOCS)
-    {
-       if(recordPtr->addr == addr)
-       {
-	   		GLOBALASSERT(0);
-       }
-      i++;
-      recordPtr++;
-    }
-	i = 0;
-	recordPtr = MallocRecord;
-    while(i<MAXMALLOCS)
-    {
-     if(recordPtr->addr==0)
-     {
-        recordPtr->addr = addr;
-        recordPtr->size = size;
-        TotalMemAllocated += size;
-		#if COPY_FILENAME
-        strcpy(recordPtr->filename, string);
-		#else
-		recordPtr->filename = string;
-		#endif
-        recordPtr->linenum = lineno;
-        while (size--)
-        {
-          *ptr++ = MALLOC_FILL_VALUE;
-        }
-		#ifdef OVERRUN_SIZE
-		{
-			char const * overrun_ptr = overrun_code;
-			int ov_cnt = OVERRUN_SIZE(recordPtr->size);
-			do /* a memcpy */
-			{
-				if (!*overrun_ptr) overrun_ptr = overrun_code; /* repeat */
-				*ptr++ = *overrun_ptr++;
-			}
-			while (--ov_cnt);
-		}
-		#endif
-        break; /* exit while loop */
-      }
-      i++;
-      recordPtr++;
-    }
-
-    GLOBALASSERT(i<MAXMALLOCS);  /* This should never fire - oh well */
-
-  }
-
-  return(1);
-
-}       
-#else
 #if COPY_FILENAME
 static int AdjustMallocRecord(unsigned long addr, long size, char string[], unsigned long lineno)
 #else
@@ -538,7 +384,7 @@ static int AdjustMallocRecord(unsigned long addr, long size, char const * string
   return(1);
 
 }       
-#endif
+
 void DumpMallocInfo(int type)
 {
    int i;
@@ -599,59 +445,6 @@ void DumpMallocInfo(int type)
          
          fclose(fp); 
      }
-     #endif
-
-     #if PSX
-     long fd;
-
-     fd = PCopen(MALLOCDUMPFILE,1,0);
-     if(fd<0)
-     {
-       fd = PCcreat(MALLOCDUMPFILE,0);
-       PCclose(fd);
-       fd = PCopen(MALLOCDUMPFILE,1,0);
-     }
-
-     if(fd<0)
-     {
-       textprint2("\n\n\nfile open error %s", MALLOCDUMPFILE);
-     }
-     else
-     {
-       char stringbuf[200];
-       sprintf(stringbuf,"\n\n\n\nOUTSTANDING MEMORY ALLOCATIONS\n\n"); 
-       #if APPEND_TO_DUMPFILE
-	     PClseek(fd,0,2);
-       #endif
-	     PCwrite(fd,stringbuf,strlen(stringbuf));
-       for (i=0;i<MAXMALLOCS;i++ )
-       {
-          if(MallocRecord[i].addr!=0)
-          {
-		       if (!(MallocRecord[i].linenum & CPPGLOBAL))
-			   {
-	             sprintf(stringbuf,"\nmalloc: %d bytes,line %d in %s", 
-	                  (int)MallocRecord[i].size, (int)MallocRecord[i].linenum, MallocRecord[i].filename);
-			   }
-			   else
-			   {
-	             sprintf(stringbuf,"\nC++ global construct malloc: %d bytes,line %d in %s", 
-	                  (int)MallocRecord[i].size, (int)(MallocRecord[i].linenum &~CPPGLOBAL), MallocRecord[i].filename);
-			   }
-		       PCwrite(fd,stringbuf,strlen(stringbuf));
-          }
-       }
-
-       sprintf(stringbuf,"\n\nTotalMemAllocated: %d\nTotalMallocNum: %d\n",
-                    (int)TotalMemAllocated, (int)TotalMallocNum);
-   
-	     PCwrite(fd,stringbuf,strlen(stringbuf));
-         
-       PCclose(fd); 
-
-
-     }
-
      #endif
 
    }
@@ -733,59 +526,6 @@ void DumpBoundsCheckInfo(int type)
          
          fclose(fp); 
      }
-     #endif
-
-     #if PSX
-     long fd;
-
-     fd = PCopen(MALLOCDUMPFILE,1,0);
-     if(fd<0)
-     {
-       fd = PCcreat(MALLOCDUMPFILE,0);
-       PCclose(fd);
-       fd = PCopen(MALLOCDUMPFILE,1,0);
-     }
-
-     if(fd<0)
-     {
-       textprint2("\n\n\nfile open error %s", MALLOCDUMPFILE);
-     }
-     else
-     {
-       char stringbuf[200];
-       sprintf(stringbuf,"\n\n\n\nBOUNDS_CHECK_PROBLEMS\n\n"); 
-       #if APPEND_TO_DUMPFILE
-	     PClseek(fd,0,2);
-       #endif
-	     PCwrite(fd,stringbuf,strlen(stringbuf));
-       for (i=0;i<MAXMALLOCS;i++ )
-       {
-          if(MallocRecord[i].addr!=0)
-          {
-			MALLOC_RECORD *recordPtr = &MallocRecord[i];
-			
-			unsigned char const * overrun_ptr = overrun_code;
-			unsigned char const * ptr = (unsigned char const *)recordPtr->addr + recordPtr->size;
-			int ov_cnt = OVERRUN_SIZE(recordPtr->size);
-			do /* a memcmp - dunno if its supported on all platforms */
-			{
-				if (!*overrun_ptr) overrun_ptr = overrun_code; /* repeat */
-				if (*overrun_ptr++ != *ptr++)
-				{
-			        sprintf(stringbuf,"\nOut of Bounds!\n%lu bytes allocated to %p\nat %s, line %lu\n", recordPtr->size,(void *)recordPtr->addr,recordPtr->filename,recordPtr->linenum);
-		    		PCwrite(fd,stringbuf,strlen(stringbuf));
-					break;
-				}
-			}
-			while (--ov_cnt);
-          }
-       }
-
-       PCclose(fd); 
-
-
-     }
-
      #endif
 
    }

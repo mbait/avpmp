@@ -246,10 +246,8 @@ void PAQBehaviour(STRATEGYBLOCK *sbPtr)
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("PAQ MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif

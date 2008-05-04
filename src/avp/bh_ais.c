@@ -968,8 +968,7 @@ int NPCOrientateToVector(STRATEGYBLOCK *sbPtr, VECTORCH *zAxisVector,int turnspe
                 mat.mat33 = cos;                
                         
                 // NOTE : It seems like OrientMat is not being set per frame which
-                // leads to inaccuracy build-up from the matrix multiplies. When this
-                // is fixed, the following PSXAccurateMatrixMultiply can be removed
+                // leads to inaccuracy build-up from the matrix multiplies.
 
                 if (offset) {
                         VECTORCH new_offset,delta_offset;
@@ -1000,11 +999,7 @@ int NPCOrientateToVector(STRATEGYBLOCK *sbPtr, VECTORCH *zAxisVector,int turnspe
 
                 }               
 
-                #if PSX
-                PSXAccurateMatrixMultiply(&sbPtr->DynPtr->OrientMat,&mat,&sbPtr->DynPtr->OrientMat);
-                #else
                 MatrixMultiply(&sbPtr->DynPtr->OrientMat,&mat,&sbPtr->DynPtr->OrientMat);
-                #endif
                 MatrixToEuler(&sbPtr->DynPtr->OrientMat, &sbPtr->DynPtr->OrientEuler);
         }
 
@@ -1415,9 +1410,7 @@ void NPCGetMovementDirection(STRATEGYBLOCK *sbPtr, VECTORCH *velocityDirection, 
                                         (GMD_myPolyPoints[point1].vy == GMD_myPolyPoints[point2].vy) && 
                                         (GMD_myPolyPoints[point1].vz == GMD_myPolyPoints[point2].vz))
                                         {
-                                                #if (!Saturn)
                                                 LOCALASSERT(1==0);
-                                                #endif
                                                 myPolyEdgeMoveDistances[i] = 0;
                                         }                       
                         }

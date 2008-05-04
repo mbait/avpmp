@@ -191,7 +191,6 @@ void FarAlienBehaviour(STRATEGYBLOCK *sbPtr)
 		
 		if(PointIsInModule(thisModule, &localCoords)==0)
 		{
-			#if (!PSX)
 			textprint("FAR ALIEN MODULE CONTAINMENT FAILURE \n");
 
 			LOGDXFMT(("Alien containment failure: %s alien is in %s, position is %d,%d,%d:\nModule extents are: %d:%d, %d:%d, %d:%d",
@@ -201,7 +200,6 @@ void FarAlienBehaviour(STRATEGYBLOCK *sbPtr)
 				thisModule->m_maxz,thisModule->m_minz));
 
 			LOCALASSERT(1==0);
-			#endif
 		}  
 	}
 	#endif
@@ -922,7 +920,6 @@ void LocateFarNPCInAIModule(STRATEGYBLOCK *sbPtr, AIMODULE *targetModule)
 		
 		if(PointIsInModule(thisModule, &localCoords)==0)
 		{
-			#if (!PSX)
 			textprint("FAR ALIEN MODULE CONTAINMENT FAILURE \n");
 
 			LOGDXFMT(("Alien containment failure: alien is in %s, position is %d,%d,%d:\nModule extents are: %d:%d, %d:%d, %d:%d",
@@ -931,7 +928,6 @@ void LocateFarNPCInAIModule(STRATEGYBLOCK *sbPtr, AIMODULE *targetModule)
 				thisModule->m_maxz,thisModule->m_minz));
 
 			LOCALASSERT(1==0);
-			#endif
 		}  
 	}
 	#endif

@@ -3219,10 +3219,8 @@ void WanderMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif
@@ -3573,10 +3571,8 @@ void PathfinderMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif
@@ -3897,10 +3893,8 @@ void GuardMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif
@@ -4247,10 +4241,8 @@ void LocalGuardMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif
@@ -4544,10 +4536,8 @@ void LoiterMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif
@@ -13627,10 +13617,8 @@ void RunAroundOnFireMission_Control(STRATEGYBLOCK *sbPtr) {
 			
 			if(PointIsInModule(thisModule, &localCoords)==0)
 			{
-				#if (!PSX)
 				textprint("FAR MARINE MODULE CONTAINMENT FAILURE \n");
 				LOCALASSERT(1==0);
-				#endif
 			}  
 		}
 		#endif

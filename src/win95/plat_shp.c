@@ -248,7 +248,6 @@ int SetupPolygonAccessFromShapeIndex(int shapeIndex)
 
 /*--------------------Patrick 17/12/96----------------------------
   I have added some more shape data access functions......
-  PSX versions are required.
   ----------------------------------------------------------------*/
 
 static VECTORCH patPointData;
@@ -353,7 +352,6 @@ int *GetPolygonVertexIndices(void)
 
 /*--------------------Roxby 3/7/97----------------------------
   I have added some more shape data access functions......
-  taken from PSX versions 
   ----------------------------------------------------------------*/
 
 

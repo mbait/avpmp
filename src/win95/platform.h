@@ -16,8 +16,6 @@ extern "C"  {
 #endif
 
 #define platform_pc Yes
-#define Saturn No
-
 
 /* Types */
 

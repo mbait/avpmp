@@ -527,10 +527,6 @@ typedef struct merged_poly
 
 #else
 
-	#if Saturn
-	#define iflag_sattexture	0x00000080	/* Outcode if outside frame buffer or behind z plane, else just draw */
-	#endif
-
 	#if platform_pc
 	#define iflag_zbuffer_w		0x00000080	/* Z-Buffer, Write-Only */
 	#endif
@@ -578,11 +574,6 @@ typedef struct merged_poly
 
 #define iflag_sortfarz			0x04000000	/* Use maxz for depth value */
 
-#define iflag_bufferxy			0x08000000  /* Internal - Saturn Only
-															- for xy clamped item */
-
-#define iflag_clampz				0x10000000  /* Internal - Saturn Only
-															- for z clamped item */
 
 #define iflag_light_corona		0x20000000 /* For use by the placed light strategy */
 
@@ -781,11 +772,7 @@ typedef struct texelgtx3d {
 
 typedef unsigned char TEXTURE;
 
-#if Saturn
-#define ImageNameSize 16
-#else
 #define ImageNameSize 128+1
-#endif
 
 
 typedef struct imageheader {

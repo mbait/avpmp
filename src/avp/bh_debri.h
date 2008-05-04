@@ -1,3 +1,6 @@
+#ifndef BH_DEBRI_H
+#define BH_DEBRI_H
+
 typedef struct OneShotAnimBehaviourType
 {
 	int counter;
@@ -37,12 +40,4 @@ extern void OneShotBehaveFun(STRATEGYBLOCK* sptr);
 extern void OneShot_Anim_BehaveFun(STRATEGYBLOCK* sptr);
 extern void MakeFragments (STRATEGYBLOCK *sbptr);
 
-
-#define EXPLOSION_LIFETIME (ONE_FIXED/4)
-#define EXPLOSION_ANIM_SPEED (ONE_FIXED*16)
-#define	EXPLOSION_LIGHTING_SCALE (ONE_FIXED*16/3)
-#if PSX || Saturn
-#define NO_OF_SPRITES_IN_BIG_EXPLOSION 5
-#else
-#define NO_OF_SPRITES_IN_BIG_EXPLOSION 10
 #endif

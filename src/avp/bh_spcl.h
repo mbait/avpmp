@@ -61,13 +61,8 @@ typedef struct xeno_morph_room_data
 	
 	int timer;
 
-#if PSX
-	struct polyheader ** pis_items_str;
-	struct psx_texture ** pis_sht_str;
-#else
 	int ** pis_items_str;
 	int ** pis_sht_str;
-#endif
 	
 	char doorID[SB_NAME_LENGTH];
 	STRATEGYBLOCK* DoorToRoom;

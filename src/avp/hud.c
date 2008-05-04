@@ -153,7 +153,6 @@ static void DisplayMarinesAmmo(void);
 
 static void DoMotionTracker(void);
 static int DoMotionTrackerBlips(void);
-//static void UpdateMarineStatusValues(void);
 
 static void HandleMarineWeapon(void);
 static void AimGunSight(int aimingSpeed, TEMPLATE_WEAPON_DATA *twPtr);
@@ -359,7 +358,7 @@ void MaintainHUD(void)
 				HandleMarineWeapon();
 
 	  	 	 	if (CurrentVisionMode==VISION_MODE_NORMAL) DoMotionTracker();
-//	            UpdateMarineStatusValues();
+
 				CheckWireFrameMode(0);
 				//flash health if invulnerable
 				if((playerStatusPtr->invulnerabilityTimer/12000 %2)==0)
@@ -1039,135 +1038,7 @@ static void DisplayMarinesAmmo(void)
 	}
 
 }				   
-#if 0
-static void UpdateMarineStatusValues(void)
-{
-	PLAYER_WEAPON_DATA *weaponPtr;
 
-    /* access the extra data hanging off the strategy block */
-	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
-    GLOBALASSERT(playerStatusPtr);
-    	
-	{
-		/* player's current weapon */
-    	GLOBALASSERT(playerStatusPtr->SelectedWeaponSlot<MAX_NO_OF_WEAPON_SLOTS);
-        
-        /* init a pointer to the weapon's data */
-        weaponPtr = &(playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot]);
-    }
-    
-
-	{
-    	int value=playerStatusPtr->Health>>16;	/* stored in 16.16 so shift down */
-        ValueOfHUDDigit[MARINE_HUD_HEALTH_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_HEALTH_TENS]=value%10;
-        value/=10;
-		ValueOfHUDDigit[MARINE_HUD_HEALTH_HUNDREDS]=value%10;
-	}
-	{
-    	#if PC_E3DEMO
-    	int value=playerStatusPtr->Energy>>16;	/* stored in 16.16 so shift down */
-        #else
-		extern int FrameRate;
-		int value=FrameRate;
-		#endif
-        ValueOfHUDDigit[MARINE_HUD_ENERGY_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_ENERGY_TENS]=value%10;
-        value/=10;
-		ValueOfHUDDigit[MARINE_HUD_ENERGY_HUNDREDS]=value%10;
-	}
-	{
-    	int value=playerStatusPtr->Armour>>16;	/* stored in 16.16 so shift down */
-        ValueOfHUDDigit[MARINE_HUD_ARMOUR_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_ARMOUR_TENS]=value%10;
-        value/=10;
-		ValueOfHUDDigit[MARINE_HUD_ARMOUR_HUNDREDS]=value%10;
-	}
-	
-	{
-    	int value=weaponPtr->PrimaryRoundsRemaining>>16;
-        /* ammo is in 16.16. we want the integer part, rounded up */
-        if ( (weaponPtr->PrimaryRoundsRemaining&0xffff) ) value+=1;
-        
-        ValueOfHUDDigit[MARINE_HUD_PRIMARY_AMMO_ROUNDS_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_PRIMARY_AMMO_ROUNDS_TENS]=value%10;
-        value/=10;
-		ValueOfHUDDigit[MARINE_HUD_PRIMARY_AMMO_ROUNDS_HUNDREDS]=value%10;
-	}
-	{
-    	int value=weaponPtr->PrimaryMagazinesRemaining;
-        ValueOfHUDDigit[MARINE_HUD_PRIMARY_AMMO_MAGAZINES_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_PRIMARY_AMMO_MAGAZINES_TENS]=value%10;
-    }	
-	
-	/* KJL 14:54:39 03/26/97 - secondary ammo */
-	if ( (weaponPtr->WeaponIDNumber == WEAPON_PULSERIFLE)
-	   ||(weaponPtr->WeaponIDNumber == WEAPON_MYSTERYGUN) )
-	{
-    	int value=weaponPtr->SecondaryRoundsRemaining>>16;
-        /* ammo is in 16.16. we want the integer part, rounded up */
-        if ( (weaponPtr->SecondaryRoundsRemaining&0xffff) ) value+=1;
-        
-        ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_ROUNDS_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_ROUNDS_TENS]=value%10;
-        value/=10;
-		ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_ROUNDS_HUNDREDS]=value%10;
-
-    	value=weaponPtr->SecondaryMagazinesRemaining;
-        ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_MAGAZINES_UNITS]=value%10;
-		value/=10;
-        ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_MAGAZINES_TENS]=value%10;
-		
-		BLTMarineNumericsToHUD(MARINE_HUD_SECONDARY_AMMO_MAGAZINES_TENS);
-    }	
-	else if (weaponPtr->WeaponIDNumber == WEAPON_GRENADELAUNCHER)
- 	{
-		/* KJL 11:46:57 04/09/97 - use to display your ammo type */
-		int value;
-		switch(GrenadeLauncherData.SelectedAmmo)
-		{
-			case AMMO_GRENADE:
-			{
-				value=1;
-				break;
-			}
-			case AMMO_FLARE_GRENADE:
-			{
-				value=2;
-				break;
-			}
-			case AMMO_FRAGMENTATION_GRENADE:
-			{
-				value=3;
-				break;
-			}
-			case AMMO_PROXIMITY_GRENADE:
-			{
-				value=4;
-				break;
-			}
-			default:
-			{
-				LOCALASSERT(0);
-				break;
-			}
-		}
-        ValueOfHUDDigit[MARINE_HUD_SECONDARY_AMMO_ROUNDS_UNITS]=value;
-		BLTMarineNumericsToHUD(MARINE_HUD_SECONDARY_AMMO_ROUNDS_UNITS);
-	}
-	else
-	{
-		BLTMarineNumericsToHUD(MARINE_HUD_PRIMARY_AMMO_MAGAZINES_TENS);
-	}
-
-}
-#endif
 static void HandleMarineWeapon(void)
 {
 	PLAYER_WEAPON_DATA *weaponPtr;

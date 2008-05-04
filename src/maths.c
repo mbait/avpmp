@@ -333,27 +333,8 @@ int MinInt(int *iarray, int iarraysize)
 
 */
 
-void CreateEulerMatrix(e, m1)
-
-	EULER *e;
-	MATRIXCH *m1;
-
+void CreateEulerMatrix(EULER *e, MATRIXCH *m1)
 {
-
-#if 0
-
-	SVECTOR eulers;
-
-	eulers.vx=(e->EulerX)&4095;
-	eulers.vy=(e->EulerY)&4095;
-	eulers.vz=(e->EulerZ)&4095;
-
-	RotMatrix(&eulers,(MATRIX *)scratchp);
-
-	psx2ch((MATRIX *)scratchp,m1);
-
-#else
-
 	int t, sx, sy, sz, cx, cy, cz;
 
 
@@ -428,9 +409,6 @@ void CreateEulerMatrix(e, m1)
 /* m33 = cx*cy */
 
 	m1->mat33=MUL_FIXED(cx,cy);
-
-#endif
-
 }
 
 
@@ -513,27 +491,9 @@ void CreateEulerVector(EULER *e, VECTORCH *v)
 
 */
 
-void MatrixMultiply(m1, m2, m3)
-
-	struct matrixch *m1, *m2, *m3;
+void MatrixMultiply(struct matrixch *m1, struct matrixch *m2, struct matrixch *m3)
 
 {
-  
-	#if 0
- 		
-	PushMatrix();
-
-	ch2psx(m1,(MATRIX *)scratchp);
-	ch2psx(m2,(MATRIX *)(scratchp+(sizeof(MATRIX))));
-
-	MulMatrix0((MATRIX *)scratchp,(MATRIX *)(scratchp+(sizeof(MATRIX))),(MATRIX *)(scratchp+((sizeof(MATRIX)<<1))));
-
-	psx2ch((MATRIX *)(scratchp+((sizeof(MATRIX)<<1))),m3);
-
- 	PopMatrix();
-		
-	#else
-		 
 	MATRIXCH TmpMat;
 	 
 /* m11'' = c1.r1' */
@@ -593,82 +553,7 @@ void MatrixMultiply(m1, m2, m3)
 /* Finally, copy TmpMat to m3 */
 
 	CopyMatrix(&TmpMat, m3);
-
-	#endif
-
 }
-
-
-void PSXAccurateMatrixMultiply(m1, m2, m3)
-
-	struct matrixch *m1, *m2, *m3;
-
-{
- 	 
-	MATRIXCH TmpMat;
-	 
-/* m11'' = c1.r1' */
-
-	TmpMat.mat11=MUL_FIXED(m1->mat11,m2->mat11);
-	TmpMat.mat11+=MUL_FIXED(m1->mat21,m2->mat12);
-	TmpMat.mat11+=MUL_FIXED(m1->mat31,m2->mat13);
-
-/* m12'' = c2.r1' */
-
-	TmpMat.mat12=MUL_FIXED(m1->mat12,m2->mat11);
-	TmpMat.mat12+=MUL_FIXED(m1->mat22,m2->mat12);
-	TmpMat.mat12+=MUL_FIXED(m1->mat32,m2->mat13);
-
-/* m13'' = c3.r1' */
-
-	TmpMat.mat13=MUL_FIXED(m1->mat13,m2->mat11);
-	TmpMat.mat13+=MUL_FIXED(m1->mat23,m2->mat12);
-	TmpMat.mat13+=MUL_FIXED(m1->mat33,m2->mat13);
-
-/* m21'' = c1.r2' */
-
-	TmpMat.mat21=MUL_FIXED(m1->mat11,m2->mat21);
-	TmpMat.mat21+=MUL_FIXED(m1->mat21,m2->mat22);
-	TmpMat.mat21+=MUL_FIXED(m1->mat31,m2->mat23);
-
-/* m22'' = c2.r2' */
-
-	TmpMat.mat22=MUL_FIXED(m1->mat12,m2->mat21);
-	TmpMat.mat22+=MUL_FIXED(m1->mat22,m2->mat22);
-	TmpMat.mat22+=MUL_FIXED(m1->mat32,m2->mat23);
-
-/* m23'' = c3.r2' */
-
-	TmpMat.mat23=MUL_FIXED(m1->mat13,m2->mat21);
-	TmpMat.mat23+=MUL_FIXED(m1->mat23,m2->mat22);
-	TmpMat.mat23+=MUL_FIXED(m1->mat33,m2->mat23);
-
-/* m31'' = c1.r3' */
-
-	TmpMat.mat31=MUL_FIXED(m1->mat11,m2->mat31);
-	TmpMat.mat31+=MUL_FIXED(m1->mat21,m2->mat32);
-	TmpMat.mat31+=MUL_FIXED(m1->mat31,m2->mat33);
-
-/* m32'' = c2.r3' */
-
-	TmpMat.mat32=MUL_FIXED(m1->mat12,m2->mat31);
-	TmpMat.mat32+=MUL_FIXED(m1->mat22,m2->mat32);
-	TmpMat.mat32+=MUL_FIXED(m1->mat32,m2->mat33);
-
-/* m33'' = c3.r3' */
-
-	TmpMat.mat33=MUL_FIXED(m1->mat13,m2->mat31);
-	TmpMat.mat33+=MUL_FIXED(m1->mat23,m2->mat32);
-	TmpMat.mat33+=MUL_FIXED(m1->mat33,m2->mat33);
-
-/* Finally, copy TmpMat to m3 */
-
-	CopyMatrix(&TmpMat, m3);
-
-}
-
-
-
 
 
 /*
@@ -677,9 +562,7 @@ void PSXAccurateMatrixMultiply(m1, m2, m3)
 
 */
 
-void TransposeMatrixCH(m1)
-
-	MATRIXCH *m1;
+void TransposeMatrixCH(MATRIXCH *m1)
 
 {
 
@@ -892,11 +775,7 @@ void _RotateVector(VECTORCH *v, MATRIXCH*  m)
 
 */
 
-void _RotateAndCopyVector(v1, v2, m)
-
-	VECTORCH *v1;
-	VECTORCH *v2;
-	MATRIXCH *m;
+void _RotateAndCopyVector(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m)
 
 {
 
@@ -913,9 +792,6 @@ void _RotateAndCopyVector(v1, v2, m)
 	v2->vz+=MUL_FIXED(m->mat33,v1->vz);
 
 }
-
-
-
 
 
 
@@ -1240,12 +1116,6 @@ void MatrixToEuler(MATRIXCH *m, EULER *e)
 }
 
 
-
-#if 1
-
-
-
-
 #define j_and_r_change_2 Yes
 
 void MatrixToEuler2(MATRIXCH *m, EULER *e)
@@ -1476,10 +1346,6 @@ void MatrixToEuler2(MATRIXCH *m, EULER *e)
 	#endif
 
 }
-
-
-
-#endif
 
 
 
@@ -1749,9 +1615,7 @@ int ArcSin(int s)
 
 */
 
-int ArcTan(height_x, width_z)
-
-	int height_x,width_z;
+int ArcTan(int height_x, int width_z)
 
 {
 
@@ -2854,4 +2718,3 @@ void QuatToMat(QUAT *q,MATRIXCH *m)
 	m->mat33=ONE_FIXED-q_2xx-q_2yy;
 
 }
-

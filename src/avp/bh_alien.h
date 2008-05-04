@@ -180,11 +180,8 @@
 	#define WOUNDING_SPEED_EFFECTS				1
 
   	#define ALIEN_STARTING_HEALTH				(30)
-	#if PSX||Saturn
-  		#define NO_OF_FRAGMENTS_FROM_DEAD_ALIEN (5)
-	#else
-  		#define NO_OF_FRAGMENTS_FROM_DEAD_ALIEN (10)
-	#endif
+	#define NO_OF_FRAGMENTS_FROM_DEAD_ALIEN (10)
+
   	/* random time between 1.5 and 2 seconds,in fixed point, with granularity 1/32th second */
 	#if ULTRAVIOLENCE
   	#define ALIEN_FAR_MOVE_TIME					((48+(FastRandom()&0xF))*(ONE_FIXED>>7))
