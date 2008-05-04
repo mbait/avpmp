@@ -60,19 +60,6 @@ typedef enum font_justification
 }FONT_JUST;
 
 
-// this prints a string packet
-
-typedef struct font_desc {
-	int fontnum;			// see list of PFFONTS;
-	char *string;	// this will eventually point into a resource fileMENU_GRAPHIC_ITEM Gamestart_MenuItems[] = {
-	short destx;
-	short desty;
-	FONT_JUST just;
-	short width; 	// width - the width we have to print
-								// the font in - overrides onto next line
-} FONT_DESC;
-
-
 // bitfield of flags
 
 typedef struct 
@@ -199,12 +186,6 @@ extern int BLTFontOffsetToHUD(PFFONT* font , int xdest, int ydest, int offset);
 /* to lock a font and get the raw data - pPitch receives the pitch of the surface */
 extern void * FontLock(PFFONT const * pFont, unsigned * pPitch);
 extern void FontUnlock(PFFONT const * pFont);
-
-
-// drawing functions
-
-extern void BLTWholeFont(int fontnum, int x , int y, int win_width);
-extern void BLTString(FONT_DESC str_packet);
 
 
 // the array of all the Fonts int the game

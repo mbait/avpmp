@@ -30,9 +30,6 @@
 	#include "hudgadg.hpp"
 		// for ClearTheQueue()
 
-	#include "font.h"
-		// for the font tests
-
 	#define UseLocalAssert Yes
 	#include "ourasert.h"
 
@@ -154,40 +151,6 @@ void TextReportGadget :: Render
 
 	/* CODE */
 	{
-		#if 0
-		BLTFontOffsetToHUD
-		(
-			// PFFONT* font , 
-			400, // int xdest, 
-			100, // int ydest, 
-			0 // int offset
-		);
-		#endif
-
-		#if 0
-		BLTWholeFont
-		(
-			3, // int fontnum,
-			30, // int x ,
-			130, // int y,
-			100 // int win_width
-		);
-		#endif
-
-		#if 0
-		textprint
-		(
-			"TextReportGadget :: Render at (%i,%i) clipped (%i,%i,%i,%i) alpha=%i\n",
-			R2Pos . x,
-			R2Pos . y,
-			R2Rect_Clip . x0,
-			R2Rect_Clip . y0,
-			R2Rect_Clip . x1,
-			R2Rect_Clip . y1,
-			FixP_Alpha
-		);
-		#endif
-
 		IndexedFont* pLetterFont = IndexedFont :: GetFont( I_Font_TeletypeLettering );
 		GLOBALASSERT( pLetterFont );
 
@@ -916,81 +879,3 @@ void CheesyDaemon_Lifetime :: Reset(void)
 
 
 #endif // UseGadgets
-
-
-
-
-
-
-
-
-#if UseGadgets && 0
-	// test code
-	#define FONT_INDEX (3)
-
-void TestStringRender_Unclipped
-(
-	r2pos& R2Pos_Cursor,
-		// start position for string;
-		// gets written back to with final position
-
-		// Renders as a single line; it is asserted that the result is fully within
-		// the physical screen (i.e. already clipped)
-	const SCString& SCStr
-)
-{
-	/* PRECONDITION */
-	{
-	}
-
-	/* CODE */
-	{
-		// GetOffset:
-		const pffont& PFFont = AvpFonts[FONT_INDEX];
-
-		ProjChar* pProjChar_I = SCStr . pProjCh();
-
-		while ( *pProjChar_I )
-		{
-			const ProjChar ProjCh = *pProjChar_I;
-
-			if
-			(
-				PFFont . bPrintable( ProjCh )
-			)
-			{
-				#if 0
-				textprint("printable \'%c\'\n",ProjCh);
-				#endif
-
-				R2Pos_Cursor . x += 1+BLTFontOffsetToHUD
-				(
-					(PFFONT*)&PFFont, // PFFONT* font,
-						// "cast away the const-ness" for the moment
-					R2Pos_Cursor . x, // int xdest,
-					R2Pos_Cursor . y, // int ydest,
-					PFFont . ProjCharToOffset( ProjCh ) // int offset
-				);
-				// appears to return the width of the character...
-			}
-			else
-			{
-				#if 0
-				textprint("unprintable \'%c\'\n",ProjCh);
-				#endif
-			}
-
-			pProjChar_I++;
-		}
-	}
-}
-
-void TestStringRender_Clipped
-(
-	r2pos& R2Pos_Cursor,
-	const r2rect& R2Rect_Clip,
-	const SCString& SCStr
-)
-{
-}
-#endif // test code
