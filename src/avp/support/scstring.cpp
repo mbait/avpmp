@@ -34,25 +34,6 @@
 /* Imported function prototypes ************************************/
 
 /* Imported data ***************************************************/
-#ifdef __cplusplus
-	extern "C"
-	{
-#endif
-		extern DISPLAYBLOCK *Player;
-
-	#if 0
-	extern OurBool			DaveDebugOn;
-	extern FDIEXTENSIONTAG	FDIET_Dummy;
-	extern IFEXTENSIONTAG	IFET_Dummy;
-	extern FDIQUAD			FDIQuad_WholeScreen;
-	extern FDIPOS			FDIPos_Origin;
-	extern IFOBJECTLOCATION IFObjLoc_Origin;
-	extern UncompressedGlobalPlotAtomID UGPAID_StandardNull;
-	#endif
-#ifdef __cplusplus
-	};
-#endif
-
 
 #include "teletype.hpp"
 
@@ -62,9 +43,6 @@
 /* Internal type definitions ***************************************/
 
 /* Internal function prototypes ************************************/
-	#if SupportHHStuff
-	static void strutil_Failure(Failure_Behaviour FailBehav);
-	#endif
 
 /* Internal globals ************************************************/
 
@@ -121,54 +99,33 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
+
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -230,55 +187,33 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
 
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -341,55 +276,33 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
 
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -449,55 +362,33 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
 
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -566,56 +457,33 @@ SCString :: SCString
 			pProjCh_Init
 		);
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
 
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -685,43 +553,22 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
+			R2Size[ i ] = pStringObj_0 -> CalcSize( i );
+			R2Size[ i ] . w += pStringObj_1 -> CalcSize( i ) . w;
+
+			bCanRender[ i ] =
 			(
-				&FDIBMap_Temp,
-
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
+				pStringObj_0 -> bCanRenderFully( i )
+				&&
+				pStringObj_1 -> bCanRenderFully( i )
+			);				
 		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
-			
-			while ( i>0 )
-			{
-				i = (FontIndex)(i-1);
-
-				#if EnableSizeData
-				R2Size[ i ] = pStringObj_0 -> CalcSize( i );
-				R2Size[ i ] . w += pStringObj_1 -> CalcSize( i ) . w;
-				#endif
-
-				bCanRender[ i ] =
-				(
-					pStringObj_0 -> bCanRenderFully( i )
-					&&
-					pStringObj_1 -> bCanRenderFully( i )
-				);				
-			}
-		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -777,90 +624,64 @@ SCString :: SCString
 			pStringObj_2		
 		);
 		
-		{
-
-			ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
-			GLOBALASSERT( pProjCh_Init_0 );
-			
-			ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
-			GLOBALASSERT( pProjCh_Intermediate );
-			
-			AllocatedSize = (size_t)
+		ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
+		GLOBALASSERT( pProjCh_Init_0 );
+		
+		ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
+		GLOBALASSERT( pProjCh_Intermediate );
+		
+		AllocatedSize = (size_t)
+		(
+			STRUTIL_SC_NumBytes
 			(
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Init_0
-				)
-				+
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Intermediate
-				)
-				- sizeof(ProjChar)	// only one null terminator needed				
-			);
-
-			pProjCh_Val = new ProjChar[	AllocatedSize ];
-			GLOBALASSERT( pProjCh_Val );
-				// this is always "owned" by the String
-			STRUTIL_SC_FastCat
+				pProjCh_Init_0
+			)
+			+
+			STRUTIL_SC_NumBytes
 			(
-				pProjCh_Val,
-				pProjCh_Init_0,
 				pProjCh_Intermediate
+			)
+			- sizeof(ProjChar)	// only one null terminator needed				
+		);
+
+		pProjCh_Val = new ProjChar[	AllocatedSize ];
+		GLOBALASSERT( pProjCh_Val );
+			// this is always "owned" by the String
+		STRUTIL_SC_FastCat
+		(
+			pProjCh_Val,
+			pProjCh_Init_0,
+			pProjCh_Intermediate
+		);
+
+		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
+		// doesn't include NULL terminator
+
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+			
+		while ( i>0 )
+		{
+			i = (FontIndex)(i-1);
+
+			R2Size[ i ] = pStringObj_0 -> CalcSize( i );
+			R2Size[ i ] . w +=
+			(
+				pStringObj_1 -> CalcSize( i ) . w
+				+
+				pStringObj_2 -> CalcSize( i ) . w
 			);
 
-			NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
-			// doesn't include NULL terminator
-
-			#if SupportHHStuff
-			{
-				FDIBMAP FDIBMap_Temp;
-
-				HHFONTS_GetSizeOfSingleLine
-				(
-					&FDIBMap_Temp,
-
-					pProjCh_Val,
-					pStandardFont
-				);
-
-				WidthGivenStandardFont = FDIBMap_Temp . Width;
-					// width in pixels, to save constant recalc
-			}
-			#else
-			{
-				FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
-				
-				while ( i>0 )
-				{
-					i = (FontIndex)(i-1);
-
-					#if EnableSizeData
-					R2Size[ i ] = pStringObj_0 -> CalcSize( i );
-					R2Size[ i ] . w +=
-					(
-						pStringObj_1 -> CalcSize( i ) . w
-						+
-						pStringObj_2 -> CalcSize( i ) . w
-					);
-					#endif
-
-					bCanRender[ i ] =
-					(
-						pStringObj_0 -> bCanRenderFully( i )
-						&&
-						pStringObj_1 -> bCanRenderFully( i )
-						&&
-						pStringObj_2 -> bCanRenderFully( i )
-					);
-				}
-			}
-			#endif
+			bCanRender[ i ] =
+			(
+				pStringObj_0 -> bCanRenderFully( i )
+				&&
+				pStringObj_1 -> bCanRenderFully( i )
+				&&
+				pStringObj_2 -> bCanRenderFully( i )
+			);
 		}
 
-		
 		pStringObj_Intermediate -> R_Release();
-
 	}
 }
 
@@ -902,94 +723,68 @@ SCString :: SCString
 			pStringObj_3
 		);
 		
-		{
-
-			ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
-			GLOBALASSERT( pProjCh_Init_0 );
-			
-			ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
-			GLOBALASSERT( pProjCh_Intermediate );
-			
-			AllocatedSize = (size_t)
+		ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
+		GLOBALASSERT( pProjCh_Init_0 );
+		
+		ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
+		GLOBALASSERT( pProjCh_Intermediate );
+		
+		AllocatedSize = (size_t)
+		(
+			STRUTIL_SC_NumBytes
 			(
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Init_0
-				)
-				+
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Intermediate
-				)
-				- sizeof(ProjChar)	// only one null terminator needed				
-			);
-
-			pProjCh_Val = new ProjChar[	AllocatedSize ];
-			GLOBALASSERT( pProjCh_Val );
-				// this is always "owned" by the String
-			STRUTIL_SC_FastCat
+				pProjCh_Init_0
+			)
+			+
+			STRUTIL_SC_NumBytes
 			(
-				pProjCh_Val,
-				pProjCh_Init_0,
 				pProjCh_Intermediate
+			)
+			- sizeof(ProjChar)	// only one null terminator needed				
+		);
+
+		pProjCh_Val = new ProjChar[	AllocatedSize ];
+		GLOBALASSERT( pProjCh_Val );
+			// this is always "owned" by the String
+		STRUTIL_SC_FastCat
+		(
+			pProjCh_Val,
+			pProjCh_Init_0,
+			pProjCh_Intermediate
+		);
+
+		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
+		// doesn't include NULL terminator
+
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
+		{
+			i = (FontIndex)(i-1);
+
+			R2Size[ i ] = pStringObj_0 -> CalcSize( i );
+			R2Size[ i ] . w +=
+			(
+				pStringObj_1 -> CalcSize( i ) . w
+				+
+				pStringObj_2 -> CalcSize( i ) . w
+				+
+				pStringObj_3 -> CalcSize( i ) . w
 			);
 
-			NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
-			// doesn't include NULL terminator
-
-			#if SupportHHStuff
-			{
-				FDIBMAP FDIBMap_Temp;
-
-				HHFONTS_GetSizeOfSingleLine
-				(
-					&FDIBMap_Temp,
-
-					pProjCh_Val,
-					pStandardFont
-				);
-
-				WidthGivenStandardFont = FDIBMap_Temp . Width;
-					// width in pixels, to save constant recalc
-			}
-			#else
-			{
-				FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
-				
-				while ( i>0 )
-				{
-					i = (FontIndex)(i-1);
-
-					#if EnableSizeData
-					R2Size[ i ] = pStringObj_0 -> CalcSize( i );
-					R2Size[ i ] . w +=
-					(
-						pStringObj_1 -> CalcSize( i ) . w
-						+
-						pStringObj_2 -> CalcSize( i ) . w
-						+
-						pStringObj_3 -> CalcSize( i ) . w
-					);
-					#endif
-
-					bCanRender[ i ] =
-					(
-						pStringObj_0 -> bCanRenderFully( i )
-						&&
-						pStringObj_1 -> bCanRenderFully( i )
-						&&
-						pStringObj_2 -> bCanRenderFully( i )
-						&&
-						pStringObj_3 -> bCanRenderFully( i )
-					);
-				}
-			}
-			#endif
+			bCanRender[ i ] =
+			(
+				pStringObj_0 -> bCanRenderFully( i )
+				&&
+				pStringObj_1 -> bCanRenderFully( i )
+				&&
+				pStringObj_2 -> bCanRenderFully( i )
+				&&
+				pStringObj_3 -> bCanRenderFully( i )
+			);
 		}
 
-		
 		pStringObj_Intermediate -> R_Release();
-
 	}
 }
 
@@ -1035,98 +830,72 @@ SCString :: SCString
 			pStringObj_4
 		);
 		
-		{
-
-			ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
-			GLOBALASSERT( pProjCh_Init_0 );
-			
-			ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
-			GLOBALASSERT( pProjCh_Intermediate );
-			
-			AllocatedSize = (size_t)
+		ProjChar* pProjCh_Init_0 = pStringObj_0 -> pProjCh();
+		GLOBALASSERT( pProjCh_Init_0 );
+		
+		ProjChar* pProjCh_Intermediate = pStringObj_Intermediate -> pProjCh();
+		GLOBALASSERT( pProjCh_Intermediate );
+		
+		AllocatedSize = (size_t)
+		(
+			STRUTIL_SC_NumBytes
 			(
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Init_0
-				)
-				+
-				STRUTIL_SC_NumBytes
-				(
-					pProjCh_Intermediate
-				)
-				- sizeof(ProjChar)	// only one null terminator needed				
-			);
-
-			pProjCh_Val = new ProjChar[	AllocatedSize ];
-			GLOBALASSERT( pProjCh_Val );
-				// this is always "owned" by the String
-			STRUTIL_SC_FastCat
+				pProjCh_Init_0
+			)
+			+
+			STRUTIL_SC_NumBytes
 			(
-				pProjCh_Val,
-				pProjCh_Init_0,
 				pProjCh_Intermediate
+			)
+			- sizeof(ProjChar)	// only one null terminator needed				
+		);
+
+		pProjCh_Val = new ProjChar[	AllocatedSize ];
+		GLOBALASSERT( pProjCh_Val );
+			// this is always "owned" by the String
+		STRUTIL_SC_FastCat
+		(
+			pProjCh_Val,
+			pProjCh_Init_0,
+			pProjCh_Intermediate
+		);
+
+		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
+		// doesn't include NULL terminator
+
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
+		{
+			i = (FontIndex)(i-1);
+
+			R2Size[ i ] = pStringObj_0 -> CalcSize( i );
+			R2Size[ i ] . w +=
+			(
+				pStringObj_1 -> CalcSize( i ) . w
+				+
+				pStringObj_2 -> CalcSize( i ) . w
+				+
+				pStringObj_3 -> CalcSize( i ) . w
+				+
+				pStringObj_4 -> CalcSize( i ) . w
 			);
 
-			NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
-			// doesn't include NULL terminator
-
-			#if SupportHHStuff
-			{
-				FDIBMAP FDIBMap_Temp;
-
-				HHFONTS_GetSizeOfSingleLine
-				(
-					&FDIBMap_Temp,
-
-					pProjCh_Val,
-					pStandardFont
-				);
-
-				WidthGivenStandardFont = FDIBMap_Temp . Width;
-					// width in pixels, to save constant recalc
-			}
-			#else
-			{
-				FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
-				
-				while ( i>0 )
-				{
-					i = (FontIndex)(i-1);
-
-					#if EnableSizeData
-					R2Size[ i ] = pStringObj_0 -> CalcSize( i );
-					R2Size[ i ] . w +=
-					(
-						pStringObj_1 -> CalcSize( i ) . w
-						+
-						pStringObj_2 -> CalcSize( i ) . w
-						+
-						pStringObj_3 -> CalcSize( i ) . w
-						+
-						pStringObj_4 -> CalcSize( i ) . w
-					);
-					#endif
-
-					bCanRender[ i ] =
-					(
-						pStringObj_0 -> bCanRenderFully( i )
-						&&
-						pStringObj_1 -> bCanRenderFully( i )
-						&&
-						pStringObj_2 -> bCanRenderFully( i )
-						&&
-						pStringObj_3 -> bCanRenderFully( i )
-						&&
-						pStringObj_4 -> bCanRenderFully( i )
-					);
-				}
-			}
-			#endif
+			bCanRender[ i ] =
+			(
+				pStringObj_0 -> bCanRenderFully( i )
+				&&
+				pStringObj_1 -> bCanRenderFully( i )
+				&&
+				pStringObj_2 -> bCanRenderFully( i )
+				&&
+				pStringObj_3 -> bCanRenderFully( i )
+				&&
+				pStringObj_4 -> bCanRenderFully( i )
+			);
 		}
-
 		
 		pStringObj_Intermediate -> R_Release();
-
 	}
 }
 
@@ -1170,54 +939,33 @@ SCString :: SCString
 		NumberOfCharacters = ( AllocatedSize / sizeof(ProjChar ) ) - 1;
 			// doesn't include NULL terminator
 
-		#if SupportHHStuff
+		FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
+		
+		while ( i>0 )
 		{
-			FDIBMAP FDIBMap_Temp;
+			i = (FontIndex)(i-1);
 
-			HHFONTS_GetSizeOfSingleLine
-			(
-				&FDIBMap_Temp,
+			IndexedFont* pFont = IndexedFont :: GetFont( i );
 
-				pProjCh_Val,
-				pStandardFont
-			);
-
-			WidthGivenStandardFont = FDIBMap_Temp . Width;
-				// width in pixels, to save constant recalc
-		}
-		#else
-		{
-			FontIndex i = IndexedFonts_MAX_NUMBER_OF_FONTS; 
-			
-			while ( i>0 )
+			if ( pFont )
 			{
-				i = (FontIndex)(i-1);
+				R2Size[ i ] = pFont -> CalcSize
+				(
+					pProjCh_Val
+				);
 
-				IndexedFont* pFont = IndexedFont :: GetFont( i );
-				
-				if ( pFont )
-				{
-					#if EnableSizeData
-					R2Size[ i ] = pFont -> CalcSize
-					(
-						pProjCh_Val
-					);
-					#endif
-					bCanRender[ i ] = pFont -> bCanRenderFully
-					(
-						pProjCh_Val
-					);
-				}
-				else
-				{
-					#if EnableSizeData
-					R2Size[ i ] = r2size(0,0);
-					#endif
-					bCanRender[ i ] = No;					
-				}
+				bCanRender[ i ] = pFont -> bCanRenderFully
+				(
+					pProjCh_Val
+				);
+			}
+			else
+			{
+				R2Size[ i ] = r2size(0,0);
+
+				bCanRender[ i ] = No;					
 			}
 		}
-		#endif
 
 		// Insert at head of list:
 		{
@@ -1234,75 +982,6 @@ SCString :: SCString
 	}
 	
 }
-
-
-#if SupportHHStuff
-void SCString :: GetSizeOfSingleLineGivenStandardFont
-(
-	FDIBMAP* pFDIBMap_Out
-)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT( pFDIBMap_Out );
-	}
-
-	/* CODE */
-	{
-		pFDIBMap_Out -> Width = WidthGivenStandardFont;
-
-		pFDIBMap_Out -> Height = HHFONTS_GetMaxHeight
-		(
-			pStandardFont
-		);
-	}
-}
-
-FDIBMAP SCString :: GetSizeOfSingleLineGivenStandardFont(void)
-{
-	/* PRECONDITION */
-	{
-	}
-
-	/* CODE */
-	{
-		FDIBMAP FDIBMap_Temp;
-
-		FDIBMap_Temp . Width = WidthGivenStandardFont;
-
-		FDIBMap_Temp . Height = HHFONTS_GetMaxHeight
-		(
-			pStandardFont
-		);
-
-		return FDIBMap_Temp;
-	}
-}
-
-int SCString :: GetWidthOfSingleLineGivenStandardFont(void)
-{
-	return WidthGivenStandardFont;
-}
-
-FDIQUAD SCString :: MinFDIQuadForSCStringAtPos
-(
-	FDIPOS FDIPos
-)
-{
-	FDIQUAD FDIQuad_Temp = FDIQuad
-	(
-		FDIPos . LeftX,
-		FDIPos . TopY,
-		WidthGivenStandardFont,
-		HHFONTS_GetMaxHeight
-		(
-			pStandardFont
-		)
-	);
-
-	return FDIQuad_Temp;
-}
-#endif
 
 /*static*/ void SCString :: UpdateAfterFontChange( FontIndex I_Font_Changed )
 {
@@ -1323,12 +1002,10 @@ FDIQUAD SCString :: MinFDIQuadForSCStringAtPos
 		{
 			if ( pFont )
 			{
-				#if EnableSizeData
 				pSCString -> R2Size[ I_Font_Changed ] = pFont -> CalcSize
 				(
 					pSCString -> pProjCh_Val
 				);
-				#endif
 
 				pSCString -> bCanRender[ I_Font_Changed ] = pFont -> bCanRenderFully
 				(
@@ -1337,9 +1014,7 @@ FDIQUAD SCString :: MinFDIQuadForSCStringAtPos
 			}
 			else
 			{
-				#if EnableSizeData
 				pSCString -> R2Size[ I_Font_Changed ] = r2size(0,0);
-				#endif
 
 				pSCString -> bCanRender[ I_Font_Changed ] = No;					
 			}
@@ -1471,491 +1146,3 @@ SCString :: ~SCString()
 
 	}
 }
-
-#if SupportHHStuff
-HHStringTable* STRUTIL_LoadStringTable(char* Filename,Failure_Behaviour FailBehav)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(Filename);
-	}
-	/* CODE */
-	{
-		/* Allocate memory for a table of pointers to strings in memory */
-		HHStringTable* pHHST= (HHStringTable*)AllocateMem
-		(
-			sizeof(HHStringTable)
-		);
-
-		if (!pHHST)
-		{
-			/* Out of memory */
-						
-			return 0;
-		}
-		else
-		{
-		
-			/* Load the file into a buffer in memory */
-			OurByteBuffer ByteBuf;
-			OurByte* pTextBuffer;
-
-			{
-				/* clear the pointers in the new string table */
-				int i = MAX_ENTRIES_PER_STRING_TABLE;
-				while (i>0)
-				{
-					i--;
-
-					pHHST -> pStringObj[i] = NULL;
-				}
-
-			}
-			
-			HHFILE_LoadLogicalFile
-			(
-				Filename,
-				FailBehav,
-				&ByteBuf
-			);
-
-			pTextBuffer=ByteBuf.pbData;
-			
-			if (!pTextBuffer)
-			{
-				/* Error loading file */
-				return 0;
-			}
-			else
-			{
-				/* Build table of string pointers in the buffer */
-
-				#define START_OF_COMMENT_TC 	('#')
-				#define END_OF_COMMENT_TC		(0x0D)
-				#define SKIP_TC					(0x0A)
-
-				/* 
-					Scan through loaded buffer, finding strings, making copies with NULL termination, 
-					until you reach the end (can be signified by EOF or by two successive # characters
-					without intermediate end-of-comment chars)
-
-					When done, free up loaded buffer.
-				*/
-
-				OurByte* pbExtract=pTextBuffer;
-				unsigned int CountChars=0;
-				OurBool StillGoing=Yes;
-
-				OurBool FoundStartChar=No;
-				OurBool FoundEndChar=No;
-				ProjChar*	pChStart=NULL;
-				unsigned int CountSinceEndChar=0;
-				unsigned int SkipChars=0;
-
-				pHHST->NumEntries_Val=0;
-
-				while
-				(
-					(CountChars<(ByteBuf.NumBytes))
-					&&
-					(StillGoing)
-				)
-				{
-				ProjChar TChar=(ProjChar)*pbExtract;
-
-					switch (TChar)
-					{
-						case SKIP_TC:
-							/* Skip this char */
-							{
-								SkipChars++;
-							}
-							break;
-
-						case START_OF_COMMENT_TC:
-							if (FoundStartChar)
-							{
-								/* Two successive StartOf.. TChars without a EndOf... are a termination sequence */
-								StillGoing=No;
-							}
-							else
-							{
-								/* It is the start of a comment */
-								FoundStartChar=Yes;
-							}
-							break;
-						case END_OF_COMMENT_TC:
-							if (FoundEndChar)
-							{
-								/* This is the terminating character of a string; copy it up */
-								LOCALASSERT(pChStart);
-								
-								/* copy it up here...*/
-								#if LimitedStringLengths
-								LOCALASSERT(CountSinceEndChar<MAX_STRING_LENGTH);
-								#endif
-
-								{
-									ProjChar* NewString=(ProjChar*)AllocateMem((CountSinceEndChar+1)*sizeof(ProjChar));
-
-									if (!NewString)
-									{
-										/* Out of memory... */
-										strutil_Failure(FailBehav);
-
-									}
-									else
-									{
-										/* Copy up chars, except for SKIP_TC... */
-									ProjChar*	pSrc=pChStart;
-									ProjChar*	pDst=NewString;
-
-										int i;
-										for (i=0;i<(CountSinceEndChar+SkipChars);i++)
-										{
-										ProjChar ChSrc=*(pSrc++);
-
-											if (ChSrc!=SKIP_TC)
-											{
-												*(pDst++)=ChSrc;
-											}
-										}
-
-										STRUTIL_SC_WriteTerminator(pDst);
-
-										GLOBALASSERT(pHHST->NumEntries() < MAX_ENTRIES_PER_STRING_TABLE);
-										
-										#if 1
-										pHHST->pStringObj[ (pHHST->NumEntries_Val++) ] = new SCString
-										(
-											NewString
-										); // you get an automatic reference when you construct it.
-
-										DeallocateMem( NewString );
-
-										#else
-										pHHST->pEntry[(pHHST->NumEntries_Val++)]=NewString;
-										#endif
-
-										
-									}
-								}
-
-								FoundEndChar=No;
-								FoundStartChar=No;
-								CountSinceEndChar=0;
-								SkipChars=0;
-								pChStart=NULL;
-							}
-							else
-							{
-								if (FoundStartChar)
-								{
-									/* Then this signifies the end of a comment and the start of the string */
-									FoundEndChar=Yes;
-									CountSinceEndChar=0;
-									SkipChars=0;
-									
-									/* Start extracting string from next character onwards...*/
-									pChStart=(pbExtract+1);
-								}
-								/* else it is padding; ignore */
-
-							}
-							
-							break;
-						default:
-							/* It is a normal character...*/
-							if (FoundEndChar)
-							{
-								CountSinceEndChar++;
-							}
-
-							break;
-					}						
-
-					/* On to next character */
-					pbExtract++;	
-					CountChars++;
-				}
-
-		
-				DeallocateMem(pTextBuffer);
-				
-				#if (debug  && LogStringTables )
-				{
-					int i;
-					char Temp[200];
-	
-					sprintf(Temp,"Loaded string table:\"%s\"",Filename);
-					DAVELOG(Temp);
-
-					sprintf(Temp,"Number of strings=%i",pHHST->NumEntries);
-					DAVELOG(Temp);
-
-					for (i=0;i<pHHST->NumEntries();i++)
-					{
-						GLOBALASSERT(pHHST->pStringObj[i]);
-
-						if 
-						(
-							STRUTIL_SC_Strlen
-							(
-								pHHST -> pStringObj[i] -> pProjCh()
-							) < 100
-						)
-						{
-							sprintf
-							(
-								Temp,
-								"Entry %3i=\"%s\"",
-								i,
-								pHHST -> pStringObj[i] -> pProjCh()
-							);
-							DAVELOG(Temp);
-						}
-						else
-						{
-							DAVELOG("String too long to log");
-						}
-					}
-					sprintf(Temp,"End of string table:\"%s\"",Filename);
-					DAVELOG(Temp);
-				}				
-				#endif
-				
-				// Clear the lazy evaluation table:
-				{
-					MCSCString** ppMCStringObj_Clear = &(pHHST -> pMCStringObj[ 0 ][ 0 ]);
-
-					for ( int i=pHHST->NumEntries(); i>0; i--)
-					{
-						for ( int j = NUM_BASE_COLOURS; j > 0; j-- )
-						{
-							*(ppMCStringObj_Clear++) = NULL;
-						}
-					}
-				}
-
-				/* Return a pointer to this table */			
-				return pHHST;
-			}
-		}
-	}
-}
-
-void STRUTIL_UnloadStringTable(HHStringTable* pHHST)
-/* This function DOES deallocate the passed structure */
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(pHHST);
-	}
-	/* CODE */
-	{
-		/* Kill off strings in table */
-		int i;
-
-		for (i=0;i<pHHST->NumEntries();i++)
-		{
-			#if 1
-			LOCALASSERT( pHHST->pStringObj[i] );
-			pHHST -> pStringObj[i] -> R_Release();
-			#else
-			LOCALASSERT(pHHST->pEntry[i]);
-			DeallocateMem(pHHST->pEntry[i]);
-			#endif
-		}
-
-		// R_Release any refs in the lazy evaluation table:
-		{
-			for (i=0;i<pHHST->NumEntries();i++)
-			{
-				for ( int j=0; j< NUM_BASE_COLOURS; j++ )
-				{
-					if ( pHHST -> pMCStringObj[i][j] )
-					{
-						pHHST -> pMCStringObj[ i ][ j ] -> R_Release();
-					}
-				}
-			}
-		}
-
-		/* Kill off table of pointers */
-		DeallocateMem(pHHST);
-	}
-}
-
-ProjChar* STRUTIL_SC_GetString(HHStringTable* pHHST,unsigned int StrNum)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(pHHST);
-		GLOBALASSERT(StrNum<pHHST->NumEntries());
-		GLOBALASSERT(StrNum< MAX_ENTRIES_PER_STRING_TABLE);
-	}
-	/* CODE */
-	{
-		GLOBALASSERT( pHHST -> pStringObj[StrNum] );
-		GLOBALASSERT( pHHST -> pStringObj[StrNum] -> pProjCh() );
-
-		return pHHST -> pStringObj[StrNum] -> pProjCh();
-	}
-}
-
-unsigned int STRUTIL_GetNumEntries
-(
-	HHStringTable* pHHST
-)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(pHHST);
-	}
-	/* CODE */
-	{
-		unsigned int ReturnVal = pHHST -> NumEntries();
-		GLOBALASSERT( ReturnVal <= MAX_ENTRIES_PER_STRING_TABLE);
-
-		return ReturnVal;
-	}
-}
-
-SCString* STRUTIL_GetSCString
-(
-	HHStringTable* pHHST,
-	unsigned int StrNum
-)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(pHHST);
-		GLOBALASSERT(StrNum<pHHST->NumEntries());
-		GLOBALASSERT(StrNum< MAX_ENTRIES_PER_STRING_TABLE);
-	}
-	/* CODE */
-	{
-		GLOBALASSERT( pHHST -> pStringObj[StrNum] );
-		GLOBALASSERT
-		(
-			pHHST -> pStringObj[StrNum] -> CheckRef()
-			>
-			0
-		);
-			// check that the reference count is above zero
-			// otherwise some code has messed up the reference
-			// count and the string will have been deallocated...
-		
-		pHHST -> pStringObj[StrNum] -> R_AddRef();
-
-		return pHHST -> pStringObj[StrNum];
-	}
-}
-
-SCString* hhstringtablestruct :: GetSCString
-(
-	unsigned int StrNum
-)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(StrNum< NumEntries() );
-		GLOBALASSERT(StrNum< MAX_ENTRIES_PER_STRING_TABLE);
-	}
-
-	/* CODE */
-	{
-		GLOBALASSERT( pStringObj[StrNum] );
-		GLOBALASSERT
-		(
-			pStringObj[StrNum] -> CheckRef()
-			>
-			0
-		);
-			// check that the reference count is above zero
-			// otherwise some code has messed up the reference
-			// count and the string will have been deallocated...
-		
-		pStringObj[StrNum] -> R_AddRef();
-
-		return pStringObj[StrNum];
-	}
-}
-
-MCSCString* hhstringtablestruct :: GetMCSCString
-(
-	unsigned int StrNum,
-	LogicalColour LogCol
-)
-{
-	/* PRECONDITION */
-	{
-		GLOBALASSERT(StrNum< NumEntries() );
-		GLOBALASSERT(StrNum< MAX_ENTRIES_PER_STRING_TABLE);
-	}
-
-	/* CODE */
-	{
-		// Lazily evaluate:
-		if
-		(
-			NULL == pMCStringObj[ StrNum ][ LogCol ]
-		)
-		{
-			// no updating of reference count of SCString
-			// due to direct access to the array
-			pMCStringObj[ StrNum ][ LogCol ] = new MCSCString
-			(
-				pStringObj[StrNum],
-				LogCol
-			);
-		}
-	
-		GLOBALASSERT( pMCStringObj[ StrNum ][ LogCol ] );
-
-		pMCStringObj[ StrNum ][ LogCol ] -> R_AddRef();
-
-		return pMCStringObj[ StrNum ][ LogCol ];
-	}
-}
-
-
-
-
-
-#if debug
-void STRUTIL_Diagnostics(void)
-{
-	/* CODE */
-	{
-		#if 0
-		int i;
-
-		for (i=0;i<pHHST_UserInterface->NumEntries;i++)
-		{
-			GLOBALASSERT(strlen(pHHST_UserInterface->pEntry[0])<90);
-			textprint("String %i = \"%s\"\n",i,pHHST_UserInterface->pEntry[i]);
-		}
-		#endif
-	}
-
-	#if 0
-	{
-		int i;
-
-		for 
-		textprint("%50s",pHHST_UserInterface->pEntry[0]);
-	}
-	#endif
-}
-#endif
-
-/* Internal function definitions ***********************************/
-static void strutil_Failure(Failure_Behaviour FailBehav)
-{
-	/* unwritten */
-
-	return;
-}
-#endif // SupportHHStuff
-
