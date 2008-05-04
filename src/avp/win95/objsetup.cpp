@@ -1,8 +1,4 @@
-#ifdef DAVEW
-	#define DB_LEVEL 1
-#else
-	#define DB_LEVEL 1
-#endif
+#define DB_LEVEL 1
 
 #include <stdlib.h>
 

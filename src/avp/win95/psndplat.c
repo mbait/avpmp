@@ -2,11 +2,7 @@
   AvP platform specific sound management source
   ----------------------------------------------------------------------------*/
 
-#ifdef DAVEW
-	#define DB_LEVEL 4
-#else
-	#define DB_LEVEL 3
-#endif
+#define DB_LEVEL 3
 
 #include "3dc.h"
 #include "inline.h"
