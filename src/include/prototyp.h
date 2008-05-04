@@ -479,9 +479,7 @@ typedef struct screendescriptorblock {
 	int SDB_Width;
 	int SDB_Height;
 	int SDB_Depth;
-	#if SupportWindows95
 	int SDB_ScreenDepth;
-	#endif
 	int SDB_Size;
 
 	int SDB_DiagonalWidth;
@@ -593,9 +591,7 @@ typedef struct viewdescriptorblock {
 	int VDB_Width;
 	int VDB_Height;
 	int VDB_Depth;
-	#if SupportWindows95
 	int VDB_ScreenDepth;
-	#endif
 
 	int VDB_CentreX;
 	int VDB_CentreY;
@@ -865,9 +861,7 @@ typedef struct displayblock
 
 	SHAPEHEADER* ObShapeData;
 
-	#if SupportWindows95
 	char * name;
-	#endif
 	
 	#if (SupportMorphing && LazyEvaluationForMorphing)
 	VECTORCH *ObMorphedPts;
@@ -1996,9 +1990,7 @@ typedef struct i_gouraud3dtexturepolygon_scan {
 
 */
 
-#if SupportWindows95
 void ClearScreen(SCREENDESCRIPTORBLOCK *sdb, int Colour);
-#endif
 
 
 void PlatformSpecificShowViewEntry(VIEWDESCRIPTORBLOCK *vdb, SCREENDESCRIPTORBLOCK *sdb);

@@ -11,10 +11,8 @@
 #include "language.h"
 #include "huffman.hpp"
 
-#if SupportWindows95
-	// DHM 12 Nov 97: hooks for C++ string handling code:
-	#include "strtab.hpp"
-#endif
+// DHM 12 Nov 97: hooks for C++ string handling code:
+#include "strtab.hpp"
 
 #define UseLocalAssert Yes
 #include "ourasert.h"
@@ -75,9 +73,7 @@ void InitTextStrings(void)
 		textPtr = TextBufferPtr;
 	}
 
-	#if SupportWindows95
 	AddToTable( EmptyString );
-	#endif
 
 	for (i=1; i<MAX_NO_OF_TEXTSTRINGS; i++)
 	{	
@@ -98,9 +94,7 @@ void InitTextStrings(void)
 		*textPtr = 0;
 		textPtr++;
 
-		#if SupportWindows95
 		AddToTable( TextStringPtr[i] );
-		#endif
 	}
 }
 
@@ -108,9 +102,7 @@ void KillTextStrings(void)
 {
 	UnloadTextFile(LanguageFilename[AvP.Language],TextBufferPtr);
 
-	#if SupportWindows95
 	UnloadTable();
-	#endif
 }
 
 char *GetTextString(enum TEXTSTRING_ID stringID)

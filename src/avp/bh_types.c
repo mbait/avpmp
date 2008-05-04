@@ -64,10 +64,9 @@
 
 #include "db.h"
 
-#if SupportWindows95
 /* for win95 net game support */
 #include "pldghost.h"
-#endif
+
 #include "bh_corpse.h"
 
 /* 
@@ -1390,8 +1389,6 @@ void ObjectBehaviours(void)
 {
 	int i;	
 
-#if SupportWindows95
-
 #ifdef AVP_DEBUG_VERSION
 	for (i=0; i<NumActiveStBlocks; i++)
 	{
@@ -1408,8 +1405,6 @@ void ObjectBehaviours(void)
 			}
 		}
 	}
-#endif
-
 #endif
 
 	RequestEnvChangeViaLift	= 0;
@@ -3251,7 +3246,6 @@ void RemoveBehaviourStrategy(STRATEGYBLOCK* sbptr)
 		}
 		case I_BehaviourNetGhost:
 		{
-			#if SupportWindows95
 			{
 				NETGHOSTDATABLOCK *ghostData;
 				ghostData = (NETGHOSTDATABLOCK *)(sbptr->SBdataptr);    
@@ -3264,7 +3258,6 @@ void RemoveBehaviourStrategy(STRATEGYBLOCK* sbptr)
 					Dispel_HModel(&ghostData->HModelController);
 				}
 			}
-			#endif
 			break;
 		}	
 
@@ -3449,7 +3442,6 @@ void RemoveBehaviourStrategy(STRATEGYBLOCK* sbptr)
 		}
 		case I_BehaviourNetCorpse:
 		{
-			#if SupportWindows95
 			{
 				NETCORPSEDATABLOCK *corpseData;
 				corpseData = (NETCORPSEDATABLOCK *)(sbptr->SBdataptr);    
@@ -3459,7 +3451,6 @@ void RemoveBehaviourStrategy(STRATEGYBLOCK* sbptr)
 					Dispel_HModel(&corpseData->HModelController);
 				}
 			}
-			#endif
 			break;
 		}	
 

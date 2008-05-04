@@ -51,10 +51,8 @@
 #include "projload.hpp"
 
 /* for win 95 net support */
-#if SupportWindows95
 #include "pldghost.h"
 #include "pldnet.h"
-#endif
 
 #include "los.h"
 #include "kshape.h"
@@ -2323,10 +2321,9 @@ void HandleWeaponImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_I
 			DISPLAYBLOCK *dispPtr = MakeDebris(I_BehaviourPlasmaImpact,positionPtr);
 			if (dispPtr) 
 			{
-				#if SupportWindows95
  				if(AvP.Network!=I_No_Network) 
   					AddNetMsg_LocalRicochet(I_BehaviourPlasmaImpact,positionPtr,&LOS_ObjectNormal);
- 				#endif			
+
 				MakeMatrixFromDirection(&LOS_ObjectNormal,&dispPtr->ObMat);
 			}
 			break;
@@ -2344,10 +2341,9 @@ void HandleWeaponImpact(VECTORCH *positionPtr, STRATEGYBLOCK *sbPtr, enum AMMO_I
 			DISPLAYBLOCK *dispPtr = MakeDebris(I_BehaviourBulletRicochet,positionPtr);
 			if (dispPtr) 
 			{
-				#if SupportWindows95
  				if(AvP.Network!=I_No_Network) 
  					AddNetMsg_LocalRicochet(I_BehaviourBulletRicochet,positionPtr,&LOS_ObjectNormal);
- 				#endif			            				
+
 				MakeMatrixFromDirection(&LOS_ObjectNormal,&dispPtr->ObMat);
 			}
 			break;
@@ -2556,9 +2552,7 @@ void CauseDamageToObject(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multi
 		}
 		case I_BehaviourNetGhost:
 		{
-			#if SupportWindows95
 			DamageNetworkGhost(sbPtr, damage, use_multiple,NULL,incoming);
-			#endif
 			break;
 		}
 		case I_BehaviourAutoGun:
@@ -6761,9 +6755,7 @@ DISPLAYBLOCK *CauseDamageToHModel(HMODELCONTROLLER *HMC_Ptr, STRATEGYBLOCK *sbPt
 		/* Whoa, positive feedback! */
 		case I_BehaviourNetGhost:
 		{
-			#if SupportWindows95
 			DamageNetworkGhost(sbPtr, damage, multiple,this_section_data,incoming);
-			#endif
 			break;
 		}
 		#endif
@@ -8116,7 +8108,6 @@ int Target_IsEdible(STRATEGYBLOCK *candidate) {
 				}
 				break;
 			}
-	#if SupportWindows95
 		case I_BehaviourNetGhost:
 			{
 				NETGHOSTDATABLOCK *dataptr;
@@ -8134,7 +8125,6 @@ int Target_IsEdible(STRATEGYBLOCK *candidate) {
 				}
 			}
 			break;
-	#endif
 		default:
 			return(0);
 			break;
@@ -10840,9 +10830,7 @@ void CreateSpearPossiblyWithFragment(DISPLAYBLOCK *dispPtr, VECTORCH *spearPosit
 		}
 		
 		#if 0 // no network yet!
-		#if SupportWindows95
 		if(AvP.Network != I_No_Network)	AddNetGameObjectID(dispPtr->ObStrategyBlock);
-		#endif
 		#endif
 	    Sound_Play(SID_SPEARGUN_HITTING_WALL,"d",&dynPtr->Position);  
 		return;

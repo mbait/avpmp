@@ -138,12 +138,7 @@ typedef enum environments
 extern char* LevelNames[];
 
 
-#if SupportWindows95
 #define GAME_NAME_LENGTH 30
-#else
-#define GAME_NAME_LENGTH 12
-#endif
-
 
 typedef struct avpgamedesc{
 

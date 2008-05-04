@@ -724,7 +724,7 @@ void AvpShowViews(void)
 
 	PlatformSpecificShowViewExit(Global_VDB_Ptr, &ScreenDescriptorBlock);
 
-	#if (SupportWindows95 && SupportZBuffering)
+	#if SupportZBuffering
 	if ((ScanDrawMode != ScanDrawDirectDraw) &&	(ZBufferMode != ZBufferOff))
 	{
 		/* KJL 10:25:44 7/23/97 - this offset is used to push back the normal game gfx,

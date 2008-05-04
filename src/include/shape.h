@@ -2,15 +2,12 @@
 #define SHAPE_INCLUDED
 
 #include "aw.h" // AW_BACKUPTEXTUREHANDLE
+
 /*
 
  Header File for Shape Data
 
 */
-
-#ifndef SupportWindows95 /* Enable so that PC code is used */
-#define SupportWindows95 1
-#endif
 
 #include "shpanim.h"
 
@@ -527,9 +524,7 @@ typedef struct merged_poly
 
 #else
 
-	#if platform_pc
 	#define iflag_zbuffer_w		0x00000080	/* Z-Buffer, Write-Only */
-	#endif
 
 #endif	/* InterfaceEngine */
 
@@ -550,9 +545,7 @@ typedef struct merged_poly
 
 #define iflag_no_mip				0x00008000	/* Use Index #0 */
 
-#if platform_pc
 #define iflag_zbuffer_r			0x00010000	/* Z-Buffer, Read-Only */
-#endif
 
 #define iflag_linear				0x00020000	/* Linear Interpolation */
 
@@ -783,12 +776,10 @@ typedef struct imageheader {
 	
 	TEXTURE *ImagePtr;					/* Pointer to texture in memory */
 
-#if SupportWindows95	
 	LPDIRECTDRAWSURFACE DDSurface;	
 	LPDIRECT3DTEXTURE D3DTexture;
 	D3DTEXTUREHANDLE D3DHandle;
 	AW_BACKUPTEXTUREHANDLE hBackup;
-#endif
 
 	int ImageNum;							/* # MIP images */
 	char ImageName[ImageNameSize];	/* Filename */

@@ -133,12 +133,7 @@ typedef struct SpearBehaviourType
 
 #define FRAG_LIFETIME 65536
 
-#if SupportWindows95
-  #define NO_OF_FRAGS_IN_CLUSTER_BOMB 6
-#else
-  #define NO_OF_FRAGS_IN_CLUSTER_BOMB 4
-#endif
-   
+#define NO_OF_FRAGS_IN_CLUSTER_BOMB 6   
 
 #define PROX_GRENADE_TRIGGER_TIME (ONE_FIXED/4)
 #define PROX_GRENADE_RANGE (4000)

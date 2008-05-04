@@ -27,10 +27,9 @@
 #include "weapons.h"
 #include "lighting.h"
 #include "sfx.h"
-#if SupportWindows95
+
 /* for win95 net game support */
 #include "pldghost.h"
-#endif
 
 #include "avp_userprofile.h"
 #include "savegame.h"
@@ -637,13 +636,9 @@ void MakeFragments (STRATEGYBLOCK * sbptr)
 	VECTORCH diff;
 	int massfact;
 
-	#if SupportWindows95
-		int mslpos;
-		SHAPEFRAGMENT * frags;
-		SHAPEFRAGMENTDESC * fragdesc;
-	#else
-		int frags = 0;
-	#endif
+	int mslpos;
+	SHAPEFRAGMENT * frags;
+	SHAPEFRAGMENTDESC * fragdesc;
 
 	if( (NumActiveBlocks > maxobjects-5)
 			|| (NumActiveStBlocks > maxstblocks-5))
@@ -662,9 +657,7 @@ void MakeFragments (STRATEGYBLOCK * sbptr)
 	
 	posPtr = &(sbptr->DynPtr->Position);
 	
-  
-#if SupportWindows95
-	mmbptr = &TempModuleMap;
+  	mmbptr = &TempModuleMap;
 	
 	mslpos = sbptr->shapeIndex;
 
@@ -862,8 +855,6 @@ void MakeFragments (STRATEGYBLOCK * sbptr)
 
 		frags++;
 	}
-#endif
-
 }
 
 DISPLAYBLOCK *MakeHierarchicalDebris(STRATEGYBLOCK *parent_sbPtr,SECTION_DATA *root, VECTORCH *positionPtr, MATRIXCH *orientation, int *wounds, int speed)

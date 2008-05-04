@@ -54,10 +54,8 @@
 #if PENTIUM_PROFILING_ON
 #include "pentime.h"
 #else
-#if SupportWindows95
 #define gProfileStart();
 #define ProfileStop(x);
-#endif
 #endif
 
 #define	VERSION_DisableStartupMenus 	Yes
@@ -145,15 +143,11 @@ void InitGame(void)
 	AvP.CurrentEnv = AvP.StartingEnv;
 	AvP.PlayerType = I_Marine;
 
-#if SupportWindows95
-
 	AvP.GameVideoRequestMode = VideoMode_DX_320x200x8; /* ignored */
 	if(HWAccel)
 		AvP.MenuVideoRequestMode = VideoMode_DX_640x480x15;
 	else
 		AvP.MenuVideoRequestMode = VideoMode_DX_640x480x8;
-
-#endif
 
 	AvP.ElapsedSeconds = 0;
 	AvP.ElapsedMinutes = 0;
@@ -378,9 +372,7 @@ void UpdateGame(void)
 	/* netgame support: it seems necessary to collect all our messages here, as some
 	things depend on the player's behaviour running before anything else... 
 	including firing the player's weapon */
-	#if SupportWindows95
 	if(AvP.Network != I_No_Network)	NetCollectMessages();
-	#endif
 
 	RemoveDestroyedStrategyBlocks();
 
@@ -420,12 +412,10 @@ void UpdateGame(void)
 	Player->ObWorld.vz = -42249;
 	#endif
 	/* netgame support */
-	#if SupportWindows95
 	if(AvP.Network != I_No_Network)	NetSendMessages();
 
 	/* KJL 11:50:18 03/21/97 - cheat modes */
 	HandleCheatModes();
-	#endif
 	
 	/*------------Patrick 1/6/97---------------
 	New sound system 

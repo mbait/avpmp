@@ -51,11 +51,9 @@
 #include "bh_dummy.h"
 #include "bh_corpse.h"
 
-#if SupportWindows95
 /* for win95 net game support */
 #include "pldghost.h"
 #include "pldnet.h"
-#endif
 
 #define SENTRYGUN_DRAMA 0
 
@@ -719,7 +717,6 @@ int Autogun_TargetFilter(STRATEGYBLOCK *candidate) {
 		case I_BehaviourXenoborg:
 			return(1);
 			break;
-		#if SupportWindows95
 		case I_BehaviourNetGhost:
 			{
 				NETGHOSTDATABLOCK *dataptr;
@@ -736,7 +733,6 @@ int Autogun_TargetFilter(STRATEGYBLOCK *candidate) {
 				}
 			}
 			break;
-		#endif
 		default:
 			return(0);
 			break;

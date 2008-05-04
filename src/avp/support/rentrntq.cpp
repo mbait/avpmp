@@ -16,8 +16,6 @@
 
 #include "fixer.h"
 
-#if SupportWindows95
-
 #include "rentrntq.h"
 
 	#if UseGadgets
@@ -238,9 +236,3 @@ void RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing(void)
 }
 
 /* Internal function definitions ***********************************/
-
-
-
-
-
-#endif // SupportWindows95

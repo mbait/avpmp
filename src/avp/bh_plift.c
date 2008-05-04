@@ -18,11 +18,9 @@
 #include "ourasert.h"
 #include "bh_plift.h"
 
-#if SupportWindows95
 /* for win95 net game support */
 #include "pldnet.h"
 #include "pldghost.h"
-#endif
 
 /* prototypes for this file */
 static int SquashingSomething(DYNAMICSBLOCK *dynPtr);
@@ -83,10 +81,8 @@ void PlatformLiftBehaviour(STRATEGYBLOCK *sbPtr)
 			}
 			else
 			{
-				#if SupportWindows95
 				LOCALASSERT(AvP.Network==I_Peer);
 				if(ActivatedByPlayer(dynPtr)) AddNetMsg_RequestPlatformLiftActivate(sbPtr);
-				#endif
 			}						
 			//textprint("Platform state: at rest\n");
 			break;
@@ -223,7 +219,6 @@ void PlatformLiftBehaviour(STRATEGYBLOCK *sbPtr)
 	//textprint("Platform pos: %d / %d / %d\n",platformliftdata->upHeight,dynPtr->Position.vy,platformliftdata->downHeight);
 
 	/* send state messages in net game */
-	#if SupportWindows95
 	if(AvP.Network==I_Host)
 	{
 		if(platformliftdata->netMsgCount>0)
@@ -236,7 +231,6 @@ void PlatformLiftBehaviour(STRATEGYBLOCK *sbPtr)
 			platformliftdata->netMsgCount--;	
 		}
 	}
-	#endif
 }
 	   
 void InitialisePlatformLift(void* bhdata, STRATEGYBLOCK *sbPtr)
@@ -510,7 +504,6 @@ static int PlayerIsNearOtherTerminal(STRATEGYBLOCK *sbPtr)
 the lift track...*/
 static int NetPlayerAtOtherTerminal(STRATEGYBLOCK *sbPtr)
 {
-#if SupportWindows95
 	extern int NumActiveStBlocks;
 	extern STRATEGYBLOCK *ActiveStBlockList[];	
 	
@@ -563,9 +556,6 @@ static int NetPlayerAtOtherTerminal(STRATEGYBLOCK *sbPtr)
 		}
 	}		
 	return 0;
-#else
-	return 0;
-#endif
 }
 
 

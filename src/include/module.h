@@ -275,9 +275,7 @@ typedef struct module {
 
 	MATRIXCH m_mat;						/* Internal use only */
 	
-	#if SupportWindows95
 	char * name;
-	#endif
 
 	WAYPOINT_HEADER *m_waypoints;
 

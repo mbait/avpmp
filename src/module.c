@@ -481,9 +481,7 @@ void AllocateModuleObject(MODULE *mptr)
 
 		/* Added Name to DISPLAYBLOCK */
 
-		#if SupportWindows95
 		dptr->name = mptr->name;
-		#endif
 
 		MapPostProcessing(dptr);
 

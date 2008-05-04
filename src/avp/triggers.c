@@ -86,12 +86,10 @@ void OperateObjectInLineOfSight(void)
 			{
 				case I_BehaviourBinarySwitch:
 				{
-					#if SupportWindows95
 					if(AvP.Network!=I_No_Network)
 					{
 						AddNetMsg_LOSRequestBinarySwitch(nearestObjectPtr->ObStrategyBlock);
 					}
-					#endif
 					RequestState(nearestObjectPtr->ObStrategyBlock,1, 0);
 					break;
 				}

@@ -277,9 +277,8 @@ extern void CreateFlamingDebris(VECTORCH *positionPtr, VECTORCH *dirPtr)
 		tempModule.m_lightarray = (struct lightblock *)0;
 		tempModule.m_extraitemdata = (struct extraitemdata *)0;
 		tempModule.m_dptr = NULL; /* this is important */
-		#if SupportWIndows95
 		tempModule.name = NULL; /* this is important */
-		#endif
+
 		AllocateModuleObject(&tempModule); 
 		dPtr = tempModule.m_dptr;		
 		if(dPtr==NULL)

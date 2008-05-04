@@ -10,9 +10,7 @@
 
 */
 
-    #if SupportWindows95
-	extern int ScanDrawMode;
-	#endif
+extern int ScanDrawMode;
 
 
 /*
@@ -441,9 +439,7 @@ void SetVDB(vdb, fl, ty, d, cx,cy, prx,pry, mxp, cl,cr,cu,cd, h1,h2,hc, amb)
 
 		vdb->VDB_Depth			= ScreenDescriptorBlock.SDB_Depth;
 
-        #if SupportWindows95
-        vdb->VDB_ScreenDepth    = ScreenDescriptorBlock.SDB_ScreenDepth;
-		#endif
+		vdb->VDB_ScreenDepth    = ScreenDescriptorBlock.SDB_ScreenDepth;
 
 		vdb->VDB_CentreX		= ScreenDescriptorBlock.SDB_CentreX;
 		vdb->VDB_CentreY		= ScreenDescriptorBlock.SDB_CentreY;
@@ -461,16 +457,12 @@ void SetVDB(vdb, fl, ty, d, cx,cy, prx,pry, mxp, cl,cr,cu,cd, h1,h2,hc, amb)
 
 	else {
 
-        #if SupportWindows95
 		 if (ScanDrawMode == ScanDrawDirectDraw)
 		   vdb->VDB_Depth			= d;
 		 else
 		   vdb->VDB_Depth = VideoModeType_24;
 
-        vdb->VDB_ScreenDepth    = ScreenDescriptorBlock.SDB_ScreenDepth;
-		#else
-		vdb->VDB_Depth			= d;
-		#endif
+		vdb->VDB_ScreenDepth    = ScreenDescriptorBlock.SDB_ScreenDepth;
 
 		vdb->VDB_CentreX		= cx;
 		vdb->VDB_CentreY		= cy;

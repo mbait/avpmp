@@ -31,8 +31,6 @@ extern "C" {
 
 #define SuppressWarnings 	Yes
 							
-#define SupportWindows95	Yes
-#define platform_pc 		Yes
 #define InterfaceEngine		No
 
 #define Term -1

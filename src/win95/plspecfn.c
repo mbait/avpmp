@@ -10,12 +10,8 @@
 #include "bh_types.h"
 #include "pvisible.h"
 
-
-
-#if SupportWindows95
 #include "kzsort.h"
 #include "kshape.h"
-#endif
 
 /*
 

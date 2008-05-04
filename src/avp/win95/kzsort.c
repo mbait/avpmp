@@ -725,7 +725,7 @@ void KRenderItems(VIEWDESCRIPTORBLOCK *VDBPtr)
 
 	#endif
 
-		#if 0//SupportWindows95
+		#if 0
 		if (ScanDrawMode != ScanDrawDirectDraw)
 		{
 			WriteEndCodeToExecuteBuffer();

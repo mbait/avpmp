@@ -103,7 +103,6 @@ void * InitXenoMorphRoom (void * bhdata, STRATEGYBLOCK * sbptr)
 
 
 	// set up the animation control
-#if SupportWindows95
 	{
 		int item_num;
 		TXACTRLBLK **pptxactrlblk;		
@@ -158,7 +157,6 @@ void * InitXenoMorphRoom (void * bhdata, STRATEGYBLOCK * sbptr)
 		}
 		*pptxactrlblk=0;
 	}
-#endif
 
 	RequestFadeToBlackLevel = 0;
 
@@ -344,12 +342,10 @@ void XenoMorphRoomBehaviour (STRATEGYBLOCK * sbptr)
 			UpdateMorphing(mctrl);
 			if(mctrl->ObMorphFlags & mph_flag_finished)		
 			{
-				#if SupportWindows95
 				d3d_light_ctrl.ctrl = LCCM_CONSTCOLOUR;
 				d3d_light_ctrl.r = ONE_FIXED - RequestFadeToBlackLevel;
 				d3d_light_ctrl.g = ONE_FIXED - RequestFadeToBlackLevel;
 				d3d_light_ctrl.b = ONE_FIXED - RequestFadeToBlackLevel;
-				#endif
 
 				xmrd->XMR_State = XMRS_FadeToBlack;
 			}
@@ -367,13 +363,10 @@ void XenoMorphRoomBehaviour (STRATEGYBLOCK * sbptr)
 				xmrd->timer = 0;
 				xmrd->XMR_State = XMRS_Process;
 			}
-			#if SupportWindows95
 
 				d3d_light_ctrl.r = ONE_FIXED - RequestFadeToBlackLevel;
 				d3d_light_ctrl.g = ONE_FIXED - RequestFadeToBlackLevel;
 				d3d_light_ctrl.b = ONE_FIXED - RequestFadeToBlackLevel;
-
-			#endif
 
 			break;
 		}
@@ -438,17 +431,13 @@ void XenoMorphRoomBehaviour (STRATEGYBLOCK * sbptr)
 
 				xmrd->timer = 0;
 				xmrd->XMR_State = XMRS_ReleasePlayer;
-				#if SupportWindows95
-					d3d_light_ctrl.ctrl = LCCM_NORMAL;
-				#endif
+
+				d3d_light_ctrl.ctrl = LCCM_NORMAL;
 			}
-			#if SupportWindows95
 
-				d3d_light_ctrl.r = ONE_FIXED - RequestFadeToBlackLevel;
-				d3d_light_ctrl.g = ONE_FIXED - RequestFadeToBlackLevel;
-				d3d_light_ctrl.b = ONE_FIXED - RequestFadeToBlackLevel;
-
-			#endif
+			d3d_light_ctrl.r = ONE_FIXED - RequestFadeToBlackLevel;
+			d3d_light_ctrl.g = ONE_FIXED - RequestFadeToBlackLevel;
+			d3d_light_ctrl.b = ONE_FIXED - RequestFadeToBlackLevel;
 			break;
 		}
 
@@ -488,9 +477,8 @@ void XenoMorphRoomBehaviour (STRATEGYBLOCK * sbptr)
 			{
 				SHAPEHEADER * pis = GetShapeData(xmrd->ProbesInShape);
 
-#if SupportWindows95
 				sbptr->SBdptr->ObTxAnimCtrlBlks = 0;
-#endif
+
 				pis->items = xmrd->pis_items_str;
 				pis->sh_textures = xmrd->pis_sht_str;
 

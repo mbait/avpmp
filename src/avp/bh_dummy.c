@@ -49,11 +49,9 @@
 #include "psndplat.h"
 #include "extents.h"
 
-#if SupportWindows95
 /* for win95 net game support */
 #include "pldghost.h"
 #include "pldnet.h"
-#endif
 
 extern int NormalFrameTime;
 extern unsigned char Null_Name[8];

@@ -38,10 +38,8 @@
 #include "bh_corpse.h"
 #include "chnkload.h"
 
-#if SupportWindows95
 /* for win95 net game support */
 #include "pldghost.h"
-#endif
 
 #include "pfarlocs.h"
 
@@ -605,9 +603,8 @@ void MakeObjectNear(STRATEGYBLOCK *sbPtr)
         tempModule.m_lightarray = (struct lightblock *)0;
         tempModule.m_extraitemdata = (struct extraitemdata *)0;
         tempModule.m_dptr = NULL; /* this is important */
-        #if SupportWIndows95
         tempModule.name = NULL; /* this is important */
-        #endif
+
         AllocateModuleObject(&tempModule); 
         dPtr = tempModule.m_dptr;               
         if(dPtr==NULL) return; /* cannot create displayblock, so leave object "far" */
@@ -1089,13 +1086,9 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
         and Static for multiplayer 
         NB some objects are always static, and initialised using
         the static dynamics template directly */
-        #if SupportWindows95
 //      if(AvP.Network==I_No_Network) inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_INANIMATE;
 //      else inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_STATIC;
         inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_INANIMATE;
-        #else
-        inanimateDynamicsInitialiser = DYNAMICS_TEMPLATE_STATIC;
-        #endif
         
         /* Initialise object's stats */
         {
@@ -1540,7 +1533,6 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
         INANIMATEOBJECT_STATUSBLOCK* objectstatusptr = sbPtr->SBdataptr;
         LOCALASSERT(objectstatusptr);
 
-        #if SupportWindows95
         if((AvP.Network==I_Peer)&&(!InanimateDamageFromNetHost))
         {
                 /* this means that the damage was generated locally in a net-game:
@@ -1553,7 +1545,6 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                 /* if we're the host, inform everyone that the object is dead */
                 if(sbPtr->SBDamageBlock.Health <= 0) AddNetMsg_InanimateObjectDestroyed(sbPtr);
         }
-        #endif
 
 		if(sbPtr->SBflags.please_destroy_me)
 		{

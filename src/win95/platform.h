@@ -15,8 +15,6 @@
 extern "C"  {
 #endif
 
-#define platform_pc Yes
-
 /* Types */
 
 typedef struct LONGLONGCH {

@@ -346,7 +346,6 @@ void DAVEHOOK_Maintain(void)
 	#endif
 
 	// Hacked in input support:
-	#if SupportWindows95
 	{
 		#if 0
 		if ( KeyboardInput[ KEY_J ] )
@@ -374,9 +373,7 @@ void DAVEHOOK_Maintain(void)
 		}
 		#endif
 	}
-	#endif // SupportWindows95
 
-	#if SupportWindows95
 	if ( bFirstFrame )
 	{
 		RE_ENTRANT_QUEUE_WinMain_FlushMessagesWithoutProcessing();
@@ -391,7 +388,6 @@ void DAVEHOOK_Maintain(void)
 		// Flush the WinProc messages:
 		RE_ENTRANT_QUEUE_WinMain_FlushMessages();
 	}
-	#endif // SupportWindows95
 }
 
 void DAVEHOOK_ScreenModeChange_Setup(void)

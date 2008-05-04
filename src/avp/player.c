@@ -31,11 +31,10 @@ so player.c is looking a bit bare at the moment. */
 #include "player.h"
 
 /* for win 95 net support */
-#if SupportWindows95
 #include "pldnet.h"
 #include "pldghost.h"
 //#include "dp_func.h"
-#endif
+
 #include "showcmds.h"
 #include "bonusabilities.h"
 
@@ -362,11 +361,8 @@ void InitPlayer(STRATEGYBLOCK* sbPtr, int sb_type)
 	//restore the number of saves allowed
 	ResetNumberOfSaves();
 
-#if SupportWindows95
 	//choosing a start position now occurs later on
 //	if(AvP.Network!=I_No_Network) TeleportNetPlayerToAStartingPosition(sbPtr, 1);
-#endif
-
 }
 
 void ChangeToMarine()
@@ -1144,7 +1140,6 @@ static void PlayerIsDead(DAMAGE_PROFILE* damage,int multiplier,VECTORCH* incomin
 	}
 
 	/* network support... */
-	#if SupportWindows95
 	if(AvP.Network!=I_No_Network) 
 	{
 		playerStatusPtr->MyCorpse=MakeNewCorpse();
@@ -1314,7 +1309,7 @@ static void PlayerIsDead(DAMAGE_PROFILE* damage,int multiplier,VECTORCH* incomin
 		    SpeciesTag_DetermineMyNextCharacterType();
 		}
 	}
-	#endif
+
 	if (playerStatusPtr->soundHandle!=SOUND_NOACTIVEINDEX) {
  		Sound_Stop(playerStatusPtr->soundHandle);
 	}

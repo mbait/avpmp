@@ -46,10 +46,8 @@
 
 #include "paintball.h"
 /* for win 95 net support */
-#if SupportWindows95
 #include "pldghost.h"
 #include "pldnet.h"
-#endif
 
 /*KJL****************************************************************************************
 *  										G L O B A L S 	            					    *
@@ -944,7 +942,6 @@ int SmartTarget_TargetFilter(STRATEGYBLOCK *candidate)
 				return(1);
 			}
 			break;
-	#if SupportWindows95
 		case I_BehaviourNetGhost:
 			{
 				NETGHOSTDATABLOCK *dataptr;
@@ -998,7 +995,6 @@ int SmartTarget_TargetFilter(STRATEGYBLOCK *candidate)
 				}
 			}
 			break;
-	#endif
 		default:
 			return(0);
 			break;
