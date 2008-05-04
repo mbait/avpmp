@@ -41,10 +41,6 @@
 #endif
 #include "db.h"	 /* Contains most off the interface. */
 
-/* G L O B A L S ****************************************************** */
-/* Have external linkage. */
-volatile BOOL DZ_NULL;
-
 /* This variable dictates whether macros ending _opt get executed. */
 int db_option = 0; /* Default is off. */
 

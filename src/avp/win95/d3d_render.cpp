@@ -1124,7 +1124,6 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr,RENDERV
 
 				if(CurrentRenderStates.FogIsOn && vertices->Z>5000)//CurrentRenderStates.FogDistance)
 				{
-//					extern int sine[];
 //					extern int CloakingPhase;
 					int brightness = (vertices->R+vertices->G+vertices->B)*86*3;
 
@@ -2956,8 +2955,6 @@ void D3D_FMVParticle_Output(RENDERVERTEX *renderVerticesPtr)
 
 
 extern int CloakingPhase;
-extern int sine[];
-extern int cosine[];
 extern int NumActiveBlocks;
 extern DISPLAYBLOCK *ActiveBlockList[];
 extern int GlobalAmbience;

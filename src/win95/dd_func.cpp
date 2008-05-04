@@ -153,8 +153,6 @@ extern unsigned char AttemptVideoModeRestart;
 extern VIDEORESTARTMODES VideoRestartMode;
 extern BOOL MMXAvailable;
 extern BOOL D3DHardwareAvailable;
-extern int cosine[];
-extern int sine[];
 
 BOOL really_32_bit = 0;
 
