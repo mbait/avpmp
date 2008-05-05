@@ -10,17 +10,9 @@
 #include "huffman.hpp"
 
 
-#ifdef cencon
-#define new my_new
-#endif
-
-
 // Class Lockable_Chunk_With_Children functions
 
-#if cencon
-#else
 extern char * users_name;
-#endif
 
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(mishchnk)
@@ -1033,12 +1025,6 @@ BOOL File_Chunk::check_file()
 }
 
 
-#if InterfaceEngine
-
-	extern File_Chunk * Env_Chunk;
-	
-#endif
-	
 BOOL File_Chunk::update_file()
 {
 
@@ -1073,22 +1059,6 @@ BOOL File_Chunk::update_file()
 	return(write_file(tempname));
 	
 	#else
-
-#if InterfaceEngine
-
-	// log, to track error
-	char fname [256];
-	char * dotpos;
-
-	strcpy (fname, filename);
-
-	dotpos = strrchr (fname, '.');
-	
-	sprintf (dotpos, ".log");
-	
-	FILE * log = fopen (fname, "a");
-
-#endif
 
 	if (!filename) return FALSE;
 
@@ -1237,13 +1207,6 @@ BOOL File_Chunk::update_file()
 	ed = (Environment_Data_Chunk *)lookup_single_child ("REBENVDT");
 	if (ed)
 	{
-
-#if InterfaceEngine
-
-	fprintf (log, "Env_Data %d %d %d %d", ed->updated, ed->local_lock, ed->updated_outside, ed->external_lock);
-
-#endif
-
 		if (ed->updated && 
 			!(ed->updated_outside || ed->external_lock)) 
 			ed->update_chunk_in_file(rif_file);
@@ -1272,11 +1235,6 @@ BOOL File_Chunk::update_file()
 
 	CloseHandle (rif_file);
 
-#if InterfaceEngine
-
-	fclose (log);
-
-#endif
 	return TRUE;
 
 	#endif //DisableLock

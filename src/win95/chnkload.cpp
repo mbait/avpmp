@@ -2999,10 +2999,6 @@ BOOL copy_to_map6(Object_Chunk * ob,MAPBLOCK6* mapblock, int shplst_pos)
 	mapblock->MapEuler.EulerY = e.EulerY;
 	mapblock->MapEuler.EulerZ = e.EulerZ;
 
-	#if InterfaceEngine
-	mapblock->o_chunk = (void *)ob;
-	#endif
-
 	return TRUE;
 }
 

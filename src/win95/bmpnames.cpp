@@ -2,21 +2,9 @@
 #include "bmpnames.hpp"
 #include "mishchnk.hpp"
 
-#if engine
 #define UseLocalAssert No
 #include "ourasert.h"
 #define assert(x) GLOBALASSERT(x)
-#else
-#if cencon
-#include "ccassert.h"
-#else
-#include <assert.h>
-#endif
-#endif
-
-#ifdef cencon
-#define new my_new
-#endif
 
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(bmpnames)
@@ -24,9 +12,6 @@ FORCE_CHUNK_INCLUDE_IMPLEMENT(bmpnames)
 
 BMP_Name::BMP_Name (const char * fname, int const gbnc_version)
 : flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (gbnc_version << BMPNAME_PARENT_VER_SHIFT), enum_id(0), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0)
-#if cencon
-, md5val(0)
-#endif
 {
 	filename = new char [strlen(fname)+1];
 	strcpy (filename, fname);
@@ -34,9 +19,6 @@ BMP_Name::BMP_Name (const char * fname, int const gbnc_version)
 
 BMP_Name::BMP_Name (const char * fname)
 : flags((BMPN_Flags)DEFAULT_BMPN_FLAGS), index(0), version_num (0), enum_id(0), priority (DEFAULT_BMPN_PRIORITY), transparency_colour_union(0)
-#if cencon
-, md5val(0)
-#endif
 {
 	filename = new char [strlen(fname)+1];
 	strcpy (filename, fname);
@@ -60,9 +42,6 @@ BMP_Name::BMP_Name (const BMP_Name & bn)
 	enum_id = bn.enum_id;
 	priority = bn.priority;
 	transparency_colour_union = bn.transparency_colour_union;
-	#if cencon
-	md5val = bn.md5val;
-	#endif
 }
 
 void BMP_Name::Validate(void)
@@ -88,13 +67,8 @@ const BMP_Name & BMP_Name::operator=(const BMP_Name & bn)
 	enum_id = bn.enum_id;
 	priority = bn.priority;
 	transparency_colour_union = bn.transparency_colour_union;
-	#if cencon
-	md5val = bn.md5val;
-	#endif
 	
 	return(*this);
-	
-	
 }
 
 

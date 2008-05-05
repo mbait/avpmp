@@ -4,9 +4,6 @@
 #include "chunk.hpp"
 #include "chnktype.hpp"
 
-#if InterfaceEngine
-#include "strachnk.hpp"
-#endif
 
 #define LOFlag_On					0x00000001
 #define LOFlag_ShadowData	0x00000002
@@ -143,11 +140,6 @@ public:
 	
 	void fill_data_block ( char * data_start);
 
-#if InterfaceEngine
-	AVP_Strategy_Chunk* GetStrategyChunk();
-	AVP_Strategy_Chunk* CreateStrategyChunk();
-#endif
-	
 private:
 
 	friend class Light_Set_Chunk;

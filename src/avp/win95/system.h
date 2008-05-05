@@ -31,8 +31,6 @@ extern "C" {
 
 #define SuppressWarnings 	Yes
 							
-#define InterfaceEngine		No
-
 #define Term -1
 
 

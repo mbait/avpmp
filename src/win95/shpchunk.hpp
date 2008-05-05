@@ -769,10 +769,6 @@ public:
 	
 	void post_input_processing();
 	
-	#if cencon || InterfaceEngine
-	void update_from_external_rif(BOOL force_scale_update);
-	#endif
-	
 	//gets name from shape_external_object_name_chunk if it has one
 	//otherwise takes name from rif_name_chunk
 	const char * get_shape_name();

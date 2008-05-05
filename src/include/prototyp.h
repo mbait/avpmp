@@ -347,15 +347,6 @@ typedef struct mapblock6 {
 
 	int MapInteriorType;
 
-	#if InterfaceEngine
-
-	/* This will point to the Object_Chunk, it will have to be */
-	/* cast within C++ though */
-	
-	void * o_chunk;
-
-	#endif
-
 } MAPBLOCK6;
 
 
@@ -384,15 +375,6 @@ typedef struct mapblock7 {
 	MAPSETVDB *MapVDBData;
 
 	int MapInteriorType;
-
-	#if InterfaceEngine
-
-	/* This will point to the Object_Chunk, it will have to be */
-	/* cast within C++ though */
-	
-	void * o_chunk;
-
-	#endif
 
 	int MapLightType;			/* See LIGHTTYPES */
 

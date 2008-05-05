@@ -3,10 +3,6 @@
 #include "ltchunk.hpp"
 
 
-#ifdef cencon
-#define new my_new
-#endif
-
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(ltchunk)
 
@@ -150,35 +146,9 @@ Light_Chunk::Light_Chunk(Chunk_With_Children * parent, const char * data, size_t
 	data += 4;
 	light.pad2 = *((int *) data);
 	
-	#if engine || cencon
 	light_added_to_module = FALSE;
-	#endif
-		
 }
 
-#if InterfaceEngine
-AVP_Strategy_Chunk* Light_Chunk::GetStrategyChunk()
-{
-	List<Chunk*> chlist;
-	parent->lookup_child("AVPSTRAT",chlist);
-	for(LIF<Chunk*> chlif(&chlist);!chlif.done();chlif.next())
-	{
-		AVP_Strategy_Chunk* asc=(AVP_Strategy_Chunk*)chlif();
-		if(asc->index==light.light_number) return asc; 
-	}
-	return 0;	
-}
-
-AVP_Strategy_Chunk* Light_Chunk::CreateStrategyChunk()
-{
-	AVP_Strategy_Chunk* asc=GetStrategyChunk();
-	if(asc) return asc;
-	
-	asc=new AVP_Strategy_Chunk(parent);
-	asc->index=light.light_number;
-	return asc;
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////////
 

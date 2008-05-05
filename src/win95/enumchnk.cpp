@@ -1,10 +1,6 @@
 #include "enumchnk.hpp"
 //#include "enumsch.hpp"
 
-#ifdef cencon
-#define new my_new
-#endif
-
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(enumchnk)
 

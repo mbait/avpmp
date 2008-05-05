@@ -2,25 +2,9 @@
 #include <math.h>
 #include "chnktype.hpp"
 
-#if engine
-
 #define UseLocalAssert No
 #include "ourasert.h"
 #define assert(x) GLOBALASSERT(x)
-
-#else
-
-#if cencon
-#include "ccassert.h"
-#else
-#include <assert.h>
-#endif
-
-#endif
-
-#ifdef cencon
-#define new my_new
-#endif
 
 // misc data structures functions
 BOOL operator==(const obinfile &o1, const obinfile &o2)
@@ -175,7 +159,6 @@ ChunkVector& ChunkVector::operator-=(const ChunkVector& a)
 
 
 
-#if engine
 ChunkVector::operator VECTORCH () const
 {
 	VECTORCH v;
@@ -185,7 +168,7 @@ ChunkVector::operator VECTORCH () const
 
 	return(v);
 }
-#endif
+
 ChunkVector::operator ChunkVectorInt () const
 {
 	ChunkVectorInt v;
@@ -267,7 +250,6 @@ ChunkVectorInt operator+(const ChunkVectorInt& a, const ChunkVectorInt& b)
 	return v;
 }
 
-
 ChunkVectorInt operator-(const ChunkVectorInt& a, const ChunkVectorInt& b)
 {
 	ChunkVectorInt v;
@@ -286,8 +268,6 @@ ChunkVectorInt& ChunkVectorInt::operator+=(const ChunkVectorInt& a)
   return *this;
 }
 
-
-
 ChunkVectorInt& ChunkVectorInt::operator-=(const ChunkVectorInt& a)
 {
   x -= a.x;
@@ -297,9 +277,6 @@ ChunkVectorInt& ChunkVectorInt::operator-=(const ChunkVectorInt& a)
   return *this;
 }
 
-
-
-#if engine
 ChunkVectorInt::operator VECTORCH () const
 {
 	VECTORCH v;
@@ -309,7 +286,6 @@ ChunkVectorInt::operator VECTORCH () const
 
 	return(v);
 }
-#endif
 
 ChunkVectorInt operator*(const ChunkVectorInt & a, const double s)
 {
@@ -407,7 +383,6 @@ ChunkVectorFloat operator/(const ChunkVectorFloat & a, const double s)
 	return(v);
 }
 
-#if engine
 ChunkVectorFloat::operator VECTORCH () const
 {
 	VECTORCH v;
@@ -417,7 +392,7 @@ ChunkVectorFloat::operator VECTORCH () const
 
 	return(v);
 }
-#endif
+
 int ChunkVectorFloat::norm()
 {
   float modulos =(float) mod(*this);
@@ -430,6 +405,7 @@ int ChunkVectorFloat::norm()
 
   return(1);
 }
+
 double  mod(const ChunkVectorFloat& a)
 {
   return(sqrt((double)a.x*(double)a.x+(double)a.y*(double)a.y+(double)a.z*(double)a.z));

@@ -3,10 +3,6 @@
 //#include "strachnk.hpp"
 //#include "obchunk.hpp"
 
-#ifdef cencon
-#define new my_new
-#endif
-
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(avpchunk)
 
@@ -110,19 +106,7 @@ ObjectID AVP_Generator_Chunk::CalculateID()
 	if(!chlist.size()) return retval;
 	char Name[100];
 
-	#if InterfaceEngine||cencon
-	//need to check for console specific rif files,and skip the 'sat' or 'psx'
-	//so that they get the same ids as the pc
-	const char* r_name=((RIF_Name_Chunk*)chlist.first_entry())->rif_name;
-	if(tolower(r_name[0])=='p' && tolower(r_name[1])=='s' && tolower(r_name[2])=='x' )
-		strcpy(Name,&r_name[3]);
-	else if (tolower(r_name[0])=='s' && tolower(r_name[1])=='a' && tolower(r_name[2])=='t' )
-		strcpy(Name,&r_name[3]);
-	else
-		strcpy(Name,r_name);
-	#else
 	strcpy(Name,((RIF_Name_Chunk*)chlist.first_entry())->rif_name);
-	#endif
 
 	strcat(Name,name);
 	char buffer[16];

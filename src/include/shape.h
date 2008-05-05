@@ -475,25 +475,6 @@ typedef struct polyheader {
 
 } POLYHEADER;
 
-#if InterfaceEngine
-
-/* 
-
-	Little structure for use creating
-	merge lists
-	
-*/
-
-typedef struct merged_poly
-{
-	int other_poly;
-	int num_verts;
-	int vert_ind[4];
-} MERGED_POLY;
-
-#endif
-
-
 
 /*
 
@@ -518,15 +499,7 @@ typedef struct merged_poly
 #define iflag_no_bfc				0x00000020	/* No Back Face Cull */
 #define iflag_hazing				0x00000040	/* Haze / Depth Cue colour */
 
-#if InterfaceEngine
-
-	#define iflag_selected		0x00000080	/* It's a tools thing */
-
-#else
-
-	#define iflag_zbuffer_w		0x00000080	/* Z-Buffer, Write-Only */
-
-#endif	/* InterfaceEngine */
+#define iflag_zbuffer_w		0x00000080	/* Z-Buffer, Write-Only */
 
 #define iflag_shadingtable		0x00000100	/* Hue is a table index */
 #define iflag_tab_gour_8		0x00000200	/* Gour. for 8-bit modes uses tab. */

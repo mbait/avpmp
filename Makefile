@@ -7,7 +7,7 @@ CFLAGS = -m32 -g -Wall -pipe -O2
 
 CFLAGS += -DLINUX
 
-CFLAGS += -Dengine=1 -Isrc -Isrc/include -Isrc/win95 -Isrc/avp -Isrc/avp/win95 -Isrc/avp/support -Isrc/avp/win95/frontend -Isrc/avp/win95/gadgets
+CFLAGS += -Isrc -Isrc/include -Isrc/win95 -Isrc/avp -Isrc/avp/win95 -Isrc/avp/support -Isrc/avp/win95/frontend -Isrc/avp/win95/gadgets
 CFLAGS += $(shell sdl-config --cflags) $(shell openal-config --cflags)
 CXXFLAGS = $(CFLAGS)
 

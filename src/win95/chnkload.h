@@ -189,12 +189,7 @@ extern int start_of_loaded_shapes;
 
 extern unsigned char *TextureLightingTable;
 
-#if defined(InterfaceEngine) && InterfaceEngine
-// this is of crucial importance!!
-extern SHAPEHEADER * mainshapelist[];
-#else
 extern SHAPEHEADER ** mainshapelist;
-#endif
 
 extern MAPHEADER Map[];
 

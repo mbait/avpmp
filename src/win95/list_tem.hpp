@@ -29,12 +29,7 @@
 	#define LIST_TEM_TYPEID_THIS "?"
 #endif
 
-#if defined(engine) 
-// Not all preprocessors do lazy evaluation. DW
-#if engine
-	#include "mem3dc.h"
-#endif
-#endif
+#include "mem3dc.h"
 
 #ifdef NDEBUG
 	static void fail(...) {}

@@ -395,10 +395,6 @@ void AllocateModuleObject(MODULE *mptr)
 		#endif	/* Support Morphing */
 
 
-		#if InterfaceEngine
-		dbptr->o_chunk = mapblockptr->o_chunk;
-		#endif
-
 		dptr->ObLightType = LightType_PerVertex;
 		dptr->ObFlags |= ObFlag_MultLSrc;
 

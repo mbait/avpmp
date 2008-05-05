@@ -1,23 +1,12 @@
 #include "chunkpal.hpp"
 #include "mishchnk.hpp"
 
-#if engine
-
 #ifndef UseLocalAssert
 #define UseLocalAssert 1
 #endif
 #include "ourasert.h"
 #define assert(x) GLOBALASSERT(x)
 
-#else
-
-#if cencon
-#include "ccassert.h"
-#else
-#include <assert.h>
-#endif
-
-#endif
 //macro for helping to force inclusion of chunks when using libraries
 FORCE_CHUNK_INCLUDE_IMPLEMENT(chunkpal)
 

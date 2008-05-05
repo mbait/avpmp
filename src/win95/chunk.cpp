@@ -2,34 +2,13 @@
 
 #include "chunk.hpp"
 
-#if engine
-
 #define UseLocalAssert No
 #include "ourasert.h"
 #define assert(x) GLOBALASSERT(x)
 
-#else
-
-#if cencon
-#include "ccassert.h"
-#else
-#include <assert.h>
-#endif
-
-#endif
-
-
-#if cencon
-#include "environs.hpp"
-#else
 #define twprintf printf
 
-#ifdef cencon
-#define new my_new
-#endif
-
 char * users_name = "Player";
-#endif
 
 #include "hash_tem.hpp"
 Chunk * Parent_File;

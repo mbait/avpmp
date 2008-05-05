@@ -19,10 +19,6 @@ struct ChunkShape;
 
 struct ZSP_zone
 {
-#if (cencon || shpedit)
-	ZSP_zone (const ChunkShape &, double, double, double, double);
-#endif
-
 	ZSP_zone ();
 	~ZSP_zone();
 	
@@ -43,11 +39,6 @@ class ZSP_Data
 {
 
 public:
-
-#if (cencon || shpedit)
-	ZSP_Data (const ChunkShape &, int);
-#endif
-
 	ZSP_Data (const char * zdata, size_t zsize);
 
 	~ZSP_Data ();
@@ -68,17 +59,6 @@ public:
 class Shape_ZSP_Data_Chunk : public Chunk
 {
 public:
-
-#if cencon || shpedit
-	Shape_ZSP_Data_Chunk (Shape_Sub_Shape_Chunk * parent, ZSP_Data zspin)
-	: Chunk(parent, "SHPZSPDT"), zspdata (zspin)
-	{}
-
-	Shape_ZSP_Data_Chunk (Shape_Chunk * parent, ZSP_Data zspin)
-	: Chunk(parent, "SHPZSPDT"), zspdata (zspin)
-	{}
-#endif
-
 	const ZSP_Data zspdata;
 
 	size_t size_chunk ();

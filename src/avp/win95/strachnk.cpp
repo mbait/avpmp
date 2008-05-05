@@ -561,46 +561,6 @@ void SimpleStrategy::set_r6_destruction_type(unsigned int dest_type)
 }
 
 //////////////////////////////////////////////
-#if InterfaceEngine
-R6SimpleStrategy::R6SimpleStrategy(int _Type, int _ExtraData, int _mass, int _integrity)
-:SimpleStrategy(_Type,_ExtraData,_mass,_integrity)
-{
-	StrategyType = StratR6SimpleObject;
-	
-	r6SoundID.id1 =	0;
-	r6SoundID.id2 = 0;
-	r6_spare1 = 0;
-	r6_spare2 = 0;
-	r6_spare3 = 0;
-	r6_spare4 = 0;
-	r6_spare5 = 0;
-	r6_spare6 = 0;
-}
-
-R6SimpleStrategy::R6SimpleStrategy(SimpleStrategy* ss)
-:SimpleStrategy(0,0,0,0)
-{
-	StrategyType = StratR6SimpleObject;
-
-	Type = ss->Type;
-	ExtraData = ss->ExtraData;
-	mass = ss->mass;
-	integrity = ss->integrity;
-	flags = ss->flags;
-	target_request = ss->target_request;
-	targetID = ss->targetID;
-
-	r6SoundID.id1 =	0;
-	r6SoundID.id2 = 0;
-	r6_spare1 = 0;
-	r6_spare2 = 0;
-	r6_spare3 = 0;
-	r6_spare4 = 0;
-	r6_spare5 = 0;
-	r6_spare6 = 0;
-
-}
-#endif
 
 R6SimpleStrategy::R6SimpleStrategy(const char * data,size_t size)
 :SimpleStrategy(data,size)

@@ -5,56 +5,20 @@
 
 #include "fixer.h"
 
-#if engine
-
-	#include "3dc.h"
-	#include "mem3dc.h" // for debug new and delete
+#include "3dc.h"
+#include "mem3dc.h" // for debug new and delete
 	
 	
-	#include "inline.h"
+#include "inline.h"
 
 #if SupportModules
 
-	#include "module.h"
+  #include "module.h"
 
 #endif
 
-	#include "list_tem.hpp"
+#include "list_tem.hpp"
 	
-
-#endif
-
-#if cencon
-
-#include "AFXWIN.H"
-
-#ifdef _DEBUG
-#undef new
-#define new DEBUG_NEW
-#define my_new DEBUG_NEW
-#else
-#define my_new new
-#endif
-
-#include "list_tem.hpp"
-
-#endif
-
-#if objedit || sprite_edit || ANIMEXP
-#include "StdAfx.h"
-#include "list_tem.hpp"
-#endif
-
-#if shpedit
-#include "stdafx.h"
-#include "list_tem.hpp"
-#endif
-
-#if standard
-#include "advwin32.h"
-#include <windows.h>
-#include "list_tem.hpp"
-#endif
 
 
 #define CHUNK_FAILED_ON_LOAD -1
@@ -74,10 +38,6 @@
 
 // we start at the header of the chunk we are in
 // so that we can stop at the end of the chunk
-
-#if cencon
-extern char users_name[];
-#endif
 
 #include "list_tem.hpp"
 
@@ -655,36 +615,3 @@ FORCE_CHUNK_INCLUDE_END
 */
 
 #endif // !included
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

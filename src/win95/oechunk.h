@@ -4,21 +4,6 @@
 #include "chunk.hpp"
 #include "obchunk.hpp"
 
-#if objedit
-#include "template.hpp"
-#endif
-//#if engine
-//#define VECTOR VECTORCH
-//#endif
-
-#if engine
-#else
-struct VECTORCH
-{
-	int vx, vy, vz;
-};
-#endif
-
 struct	ChunkMapBlock
 {
 	char TemplateName[20];
@@ -96,4 +81,5 @@ public :
 	//constructor from buffer
 	Strategy_Chunk (Chunk_With_Children * parent,const char* data,size_t);
 };
+
 #endif
