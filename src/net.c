@@ -3,8 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <pthread.h>
-
 #include "fixer.h"
 
 #include "3dc.h"

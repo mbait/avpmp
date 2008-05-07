@@ -77,7 +77,7 @@ typedef struct pffont
 	int num_chars_in_font;			/*number of chars in this font */
 	FONT_TYPE font_type;
 	FONT_FLAGS flags;
-	RECT_AVP srcRect[MAXNUM_CHARS_IN_FONT];  /*source rectangles*/
+	RECT srcRect[MAXNUM_CHARS_IN_FONT];  /*source rectangles*/
 
 	int fttexWidth;                       /* filled in during loading */
 	int fttexHeight;
@@ -115,7 +115,7 @@ typedef struct pffont
 	{
 		if ( bPrintable(ProjCh) )
 		{
-			const RECT_AVP& charRect = srcRect[ ProjCharToOffset(ProjCh) ] ;
+			const RECT& charRect = srcRect[ ProjCharToOffset(ProjCh) ] ;
 
 			return (charRect . right - charRect . left);
 		}

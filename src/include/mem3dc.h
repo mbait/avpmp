@@ -8,6 +8,7 @@
 
 #endif
 
+#include "fixer.h" // make sure system headers get included first, because windows headers use Yes/No
 #include "system.h"
 #include <stddef.h>
 

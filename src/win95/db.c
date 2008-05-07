@@ -64,7 +64,6 @@ int db_option = 0; /* Default is off. */
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdarg.h>	/* For variable arguments. */
-#include <unistd.h>
 
 /* C O N S T A N T S ************************************************** */
 

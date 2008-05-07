@@ -1,6 +1,11 @@
-#ifndef __FILES_H__
-#define __FILES_H__
+#ifndef FILES_H
+#define FILES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdio.h>
 #include <time.h>
 
 #define	FILEMODE_READONLY	0x01
@@ -32,5 +37,9 @@ int CreateGameDirectory(const char *dirname);
 void *OpenGameDirectory(const char *dirname, const char *pattern, int type);
 GameDirectoryFile *ScanGameDirectory(void *dir);
 int CloseGameDirectory(void *dir);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

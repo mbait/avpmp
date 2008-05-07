@@ -3019,7 +3019,7 @@ void PostLandscapeRendering()
 		}
 	}
 #endif
-	else if (!strcasecmp(LevelName,"hangar"))
+	else if (!stricmp(LevelName,"hangar"))
 	{
 #if 0 /* not yet */
 	   	#if FMV_ON
@@ -3036,7 +3036,7 @@ void PostLandscapeRendering()
 		#endif
 #endif		
 	}
-	else if (!strcasecmp(LevelName,"invasion_a"))
+	else if (!stricmp(LevelName,"invasion_a"))
 	{
 		char drawWater = 0;
 		char drawEndWater = 0;
@@ -3061,12 +3061,12 @@ void PostLandscapeRendering()
 					{
 						drawEndWater = 1;
 					}
-					if((!strcasecmp(modulePtr->name,"shaft01"))
-					 ||(!strcasecmp(modulePtr->name,"shaft02"))
-					 ||(!strcasecmp(modulePtr->name,"shaft03"))
-					 ||(!strcasecmp(modulePtr->name,"shaft04"))
-					 ||(!strcasecmp(modulePtr->name,"shaft05"))
-					 ||(!strcasecmp(modulePtr->name,"shaft06")))
+					if((!stricmp(modulePtr->name,"shaft01"))
+					 ||(!stricmp(modulePtr->name,"shaft02"))
+					 ||(!stricmp(modulePtr->name,"shaft03"))
+					 ||(!stricmp(modulePtr->name,"shaft04"))
+					 ||(!stricmp(modulePtr->name,"shaft05"))
+					 ||(!stricmp(modulePtr->name,"shaft06")))
 					{
 						extern void HandleRainShaft(MODULE *modulePtr, int bottomY, int topY, int numberOfRaindrops);
 						HandleRainShaft(modulePtr, -11726,-107080,10);
@@ -3138,7 +3138,7 @@ void PostLandscapeRendering()
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale);
 		}
 	}
-	else if (!strcasecmp(LevelName, "derelict"))
+	else if (!stricmp(LevelName, "derelict"))
 	{
 		char drawMirrorSurfaces = 0;
 		char drawWater = 0;
@@ -3151,12 +3151,12 @@ void PostLandscapeRendering()
 			/* if it's a module, which isn't inside another module */
 			if (modulePtr && modulePtr->name)
 			{
-			  	if( (!strcasecmp(modulePtr->name,"start-en01"))
-			  	  ||(!strcasecmp(modulePtr->name,"start")))
+			  	if( (!stricmp(modulePtr->name,"start-en01"))
+			  	  ||(!stricmp(modulePtr->name,"start")))
 				{
 					drawMirrorSurfaces = 1;
 				}
-				else if (!strcasecmp(modulePtr->name,"water-01"))
+				else if (!stricmp(modulePtr->name,"water-01"))
 				{
 					extern void HandleRainShaft(MODULE *modulePtr, int bottomY, int topY, int numberOfRaindrops);
 					drawWater = 1;
@@ -3202,7 +3202,7 @@ void PostLandscapeRendering()
 		}
 
 	}
-	else if (!strcasecmp(LevelName,"genshd1"))
+	else if (!stricmp(LevelName,"genshd1"))
 	{
 		while(numOfObjects)
 		{
@@ -3212,17 +3212,17 @@ void PostLandscapeRendering()
 			/* if it's a module, which isn't inside another module */
 			if (modulePtr && modulePtr->name)
 			{
-				if( (!strcasecmp(modulePtr->name,"largespace"))
-				  ||(!strcasecmp(modulePtr->name,"proc13"))
-				  ||(!strcasecmp(modulePtr->name,"trench01"))
-				  ||(!strcasecmp(modulePtr->name,"trench02"))
-				  ||(!strcasecmp(modulePtr->name,"trench03"))
-				  ||(!strcasecmp(modulePtr->name,"trench04"))
-				  ||(!strcasecmp(modulePtr->name,"trench05"))
-				  ||(!strcasecmp(modulePtr->name,"trench06"))
-				  ||(!strcasecmp(modulePtr->name,"trench07"))
-				  ||(!strcasecmp(modulePtr->name,"trench08"))
-				  ||(!strcasecmp(modulePtr->name,"trench09")))
+				if( (!stricmp(modulePtr->name,"largespace"))
+				  ||(!stricmp(modulePtr->name,"proc13"))
+				  ||(!stricmp(modulePtr->name,"trench01"))
+				  ||(!stricmp(modulePtr->name,"trench02"))
+				  ||(!stricmp(modulePtr->name,"trench03"))
+				  ||(!stricmp(modulePtr->name,"trench04"))
+				  ||(!stricmp(modulePtr->name,"trench05"))
+				  ||(!stricmp(modulePtr->name,"trench06"))
+				  ||(!stricmp(modulePtr->name,"trench07"))
+				  ||(!stricmp(modulePtr->name,"trench08"))
+				  ||(!stricmp(modulePtr->name,"trench09")))
 				{
 					extern void HandleRain(int numberOfRaindrops);
 					HandleRain(999);

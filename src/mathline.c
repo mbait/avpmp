@@ -30,16 +30,16 @@ int FloatToInt(float);
 #undef ASM386
 
 #if !defined(ASM386)
-static long long ConvertToLongLong(const LONGLONGCH* llch)
+static __int64 ConvertToLongLong(const LONGLONGCH* llch)
 {
-	long long ll;
+	__int64 ll;
 	
-	ll = ((long long)llch->hi32 << 32) | ((long long)llch->lo32 << 0);
+	ll = ((__int64)llch->hi32 << 32) | ((__int64)llch->lo32 << 0);
 	
 	return ll;
 }
 
-static void ConvertFromLongLong(LONGLONGCH* llch, const long long* ll)
+static void ConvertFromLongLong(LONGLONGCH* llch, const __int64* ll)
 {
 	llch->lo32 = (unsigned int)((*ll>> 0) & 0xffffffff);
 	llch->hi32 = (  signed int)((*ll>>32) & 0xffffffff);	
@@ -85,10 +85,10 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	);
 */
 #else
-	long long aa = ConvertToLongLong(a);
-	long long bb = ConvertToLongLong(b);
+	__int64 aa = ConvertToLongLong(a);
+	__int64 bb = ConvertToLongLong(b);
 	
-	long long cc = aa + bb;
+	__int64 cc = aa + bb;
 	
 	ConvertFromLongLong(c, &cc);
 #endif
@@ -122,8 +122,8 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "memory", "cc"
 	);
 #else
-	long long cc = ConvertToLongLong(c);
-	long long aa = ConvertToLongLong(a);
+	__int64 cc = ConvertToLongLong(c);
+	__int64 aa = ConvertToLongLong(a);
 	
 	cc += aa;
 	
@@ -162,10 +162,10 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "memory", "cc"
 	);
 #else
-	long long aa = ConvertToLongLong(a);
-	long long bb = ConvertToLongLong(b);
+	__int64 aa = ConvertToLongLong(a);
+	__int64 bb = ConvertToLongLong(b);
 	
-	long long cc = aa - bb;
+	__int64 cc = aa - bb;
 	
 	ConvertFromLongLong(c, &cc);
 #endif
@@ -197,8 +197,8 @@ __asm__("movl	0(%%esi), %0		\n\t"
 	: "memory", "cc"
 	);
 #else
-	long long cc = ConvertToLongLong(c);
-	long long aa = ConvertToLongLong(a);
+	__int64 cc = ConvertToLongLong(c);
+	__int64 aa = ConvertToLongLong(a);
 	
 	cc -= aa;
 	
@@ -236,10 +236,10 @@ __asm__("imull	%3			\n\t"
 	: "%edx", "memory", "cc"
 	);
 #else
-	long long aa = (long long) a;
-	long long bb = (long long) b;
+	__int64 aa = (__int64) a;
+	__int64 bb = (__int64) b;
 	
-	long long cc = aa * bb;
+	__int64 cc = aa * bb;
 	
 	ConvertFromLongLong(c, &cc);
 #endif
@@ -368,7 +368,7 @@ __asm__("notl	0(%%esi)		\n\t"
 	: "memory", "cc"
 	);
 #else
-	long long aa = ConvertToLongLong(a);
+	__int64 aa = ConvertToLongLong(a);
 	
 	aa = -aa;
 	
@@ -411,7 +411,7 @@ __asm__ volatile
 	: "memory", "cc"
 	);
 #else
-	long long aa = ConvertToLongLong(a);
+	__int64 aa = ConvertToLongLong(a);
 	
 	aa >>= shift;
 	
@@ -444,7 +444,7 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	: "%eax", "%edx", "memory", "cc"
 	);
 #else
-	long long aa = (long long) *b;
+	__int64 aa = (__int64) *b;
 	
 	ConvertFromLongLong(a, &aa);
 #endif
@@ -461,7 +461,7 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 
  A proper version of this function ought to read
  16.16 * 16.16 -> 32.16
- but this would require a long long result
+ but this would require a __int64 result
 
  Algorithm:
 
@@ -499,10 +499,10 @@ __asm__("imull	%2			\n\t"
 	);
 	return retval;
 #else
-	long long aa = (long long) a;
-	long long bb = (long long) b;
+	__int64 aa = (__int64) a;
+	__int64 bb = (__int64) b;
 	
-	long long cc = aa * bb;
+	__int64 cc = aa * bb;
 	
 	return (int) ((cc >> 16) & 0xffffffff);
 #endif
@@ -545,11 +545,13 @@ __asm__("cdq				\n\t"
 	);
 	return retval;
 #else
-	long long aa = (long long) a;
-	long long bb = (long long) b;
-	long long cc = (aa << 16) / bb;
+	{
+	__int64 aa = (__int64) a;
+	__int64 bb = (__int64) b;
+	__int64 cc = (aa << 16) / bb;
 	
 	return (int) (cc & 0xffffffff);
+	}
 #endif
 }
 
@@ -600,10 +602,10 @@ __asm__("movl	0(%%esi), %%eax		\n\t"
 	);
 	return retval;
 #else
-	long long aa = ConvertToLongLong(a);
-	long long bb = (long long) b;
+	__int64 aa = ConvertToLongLong(a);
+	__int64 bb = (__int64) b;
 	
-	long long cc = aa / bb;
+	__int64 cc = aa / bb;
 	
 	return (int) (cc & 0xffffffff);
 #endif
@@ -639,11 +641,11 @@ __asm__("imull	%2			\n\t"
 	);	
 	return retval;
 #else
-	long long aa = (long long) a;
-	long long bb = (long long) b;
-	long long cc = (long long) c;
+	__int64 aa = (__int64) a;
+	__int64 bb = (__int64) b;
+	__int64 cc = (__int64) c;
 	
-	long long dd = (aa * bb) / cc;
+	__int64 dd = (aa * bb) / cc;
 	
 	return (int) (dd & 0xffffffff);
 #endif

@@ -182,8 +182,6 @@ extern DISPLAYBLOCK *Player;
 /***************************************************************/
 /************************ AVP high level control **************/
 
-extern RECT_AVP screenRect;
-
 /* KJL 15:42:23 10/02/96 - These two are mine. */
 extern void MaintainPlayer(void);
 extern void MaintainHUD(void);

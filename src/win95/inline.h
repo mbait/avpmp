@@ -590,7 +590,7 @@ fptmp = (b); \
 FloatToInt(); \
 a = itmp;}
 
-#elif defined(_MSC_VER) /* inline assember for the Microsoft compiler */
+#elif defined(_MSC_VER) && 0 /* inline assember for the Microsoft compiler */
 
 /* ADD */
 

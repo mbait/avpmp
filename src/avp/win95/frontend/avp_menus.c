@@ -34,8 +34,7 @@
 /* used to get file time */
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-                     
+                    
 extern void StartMenuBackgroundBink(void);
 extern int PlayMenuBackgroundBink(void);
 extern void EndMenuBackgroundBink(void);

@@ -2176,7 +2176,7 @@ void SetupAnimatingShape(Shape_Chunk* sc,SHAPEHEADER* shp, Shape_Merge_Data_Chun
 		int x=max(-sas->min_x,sas->max_x);
 		int y=max(-sas->min_y,sas->max_y);
 		int z=max(-sas->min_z,sas->max_z);
-		sas->radius=(int)sqrt(x*x+y*y+z*z);
+		sas->radius=(int)sqrt((double)(x*x+y*y+z*z));
 		
 		
 		sas->vertex_normals=(int*)PoolAllocateMem(sizeof(VECTORCH)*cas->num_verts);

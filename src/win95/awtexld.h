@@ -42,8 +42,6 @@ enum AwTlErc
 	AW_TL_ERC;
 
 
-#define NO_ERROR	0
-
 /*********/
 /* Flags */
 /*********/

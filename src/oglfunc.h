@@ -1,8 +1,12 @@
 #ifndef OGLFUNC_H
 #define OGLFUNC_H
 
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
+
 #include <GL/gl.h>
-#include <GL/glext.h>
+//#include <GL/glext.h>
 
 typedef void (APIENTRY *PFNGLALPHAFUNCPROC)(GLenum, GLclampf);
 typedef void (APIENTRY *PFNGLARRAYELEMENTPROC)(GLint);

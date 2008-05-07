@@ -3,12 +3,12 @@
 
 #include "fixer.h"
 
-#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
-	#define _IFF_WIN_TARGET
-	#include <windows.h>
-#else // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
+//#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
+//	#define _IFF_WIN_TARGET
+//	#include <windows.h>
+//#else // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
 	#include <stdio.h>
-#endif // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
+//#endif // ! WIN32 && ! _WIN32 && ! WINDOWS && ! _WINDOWS
 
 #include "media.hpp"
 
@@ -123,6 +123,8 @@ namespace IFF
 		#undef BYTE
 		#pragma message("BYTE was defined - undefining")
 	#endif
+
+#if !defined(_MSC_VER)
 	typedef int8_t BYTE;
 	typedef uint8_t UBYTE;
 
@@ -134,6 +136,20 @@ namespace IFF
 
 	typedef int64_t INT64;
 	typedef uint64_t UINT64;
+#else
+	#pragma message("might want to move these typedefs elsewhere")
+	typedef signed char BYTE;
+	typedef unsigned char UBYTE;
+
+	typedef signed short INT16;
+	typedef unsigned short UINT16;
+
+	typedef signed int INT32;
+	typedef unsigned int UINT32;
+
+	typedef signed __int64 INT64;
+	typedef unsigned __int64 UINT64;
+#endif
 
 	struct RGBTriple
 	{
@@ -557,12 +573,12 @@ namespace IFF
 		m_nBytesRemaining -= 2;
 		if (m_nBytesRemaining >= 0)
 		{
-			UBYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			UBYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
@@ -573,12 +589,12 @@ namespace IFF
 		m_nBytesRemaining -= 2;
 		if (m_nBytesRemaining >= 0)
 		{
-			BYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			BYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
@@ -589,18 +605,18 @@ namespace IFF
 		m_nBytesRemaining -= 4;
 		if (m_nBytesRemaining >= 0)
 		{
-			UBYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			UBYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
@@ -611,18 +627,18 @@ namespace IFF
 		m_nBytesRemaining -= 4;
 		if (m_nBytesRemaining >= 0)
 		{
-			BYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			BYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
@@ -633,30 +649,30 @@ namespace IFF
 		m_nBytesRemaining -= 8;
 		if (m_nBytesRemaining >= 0)
 		{
-			UBYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			UBYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
@@ -667,30 +683,30 @@ namespace IFF
 		m_nBytesRemaining -= 8;
 		if (m_nBytesRemaining >= 0)
 		{
-			BYTE byte;
-			::MediaRead(m_pMedium, &byte);
-			n = byte;
-			::MediaRead(m_pMedium, &byte);
+			BYTE b;
+			::MediaRead(m_pMedium, &b);
+			n = b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
-			::MediaRead(m_pMedium, &byte);
+			n |= b;
+			::MediaRead(m_pMedium, &b);
 			n <<= 8;
-			n |= byte;
+			n |= b;
 			if (m_pMedium->m_fError) m_bError = true;
 		}
 		else m_bError = true;
