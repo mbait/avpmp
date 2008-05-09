@@ -189,5 +189,5 @@ int CloseGameDirectory(void *dir)
 
 void InitGameDirectories(char *argv0)
 {
-	SetGameDirectories("local/", "./");
+	SetGameDirectories("local", ".");
 }
