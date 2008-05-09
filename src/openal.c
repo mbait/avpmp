@@ -168,7 +168,7 @@ int PlatStartSoundSys()
 	attrlist[3] = AL_FALSE;
 	attrlist[4] = 0;
 	
-	snprintf(buf, sizeof(buf), "'( (sampling-rate %d ))\n", AvpFrequency);
+	_snprintf(buf, sizeof(buf), "'( (sampling-rate %d ))\n", AvpFrequency);
 	
 	AvpSoundDevice = alcOpenDevice(buf);
 	if (AvpSoundDevice == NULL)

@@ -277,7 +277,9 @@ List<int> LoadedNPC::image_groups;
 extern "C"
 {
 	extern BOOL Current_Level_Requires_Mirror_Image();
+    extern int AllowGoldWeapons;
 };
+
 void InitNPCs(RIFFHANDLE h)
 {
 	
@@ -572,8 +574,6 @@ void InitNPCs(RIFFHANDLE h)
 
 	if(AvP.PlayerType==I_Marine || Load_HNPC[HNPC_Marine])
 	{
-        extern int AllowGoldWeapons;
-
         // if the mdisk.rif file exists, add it.  Note: Only the Gold version
         // has this file, so the OpenGameFile is called just to check if it
         // is available.

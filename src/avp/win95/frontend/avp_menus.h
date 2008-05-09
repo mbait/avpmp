@@ -337,7 +337,7 @@ typedef struct
 	unsigned char	ElapsedTime_Seconds;
 	unsigned char	Difficulty;
 
-	FILETIME	TimeStamp;
+	time_t TimeStamp;
 } SAVE_SLOT_HEADER;
 
 #define NUMBER_OF_SAVE_SLOTS 8

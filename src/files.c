@@ -1,6 +1,6 @@
 #define _BSD_SOURCE
 
-//#include <unistd.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -531,6 +531,179 @@ int CloseGameDirectory(void *dir)
 		return 0;
 	}
 	return -1;
+}
+
+/*
+  Game-specific helper function.
+ */
+static int try_game_directory(char *dir, char *file)
+{
+	char tmppath[PATH_MAX];
+
+	strncpy(tmppath, dir, PATH_MAX-32);
+	tmppath[PATH_MAX-32] = 0;
+	strcat(tmppath, file);
+	
+	return access(tmppath, R_OK) == 0;
+}
+
+/*
+  Game-specific helper function.
+ */
+static int check_game_directory(char *dir)
+{
+	if (!dir || !*dir) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/avp_huds")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/avp_huds/alien.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/avp_rifs")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/avp_rifs/temple.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/fastfile")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "/fastfile/ffinfo.txt")) {
+		return 0;
+	}
+	
+	return 1;
+}
+
+/*
+  Game-specific initialization
+ */
+void InitGameDirectories(char *argv0)
+{
+	extern char *SecondTex_Directory;
+	extern char *SecondSoundDir;
+	
+	char tmppath[PATH_MAX];
+	char *homedir, *gamedir, *localdir, *tmp;
+	char *path;
+	size_t len, copylen;
+	
+	SecondTex_Directory = "graphics/";
+	SecondSoundDir = "sound/";
+
+	homedir = getenv("HOME");
+	if (homedir == NULL)
+		homedir = ".";
+	localdir = (char *)malloc(strlen(homedir)+10);
+	strcpy(localdir, homedir);
+	strcat(localdir, "/");
+	strcat(localdir, ".avp");
+	
+	tmp = NULL;
+	
+	/*
+	1. $AVP_DATA overrides all
+	2. executable path from argv[0]
+	3. realpath of executable path from argv[0]
+	4. $PATH
+	5. current directory
+	*/
+	
+	/* 1. $AVP_DATA */
+	gamedir = getenv("AVP_DATA");
+	
+	/* $AVP_DATA overrides all, so no check */
+	
+	if (gamedir == NULL) {
+		/* 2. executable path from argv[0] */
+		tmp = strdup(argv0);
+		
+		if (tmp == NULL) {
+			/* ... */
+			fprintf(stderr, "InitGameDirectories failure\n");
+			exit(EXIT_FAILURE);
+		}
+
+		gamedir = strrchr(tmp, '/');
+
+		if (gamedir) {
+			*gamedir = 0;
+			gamedir = tmp;
+		
+			if (!check_game_directory(gamedir)) {
+				gamedir = NULL;
+			}
+		}
+	}
+	
+	if (gamedir == NULL) {
+		/* 3. realpath of executable path from argv[0] */
+		
+		assert(tmp != NULL);
+
+		gamedir = realpath(tmp, tmppath);
+
+		if (!check_game_directory(gamedir)) {
+			gamedir = NULL;
+		}
+	}
+
+	if (gamedir == NULL) {
+		/* 4. $PATH */
+		path = getenv("PATH");
+		if (path) {
+			while (*path) {
+				len = strcspn(path, ":");
+				
+				copylen = min(len, PATH_MAX-1);
+				
+				strncpy(tmppath, path, copylen);
+				tmppath[copylen] = 0;
+				
+				if (check_game_directory(tmppath)) {
+					gamedir = tmppath;
+					break;
+				}
+				
+				path += len;
+				path += strspn(path, ":");
+			}
+		}
+	}
+	
+	if (gamedir == NULL) {
+		/* 5. current directory */
+		gamedir = ".";
+	}
+	
+	assert(gamedir != NULL);
+	
+	/* last chance sanity check */
+	if (!check_game_directory(gamedir)) {
+		fprintf(stderr, "Unable to find the AvP gamedata.\n");
+		fprintf(stderr, "The directory last examined was: %s\n", gamedir);
+		fprintf(stderr, "Has the game been installed and\n");
+		fprintf(stderr, "are all game files lowercase?\n");
+		exit(EXIT_FAILURE);
+	}
+
+	SetGameDirectories(localdir, gamedir);
+	
+	free(localdir);
+	if (tmp) {
+		free(tmp);
+	}
+	
+	/* delete some log files */
+	DeleteGameFile("dx_error.log");
 }
 
 #ifdef FILES_DRIVER

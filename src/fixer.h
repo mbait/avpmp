@@ -4,26 +4,30 @@
 #if defined(_MSC_VER)
 
 // just include the windows header to get everything.
-#undef Yes
-#undef No
+#undef Yes // sigh
+#undef No // sigh
 #include <windows.h>
 #include <tchar.h>
 #include <mbstring.h>
+#define Yes 1 // sigh
+#define No 0 // sigh
+
 #pragma warning( disable: 4996 ) // unsafe function (strcpy, fopen, etc.) used
 
-#define Yes 1
-#define No 0
-
 #include "files.h"
+
+#if !defined(PATH_MAX)
+#define PATH_MAX MAX_PATH
+#endif
 
 // gonna deal with this one later.
 #define PACKED 
 
-// unused directplay code.
-typedef int DPID;
-
 // not sure where this was originally defined.
 #define RGBA_MAKE(r, g, b, a)   ((((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
+
+// unused placeholder directplay code.
+typedef int DPID;
 
 typedef struct DPNAME
 {
@@ -125,6 +129,8 @@ extern "C" {
 #define _tcslen		strlen
 #define _tcscpy		strcpy
 
+#define _snprintf   snprintf
+
 size_t _mbclen(const unsigned char *s);
 
 #define RGBA_MAKE(r, g, b, a)   ((((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
@@ -137,6 +143,7 @@ typedef int HINSTANCE;
 typedef int WPARAM;
 typedef int LPARAM;
 typedef int HANDLE;
+typedef int HRESULT;
 
 typedef int BOOL;
 typedef unsigned char BYTE;
@@ -165,21 +172,6 @@ typedef int64_t __int64;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif
-
-typedef time_t FILETIME;
-
-/* this SYSTEMTIME is incorrect, but it is also currently unused */
-typedef struct SYSTEMTIME 
-{
-	int wYear; /* should be uint16_t, not int32_t */
-	int wMonth;
-	int wDay;
-	/* int wDayOfWeek; */
-	int wHour;
-	int wMinute;
-	int wSecond;
-	/* int wMilliseconds; */	
-} SYSTEMTIME;
 
 #define	VK_BACK				1
 #define VK_END				2
@@ -230,6 +222,7 @@ int SetEndOfFile(HANDLE file);
 unsigned int timeGetTime();
 unsigned int GetTickCount();
 
+
 typedef struct DPNAME
 {
 	int dwSize;
@@ -239,8 +232,6 @@ typedef struct DPNAME
 } DPNAME;
 
 #define DP_OK	0
-
-typedef int HRESULT;
 
 #define DPRECEIVE_ALL			1
 #define DPSYS_ADDPLAYERTOGROUP		2

@@ -141,8 +141,9 @@ static int check_token(const char *string, const char *token)
 
 void load_ogl_functions(int mode)
 {
-	const char * ogl_missing_func;
-	
+	const char* ogl_missing_func;
+	const char* ext;
+
 	ogl_missing_func = NULL;
 	
 	LoadOGLProc(PFNGLALPHAFUNCPROC, glAlphaFunc);
@@ -244,7 +245,7 @@ void load_ogl_functions(int mode)
 		exit(EXIT_FAILURE);
 	}
 	
-	const char *ext = (const char *) pglGetString(GL_EXTENSIONS);
+	ext = (const char *) pglGetString(GL_EXTENSIONS);
 
 	ogl_have_paletted_texture = check_token(ext, "GL_EXT_paletted_texture");	
 	ogl_have_secondary_color = check_token(ext, "GL_EXT_secondary_color");
@@ -262,7 +263,7 @@ void load_ogl_functions(int mode)
 		if (!ogl_missing_func) {	
 			GLint size;
 			
-			pglColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA, 256, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+			pglColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA, 256, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
 			pglGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH_EXT, &size);
 			
 			if (size != 256) {

@@ -69,8 +69,10 @@ typedef struct
 {
 	char Name[MAX_SIZE_OF_USERS_NAME+1];
 
-	SYSTEMTIME TimeLastUpdated;
-	FILETIME FileTime;
+	time_t FileTime;
+
+	// used to be an incomplete SYSTEMTIME struct, TimeLastUpdated
+	int unused[6];
 
 	/* KJL 15:14:12 10/12/98 - array to hold level completion data
 	3 species, pad out to 16 levels each */

@@ -10,7 +10,7 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <getopt.h>
+///#include <getopt.h>
               
 #include "fixer.h"
 
@@ -66,10 +66,10 @@ JOYINFOEX JoystickData;
 JOYCAPS JoystickCaps;
 
 /* defaults */
-static int WantFullscreen = 1;
+static int WantFullscreen = 0;
 int WantSound = 1;
-static int WantCDRom = 1;
-static int WantJoystick = 1;
+static int WantCDRom = 0;
+static int WantJoystick = 0;
 
 /* originally was "/usr/lib/libGL.so.1:/usr/lib/tls/libGL.so.1:/usr/X11R6/lib/libGL.so" */
 static const char * opengl_library = NULL;
@@ -336,7 +336,7 @@ char *GetVideoModeDescription3()
 {
 	static char buf[64];
 	
-	snprintf(buf, 64, "%dx%d", VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
+	_snprintf(buf, 64, "%dx%d", VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
 
 	return buf;
 }
@@ -1097,187 +1097,23 @@ void FlipBuffers()
 
 char *AvpCDPath = 0;
 
-static int try_game_directory(char *dir, char *file)
-{
-	char tmppath[PATH_MAX];
-
-	strncpy(tmppath, dir, PATH_MAX-32);
-	tmppath[PATH_MAX-32] = 0;
-	strcat(tmppath, file);
-	
-	return access(tmppath, R_OK) == 0;
-}
-
-static int check_game_directory(char *dir)
-{
-	if (!dir || !*dir) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/avp_huds")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/avp_huds/alien.rif")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/avp_rifs")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/avp_rifs/temple.rif")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/fastfile")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "/fastfile/ffinfo.txt")) {
-		return 0;
-	}
-	
-	return 1;
-}
-
-void InitGameDirectories(char *argv0)
-{
-	extern char *SecondTex_Directory;
-	extern char *SecondSoundDir;
-	
-	char tmppath[PATH_MAX];
-	char *homedir, *gamedir, *localdir, *tmp;
-	char *path;
-	size_t len, copylen;
-	
-	SecondTex_Directory = "graphics/";
-	SecondSoundDir = "sound/";
-
-	homedir = getenv("HOME");
-	if (homedir == NULL)
-		homedir = ".";
-	localdir = (char *)malloc(strlen(homedir)+10);
-	strcpy(localdir, homedir);
-	strcat(localdir, "/");
-	strcat(localdir, ".avp");
-	
-	tmp = NULL;
-	
-	/*
-	1. $AVP_DATA overrides all
-	2. executable path from argv[0]
-	3. realpath of executable path from argv[0]
-	4. $PATH
-	5. current directory
-	*/
-	
-	/* 1. $AVP_DATA */
-	gamedir = getenv("AVP_DATA");
-	
-	/* $AVP_DATA overrides all, so no check */
-	
-	if (gamedir == NULL) {
-		/* 2. executable path from argv[0] */
-		tmp = strdup(argv0);
-		
-		if (tmp == NULL) {
-			/* ... */
-			fprintf(stderr, "InitGameDirectories failure\n");
-			exit(EXIT_FAILURE);
-		}
-
-		gamedir = strrchr(tmp, '/');
-
-		if (gamedir) {
-			*gamedir = 0;
-			gamedir = tmp;
-		
-			if (!check_game_directory(gamedir)) {
-				gamedir = NULL;
-			}
-		}
-	}
-	
-	if (gamedir == NULL) {
-		/* 3. realpath of executable path from argv[0] */
-		
-		assert(tmp != NULL);
-
-		gamedir = realpath(tmp, tmppath);
-
-		if (!check_game_directory(gamedir)) {
-			gamedir = NULL;
-		}
-	}
-
-	if (gamedir == NULL) {
-		/* 4. $PATH */
-		path = getenv("PATH");
-		if (path) {
-			while (*path) {
-				len = strcspn(path, ":");
-				
-				copylen = min(len, PATH_MAX-1);
-				
-				strncpy(tmppath, path, copylen);
-				tmppath[copylen] = 0;
-				
-				if (check_game_directory(tmppath)) {
-					gamedir = tmppath;
-					break;
-				}
-				
-				path += len;
-				path += strspn(path, ":");
-			}
-		}
-	}
-	
-	if (gamedir == NULL) {
-		/* 5. current directory */
-		gamedir = ".";
-	}
-	
-	assert(gamedir != NULL);
-	
-	/* last chance sanity check */
-	if (!check_game_directory(gamedir)) {
-		fprintf(stderr, "Unable to find the AvP gamedata.\n");
-		fprintf(stderr, "The directory last examined was: %s\n", gamedir);
-		fprintf(stderr, "Has the game been installed and\n");
-		fprintf(stderr, "are all game files lowercase?\n");
-		exit(EXIT_FAILURE);
-	}
-
-	SetGameDirectories(localdir, gamedir);
-	
-	free(localdir);
-	if (tmp) {
-		free(tmp);
-	}
-	
-	/* delete some log files */
-	DeleteGameFile("dx_error.log");
-}
-
-static const struct option getopt_long_options[] = {
-{ "help",	0,	NULL,	'h' },
-{ "version",	0,	NULL,	'v' },
-{ "fullscreen",	0,	NULL,	'f' },
-{ "windowed",	0,	NULL,	'w' },
-{ "nosound",	0,	NULL,	's' },
-{ "nocdrom",	0,	NULL,	'c' },
-{ "nojoy",	0,	NULL,	'j' },
-{ "debug",	0,	NULL,	'd' },
-{ "withgl",	1,	NULL,	'g' },
-/*
-{ "loadrifs",	1,	NULL,	'l' },
-{ "server",	0,	someval,	1 },
-{ "client",	1,	someval,	2 },
-*/
-{ NULL,		0,	NULL,	0 },
-};
+///static const struct option getopt_long_options[] = {
+///{ "help",	0,	NULL,	'h' },
+///{ "version",	0,	NULL,	'v' },
+///{ "fullscreen",	0,	NULL,	'f' },
+///{ "windowed",	0,	NULL,	'w' },
+///{ "nosound",	0,	NULL,	's' },
+///{ "nocdrom",	0,	NULL,	'c' },
+///{ "nojoy",	0,	NULL,	'j' },
+///{ "debug",	0,	NULL,	'd' },
+///{ "withgl",	1,	NULL,	'g' },
+////*
+///{ "loadrifs",	1,	NULL,	'l' },
+///{ "server",	0,	someval,	1 },
+///{ "client",	1,	someval,	2 },
+///*/
+///{ NULL,		0,	NULL,	0 },
+///};
 
 static const char *usage_string =
 "Aliens vs Predator Linux - http://www.icculus.org/avp/\n"
@@ -1296,43 +1132,43 @@ int main(int argc, char *argv[])
 {			
 	int c;
 	
-	opterr = 0;
-	while ((c = getopt_long(argc, argv, "hvfwscdg:", getopt_long_options, NULL)) != -1) {
-		switch(c) {
-			case 'h':
-				printf("%s", usage_string);
-				exit(EXIT_SUCCESS);
-			case 'v':
-				printf("%s", AvPVersionString);
-				exit(EXIT_SUCCESS);
-			case 'f':
-				WantFullscreen = 1;
-				break;
-			case 'w':
-				WantFullscreen = 0;
-				break;
-			case 's':
-				WantSound = 0;
-				break;
-			case 'c':
-				WantCDRom = 0;
-				break;
-			case 'j':
-				WantJoystick = 0;
-				break;			
-			case 'd': {
-				extern int DebuggingCommandsActive;
-				DebuggingCommandsActive = 1;
-				}
-				break;
-			case 'g':
-				opengl_library = optarg;
-				break;
-			default:
-				printf("%s", usage_string);
-				exit(EXIT_FAILURE);	
-		}
-	}
+///	opterr = 0;
+///	while ((c = getopt_long(argc, argv, "hvfwscdg:", getopt_long_options, NULL)) != -1) {
+///		switch(c) {
+///			case 'h':
+///				printf("%s", usage_string);
+///				exit(EXIT_SUCCESS);
+///			case 'v':
+///				printf("%s", AvPVersionString);
+///				exit(EXIT_SUCCESS);
+///			case 'f':
+///				WantFullscreen = 1;
+///				break;
+///			case 'w':
+///				WantFullscreen = 0;
+///				break;
+///			case 's':
+///				WantSound = 0;
+///				break;
+///			case 'c':
+///				WantCDRom = 0;
+///				break;
+///			case 'j':
+///				WantJoystick = 0;
+///				break;			
+///			case 'd': {
+///				extern int DebuggingCommandsActive;
+///				DebuggingCommandsActive = 1;
+///				}
+///				break;
+///			case 'g':
+///				opengl_library = optarg;
+///				break;
+///			default:
+///				printf("%s", usage_string);
+///				exit(EXIT_FAILURE);	
+///		}
+///	}
 
 	InitGameDirectories(argv[0]);
 	

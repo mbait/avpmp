@@ -539,7 +539,7 @@ AwTl::SurfUnion AwBackupTexture::CreateTexture(AwTl::CreateTextureParms const & 
 				y = m_nHeight-1;
 			}
 			
-			for (int i, rowcount = m_nHeight; rowcount; --rowcount, i++)
+			for (int i = 0, rowcount = m_nHeight; rowcount; --rowcount, i++)
 			{
 				PtrUnion src_rowP = GetRowPtr(y);
 				db_assert1(src_rowP.voidP);
