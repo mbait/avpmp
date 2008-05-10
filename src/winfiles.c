@@ -1,5 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
+#include <shlobj.h>
+#include <direct.h>
+#include <assert.h>
 
 #include "files.h"
 
@@ -16,7 +19,10 @@ int SetGameDirectories(const char *local, const char *global)
 	local_dir = _strdup(local);
 	global_dir = _strdup(global);
 
-	// TODO - create local directory if it doesn't exist
+	if( GetFileAttributes( local_dir ) == INVALID_FILE_ATTRIBUTES ) {
+		_mkdir( local_dir );
+	}
+
 	return 0;
 }
 
@@ -26,8 +32,8 @@ int SetGameDirectories(const char *local, const char *global)
 static char *FixFilename(const char *filename, const char *prefix, int force)
 {
 	char *f, *ptr;
-	int flen;
-	int plen;
+	size_t flen;
+	size_t plen;
 	
 	plen = strlen(prefix) + 1;
 	flen = strlen(filename) + plen + 1;
@@ -187,7 +193,192 @@ int CloseGameDirectory(void *dir)
 	return 0;
 }
 
+static char* GetLocalDirectory(void)
+{
+	char folderPath[2 * MAX_PATH + 10];
+	char* localdir;
+
+	const char* homedrive;
+	const char* homepath;
+	char* homedir;
+
+	homedir = NULL;
+
+	/*
+	  TODO - should check that the directory is actually usable.
+     */
+
+	/*
+	   1. Check registry (not currently implemented)
+	 */
+
+	/*
+	   2. CSIDL_LOCAL_APPDATA with SHGetFolderPath
+	 */
+	if( homedir == NULL ) {
+		if( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_LOCAL_APPDATA,
+			NULL, SHGFP_TYPE_CURRENT, &folderPath[0] ) ) ) {
+
+			homedir = _strdup( folderPath );
+		}
+	}
+
+	/*
+	   3. CSIDL_APPDATA with SHGetFolderPath
+     */
+	if( homedir == NULL ) {
+		if( SUCCEEDED( SHGetFolderPath( NULL, CSIDL_APPDATA,
+			NULL, SHGFP_TYPE_CURRENT, &folderPath[0] ) ) ) {
+
+			homedir = _strdup( folderPath );
+		}
+	}
+
+	/*
+	   4. HOMEDRIVE+HOMEPATH
+     */
+
+	if( homedir == NULL ) {
+		homedrive = getenv("HOMEDRIVE");
+		homepath  = getenv("HOMEPATH");
+
+		if( homedrive == NULL ) {
+			homedrive = "";
+		}
+
+		if( homepath != NULL ) {
+
+			homedir = (unsigned char*)malloc(strlen(homedrive)+strlen(homepath)+1);
+			
+			strcpy(homedir, homedrive);
+			strcat(homedir, homepath);
+		}
+	}
+
+	/*
+	   5. HOME
+     
+     */
+	if( homedir == NULL ) {
+		homepath = getenv("HOME");
+
+		if( homepath != NULL ) {
+			homedir = _strdup(homepath);
+		}
+	}
+
+	/* 
+	  6. CWD
+     */
+	if( homedir == NULL ) {
+		homedir = _strdup(".");
+	}
+
+	localdir = (unsigned char*)malloc(strlen(homedir) + 10);
+	strcpy(localdir, homedir);
+	strcat(localdir, "\\AvPLinux"); // temp name, maybe
+
+	free(homedir);
+
+	return localdir;
+}
+
+static const char* GetGlobalDirectory(void)
+{
+	/*
+	   TODO
+     */
+	return _strdup(".");
+}
+
+/*
+  Game-specific helper function.
+ */
+static int try_game_directory(const char *dir, const char *file)
+{
+	char tmppath[MAX_PATH];
+	DWORD retr;
+
+	strncpy(tmppath, dir, MAX_PATH-32);
+	tmppath[MAX_PATH-32] = 0;
+	strcat(tmppath, file);
+	
+	retr = GetFileAttributes(tmppath);
+
+	if( retr == INVALID_FILE_ATTRIBUTES ) {
+		return 0;
+	}
+
+	/*
+	  TODO - expand this check to check for read access
+     */
+	return 1;
+}
+
+/*
+  Game-specific helper function.
+ */
+static int check_game_directory(const char *dir)
+{
+	if (!dir || !*dir) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_huds")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_huds\\alien.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_rifs")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_rifs\\temple.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\fastfile")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\fastfile\\ffinfo.txt")) {
+		return 0;
+	}
+	
+	return 1;
+}
+
+/*
+  Game-specific initialization
+ */
 void InitGameDirectories(char *argv0)
 {
-	SetGameDirectories("local", ".");
+	extern char *SecondTex_Directory;
+	extern char *SecondSoundDir;
+
+	const char* localdir;
+	const char* globaldir;
+
+	SecondTex_Directory = "graphics\\";
+	SecondSoundDir = "sound\\";
+
+	localdir  = GetLocalDirectory();
+	globaldir = GetGlobalDirectory();
+
+	assert(localdir != NULL);
+	assert(globaldir != NULL);
+	
+	/* last chance sanity check */
+	if (!check_game_directory(globaldir)) {
+		fprintf(stderr, "Unable to find the AvP gamedata.\n");
+		fprintf(stderr, "The directory last examined was: %s\n", globaldir);
+		fprintf(stderr, "Has the game been installed and\n");
+		fprintf(stderr, "are all game files lowercase?\n");
+		exit(EXIT_FAILURE);
+	}
+
+	SetGameDirectories(localdir, globaldir);
 }
