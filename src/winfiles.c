@@ -3,6 +3,10 @@
 #include <shlobj.h>
 #include <direct.h>
 #include <assert.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
 
 #include "files.h"
 
@@ -157,41 +161,467 @@ int CloseGameFile(FILE *pfd)
 	return fclose(pfd);
 }
 
+/*
+Get the filesystem attributes of a file
+
+#define	FILEATTR_DIRECTORY	0x0100
+#define FILEATTR_READABLE	0x0200
+#define FILEATTR_WRITABLE	0x0400
+
+Error or can't access it: return value of 0 (What is the game going to do about it anyway?)
+*/
+static int GetFA(const char *filename)
+{
+	struct stat buf;
+	int attr;
+
+	attr = 0;
+	if (stat(filename, &buf) == 0) {
+		if (buf.st_mode & _S_IFDIR) {
+			attr |= FILEATTR_DIRECTORY;
+		}
+			
+		if (buf.st_mode & _S_IREAD) {
+			attr |= FILEATTR_READABLE;
+		}
+			
+		if (buf.st_mode & _S_IWRITE) {
+			attr |= FILEATTR_WRITABLE;
+		}
+	}
+	
+	return attr;
+}
+
+static time_t GetTS(const char *filename)
+{
+	struct stat buf;
+
+	if (stat(filename, &buf) == 0) {
+		return buf.st_mtime;
+	}
+	
+	return 0;
+}
+
 int GetGameFileAttributes(const char *filename, int type)
 {
-	// TODO
+	struct stat buf;
+	char *rfilename;
+	int attr;
+	
+	attr = 0;	
+	if (type != FILETYPE_CONFIG) {
+		rfilename = FixFilename(filename, global_dir, 0);
+		
+		if (stat(rfilename, &buf) == 0) {
+			if (buf.st_mode & _S_IFDIR) {
+				attr |= FILEATTR_DIRECTORY;
+			}
+				
+			if (buf.st_mode & _S_IREAD) {
+				attr |= FILEATTR_READABLE;
+			}
+				
+			if (buf.st_mode & _S_IWRITE) {
+				attr |= FILEATTR_WRITABLE;
+			}
+			
+			free(rfilename);
+		
+			return attr;
+		}
+		
+		free(rfilename);
+		
+		rfilename = FixFilename(filename, global_dir, 1);
+		
+		if (stat(rfilename, &buf) == 0) {
+			if (buf.st_mode & _S_IFDIR) {
+				attr |= FILEATTR_DIRECTORY;
+			}
+				
+			if (buf.st_mode & _S_IREAD) {
+				attr |= FILEATTR_READABLE;
+			}
+				
+			if (buf.st_mode & _S_IWRITE) {
+				attr |= FILEATTR_WRITABLE;
+			}
+			
+			free(rfilename);
+		
+			return attr;
+		}
+		
+		free(rfilename);
+	}
+	
+	if (type != FILETYPE_PERM) {
+		rfilename = FixFilename(filename, local_dir, 0);
+		
+		if (stat(rfilename, &buf) == 0) {
+			if (buf.st_mode & _S_IFDIR) {
+				attr |= FILEATTR_DIRECTORY;
+			}
+				
+			if (buf.st_mode & _S_IREAD) {
+				attr |= FILEATTR_READABLE;
+			}
+				
+			if (buf.st_mode & _S_IWRITE) {
+				attr |= FILEATTR_WRITABLE;
+			}
+
+			free(rfilename);
+		
+			return attr;
+		}
+		
+		free(rfilename);
+		
+		rfilename = FixFilename(filename, local_dir, 1);
+		
+		if (stat(rfilename, &buf) == 0) {
+			if (buf.st_mode & _S_IFDIR) {
+				attr |= FILEATTR_DIRECTORY;
+			}
+				
+			if (buf.st_mode & _S_IREAD) {
+				attr |= FILEATTR_READABLE;
+			}
+				
+			if (buf.st_mode & _S_IWRITE) {
+				attr |= FILEATTR_WRITABLE;
+			}
+			
+			free(rfilename);
+		
+			return attr;
+		}
+		
+		free(rfilename);
+		
+	}
+	
 	return 0;
 }
 
+/*
+Delete a file: local dir only
+*/
 int DeleteGameFile(const char *filename)
 {
-	// TODO
-	return 0;
+	char *rfilename;
+	int ret;
+	
+	rfilename = FixFilename(filename, local_dir, 0);
+	ret = _unlink(rfilename);
+	free(rfilename);
+	
+	if (ret == -1) {
+		rfilename = FixFilename(filename, local_dir, 1);
+		ret = _unlink(rfilename);
+		free(rfilename);
+	}
+	
+	return ret;
 }
 
+/*
+Create a directory: local dir only
+
+TODO: maybe also mkdir parent directories, if they do not exist?
+*/
 int CreateGameDirectory(const char *dirname)
 {
-	// TODO
-	return 0;
+	char *rfilename;
+	int ret;
+
+	rfilename = FixFilename(dirname, local_dir, 0);
+	ret = _mkdir(rfilename);
+	free(rfilename);
+	
+	if (ret == -1) {
+		rfilename = FixFilename(dirname, local_dir, 1);
+		ret = _mkdir(rfilename);
+		free(rfilename);
+	}
+	
+	return ret;
 }
 
+
+/* This struct is private. */
+typedef struct GameDirectory
+{
+	intptr_t localdir;		/* directory opened with _findfirst */
+	intptr_t globaldir;
+	
+	struct _finddata_t tmplocalfinddata;
+	struct _finddata_t localfinddata;
+	struct _finddata_t tmpglobalfinddata;
+	struct _finddata_t globalfinddata;
+
+	char *localdirname;
+	char *globaldirname;
+
+	GameDirectoryFile tmp;	/* Temp space */
+} GameDirectory;
+
+/*
+"Open" a directory dirname, with type type
+Returns a pointer to a directory datatype
+
+Pattern is the pattern to match
+*/
 void *OpenGameDirectory(const char *dirname, const char *pattern, int type)
 {
-	// TODO
-	return NULL;
+	char* localdirname;
+	char* globaldirname;
+	char* filespec;
+
+	intptr_t localdir;
+	intptr_t globaldir;
+	GameDirectory *gd;
+	
+	gd = (GameDirectory *)malloc(sizeof(GameDirectory));
+	memset( gd, 0, sizeof(GameDirectory) );
+
+	globaldir = -1;
+	globaldirname = NULL;
+	if (type != FILETYPE_CONFIG) {
+		globaldirname = FixFilename(dirname, global_dir, 0);
+
+		filespec = (char*) malloc(strlen(globaldirname)+1+strlen(pattern)+1);
+		strcpy( filespec, globaldirname );
+		strcat( filespec, DIR_SEPARATOR );
+		strcat( filespec, pattern );
+
+		globaldir = _findfirst(filespec, &gd->tmpglobalfinddata);
+		free(filespec);
+
+		if (globaldir == -1L) {
+			free(globaldirname);
+			
+			globaldirname = FixFilename(dirname, global_dir, 1);
+
+			filespec = (char*) malloc(strlen(globaldirname)+1+strlen(pattern)+1);
+			strcpy( filespec, globaldirname );
+			strcat( filespec, DIR_SEPARATOR );
+			strcat( filespec, pattern );
+
+			globaldir = _findfirst(filespec, &gd->tmpglobalfinddata);
+			free(filespec);
+
+			if (globaldir == -1L) {
+				free(globaldirname);
+				globaldirname = NULL;
+			}
+		}		
+	}
+	
+	localdir = -1;
+	localdirname = NULL;
+	if (type != FILETYPE_PERM) {
+		localdirname = FixFilename(dirname, local_dir, 0);
+
+		filespec = (char*) malloc(strlen(localdirname)+1+strlen(pattern)+1);
+		strcpy( filespec, localdirname );
+		strcat( filespec, DIR_SEPARATOR );
+		strcat( filespec, pattern );
+
+		localdir = _findfirst(filespec, &gd->tmplocalfinddata);
+		free(filespec);
+
+		if (localdir == -1L) {
+			free(localdirname);
+			
+			localdirname = FixFilename(dirname, local_dir, 1);
+
+			filespec = (char*) malloc(strlen(localdirname)+1+strlen(pattern)+1);
+			strcpy( filespec, localdirname );
+			strcat( filespec, DIR_SEPARATOR );
+			strcat( filespec, pattern );
+
+			localdir = _findfirst(filespec, &gd->tmplocalfinddata);
+			free( filespec );
+
+			if (localdir == -1L) {
+				free(localdirname);
+				localdirname = NULL;
+			}
+		}
+	}
+	
+	if (localdir == -1L && globaldir == -1L) {
+		free( gd );
+		return NULL;
+	}
+
+	gd->localdir = localdir;
+	gd->globaldir = globaldir;
+
+	gd->localdirname = localdirname;
+	gd->globaldirname = globaldirname;
+
+	return gd;
 }
 
+/*
+This struct is public.
+
+typedef struct GameDirectoryFile
+{
+	char *filename;
+	int attr;
+} GameDirectoryFile;
+*/
+
+/*
+Returns the next match of pattern with the contents of dir
+
+f is the current file
+*/
 GameDirectoryFile *ScanGameDirectory(void *dir)
 {
-	// TODO
+	char *ptr;
+	GameDirectory *directory;
+	
+	directory = (GameDirectory *)dir;
+	
+	if (directory->globaldir != -1L) {
+		directory->globalfinddata = directory->tmpglobalfinddata;
+
+		ptr = FixFilename(directory->globalfinddata.name, directory->globaldirname, 0);
+		directory->tmp.attr = GetFA(ptr);
+		directory->tmp.timestamp = GetTS(ptr);
+		free(ptr);
+
+		directory->tmp.filename = &directory->globalfinddata.name[0];
+
+		if( _findnext( directory->globaldir, &directory->tmpglobalfinddata ) == -1 ) {
+				_findclose(directory->globaldir);
+				free(directory->globaldirname);
+		
+				directory->globaldir = -1L;
+				directory->globaldirname = NULL;
+		}
+
+		return &directory->tmp;
+	}
+	
+	if (directory->localdir != -1L) {
+		directory->localfinddata = directory->tmplocalfinddata;
+
+		ptr = FixFilename(directory->localfinddata.name, directory->localdirname, 0);
+		directory->tmp.attr = GetFA(ptr);
+		directory->tmp.timestamp = GetTS(ptr);
+		free(ptr);
+
+		directory->tmp.filename = &directory->localfinddata.name[0];
+
+		if( _findnext( directory->localdir, &directory->tmplocalfinddata ) == -1 ) {
+				_findclose(directory->localdir);
+				free(directory->localdirname);
+		
+				directory->localdir = -1L;
+				directory->localdirname = NULL;
+		}
+
+		return &directory->tmp;
+	}
+	
 	return NULL;
 }
 
+/*
+Close directory
+*/
 int CloseGameDirectory(void *dir)
 {
-	// TODO
-	return 0;
+	GameDirectory *directory = (GameDirectory *)dir;
+	
+	if (directory != NULL) {
+
+		if (directory->localdirname != NULL) {
+			free(directory->localdirname);
+		}
+		if (directory->globaldirname != NULL) {
+			free(directory->globaldirname);
+		}
+		if (directory->localdir != -1L) {
+			_findclose(directory->localdir);
+		}
+		if (directory->globaldir != -1L) {
+			_findclose(directory->globaldir);
+		}
+			
+		return 0;
+	}
+	return -1;
 }
+
+/*
+  Game-specific helper function.
+ */
+static int try_game_directory(const char *dir, const char *file)
+{
+	char tmppath[MAX_PATH];
+	DWORD retr;
+
+	strncpy(tmppath, dir, MAX_PATH-32);
+	tmppath[MAX_PATH-32] = 0;
+	strcat(tmppath, file);
+	
+	retr = GetFileAttributes(tmppath);
+
+	if( retr == INVALID_FILE_ATTRIBUTES ) {
+		return 0;
+	}
+
+	/*
+	  TODO - expand this check to check for read access
+     */
+	return 1;
+}
+
+/*
+  Game-specific helper function.
+ */
+static int check_game_directory(const char *dir)
+{
+	if (!dir || !*dir) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_huds")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_huds\\alien.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_rifs")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\avp_rifs\\temple.rif")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\fastfile")) {
+		return 0;
+	}
+	
+	if (!try_game_directory(dir, "\\fastfile\\ffinfo.txt")) {
+		return 0;
+	}
+	
+	return 1;
+}
+
 
 static char* GetLocalDirectory(void)
 {
@@ -283,72 +713,50 @@ static char* GetLocalDirectory(void)
 	return localdir;
 }
 
-static const char* GetGlobalDirectory(void)
+static const char* GetGlobalDirectory(const char* argv0)
 {
+	char* gamedir;
+	char* tmp;
+
 	/*
-	   TODO
-     */
+	1. $AVP_DATA overrides all
+	2. Registry Setting
+	3. executable path from argv[0]
+	4. current directory
+	*/
+	
+	/* 1. $AVP_DATA */
+	gamedir = getenv("AVP_DATA");
+	
+	/* $AVP_DATA overrides all, so no check */
+	
+	/* 2. Registry Setting */
+	/* TODO */
+
+	if (gamedir == NULL) {
+		/* 3. executable path from argv[0] */
+		tmp = _strdup(argv0);
+		
+		if (tmp == NULL) {
+			/* ... */
+			fprintf(stderr, "GetGlobalDirectory failure\n");
+			exit(EXIT_FAILURE);
+		}
+
+		gamedir = strrchr(tmp, DIR_SEPARATOR[0]);
+
+		if (gamedir != NULL) {
+			*gamedir = 0;
+			gamedir = tmp;
+		
+			if (!check_game_directory(gamedir)) {
+				gamedir = NULL;
+			}
+		}
+	}
+
+	/* 4. current directory */
 	return _strdup(".");
-}
-
-/*
-  Game-specific helper function.
- */
-static int try_game_directory(const char *dir, const char *file)
-{
-	char tmppath[MAX_PATH];
-	DWORD retr;
-
-	strncpy(tmppath, dir, MAX_PATH-32);
-	tmppath[MAX_PATH-32] = 0;
-	strcat(tmppath, file);
-	
-	retr = GetFileAttributes(tmppath);
-
-	if( retr == INVALID_FILE_ATTRIBUTES ) {
-		return 0;
-	}
-
-	/*
-	  TODO - expand this check to check for read access
-     */
-	return 1;
-}
-
-/*
-  Game-specific helper function.
- */
-static int check_game_directory(const char *dir)
-{
-	if (!dir || !*dir) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\avp_huds")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\avp_huds\\alien.rif")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\avp_rifs")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\avp_rifs\\temple.rif")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\fastfile")) {
-		return 0;
-	}
-	
-	if (!try_game_directory(dir, "\\fastfile\\ffinfo.txt")) {
-		return 0;
-	}
-	
-	return 1;
 }
 
 /*
@@ -366,7 +774,7 @@ void InitGameDirectories(char *argv0)
 	SecondSoundDir = "sound\\";
 
 	localdir  = GetLocalDirectory();
-	globaldir = GetGlobalDirectory();
+	globaldir = GetGlobalDirectory(argv0);
 
 	assert(localdir != NULL);
 	assert(globaldir != NULL);
