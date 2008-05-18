@@ -2,16 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <assert.h>
 
 #include "SDL.h"
 #include "oglfunc.h"
 
+#if !defined(_MSC_VER)
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-///#include <getopt.h>
-              
+#include <getopt.h>
+#endif
+
 #include "fixer.h"
 
 #include "3dc.h"
@@ -1097,23 +1098,25 @@ void FlipBuffers()
 
 char *AvpCDPath = 0;
 
-///static const struct option getopt_long_options[] = {
-///{ "help",	0,	NULL,	'h' },
-///{ "version",	0,	NULL,	'v' },
-///{ "fullscreen",	0,	NULL,	'f' },
-///{ "windowed",	0,	NULL,	'w' },
-///{ "nosound",	0,	NULL,	's' },
-///{ "nocdrom",	0,	NULL,	'c' },
-///{ "nojoy",	0,	NULL,	'j' },
-///{ "debug",	0,	NULL,	'd' },
-///{ "withgl",	1,	NULL,	'g' },
-////*
-///{ "loadrifs",	1,	NULL,	'l' },
-///{ "server",	0,	someval,	1 },
-///{ "client",	1,	someval,	2 },
-///*/
-///{ NULL,		0,	NULL,	0 },
-///};
+#if !defined(_MSC_VER)
+static const struct option getopt_long_options[] = {
+{ "help",	0,	NULL,	'h' },
+{ "version",	0,	NULL,	'v' },
+{ "fullscreen",	0,	NULL,	'f' },
+{ "windowed",	0,	NULL,	'w' },
+{ "nosound",	0,	NULL,	's' },
+{ "nocdrom",	0,	NULL,	'c' },
+{ "nojoy",	0,	NULL,	'j' },
+{ "debug",	0,	NULL,	'd' },
+{ "withgl",	1,	NULL,	'g' },
+/*
+{ "loadrifs",	1,	NULL,	'l' },
+{ "server",	0,	someval,	1 },
+{ "client",	1,	someval,	2 },
+*/
+{ NULL,		0,	NULL,	0 },
+};
+#endif
 
 static const char *usage_string =
 "Aliens vs Predator Linux - http://www.icculus.org/avp/\n"
@@ -1130,45 +1133,47 @@ static const char *usage_string =
          
 int main(int argc, char *argv[])
 {			
+#if !defined(_MSC_VER)
 	int c;
 	
-///	opterr = 0;
-///	while ((c = getopt_long(argc, argv, "hvfwscdg:", getopt_long_options, NULL)) != -1) {
-///		switch(c) {
-///			case 'h':
-///				printf("%s", usage_string);
-///				exit(EXIT_SUCCESS);
-///			case 'v':
-///				printf("%s", AvPVersionString);
-///				exit(EXIT_SUCCESS);
-///			case 'f':
-///				WantFullscreen = 1;
-///				break;
-///			case 'w':
-///				WantFullscreen = 0;
-///				break;
-///			case 's':
-///				WantSound = 0;
-///				break;
-///			case 'c':
-///				WantCDRom = 0;
-///				break;
-///			case 'j':
-///				WantJoystick = 0;
-///				break;			
-///			case 'd': {
-///				extern int DebuggingCommandsActive;
-///				DebuggingCommandsActive = 1;
-///				}
-///				break;
-///			case 'g':
-///				opengl_library = optarg;
-///				break;
-///			default:
-///				printf("%s", usage_string);
-///				exit(EXIT_FAILURE);	
-///		}
-///	}
+	opterr = 0;
+	while ((c = getopt_long(argc, argv, "hvfwscdg:", getopt_long_options, NULL)) != -1) {
+		switch(c) {
+			case 'h':
+				printf("%s", usage_string);
+				exit(EXIT_SUCCESS);
+			case 'v':
+				printf("%s", AvPVersionString);
+				exit(EXIT_SUCCESS);
+			case 'f':
+				WantFullscreen = 1;
+				break;
+			case 'w':
+				WantFullscreen = 0;
+				break;
+			case 's':
+				WantSound = 0;
+				break;
+			case 'c':
+				WantCDRom = 0;
+				break;
+			case 'j':
+				WantJoystick = 0;
+				break;			
+			case 'd': {
+				extern int DebuggingCommandsActive;
+				DebuggingCommandsActive = 1;
+				}
+				break;
+			case 'g':
+				opengl_library = optarg;
+				break;
+			default:
+				printf("%s", usage_string);
+				exit(EXIT_FAILURE);	
+		}
+	}
+#endif
 
 	InitGameDirectories(argv[0]);
 	

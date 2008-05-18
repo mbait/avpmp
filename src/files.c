@@ -1,5 +1,6 @@
 #define _BSD_SOURCE
 
+#include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +13,7 @@
 #include <dirent.h>
 #include <fnmatch.h>
 
+#include "fixer.h"
 #include "files.h"
 
 static char *local_dir;
