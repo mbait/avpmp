@@ -56,6 +56,7 @@ I'm going to try storing the quaternions as shorts within the keyframes ,
 because there are loads of them.
 -Richard.
 */
+PACKED_PUSH
 typedef struct quat_short
 {
 	short quatx;
@@ -63,6 +64,8 @@ typedef struct quat_short
 	short quatz;
 	short quatw;
 } PACKED QUAT_SHORT;
+PACKED_POP
+
 /*A couple of conversion functions */
 extern void CopyShortQuatToInt(QUAT_SHORT* qs_from,QUAT* q_to);
 extern void CopyIntQuatToShort(QUAT* q_from,QUAT_SHORT* qs_to);
@@ -72,6 +75,7 @@ extern void CopyIntQuatToShort(QUAT* q_from,QUAT_SHORT* qs_to);
 
 //make sure the keyframe structure packs as much as possible
 
+PACKED_PUSH
 typedef struct keyframe_data {
 	short Offset_x; /*Offset values may need to be scaled*/
 	short Offset_y;	/*In practice scaling should only be needed for 'placed' hierarchies*/
@@ -96,7 +100,7 @@ typedef struct keyframe_data {
 	unsigned short Sequence_Length; /* Time between these values and the next ones. */
 	struct keyframe_data *Next_Frame; /*This is no longer Null for the last frame - look at the last_frame setting instead*/
 } PACKED KEYFRAME_DATA;
-
+PACKED_POP
 
 
 /*Two functions for extracting and setting the key frame offset */

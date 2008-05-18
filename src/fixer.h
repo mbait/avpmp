@@ -20,8 +20,9 @@
 #define PATH_MAX MAX_PATH
 #endif
 
-// gonna deal with this one later.
-#define PACKED 
+#define PACKED_PUSH  __pragma( pack(push, 1) );
+#define PACKED_POP   __pragma( pack(pop) );
+#define PACKED
 
 // not sure where this was originally defined.
 #define RGBA_MAKE(r, g, b, a)   ((((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
@@ -99,6 +100,8 @@ extern "C" {
 
 #include "files.h"
 
+#define PACKED_PUSH
+#define PACKED_POP
 #define PACKED __attribute__((packed))
 
 /* windows junk */
