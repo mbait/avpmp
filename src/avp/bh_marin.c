@@ -13719,6 +13719,12 @@ void GetPointToFaceMarineTowards(STRATEGYBLOCK *sbPtr,VECTORCH *output) {
 		return;
 	}
 
+	// SBF - 20080518 - commented out - this block of code is a NO-OP
+	// due to the aliased targetModule variable.  This code might have
+	// been disabled intentionally? In any case, disabling this code
+	// works around a crash in FarNPC_GetTargetAIModuleForMarineRespond
+	// during level reloads.
+#if 0 // SBF - 20080518 - commented out
 	if (NpcSquad.alertZone) {
 		/* Might want to face towards trouble. */
 		if (sbPtr->containingModule->m_aimodule!=NpcSquad.alertZone) {
@@ -13726,7 +13732,7 @@ void GetPointToFaceMarineTowards(STRATEGYBLOCK *sbPtr,VECTORCH *output) {
 			targetModule = FarNPC_GetTargetAIModuleForMarineRespond(sbPtr);
 		}
 	}
-	
+
 	/* Did that work? */
 
 	if (targetModule) {
@@ -13745,6 +13751,7 @@ void GetPointToFaceMarineTowards(STRATEGYBLOCK *sbPtr,VECTORCH *output) {
 			
 		}
 	}
+#endif // SBF - 20080518 - commented out
 
 	AdjModuleRefPtr = sbPtr->containingModule->m_aimodule->m_link_ptrs;	
 	/* check if there is a module adjacency list */ 

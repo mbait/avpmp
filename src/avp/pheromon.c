@@ -182,16 +182,44 @@ End of level clean up for pheromone system
 void CleanUpPheromoneSystem(void)
 {
 	#if 1
-	if (Pher_Player1) DeallocateMem(Pher_Player1);
-	if (Pher_Player2) DeallocateMem(Pher_Player2);
-	if (Pher_Ai1) DeallocateMem(Pher_Ai1);
+	if (Pher_Player1 != NULL) {
+		DeallocateMem(Pher_Player1); 
+		Pher_Player1 = NULL;
+	}
+	if (Pher_Player2 != NULL) {
+		DeallocateMem(Pher_Player2);
+		Pher_Player2 = NULL;
+	}
+	if (Pher_Ai1 != NULL) {
+		DeallocateMem(Pher_Ai1);
+		Pher_Ai1 = NULL;
+	}
+	PherPl_ReadBuf = NULL;
+	PherPl_WriteBuf = NULL;
+	PherAi_Buf = NULL;
 	#endif
 	
 	#if SUPER_PHEROMONE_SYSTEM
-	if (Pher_Aliens1) DeallocateMem(Pher_Aliens1);
-	if (Pher_Aliens2) DeallocateMem(Pher_Aliens2);
-	if (Pher_Marines1) DeallocateMem(Pher_Marines1);
-	if (Pher_Marines2) DeallocateMem(Pher_Marines2);
+	if (Pher_Aliens1 != NULL) {
+		DeallocateMem(Pher_Aliens1);
+		Pher_Aliens1 = NULL;
+	}
+	if (Pher_Aliens2 != NULL) {
+		DeallocateMem(Pher_Aliens2);
+		Pher_Aliens2 = NULL;
+	}
+	if (Pher_Marines1 != NULL) {
+		DeallocateMem(Pher_Marines1);
+		Pher_Marines1 = NULL;
+	}
+	if (Pher_Marines2 != NULL) {
+		DeallocateMem(Pher_Marines2);
+		Pher_Marines2 = NULL;
+	}
+	PherAls_ReadBuf = NULL;
+	PherAls_WriteBuf = NULL;
+	PherMars_ReadBuf = NULL;
+	PherMars_WriteBuf = NULL;
 	#endif
 }
 
