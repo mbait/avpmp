@@ -4037,7 +4037,8 @@ void AddShape(DISPLAYBLOCK *dptr, VIEWDESCRIPTORBLOCK *VDB_Ptr)
 				{
 					PARTICLE particle;
 
-					particle.Position.vy = -280+i-GetCos((CloakingPhase/16*i + i*64+particle.Position.vz)&4095)/1024;
+					// SBF - 20080518 - commented out the undefined usage of particle.Position.vz
+					particle.Position.vy = -280+i-GetCos((CloakingPhase/16*i + i*64/*+particle.Position.vz*/)&4095)/1024;
 
 					particle.Position.vx = GetCos((CloakingPhase +i*64+particle.Position.vy)&4095)/512;
 					particle.Position.vz = GetSin((CloakingPhase +i*64+particle.Position.vy)&4095)/512;
