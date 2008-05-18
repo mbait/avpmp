@@ -4384,54 +4384,7 @@ extern void TranslationSetup(void)
 }
 
 
-#ifndef LINUX
-#ifndef _MSC_VER
-void TranslatePoint(int *source, int *dest, int *matrix);
-#pragma aux TranslatePoint = \
-"fld	DWORD PTR [esi]"\
-"fmul	DWORD PTR [edi]"\
-"fld	DWORD PTR [esi+4]"\
-"fmul	DWORD PTR [edi+4]"\
-"fld	DWORD PTR [esi+8]"\
-"fmul	DWORD PTR [edi+8]"\
-"fxch	st(1)"\
-"faddp	st(2),st"\
-"fld	DWORD PTR [esi]"\
-"fmul	DWORD PTR [edi+16]"\
-"fxch	st(1)"\
-"faddp	st(2),st"\
-"fld	DWORD PTR [esi+4]"\
-"fmul	DWORD PTR [edi+20]"\
-"fld	DWORD PTR [esi+8]"\
-"fmul	DWORD PTR [edi+24]"\
-"fxch	st(1)"\
-"faddp	st(2),st"\
-"fld	DWORD PTR [esi]"\
-"fmul	DWORD PTR [edi+32]"\
-"fxch	st(1)"\
-"faddp	st(2),st"\
-"fld	DWORD PTR [esi+4]"\
-"fmul	DWORD PTR [edi+36]"\
-"fld	DWORD PTR [esi+8]"\
-"fmul	DWORD PTR [edi+40]"\
-"fxch	st(1)"\
-"faddp	st(2),st"\
-"fxch	st(3)"\
-"fadd	DWORD PTR [edi+12]"\
-"fxch	st(1)"\
-"faddp	st(3),st"\
-"fxch	st(1)"\
-"fadd	DWORD PTR [edi+28]"\
-"fxch	st(2)"\
-"fadd	DWORD PTR [edi+44]"\
-"fxch	st(1)"\
-"fstp	DWORD PTR [ebx]"\
-"fxch	st(1)"\
-"fstp	DWORD PTR [ebx+4]"\
-"fstp	DWORD PTR [ebx+8]"\
-parm[esi] [ebx] [edi];
-
-#else
+#if defined(_MSC_VER) && 0
 void TranslatePoint(int *source, int *dest, int *matrix)
 {
 	__asm
@@ -4482,9 +4435,7 @@ void TranslatePoint(int *source, int *dest, int *matrix)
 		fstp	DWORD PTR [ebx+8]
 	}
 }
-
-#endif
-#else /* LINUX */
+#else
 static void TranslatePoint(const float *source, float *dest, const float *matrix)
 {
 	dest[0] = matrix[ 0] * source[0] + matrix[ 1] * source[1] + matrix[ 2] * source[2] + matrix[ 3];
@@ -4499,7 +4450,6 @@ void TranslatePointIntoViewspace(VECTORCH *pointPtr)
 	Source[1] = pointPtr->vy;
 	Source[2] = pointPtr->vz;
 
-//	TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
 	TranslatePoint(Source, Dest, ViewMatrix);
 
 	f2i(pointPtr->vx,Dest[0]);
@@ -4534,7 +4484,6 @@ void SquishPoints(SHAPEINSTR *shapeinstrptr)
 			Source[1] = point.vy;
 			Source[2] = point.vz;
 
-//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
 			TranslatePoint(Source, Dest, ViewMatrix);
 
 			f2i(RotatedPts[i].vx,Dest[0]);
@@ -4620,7 +4569,6 @@ void MorphPoints(SHAPEINSTR *shapeinstrptr)
 			Source[1] = srcPtr->vy+Global_ODB_Ptr->ObWorld.vy;
 			Source[2] = srcPtr->vz+Global_ODB_Ptr->ObWorld.vz;
 
-//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ViewMatrix);
 			TranslatePoint(Source, Dest, ViewMatrix);
 			
 			f2i(destPtr->vx,Dest[0]);
@@ -4678,8 +4626,6 @@ void TranslateShapeVertices(SHAPEINSTR *shapeinstrptr)
 			Source[1] = srcPtr->vy;
 			Source[2] = srcPtr->vz;
 
-//			TranslatePoint((int*)&Source,(int*)&Dest,(int*)&ObjectViewMatrix);
-//			TranslatePoint((int*)&Dest,(int*)&Source,(int*)&ViewMatrix);
 			TranslatePoint(Source, Dest, ObjectViewMatrix);
 			TranslatePoint(Dest, Source, ViewMatrix);
 			
