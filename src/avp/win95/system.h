@@ -36,9 +36,6 @@ extern "C" {
 
 /********************  General *****************************/
 
-#define SupportFPMathsFunctions				Yes
-#define SupportFPSquareRoot				Yes
-
 #define GlobalScale 1
 
 

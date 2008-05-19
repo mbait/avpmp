@@ -524,8 +524,6 @@ static void RotateAndCopyVector_ASM(VECTORCH *v1, VECTORCH *v2, MATRIXCH *m)
 	}
 }
 
-#if (SupportFPMathsFunctions || SupportFPSquareRoot)
-
 /*
 
  Square Root
@@ -549,8 +547,6 @@ static int SqRoot32(int A)
 	}
 	return (int)temp2;
 }
-
-#endif
 
 
 /*

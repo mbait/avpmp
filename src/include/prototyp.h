@@ -50,8 +50,6 @@ typedef struct quat {
 
 } QUAT;
 
-#if SupportFPMathsFunctions
-
 typedef struct vectorchf {
 
 	float vx;
@@ -62,18 +60,12 @@ typedef struct vectorchf {
 
 void FNormalise(VECTORCHF *n);
 
-#endif
-
-
 typedef struct vector2d {
 
 	int vx;
 	int vy;
 
 } VECTOR2D;
-
-
-#if SupportFPMathsFunctions
 
 typedef struct vector2df {
 
@@ -83,9 +75,6 @@ typedef struct vector2df {
 } VECTOR2DF;
 
 void FNormalise2d(VECTOR2DF *n);
-
-#endif
-
 
 typedef struct line {
 
@@ -132,9 +121,6 @@ typedef struct matrixch {
 
 } MATRIXCH;
 
-
-#if SupportFPMathsFunctions
-
 typedef struct matrixchf {
 
 	float mat11;
@@ -150,9 +136,6 @@ typedef struct matrixchf {
 	float mat33;
 
 } MATRIXCHF;
-
-#endif
-
 
 /* Sorry about this... */
 
