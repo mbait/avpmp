@@ -896,7 +896,7 @@ extern void DoStatisticsScreen(int completed_level)
 
 	int targets,targetspassed;
 
-	NPC_DATA *NpcData;
+	NPC_DATA *NpcData = NULL;
 	
 	switch (AvP.PlayerType)
 	{

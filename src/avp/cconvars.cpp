@@ -447,7 +447,7 @@ void PredPistol_SemiAuto(void) {
 
 void SetPlayerStartingHealth(int value) {
 
-	NPC_DATA *NpcData;
+	NPC_DATA *NpcData = NULL;
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
 	
 	switch (AvP.PlayerType)
@@ -509,7 +509,7 @@ void SetPlayerStartingHealth(int value) {
 
 void SetPlayerStartingArmour(int value) {
 
-	NPC_DATA *NpcData;
+	NPC_DATA *NpcData = NULL;
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
 	
 	switch (AvP.PlayerType)

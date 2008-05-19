@@ -887,11 +887,10 @@ static int DoMotionTrackerBlips(void)
 
 static void DisplayHealthAndArmour(void)
 {
-//	extern void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour);
 	int health,armour;
     /* access the extra data hanging off the strategy block */
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
-	NPC_DATA *NpcData;
+	NPC_DATA *NpcData = NULL;
 	
 	switch (AvP.PlayerType)
 	{

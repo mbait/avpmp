@@ -191,10 +191,10 @@ void FindVisibleModules(VMODULE *vptr,int flag)
 {
 	while(vptr->vmod_type != vmtype_term)
 	{
-		MODULE *mptr;
+		MODULE *mptr = NULL;
 
 		/* Add this module to the visible array */
-		if(vptr->vmod_mref.mref_ptr)
+		if(vptr->vmod_mref.mref_ptr != NULL)
 		{
 			mptr = vptr->vmod_mref.mref_ptr;
 			ModuleCurrVisArray[mptr->m_index] = flag;
@@ -211,7 +211,7 @@ void FindVisibleModules(VMODULE *vptr,int flag)
 				/* If the door/viewport is closed... */
 				/* Branch to this vptr */
 				/* else vptr++; */
-				if(mptr)
+				if(mptr != NULL)
 				{
 					if(mptr->m_flags & m_flag_open) vptr++;
 					else vptr = vptr->vmod_data.vmodidata_ptr;
@@ -239,10 +239,10 @@ int ThisObjectIsInAModuleVisibleFromCurrentlyVisibleModules(STRATEGYBLOCK *sbPtr
 	
 	while(vPtr->vmod_type != vmtype_term)
 	{
-		MODULE *mptr;
+		MODULE *mptr = NULL;
 
 		/* consider this module */
-		if(vPtr->vmod_mref.mref_ptr)
+		if(vPtr->vmod_mref.mref_ptr != NULL)
 		{
 			mptr = vPtr->vmod_mref.mref_ptr;
 			if(ModuleCurrVisArray[mptr->m_index] == 2)
@@ -269,7 +269,7 @@ int ThisObjectIsInAModuleVisibleFromCurrentlyVisibleModules(STRATEGYBLOCK *sbPtr
 				/* If the door/viewport is closed... */
 				/* Branch to this vPtr */
 				/* else vPtr++; */
-				if(mptr)
+				if(mptr != NULL)
 				{
 					if(mptr->m_flags & m_flag_open) vPtr++;
 					else vPtr = vPtr->vmod_data.vmodidata_ptr;
@@ -1039,6 +1039,7 @@ int IsModuleVisibleFromModule(MODULE *source, MODULE *target) {
 	int gotit;
 
 	vptr=source->m_vmptr;
+	mptr=NULL;
 	gotit=0;
 
 	if ((source==NULL)||(target==NULL)) return(0);

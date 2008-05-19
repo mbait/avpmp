@@ -718,8 +718,8 @@ static int EmergencyRelocateObject(STRATEGYBLOCK *sbPtr)
         nearest invisible module that has entry point locations, and relocate to one of 
         these locations. */
         {       
-                extern SCENE Global_Scene;
-                extern SCENEMODULE **Global_ModulePtr;
+                //extern SCENE Global_Scene;
+                //extern SCENEMODULE **Global_ModulePtr;
                 
                 AIMODULE *targetModule = 0;
                 int targetModuleDistance = 0;
