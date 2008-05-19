@@ -839,17 +839,8 @@ template <class TYPE> class HashTable;
 #define HT_WATCOM_DEFINE_FOR_SIMPLE_TYPE(TYPE) \
 	class HashTable<TYPE> HT_DEFINITION(TYPE,TYPE,TYPE)
 	
-#ifdef __WATCOMC__
-
-//watcom generartes errors if template<> is added to the start of the line - Richard.
-#define HT_DEFINE_FOR_SIMPLE_TYPE(SIMPLE_TYPE) HT_WATCOM_DEFINE_FOR_SIMPLE_TYPE(SIMPLE_TYPE)
-
-#else
-
 #define HT_DEFINE_FOR_SIMPLE_TYPE(SIMPLE_TYPE) template<> HT_WATCOM_DEFINE_FOR_SIMPLE_TYPE(SIMPLE_TYPE)
 
-#endif
-	
 HT_DEFINE_FOR_SIMPLE_TYPE(unsigned long)
 HT_DEFINE_FOR_SIMPLE_TYPE(signed long)
 HT_DEFINE_FOR_SIMPLE_TYPE(unsigned)

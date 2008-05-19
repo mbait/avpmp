@@ -98,12 +98,6 @@ static unsigned char DefaultD3DTextureFilterMax;
 
 #if SuppressWarnings
 static int* itemptr_tmp;
-
-#ifdef __WATCOMC__
-#pragma warning 389 5
-#pragma message("Note: Disabled Warning W389 'Integral value may be truncated...'")
-#endif
-
 #endif
 
 

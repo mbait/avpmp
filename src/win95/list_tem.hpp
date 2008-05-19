@@ -100,24 +100,16 @@ struct List_Member_Base
 	union
 	{
 		List_Member_Base<T> *prev;
-		#ifndef __WATCOMC__
 	   	List_Member<T> *prev_debug; // encourage the debugger to display the list members data
-		#endif                      // hopefully casting from base to derived class would not
+		                            // hopefully casting from base to derived class would not
 		                            // cause the actual value of the ptr to change, so the debugger
 		                            // will display the information correctly, and this union
 		                            // won't cause any kind of performance hit
-
-									//watcom doesn't appear to like this, unfortunately.
-
-									
-		
 	};
 	union
 	{
 		List_Member_Base<T> *next;
-		#ifndef __WATCOMC__
 		List_Member<T> *next_debug;
-		#endif
 	};
 	virtual ~List_Member_Base() {}
 };

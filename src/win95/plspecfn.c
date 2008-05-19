@@ -486,8 +486,6 @@ void ShapePointsInstr(SHAPEINSTR *shapeinstrptr)
  together, divides the summed product with another integer and then returns
  the result of that divide, which is also an integer.
 
- It is not inlined for Watcom C, although the functions it calls ARE.
-
 */
 
 int WideMul2NarrowDiv(int a, int b, int c, int d, int e)
@@ -1108,9 +1106,6 @@ void MaxLONGLONGCH(LONGLONGCH *llarrayptr, int llarraysize, LONGLONGCH *llmax)
 /*
 
  Some operators derived from the 64-bit CMP function.
-
- These were first defined for pcwatcom\plspecfn.h and transferred as and
- when needed to other platforms.
 
 */
 

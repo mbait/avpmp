@@ -253,12 +253,7 @@ BOOL WaitForRasterThread()
   mssetup api
 */
 
-#ifdef __WATCOMC__
-
-unsigned int GetCPUId(void);
-#pragma aux GetCPUId = "mov eax,1" "cpuid" value [edx] modify [eax ebx ecx];
-
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
 
 static unsigned int GetCPUId(void)
 {

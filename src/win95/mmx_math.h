@@ -87,16 +87,7 @@ extern void MMXAsm_VectorDot(void);
 extern void MMXAsm_VectorDot16(void);
 
 /* inline calls to MMX functions with correct parameters set */
-#ifdef __WATCOMC__
-
-#pragma aux MMX_VectorTransform = "call MMXAsm_VectorTransform" parm [eax] [edx];
-#pragma aux MMX_VectorTransformed = "call MMXAsm_VectorTransformed" parm [eax] [edx] [ecx];
-#pragma aux MMX_VectorTransformAndAdd = "call MMXAsm_VectorTransformAndAdd" parm [eax] [edx] [ecx];
-#pragma aux MMX_VectorTransformedAndAdd = "call MMXAsm_VectorTransformedAndAdd" parm [eax] [edx] [ecx] [ebx];
-#pragma aux MMX_VectorDot = "call MMXAsm_VectorDot" parm [eax] [edx] value [eax];
-#pragma aux MMX_VectorDot16 = "call MMXAsm_VectorDot16" parm [eax] [edx] value [eax];
-
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
 
 _asmcall void MMX_VectorTransform(struct vectorch * vector, struct matrixch const * matrix)
 {
@@ -187,119 +178,7 @@ extern int use_mmx_math;
 extern const __int64 mmx_sign_mask;
 extern const __int64 mmx_one_fixed_h;
 
-#ifdef __WATCOMC__
-
-#pragma aux MMXInline_VectorDot = \
-\
-"	movq mm0,[edx]" \
-\
-"	movd mm2,[edx+08h]" \
-"	movq mm4,mm0" \
-\
-"	pand mm4,mmx_sign_mask" \
-"	movq mm6,mm2" \
-\
-"	movq mm1,[eax]" \
-"	paddd mm4,mm4" \
-\
-"	movd mm3,[eax+08h]" \
-"	movq mm5,mm1" \
-\
-"	pand mm6,mmx_sign_mask" \
-"	movq mm7,mm3" \
-\
-"	pand mm5,mmx_sign_mask" \
-"	paddd mm6,mm6" \
-\
-"	pand mm7,mmx_sign_mask" \
-"	paddd mm5,mm5" \
-\
-"	paddd mm0,mm4" \
-"	paddd mm2,mm6" \
-\
-"	paddd mm7,mm7" \
-"	movq mm4,mm2" \
-\
-"	punpcklwd mm4,mm0" \
-"	paddd mm1,mm5" \
-\
-"	punpckhwd mm2,mm0" \
-"	paddd mm3,mm7" \
-\
-"	movq mm5,mm3" \
-"	punpckhwd mm3,mm1" \
-\
-"	punpcklwd mm5,mm1" \
-"	movq mm0,mm2" \
-\
-"	movq mm1,mm4" \
-"	pmaddwd mm0,mm3" \
-\
-"	movq mm6,mm3" \
-"	psrlq mm3,32" \
-\
-"	movq mm7,mm5" \
-"	punpckldq mm3,mm6" \
-\
-"	pmaddwd mm1,mm5" \
-"	psrlq mm5,32" \
-\
-"	punpckldq mm5,mm7" \
-"	pmaddwd mm2,mm3" \
-\
-"	pmaddwd mm4,mm5" \
-"	movq mm3,mm0" \
-\
-"	punpckldq mm0,mm1" \
-\
-"	psubd mm0,mmx_one_fixed_h" \
-"	punpckhdq mm1,mm3" \
-\
-"	psrad mm0,16" \
-"	paddd mm2,mm4" \
-\
-"	pslld mm1,16" \
-"	paddd mm2,mm0" \
-\
-"	paddd mm2,mm1" \
-\
-"	movq mm1,mm2" \
-"	psrlq mm2,32" \
-\
-"	paddd mm1,mm2" \
-\
-"	movd eax,mm1" \
-\
-"	emms" \
-\
-"	inc eax" \
-\
-parm [eax] [edx] value [eax];
-
-#pragma aux MMXInline_VectorDot16 = \
-\
-"	movd mm0,[edx+08h]" \
-\
-"	packssdw mm0,[edx]" \
-\
-"	movd mm1,[eax+08h]" \
-\
-"	packssdw mm1,[eax]" \
-\
-"	pmaddwd mm0,mm1" \
-\
-"	movq mm1,mm0" \
-"	psrlq mm0,32" \
-\
-"	paddd mm0,mm1" \
-\
-"	movd eax,mm0" \
-\
-"	emms" \
-\
-parm [eax] [edx] value [eax];
-
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
 
 _asminline signed MMXInline_VectorDot(struct vectorch const * v1, struct vectorch const * v2)
 {

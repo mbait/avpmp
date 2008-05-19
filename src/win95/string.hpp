@@ -1,10 +1,6 @@
 #ifndef _included_string_hpp_
 #define _included_string_hpp_
 
-#ifdef __WATCOMC__
-#include <string.hpp>
-#else
-
 #ifndef __cplusplus
 #error "string.hpp requires C++ compilation"
 #endif
@@ -177,7 +173,5 @@ inline int valid(String const & str)
 {
 	return str.valid();
 }
-
-#endif
 
 #endif

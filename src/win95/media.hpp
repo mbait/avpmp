@@ -1,12 +1,6 @@
 #ifndef _INCLUDED_MEDIA_HPP_
 #define _INCLUDED_MEDIA_HPP_
 
-//#if defined(_WIN32) || defined(WIN32) || defined(WINDOWS) || defined(_WINDOWS)
-//	#define _MEDIA_WIN_TARGET
-//	#include <windows.h>
-//#endif // WIN32 || _WIN32 || WINDOWS || _WINDOWS
-
-
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
@@ -28,10 +22,6 @@ void MediaRead(MediaMedium * pThis, TYPE * p);
 // - use WriteBlock instead
 template <class TYPE>
 void MediaWrite(MediaMedium * pThis, TYPE d);
-
-#ifdef __WATCOMC__
-template <class TYPE> class _Media_CompilerHack;
-#endif
 
 class MediaMedium
 {
@@ -284,15 +274,10 @@ class MediaMedium
 	friend class _Media_CompilerHack;
 };
 
-#ifdef __WATCOMC__
-template <class TYPE>
-#endif
 class _Media_CompilerHack
 {
 	public:
-		#ifndef __WATCOMC__
 		template <class TYPE>
-		#endif
 		static inline void MediaRead(MediaMedium * pThis, TYPE * p)
 		{
 			if (pThis->m_nReadBufPos + sizeof(TYPE) <= pThis->m_nBufSize)
@@ -317,9 +302,7 @@ class _Media_CompilerHack
 			}
 		}
 	
-		#ifndef __WATCOMC__
 		template <class TYPE>
-		#endif
 		static inline void MediaWrite(MediaMedium * pThis, TYPE d)
 		{
 			if (pThis->m_nWriteBufPos + sizeof(TYPE) <= pThis->m_nBufSize)
@@ -353,11 +336,7 @@ class _Media_CompilerHack
 template <class TYPE>
 inline void MediaRead(MediaMedium * pThis, TYPE * p)
 {
-	_Media_CompilerHack
-		#ifdef __WATCOMC__
-		<TYPE>
-		#endif
-		::MediaRead(pThis,p);
+	_Media_CompilerHack::MediaRead(pThis,p);
 }
 
 // use this to write simple data types
@@ -368,11 +347,7 @@ inline void MediaRead(MediaMedium * pThis, TYPE * p)
 template <class TYPE>
 inline void MediaWrite(MediaMedium * pThis, TYPE d)
 {
-	_Media_CompilerHack
-		#ifdef __WATCOMC__
-		<TYPE>
-		#endif
-		::MediaWrite(pThis,d);
+	_Media_CompilerHack::MediaWrite(pThis,d);
 }
 
 #ifdef _MEDIA_WIN_TARGET

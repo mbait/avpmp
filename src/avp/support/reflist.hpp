@@ -29,7 +29,7 @@
 #ifndef _reflist_hpp
 #define _reflist_hpp 1
 
-	#if ( defined( __WATCOMC__ ) || defined( _MSC_VER ) )
+	#if defined( _MSC_VER )
 		#pragma once
 	#endif
 

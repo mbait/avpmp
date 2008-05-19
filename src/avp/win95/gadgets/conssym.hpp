@@ -11,7 +11,7 @@
 #ifndef _conssym_hpp
 #define _conssym_hpp 1
 
-	#if ( defined( __WATCOMC__ ) || defined( _MSC_VER ) )
+	#if defined( _MSC_VER )
 		#pragma once
 	#endif
 

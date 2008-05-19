@@ -20,7 +20,7 @@
 #ifndef _wrapstr_hpp
 #define _wrapstr_hpp 1
 
-	#if ( defined( __WATCOMC__ ) || defined( _MSC_VER ) )
+	#if defined( _MSC_VER )
 		#pragma once
 	#endif
 
