@@ -159,24 +159,32 @@ int PlatStartSoundSys()
 	};
 	
 	SoundActivated = 0;
-	if (WantSound == 0)
+	if (WantSound == 0) {
 		return 0;
+	}
 
 	attrlist[0] = ALC_FREQUENCY;
 	attrlist[1] = AvpFrequency;
 	attrlist[2] = ALC_SYNC;
 	attrlist[3] = AL_FALSE;
 	attrlist[4] = 0;
-	
+
+#if defined(_MSC_VER)
+	buf[0] = 0;
+#else
 	_snprintf(buf, sizeof(buf), "'( (sampling-rate %d ))\n", AvpFrequency);
-	
+#endif
+
 	AvpSoundDevice = alcOpenDevice(buf);
-	if (AvpSoundDevice == NULL)
+	if (AvpSoundDevice == NULL) {
 		return 0;
-		
+	}
+
 	AvpSoundContext = alcCreateContext(AvpSoundDevice, attrlist);
-	if (AvpSoundContext == NULL) /* TODO: destroy sound device */
+	if (AvpSoundContext == NULL) {
+		/* TODO: destroy sound device */
 		return 0;
+	}
 		
 	alcMakeContextCurrent(AvpSoundContext);
 	
@@ -191,13 +199,17 @@ int PlatStartSoundSys()
 		exit(1);
 	}
 	
+	memset( ActiveSounds, 0, sizeof(ActiveSounds) );
+
 	for (i = 0; i < SOUND_MAXACTIVE; i++) {
 		ALuint p;
 		
 		alGenSources (1, &p);
 		if (alGetError () != AL_NO_ERROR) {
-			fprintf (stderr, "alGenSources () error = ...");
-			return -1;
+			// TODO - need to figure out how many sources we are allowed to make
+			//fprintf (stderr, "alGenSources () error = ...");
+			//return -1;
+			break;
 		}
 		
 		ActiveSounds[i].ds3DBufferP = p;
@@ -214,9 +226,6 @@ int PlatStartSoundSys()
 		alSourcefv(p, AL_POSITION, ActiveSounds[i].PropSetP_pos);
 		alSourcefv(p, AL_VELOCITY, ActiveSounds[i].PropSetP_vel);
 		
-		/*
-		alSourcef(p, AL_ROLLOFF_FACTOR, 0.0f);
-		*/
 		alSourcef(p, AL_ROLLOFF_FACTOR, 0.01f);
 		alSourcef(p, AL_REFERENCE_DISTANCE, 1.0f);
 	}
@@ -859,7 +868,8 @@ unsigned int PlatMaxHWSounds()
 #ifdef OPENAL_DEBUG
 	fprintf(stderr, "OPENAL: PlatMaxHWSounds()\n");
 #endif	
-	return 32;
+	// TODO - need to implement this for real?
+	return 0;
 }
 
 void InitialiseBaseFrequency(SOUNDINDEX soundNum)
@@ -974,8 +984,7 @@ printf("WAV DEBUG: bad bit setup\n");
 
 int LoadWavFile(int soundNum, char * wavFileName)
 {
-	ALuint size;
-	ALushort freq, chan, format;
+	ALushort freq, format;
 	ALvoid *data, *bufferPtr;
 	int len, seclen;
 	FILE *fp;
@@ -1030,9 +1039,8 @@ unsigned char *ExtractWavFile(int soundIndex, unsigned char *bufferPtr)
 {
 	ALint len, seclen = 0;
 	void *udata;
-	ALushort rfmt, rchan, rfreq;
-	ALuint rsize;
-	int slen;
+	ALushort rfmt, rfreq;
+	size_t slen;
 
 #ifdef OPENAL_DEBUG		
 fprintf(stderr, "OPENAL: ExtractWavFile(%d, %p)\n", soundIndex, bufferPtr); 
@@ -1073,7 +1081,8 @@ int LoadWavFromFastFile(int soundNum, char * wavFileName)
 {
 	FFILE *fp;
 	unsigned char *buf;
-	unsigned int len = 0;
+	size_t len;
+	int ok = 0;
 
 #ifdef OPENAL_DEBUG	
 	fprintf(stderr, "OPENAL: LoadWavFromFastFile(%d, %s)\n", soundNum, wavFileName); 
@@ -1087,9 +1096,9 @@ int LoadWavFromFastFile(int soundNum, char * wavFileName)
 		strcpy (buf, wavFileName);
 		ffread (&buf[strlen(wavFileName)+1], len, 1, fp);
 		ffclose (fp);
-		len = (int)ExtractWavFile (soundNum, buf);		
+		ok = ( ExtractWavFile (soundNum, buf) != NULL );
 		free (buf);
 	}
 
-	return len;
+	return ok;
 }
