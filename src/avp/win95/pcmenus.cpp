@@ -46,7 +46,6 @@ extern "C"
 
 	extern void DrawInternationalizedString(MENU_TEXT_ITEM *itemPtr, int highlighted);
 	extern void DrawMenuBackdrop(void);
-	extern void (*UpdateScreen[]) (void);
  	extern int IDemandSelect(void); // not in any header file!!!
 
 /**********************/

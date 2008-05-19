@@ -659,48 +659,6 @@ void FrameCounterHandler(void)
 
 /*
 
-   This jump table has been provided
-   solely to ensure compatibility with
-   DOS and other versions.
-	
-*/
-
-void (*UpdateScreen[]) (void) = {
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers,
-    FlipBuffers
-
-};
-
-/*
-
  Wait for Return Key
 
  Such a function may not be defined on some platforms

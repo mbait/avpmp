@@ -74,7 +74,6 @@ extern int PrintDebuggingText(const char* t, ...);
 
 */
 extern int VideoMode;
-extern void (*UpdateScreen[]) (void);
 extern DISPLAYBLOCK* ActiveBlockList[];
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern void (*SetVideoMode[]) (void);
