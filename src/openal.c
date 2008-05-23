@@ -19,6 +19,10 @@
 #include "dynblock.h"
 #include "stratdef.h"
 
+#if defined( _MSC_VER )
+#include <eax.h>
+#endif
+
 ACTIVESOUNDSAMPLE ActiveSounds[SOUND_MAXACTIVE];
 ACTIVESOUNDSAMPLE BlankActiveSound = {SID_NOSOUND,ASP_Minimum,0,0,NULL,0,0,0,0,0, { {0,0,0},{0,0,0},0,0 }, 0, 0, { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, NULL, NULL, NULL};
 SOUNDSAMPLEDATA BlankGameSound = {0,0,0,0,0,NULL,0,0,NULL,0};
@@ -31,6 +35,24 @@ static int AvpFrequency = 44100;
 extern int WantSound;
 
 static int SoundActivated = 0;
+
+static struct {
+	unsigned int flags;
+	BOOL reverb_changed;
+	float reverb_mix;
+	unsigned int env_index;
+} SoundConfig;
+
+#if defined(_MSC_VER)
+// EAX1.0
+#define EAX_REVERBMIX_USEDISTANCE -1.0F
+
+// EAX1.0
+#define EAX_ENVIRONMENT_DEFAULT EAX_ENVIRONMENT_PLAIN
+
+ALAPI ALenum ALAPIENTRY (*EAX_pfPropSet)(const GUID *propertySetID,ALuint property,ALuint source,ALvoid *pValue,ALuint size);
+ALAPI ALenum ALAPIENTRY (*EAX_pfPropGet)(const GUID *propertySetID,ALuint property,ALuint source,ALvoid *value,ALuint size);
+#endif
 
 /* start simplistic riff wave parsing */
 #define lsb8 (buf, x)  (((unsigned int)buf[(x)+0] <<  0))
@@ -143,6 +165,7 @@ openal.c TODO:
 1. There is no EAX/Reverb.  But there's probably not much I can do...
 2. Restarting sound system may or may not work.
 3. Better Error Handling (device not avail, etc).
+4. Implement sample offsets in psnd.c using AL_SAMPLE_OFFSET (add api here)
 */
 int PlatStartSoundSys()
 {
@@ -157,6 +180,12 @@ int PlatStartSoundSys()
 		ALC_SYNC, AL_FALSE,
 		0
 	};
+	
+	/* Set the globals. */
+	SoundConfig.flags = 0;
+	SoundConfig.reverb_changed = TRUE;
+	SoundConfig.reverb_mix = 0.0f;
+	SoundConfig.env_index = 1000;
 	
 	SoundActivated = 0;
 	if (WantSound == 0) {
@@ -196,9 +225,24 @@ int PlatStartSoundSys()
 	alDistanceModel(AL_NONE);
 	
 	if (alGetError() != AL_NO_ERROR) {
+		// TODO: this shouldn't exit abruptly..
+		// TODO: better error handling throughout
 		fprintf(stderr, "alListenerfv() error = ...\n");
 		exit(1);
 	}
+
+#if defined(_MSC_VER)
+	EAX_pfPropSet = NULL;
+	EAX_pfPropGet = NULL;
+	
+	if( alISExtensionPresent( (ALubyte*) "EAX" ) == AL_TRUE ) {
+		EAX_pfPropSet = alGetProcAddress( (ALubyte*) "EAXSet" );
+		EAX_pfPropGet = alGetProcAddress( (ALubyte*) "EAXGet" );
+	}
+	
+	// Set a default environment value.
+	PlatSetEnviroment(EAX_ENVIRONMENT_DEFAULT, EAX_REVERBMIX_USEDISTANCE);
+#endif
 	
 	memset( ActiveSounds, 0, sizeof(ActiveSounds) );
 
@@ -212,6 +256,8 @@ int PlatStartSoundSys()
 			//return -1;
 			break;
 		}
+		
+		// TODO: remove the incorrectly named PropSetP variables
 		
 		ActiveSounds[i].ds3DBufferP = p;
 
@@ -512,14 +558,17 @@ int PlatPlaySound(int activeIndex)
 
 	alSourcei(ActiveSounds[activeIndex].ds3DBufferP, AL_LOOPING,
 		ActiveSounds[activeIndex].loop ? AL_TRUE : AL_FALSE);
-		
+
+	/* may need to initialise pitch before playing */		
 	if (1 || ActiveSounds[activeIndex].pitch != GameSounds[si].pitch) {
 		PlatChangeSoundPitch(activeIndex, ActiveSounds[activeIndex].pitch);
 	}
 	
 	if (ActiveSounds[activeIndex].threedee) {			
 		alSourcei(ActiveSounds[activeIndex].ds3DBufferP, AL_SOURCE_RELATIVE, AL_FALSE);
-		
+
+		// TODO: min distance ActiveSounds[activeIndex].threedeedata.inner_range?
+		// TODO: max distance DS3D_DEFAULTMAXDISTANCE?
 		PlatDo3dSound(activeIndex);
 	} else {
 		ALfloat zero[3] = { 0.0f, 0.0f, 0.0f };
@@ -534,6 +583,12 @@ int PlatPlaySound(int activeIndex)
 		ActiveSounds[activeIndex].volume = newVolume;
 		
 		PlatChangeSoundVolume (activeIndex, ActiveSounds[activeIndex].volume);
+	}
+
+	if (!ActiveSounds[activeIndex].reverb_off) {
+		// TODO: DSPROPERTY_EAXBUFFER_REVERBMIX set to &SoundConfig.reverb_mix
+	} else {
+		// TODO: DSPROPERTY_EAXBUFFER_REVERBMIX set to 0
 	}
 	
 	if (!ActiveSounds[activeIndex].paused) {
@@ -692,9 +747,6 @@ int PlatDo3dSound(int activeIndex)
 		return 0;
 	}
 	
-//	if (ActiveSounds[activeIndex].threedee == 0)
-//		return 1;
-
 	relativePosn.vx = ActiveSounds[activeIndex].threedeedata.position.vx - 
 			Global_VDB_Ptr->VDB_World.vx;
 	relativePosn.vy = ActiveSounds[activeIndex].threedeedata.position.vy - 
@@ -780,6 +832,8 @@ fprintf(stderr, "OPENAL: Sound : (%f, %f, %f) [%d] [%d,%d]\n", ActiveSounds[acti
 //			ActiveSounds[activeIndex].threedeedata.velocity.vz;
 //		alSourcefv (ActiveSounds[activeIndex].ds3DBufferP,
 //			    AL_VELOCITY, ActiveSounds[activeIndex].PropSetP_vel);
+
+		// TODO: fake 3d support ?
 	}
 
 	return 1;
@@ -790,10 +844,11 @@ void PlatUpdatePlayer()
 {
 	ALfloat vel[3], or[6], pos[3];
 
-	if (!SoundActivated)
+	if (!SoundActivated) {
 		return;
-
-	if (Global_VDB_Ptr) {	
+	}
+	
+	if (Global_VDB_Ptr != NULL) {
 		extern int NormalFrameTime;
 		extern int DopplerShiftIsOn;
 		
@@ -842,8 +897,59 @@ void PlatUpdatePlayer()
 		alListenerfv (AL_VELOCITY, vel);
 		alListenerfv (AL_POSITION, pos);
 	}
+
+#if defined( _MSC_VER )
+	if( SoundConfig.reverb_changed ) {
+		// TODO: reverb handling
+	}
+#endif
+}
+
+void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
+{
+#ifdef OPENAL_DEBUG
+	fprintf(stderr, "OPENAL: PlatSetEnvironment(%d, %f)\n", env_index, reverb_mix);
+#endif
+
+#if defined( _MSC_VER )
+	if( SoundConfig.env_index != env_index ) {
+		
+		// TODO: support the custom plain reverb
+		if( env_index >= EAX_ENVIRONMENT_COUNT ) {
+			env_index = EAX_ENVIRONMENT_DEFAULT;
+		}
+		
+		if( EAX_pfPropSet != NULL ) {
+			ALulong ulEAXVal = env_index;
+			
+			EAX_pfPropSet(PROPSETID_EAX_ListenerProperties,
+				DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &ulEAXVal, sizeof( ulEAXVal ) );
+
+			// how to set all parameters:
+			// EAXLISTENERPROPERTIES mystruct = { ... };
+			// EAX_pfPrp[Set(PROPSETID_EAX_ListenerProperites,
+			//	DSPROPERTY_EAXLISTENER_ALL, 0, &mystruct, sizeof(EAXLISTENERPROPERTIES));
+		}
+		
+		SoundConfig.env_index = env_index;
+	}
 	
-	// TODO: reverb handling
+	if( reverb_mix == SoundConfig.reverb_mix ) {
+		return;
+	}
+	
+	// EAX2.0: EAX_REVERBMIX_USEDISTANCE is DSPPROPERTY_EAXBUFFER_ROOMROLLOFFFACTOR?
+	// But I don't think AvP even set this in the final version.
+	
+	if( (reverb_mix < 0.0f) || (reverb_mix > 1.0f) ) {
+		// TODO: handle EAX_REVERBMIX_USEDISTANCE
+		SoundConfig.reverb_mix = EAX_REVERBMIX_USEDISTANCE;
+	} else {
+		SoundConfig.reverb_mix = reverb_mix;
+	}
+	
+	SoundConfig.reverb_changed = TRUE;
+#endif
 }
 
 void PlatEndGameSound(SOUNDINDEX index)
@@ -907,14 +1013,6 @@ void InitialiseBaseFrequency(SOUNDINDEX soundNum)
 #endif
 
 	GameSounds[soundNum].dsFrequency = frequency;
-}
-
-void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
-{
-	// TODO: implement
-#ifdef OPENAL_DEBUG
-	fprintf(stderr, "OPENAL: PlatSetEnvironment(%d, %f)\n", env_index, reverb_mix);
-#endif
 }
 
 void UpdateSoundFrequencies()
