@@ -20,7 +20,7 @@
 #include "stratdef.h"
 
 #if defined( _MSC_VER )
-#include <eax.h>
+#include <AL/eax.h>
 #endif
 
 ACTIVESOUNDSAMPLE ActiveSounds[SOUND_MAXACTIVE];
@@ -50,8 +50,8 @@ static struct {
 // EAX1.0
 #define EAX_ENVIRONMENT_DEFAULT EAX_ENVIRONMENT_PLAIN
 
-ALAPI ALenum ALAPIENTRY (*EAX_pfPropSet)(const GUID *propertySetID,ALuint property,ALuint source,ALvoid *pValue,ALuint size);
-ALAPI ALenum ALAPIENTRY (*EAX_pfPropGet)(const GUID *propertySetID,ALuint property,ALuint source,ALvoid *value,ALuint size);
+EAXSet EAX_pfPropSet;
+EAXGet EAX_pfPropGet;
 #endif
 
 /* start simplistic riff wave parsing */
@@ -235,7 +235,7 @@ int PlatStartSoundSys()
 	EAX_pfPropSet = NULL;
 	EAX_pfPropGet = NULL;
 	
-	if( alISExtensionPresent( (ALubyte*) "EAX" ) == AL_TRUE ) {
+	if( alIsExtensionPresent( (ALubyte*) "EAX" ) == AL_TRUE ) {
 		EAX_pfPropSet = alGetProcAddress( (ALubyte*) "EAXSet" );
 		EAX_pfPropGet = alGetProcAddress( (ALubyte*) "EAXGet" );
 	}
@@ -920,14 +920,14 @@ void PlatSetEnviroment(unsigned int env_index, float reverb_mix)
 		}
 		
 		if( EAX_pfPropSet != NULL ) {
-			ALulong ulEAXVal = env_index;
+			ALuint ulEAXVal = env_index;
 			
-			EAX_pfPropSet(PROPSETID_EAX_ListenerProperties,
+			EAX_pfPropSet(&DSPROPSETID_EAX20_ListenerProperties,
 				DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &ulEAXVal, sizeof( ulEAXVal ) );
 
 			// how to set all parameters:
 			// EAXLISTENERPROPERTIES mystruct = { ... };
-			// EAX_pfPrp[Set(PROPSETID_EAX_ListenerProperites,
+			// EAX_pfPropSet(&DSPROPSETID_EAX_ListenerProperites,
 			//	DSPROPERTY_EAXLISTENER_ALL, 0, &mystruct, sizeof(EAXLISTENERPROPERTIES));
 		}
 		
