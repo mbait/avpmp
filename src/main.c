@@ -493,6 +493,14 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 		isgrab = SDL_GRAB_OFF;
 	}
 	
+	// reset input
+	memset((void*) KeyboardInput, 0, MAX_NUMBER_OF_INPUT_KEYS);
+	GotAnyKey = 0;
+	
+	// force restart the video system
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	
 	if ((surface = SDL_SetVideoMode(Width, Height, Depth, flags)) == NULL) {
 		fprintf(stderr, "(Software) SDL SetVideoMode failed: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -550,6 +558,14 @@ int SetOGLVideoMode(int Width, int Height)
 		
 		isgrab = SDL_GRAB_OFF;
 	}
+
+	// reset input
+	memset((void*) KeyboardInput, 0, MAX_NUMBER_OF_INPUT_KEYS);
+	GotAnyKey = 0;
+	
+	// force restart the video system
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	load_opengl_library(opengl_library);
 			
