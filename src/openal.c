@@ -169,6 +169,7 @@ openal.c TODO:
 */
 int PlatStartSoundSys()
 {
+	int initSources;
 	int i;
 	char buf[42];
 	ALfloat pos[] = { 0.0, 0.0, 0.0 },
@@ -244,17 +245,22 @@ int PlatStartSoundSys()
 	PlatSetEnviroment(EAX_ENVIRONMENT_DEFAULT, EAX_REVERBMIX_USEDISTANCE);
 #endif
 	
-	memset( ActiveSounds, 0, sizeof(ActiveSounds) );
-
+	initSources = 1;
+	
 	for (i = 0; i < SOUND_MAXACTIVE; i++) {
 		ALuint p;
 		
-		alGenSources (1, &p);
-		if (alGetError () != AL_NO_ERROR) {
-			// TODO - need to figure out how many sources we are allowed to make
-			//fprintf (stderr, "alGenSources () error = ...");
-			//return -1;
-			break;
+		if( initSources ) {
+			alGenSources (1, &p);
+			if (alGetError () != AL_NO_ERROR) {
+				// TODO - need to figure out how many sources we are allowed to make
+				//fprintf (stderr, "alGenSources () error = ...");
+				//return -1;
+				initSources = 0;
+				p = 0;
+			}
+		} else {
+			p = 0;
 		}
 		
 		// TODO: remove the incorrectly named PropSetP variables
@@ -268,13 +274,15 @@ int PlatStartSoundSys()
 		ActiveSounds[i].PropSetP_vel[1] = 0.0;
 		ActiveSounds[i].PropSetP_vel[2] = 0.0;
 
-		alSourcef(p, AL_PITCH, 1.0f);
-		alSourcef(p, AL_GAIN, 1.0f);
-		alSourcefv(p, AL_POSITION, ActiveSounds[i].PropSetP_pos);
-		alSourcefv(p, AL_VELOCITY, ActiveSounds[i].PropSetP_vel);
+		if( initSources ) {
+			alSourcef(p, AL_PITCH, 1.0f);
+			alSourcef(p, AL_GAIN, 1.0f);
+			alSourcefv(p, AL_POSITION, ActiveSounds[i].PropSetP_pos);
+			alSourcefv(p, AL_VELOCITY, ActiveSounds[i].PropSetP_vel);
 		
-		alSourcef(p, AL_ROLLOFF_FACTOR, 0.01f);
-		alSourcef(p, AL_REFERENCE_DISTANCE, 1.0f);
+			alSourcef(p, AL_ROLLOFF_FACTOR, 0.01f);
+			alSourcef(p, AL_REFERENCE_DISTANCE, 1.0f);
+		}
 	}
 	
 	SoundActivated = 1;
