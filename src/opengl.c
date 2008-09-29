@@ -517,7 +517,7 @@ void D3D_DecalSystem_Setup()
 	pglEnable(GL_POLYGON_OFFSET_FILL);
 	
 	static GLfloat factor = 0.0f;
-	static GLfloat units = -100.0f;
+	static GLfloat units = -0.09375f;
 	pglPolygonOffset(factor, units);
 }
 
