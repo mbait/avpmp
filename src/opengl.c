@@ -513,9 +513,12 @@ void D3D_DecalSystem_Setup()
 	
 	pglDepthMask(GL_FALSE);
 
-	/* this does stop zfighting with bulletmarks on walls... */
+	/* enable polygon offset to help lessen decal z-fighting... */
 	pglEnable(GL_POLYGON_OFFSET_FILL);
-	pglPolygonOffset(-8.0, -8.0);
+	
+	static GLfloat factor = 0.0f;
+	static GLfloat units = -100.0f;
+	pglPolygonOffset(factor, units);
 }
 
 void D3D_DecalSystem_End()
