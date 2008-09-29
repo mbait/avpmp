@@ -474,7 +474,7 @@ void ReleaseD3DTexture(void *tex)
 {
 	D3DTexture *TextureHandle = (D3DTexture *)tex;
 	
-	pglDeleteTextures(1, &(TextureHandle->id));
+	pglDeleteTextures(1, (GLuint*) &(TextureHandle->id));
 	
 	free(TextureHandle);
 }
@@ -614,13 +614,11 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
 		GLfloat s, t;
-		GLfloat rhw = 1.0/(float)vertices->Z, zvalue;
+		GLfloat w = (float)vertices->Z;
+		GLfloat zvalue;
 		
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
-
-//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
-//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
 
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);
@@ -628,10 +626,10 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0f - 2.0f*ZNear/zvalue;
 		
-		varrp->v[0] = svarrp->v[0] = x/rhw;
-		varrp->v[1] = svarrp->v[1] = y/rhw;
-		varrp->v[2] = svarrp->v[2] = z/rhw;
-		varrp->v[3] = svarrp->v[3] = 1/rhw;
+		varrp->v[0] = svarrp->v[0] = x*w;
+		varrp->v[1] = svarrp->v[1] = y*w;
+		varrp->v[2] = svarrp->v[2] = z*w;
+		varrp->v[3] = svarrp->v[3] = w;
 		
 		varrp->t[0] = /**/ svarrp->t[0] = /**/ s;
 		varrp->t[1] = /**/ svarrp->t[1] = /**/ t;
@@ -683,26 +681,22 @@ void D3D_SkyPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *renderVertice
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		GLfloat x, y, z;
 		GLfloat s, t;
-		GLfloat rhw;
+		GLfloat w;
 		
-		rhw = 1.0 / (float)vertices->Z;
+		w = (float)vertices->Z;
 		
 		s = ((float)vertices->U) * RecipW + (1.0f/256.0f);
 		t = ((float)vertices->V) * RecipH + (1.0f/256.0f);
 
-//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
-//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
-
-		
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);
 
 		z = 1.0f;
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->t[0] = s;
 		varrp->t[1] = t;
@@ -756,28 +750,24 @@ void D3D_ZBufferedCloakedPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 		
 		GLfloat x, y, z;
 		GLfloat s, t;
-		GLfloat rhw;
+		GLfloat w;
 		GLfloat zvalue;
 		
-		rhw = 1.0 / (float)vertices->Z;
+		w = (float)vertices->Z;
 		
 		s = (((float)vertices->U/65536.0f)+0.5) * RecipW;
 		t = (((float)vertices->V/65536.0f)+0.5) * RecipH;
 		
-//		if (s < 0.0 || t < 0.0 || s >= 1.0 || t >= 1.0)
-//			fprintf(stderr, "HEY! s = %f, t = %f (%d, %d)\n", s, t, vertices->U, vertices->V);
-
-
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);
 		
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->t[0] = s;
 		varrp->t[1] = t;
@@ -861,9 +851,10 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
 		GLfloat x, y, z, zvalue;
-		GLfloat s, t, rhw;
+		GLfloat s, t;
+		GLfloat w;
 		
-		rhw = 1.0 / (float)vertices->Z;
+		w = (float)vertices->Z;
 		
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);
@@ -874,10 +865,10 @@ void D3D_Decal_Output(DECAL *decalPtr, RENDERVERTEX *renderVerticesPtr)
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0f - 2.0f*ZNear/zvalue;
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->t[0] = s;
 		varrp->t[1] = t;
@@ -961,7 +952,7 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		
 		GLfloat x, y, z;
 		GLfloat s, t;
-		GLfloat rhw = 1/(float)vertices->Z;
+		GLfloat w = (float)vertices->Z;
 		
 		s = ((float)(vertices->U>>16)+.5) * RecipW;
 		t = ((float)(vertices->V>>16)+.5) * RecipH;
@@ -970,17 +961,17 @@ void D3D_Particle_Output(PARTICLE *particlePtr, RENDERVERTEX *renderVerticesPtr)
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);		
 		
 		if (particleDescPtr->IsDrawnInFront) {
-			z = -0.999f; /* ... */
+			z = -0.99999f; /* ... */
 		} else if (particleDescPtr->IsDrawnAtBack) {
-			z = 0.999f;
+			z = 0.99999f;
 		} else {
 			z = 1.0 - 2.0*ZNear/((float)vertices->Z); /* currently maps [ZNear, inf) to [-1, 1], probably could be more precise with a ZFar */
 		}
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->t[0] = s;
 		varrp->t[1] = t;
@@ -1007,7 +998,8 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];
 		
 		GLfloat x, y, z;
-		float rhw, zvalue;
+		GLfloat w;
+		GLfloat zvalue;
 		
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);
@@ -1015,12 +1007,12 @@ void D3D_PredatorThermalVisionPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVER
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 		
-		rhw = 1.0/(float)vertices->Z;
+		w = (float)vertices->Z;
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->c[0] = vertices->R;
 		varrp->c[1] = vertices->G;
@@ -1046,20 +1038,21 @@ void D3D_ZBufferedGouraudPolygon_Output(POLYHEADER *inputPolyPtr, RENDERVERTEX *
 	for (i = 0; i < RenderPolygon.NumberOfVertices; i++) {
 		RENDERVERTEX *vertices = &renderVerticesPtr[i];	
 		GLfloat x, y, z;
-		float rhw, zvalue;
+		GLfloat w;
+		GLfloat zvalue;
 				
 		zvalue = vertices->Z+HeadUpDisplayZOffset;
 		z = 1.0 - 2*ZNear/zvalue;
 				
-		rhw = 1.0/(float)vertices->Z;
+		w = (float)vertices->Z;
 
 		x =  ((float)vertices->X*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreX);
 		y = -((float)vertices->Y*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices->Z*(float)ScreenDescriptorBlock.SDB_CentreY);	
 
-		varrp->v[0] = x/rhw;
-		varrp->v[1] = y/rhw;
-		varrp->v[2] = z/rhw;
-		varrp->v[3] = 1/rhw;
+		varrp->v[0] = x*w;
+		varrp->v[1] = y*w;
+		varrp->v[2] = z*w;
+		varrp->v[3] = w;
 		
 		varrp->c[0] = vertices->R;
 		varrp->c[1] = vertices->G;
@@ -1825,7 +1818,7 @@ int Hardware_RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AV
 		case AVPMENUFORMAT_RIGHTJUSTIFIED:
 		{
 			int length = 0;
-			signed char *ptr = textPtr;
+			signed char *ptr = (signed char*) textPtr;
 
 			while(*ptr)
 			{
@@ -1838,7 +1831,7 @@ int Hardware_RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AV
 		case AVPMENUFORMAT_CENTREJUSTIFIED:
 		{
 			int length = 0;
-			signed char *ptr = textPtr;
+			signed char *ptr = (signed char*) textPtr;
 
 			while(*ptr)
 			{
@@ -1877,7 +1870,7 @@ int Hardware_RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha
 		case AVPMENUFORMAT_RIGHTJUSTIFIED:
 		{
 			int length = 0;
-			signed char *ptr = textPtr;
+			signed char *ptr = (signed char*) textPtr;
 
 			while(*ptr)
 			{
@@ -1890,7 +1883,7 @@ int Hardware_RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha
 		case AVPMENUFORMAT_CENTREJUSTIFIED:
 		{
 			int length = 0;
-			signed char *ptr = textPtr;
+			signed char *ptr = (signed char*) textPtr;
 
 			while(*ptr)
 			{
@@ -2602,18 +2595,19 @@ void D3D_DrawParticle_Rain(PARTICLE *particlePtr,VECTORCH *prevPositionPtr)
 		CheckTriangleBuffer(3, 0, 0, 0, NULL, TRANSLUCENCY_NORMAL, -1);
 				
 		for (i = 0; i < 3; i++) {
-			GLfloat xf, yf, zf, rhw;
+			GLfloat xf, yf, zf;
+			GLfloat w;
 			
 			xf =  ((float)vertices[i].vx*((float)Global_VDB_Ptr->VDB_ProjX+1.0f))/((float)vertices[i].vz*(float)ScreenDescriptorBlock.SDB_CentreX);
 			yf = -((float)vertices[i].vy*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)vertices[i].vz*(float)ScreenDescriptorBlock.SDB_CentreY);
 			
 			zf = 1.0f - 2.0f*ZNear/(float)vertices[i].vz;
-			rhw = 1.0f / (float)vertices[i].vz;
+			w = (float)vertices[i].vz;
 
-			varrp->v[0] = xf/rhw;
-			varrp->v[1] = yf/rhw;
-			varrp->v[2] = zf/rhw;
-			varrp->v[3] = 1.0f/rhw;
+			varrp->v[0] = xf*w;
+			varrp->v[1] = yf*w;
+			varrp->v[2] = zf*w;
+			varrp->v[3] = w;
 				
 			if (i == 0) {
 				varrp->c[0] = 0;
@@ -4471,7 +4465,8 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 	start = varrc;
 	for (i=0; i<256; i++) {
 		GLfloat xf, yf, zf;
-		GLfloat sf, tf, rhw;
+		GLfloat sf, tf;
+		GLfloat w;
 		int r, g, b, a;
 		
 		if (point->vz < 1) point->vz = 1;
@@ -4480,7 +4475,7 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 		yf = -((float)point->vy*((float)Global_VDB_Ptr->VDB_ProjY+1.0f))/((float)point->vz*(float)ScreenDescriptorBlock.SDB_CentreY);
 		
 		z = point->vz + HeadUpDisplayZOffset;
-		rhw = 1.0f / (float)point->vz;
+		w = (float)point->vz;
 		zf = 1.0f - 2.0f*ZNear/(float)z;
 		
 		sf = pointWS->vx*WaterUScale+(1.0f/256.0f);
@@ -4492,10 +4487,10 @@ void D3D_DrawMoltenMetalMesh_Unclipped(void)
 		a = (MeshVertexColour[i] >> 24) & 0xFF;
 			
 		
-		varrp->v[0] = xf/rhw;
-		varrp->v[1] = yf/rhw;
-		varrp->v[2] = zf/rhw;
-		varrp->v[3] = 1.0f/rhw;
+		varrp->v[0] = xf*w;
+		varrp->v[1] = yf*w;
+		varrp->v[2] = zf*w;
+		varrp->v[3] = w;
 		
 		varrp->t[0] = sf;
 		varrp->t[1] = tf;
@@ -4565,7 +4560,8 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 		for (i=0; i<256; i++)
 		{
 			GLfloat xf, yf, zf;
-			GLfloat sf, tf, rhw;
+			GLfloat sf, tf;
+			GLfloat w;
 			int r, g, b, a;
 			
 			if (point->vz < 1) point->vz = 1;
@@ -4589,7 +4585,7 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 			tf = pointWS->vy*WaterVScale+(1.0f/256.0f);
 	
 			z = point->vz + HeadUpDisplayZOffset;
-		  	rhw = 1.0f / (float)point->vz;
+		  	w = (float)point->vz;
 		  	
 			b = (MeshVertexColour[i] >> 0)  & 0xFF;
 			g = (MeshVertexColour[i] >> 8)  & 0xFF;
@@ -4600,10 +4596,10 @@ void D3D_DrawMoltenMetalMesh_Clipped(void)
 			yf = -((float)y - (float)ScreenDescriptorBlock.SDB_CentreY - 0.5f) / ((float)ScreenDescriptorBlock.SDB_CentreY - 0.5f);
 			zf = 1.0f - 2.0f*ZNear/(float)z;
 
-			varrp->v[0] = xf/rhw;
-			varrp->v[1] = yf/rhw;
-			varrp->v[2] = zf/rhw;
-			varrp->v[3] = 1.0f/rhw;
+			varrp->v[0] = xf*w;
+			varrp->v[1] = yf*w;
+			varrp->v[2] = zf*w;
+			varrp->v[3] = w;
 			
 			varrp->t[0] = sf;
 			varrp->t[1] = tf;
