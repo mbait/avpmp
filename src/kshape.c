@@ -1229,7 +1229,7 @@ static void PredatorSeeAliensVisionPolygon_Construct(POLYHEADER *polyPtr)
 		}
 		else
 		{
-			alpha = 0;
+			alpha = 255;
 			RenderPolygon.TranslucencyMode = TRANSLUCENCY_OFF;
 		}
 		

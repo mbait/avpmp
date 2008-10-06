@@ -87,11 +87,14 @@ static int svarrc, starrc;
 /* Do not call this directly! */
 static void SetTranslucencyMode(enum TRANSLUCENCY_TYPE mode)
 {		
+	pglDisable(GL_ALPHA_TEST);
+
 	switch(mode) {
 		case TRANSLUCENCY_OFF:
 			if (TRIPTASTIC_CHEATMODE||MOTIONBLUR_CHEATMODE) {
 				pglBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 			} else {
+				pglEnable(GL_ALPHA_TEST);
 				pglBlendFunc(GL_ONE, GL_ZERO);
 			}
 			break;
@@ -131,6 +134,8 @@ void InitOpenGL()
 {
 	CurrentTranslucencyMode = TRANSLUCENCY_OFF;
 	pglBlendFunc(GL_ONE, GL_ZERO);
+	
+	pglAlphaFunc(GL_GREATER, 0.0f);
 	
 	CurrentFilteringMode = FILTERING_BILINEAR_OFF;
 	pglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -2341,7 +2346,7 @@ void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale
 		unsigned int c;
 		
 		c = GammaValues[i];
-		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 255);
 		
 		x[0] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
 		x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
@@ -2355,7 +2360,7 @@ void D3D_DrawColourBar(int yTop, int yBottom, int rScale, int gScale, int bScale
 		
 		i++;
 		c = GammaValues[i];
-		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 0);
+		pglColor4ub(MUL_FIXED(c,rScale), MUL_FIXED(c,gScale), MUL_FIXED(c,bScale), 255);
 		x[2] = (Global_VDB_Ptr->VDB_ClipRight*i)/255;
 		x[2] =  (x[2] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
 		y[2] = yBottom;
@@ -2409,7 +2414,7 @@ void ColourFillBackBufferQuad(int FillColour, int x0, int y0, int x1, int y1)
 	r = ((FillColour >> 16) & 0xFF);
 	a = ((FillColour >> 24) & 0xFF);	
 
-	pglColor4ub(r, g, b, a);
+	pglColor4ub(r, g, b, 255);
 
 	x[0] = x0;
 	x[0] =  (x[0] - ScreenDescriptorBlock.SDB_CentreX)/ScreenDescriptorBlock.SDB_CentreX;
@@ -2517,7 +2522,8 @@ void BltImage(RECT *dest, DDSurface *image, RECT *src)
 	pglDisable(GL_BLEND);
 	pglDisable(GL_DEPTH_TEST);
 	pglDisable(GL_TEXTURE_2D);
-		
+	pglDisable(GL_ALPHA_TEST);
+	
 	pglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	pglPixelStorei(GL_UNPACK_ROW_LENGTH, image->w);
 	pglPixelZoom((double)width/(double)width1, (double)height/(double)height1);
