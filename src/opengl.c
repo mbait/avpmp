@@ -1329,18 +1329,18 @@ void D3D_ScreenInversionOverlay()
 		SelectPolygonBeginType(3); /* triangles */
 		
 		pglTexCoord2f(s[0], t[0]);
-		pglVertex3f(x[0], y[0], 1.0f);
+		pglVertex3f(x[0], y[0], -1.0f);
 		pglTexCoord2f(s[1], t[1]);
-		pglVertex3f(x[1], y[1], 1.0f);
+		pglVertex3f(x[1], y[1], -1.0f);
 		pglTexCoord2f(s[3], t[3]);
-		pglVertex3f(x[3], y[3], 1.0f);
+		pglVertex3f(x[3], y[3], -1.0f);
 	
 		pglTexCoord2f(s[1], t[1]);
-		pglVertex3f(x[1], y[1], 1.0f);
+		pglVertex3f(x[1], y[1], -1.0f);
 		pglTexCoord2f(s[2], t[2]);
-		pglVertex3f(x[2], y[2], 1.0f);
+		pglVertex3f(x[2], y[2], -1.0f);
 		pglTexCoord2f(s[3], t[3]);
-		pglVertex3f(x[3], y[3], 1.0f);
+		pglVertex3f(x[3], y[3], -1.0f);
 	
 		pglEnd();
 		
@@ -1598,7 +1598,10 @@ void D3D_RenderHUDString(char *stringPtr,int x,int y,int colour)
 {
 	struct VertexTag quadVertices[4];
 
-if (stringPtr == NULL) return;
+	if (stringPtr == NULL)
+	{
+		return;
+	}
 
 	quadVertices[0].Y = y-1;
 	quadVertices[1].Y = y-1;
@@ -1645,7 +1648,10 @@ void D3D_RenderHUDString_Clipped(char *stringPtr,int x,int y,int colour)
 	struct VertexTag quadVertices[4];
 
 // 	LOCALASSERT(y<=0);
-if (stringPtr == NULL) return;
+	if (stringPtr == NULL)
+	{
+		return;
+	}
 
 	CheckFilteringModeIsCorrect(FILTERING_BILINEAR_OFF);
 
@@ -1694,7 +1700,10 @@ void D3D_RenderHUDString_Centred(char *stringPtr, int centreX, int y, int colour
 	char *ptr = stringPtr;
 	struct VertexTag quadVertices[4];
 
-if (stringPtr == NULL) return;
+	if (stringPtr == NULL)
+	{
+		return;
+	}
 	
 	while(*ptr)
 	{
