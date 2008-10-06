@@ -1,9 +1,9 @@
 CC = gcc
 CXX = g++
 
-#CFLAGS = -g -Wall -pipe
-CFLAGS = -m32 -g -Wall -pipe -O2
-#CFLAGS = -DNDEBUG -Wall -pipe -O6 -ffast-math -fomit-frame-pointer -march=pentium -mcpu=pentiumpro
+CFLAGS = -m32 -g -Wall -pipe
+#CFLAGS += -O2
+#CFLAGS += -DNDEBUG -O6 -ffast-math -fomit-frame-pointer -march=pentium3 -mtune=pentium4
 
 CFLAGS += -Isrc -Isrc/include -Isrc/win95 -Isrc/avp -Isrc/avp/win95 -Isrc/avp/support -Isrc/avp/win95/frontend -Isrc/avp/win95/gadgets
 CFLAGS += $(shell sdl-config --cflags) $(shell openal-config --cflags)
