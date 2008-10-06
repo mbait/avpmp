@@ -47,7 +47,6 @@ extern int NormalFrameTime;
 extern int GlobalAmbience;
 /* JH 29/5/97 - to control how D3D does the lighting */
 struct D3DLightColourControl d3d_light_ctrl;
-struct D3DOverlayColourControl d3d_overlay_ctrl;
 /*KJL****************************************************************************************
 *                                     F U N C T I O N S	                                    *
 ****************************************************************************************KJL*/

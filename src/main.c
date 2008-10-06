@@ -1260,7 +1260,6 @@ if (AvP_MainMenus())
 	
 	/* turn off any special effects */
 	d3d_light_ctrl.ctrl = LCCM_NORMAL;
-	d3d_overlay_ctrl.ctrl = OCCM_NORMAL;
 	
 	SetOGLVideoMode(VideoModeList[CurrentVideoMode].w, VideoModeList[CurrentVideoMode].h);
 	
