@@ -43,6 +43,7 @@
 #include "progress_bar.h"
 #include "scrshot.hpp"
 #include "version.h"
+#include "fmv.h"
 
 char LevelName[] = {"predbit6\0QuiteALongNameActually"}; /* the real way to load levels */
 
@@ -76,6 +77,13 @@ static int WantJoystick = 0;
 static const char * opengl_library = NULL;
 
 /* ** */
+
+static void IngameKeyboardInput_ClearBuffer(void)
+{
+	// clear the keyboard state
+	memset((void*) KeyboardInput, 0, MAX_NUMBER_OF_INPUT_KEYS);
+	GotAnyKey = 0;
+}
 
 void DirectReadKeyboard()
 {
@@ -494,8 +502,7 @@ int SetSoftVideoMode(int Width, int Height, int Depth)
 	}
 	
 	// reset input
-	memset((void*) KeyboardInput, 0, MAX_NUMBER_OF_INPUT_KEYS);
-	GotAnyKey = 0;
+	IngameKeyboardInput_ClearBuffer();
 	
 	// force restart the video system
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -560,8 +567,7 @@ int SetOGLVideoMode(int Width, int Height)
 	}
 
 	// reset input
-	memset((void*) KeyboardInput, 0, MAX_NUMBER_OF_INPUT_KEYS);
-	GotAnyKey = 0;
+	IngameKeyboardInput_ClearBuffer();
 	
 	// force restart the video system
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -1279,7 +1285,7 @@ if (AvP_MainMenus())
 	
 	AvP.MainLoopRunning = 1;
 	
-/*	ScanImagesForFMVs(); NOT YET */
+	ScanImagesForFMVs();
 	
 	ResetFrameCounter();
 
@@ -1296,7 +1302,7 @@ if (AvP_MainMenus())
 		TeleportNetPlayerToAStartingPosition(Player->ObStrategyBlock,1);
 	}
 
-/*	IngameKeyboardInput_ClearBuffer(); NOT YET */
+	IngameKeyboardInput_ClearBuffer();
 	
 	while(AvP.MainLoopRunning) {
 		CheckForWindowsMessages();
@@ -1322,8 +1328,6 @@ if (AvP_MainMenus())
 			} else {
 				ReadUserInput();
 				
-				/* UpdateAllFMVTextures(); NOT YET */
-			
 				SoundSys_Management();
 				
 				FlushD3DZBuffer();
@@ -1376,10 +1380,7 @@ if (AvP_MainMenus())
 
 	FixCheatModesInUserProfile(UserProfilePtr);
 
-/*	NOT YET
-	CloseFMV();
 	ReleaseAllFMVTextures();
-*/
 
 	CONSBIND_WriteKeyBindingsToConfigFile();
 	

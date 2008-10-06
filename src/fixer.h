@@ -107,6 +107,14 @@ typedef struct RECT
 	int bottom;
 } RECT;
 
+typedef struct PALETTEENTRY
+{
+	BYTE peRed;
+	BYTE peGreen;
+	BYTE peBlue;
+	BYTE peFlags;
+} PALETTEENTRY;
+
 #if !defined(__INTEL_COMPILER)
 typedef int64_t __int64;
 #else

@@ -35,6 +35,10 @@ void PlayMenuMusic(void)
 {
 }
 
+void EndMenuMusic(void)
+{
+}
+
 void WeWantAnIntro(void)
 {
 	IntroHasAlreadyBeenPlayed = 0;

@@ -52,58 +52,6 @@ void EndMenuBackgroundBink()
 */
 }
 
-
-/* smacker.c */
-int FmvColourRed;
-int FmvColourGreen;
-int FmvColourBlue;
-int IntroOutroMoviesAreActive = 1;
-int MoviesAreActive;
-int SmackerSoundVolume;
-
-void GetFMVInformation(int *messageNumberPtr, int *frameNumberPtr)
-{
-/*
-	fprintf(stderr, "GetFMVInformation(%p, %p)\n", messageNumberPtr, frameNumberPtr);
-*/	
-}
-
-void InitialiseTriggeredFMVs()
-{
-/*
-	fprintf(stderr, "InitialiseTriggeredFMVs()\n");
-*/	
-}
-
-void StartFMVAtFrame(int number, int frame)
-{
-/*
-	fprintf(stderr, "StartFMVAtFrame(%d, %d)\n", number, frame);
-*/	
-}
-
-void StartTriggerPlotFMV(int number)
-{
-/*
-	fprintf(stderr, "StartTriggerPlotFMV(%d)\n", number);
-*/	
-}
-
-void UpdateAllFMVTextures()
-{
-/*
-	fprintf(stderr, "UpdateAllFMVTextures()\n");
-*/	
-}
-
-void EndMenuMusic()
-{
-/*
-	fprintf(stderr, "EndMenuMusic()\n");
-*/	
-}
-
-
 /* alt_tab.cpp */
 void ATIncludeSurface(void * pSurface, void * hBackup)
 {
