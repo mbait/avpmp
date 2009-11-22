@@ -171,16 +171,11 @@ int PlatStartSoundSys()
 {
 	int initSources;
 	int i;
-	char buf[42];
-	ALfloat pos[] = { 0.0, 0.0, 0.0 },
-		vel[] = { 0.0, 0.0, 0.0 },
-		or[]  = { 0.0, 0.0, 1.0, 0.0, -1.0, 0.0 };
+	ALfloat pos[] = { 0.0, 0.0, 0.0 };
+	ALfloat vel[] = { 0.0, 0.0, 0.0 };
+	ALfloat or[]  = { 0.0, 0.0, 1.0, 0.0, -1.0, 0.0 };
 		
-	int attrlist[6] = {
-		ALC_FREQUENCY, 0,
-		ALC_SYNC, AL_FALSE,
-		0
-	};
+	int attrlist[6];
 	
 	/* Set the globals. */
 	SoundConfig.flags = 0;
@@ -199,13 +194,7 @@ int PlatStartSoundSys()
 	attrlist[3] = AL_FALSE;
 	attrlist[4] = 0;
 
-#if defined(_MSC_VER)
-	buf[0] = 0;
-#else
-	_snprintf(buf, sizeof(buf), "'( (sampling-rate %d ))\n", AvpFrequency);
-#endif
-
-	AvpSoundDevice = alcOpenDevice(buf);
+	AvpSoundDevice = alcOpenDevice(NULL);
 	if (AvpSoundDevice == NULL) {
 		return 0;
 	}
