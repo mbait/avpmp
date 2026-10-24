@@ -38,6 +38,16 @@
 #include "files.h"
 
 #ifdef __cplusplus
+/* pull in the standard headers that use min/max identifiers before the
+   windows-style macros below are defined (fixer.h may itself be included
+   from inside an extern "C" block, hence the extern "C++") */
+extern "C++" {
+#include <algorithm>
+#include <limits>
+#include <cmath>
+#include <cstdlib>
+#include <string>
+}
 extern "C" {
 #endif
 

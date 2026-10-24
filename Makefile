@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 
-CFLAGS = -m32 -g -Wall -pipe
+CFLAGS = -m32 -g -Wall -pipe -fcommon
 #CFLAGS += -O2
 #CFLAGS += -DNDEBUG -O6 -ffast-math -fomit-frame-pointer -march=pentium3 -mtune=pentium4
 
