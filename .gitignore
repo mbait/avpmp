@@ -4,3 +4,12 @@
 # exclude patterns (uncomment them if you want to use them):
 *.[oa]
 avp
+smb-creds.txt
+tools/.setup-log
+tools/.dpkg-baseline
+tools/.apt-manual-baseline
+tools/.foreign-arch-baseline
+tools/.added-packages
+__pycache__/
+*.pyc
+*.blend1
