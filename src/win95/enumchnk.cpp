@@ -89,7 +89,7 @@ Enum_Header_Chunk::Enum_Header_Chunk (Chunk_With_Children * parent, const char *
 
 BOOL Enum_Header_Chunk::output_chunk (HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 

@@ -88,7 +88,7 @@ AllSprites_Header_Chunk::AllSprites_Header_Chunk (Chunk_With_Children * parent, 
 
 BOOL AllSprites_Header_Chunk::output_chunk (HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 

@@ -15,7 +15,8 @@ make distclean  # also removes editor backup files
 ```
 
 - Plain hand-written `Makefile`; no configure step, no linter. `-Wall` warnings are the only static check for the C/C++ code.
-- Builds **32-bit** (`-m32` in both CFLAGS and LDLIBS): needs multilib gcc/g++, 32-bit SDL 1.2 (found via `sdl-config`) and 32-bit OpenAL (found via `pkg-config openal`). The code assumes 32-bit types/pointers. On Ubuntu 24.04: `dpkg --add-architecture i386`, install `gcc-multilib g++-multilib libsdl1.2-dev:i386 libopenal-dev:i386 libgl1-mesa-dri:i386 libglx-mesa0:i386`, and build with `PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig make`.
+- Builds natively (x86-64 or i386): needs SDL 1.2 (found via `sdl-config`) and OpenAL (found via `pkg-config openal`). On Ubuntu 24.04: `libsdl1.2-dev libopenal-dev`. For a 32-bit build: `dpkg --add-architecture i386`, install `gcc-multilib g++-multilib libsdl1.2-dev:i386 libopenal-dev:i386 libgl1-mesa-dri:i386 libglx-mesa0:i386`, and run `PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig make CC="gcc -m32" CXX="g++ -m32"`. The Makefile has no header dependencies, so `make clean` after changing a header or switching architectures.
+- 64-bit (LP64) rules: data read from files (RIF chunks, fastfiles, user profiles) must use `int`/`unsigned int`/`DWORD` (4 bytes), never `long`, `size_t`, `time_t` or pointers. Don't store pointers in `int`s; Rebellion's `int *` arrays that hold pointers (e.g. texture animation lists, whose first slot is a pointer-sized sequence number) must be indexed as pointer arrays. Savegames hold native structs, so they aren't portable between 32- and 64-bit builds; user profiles are.
 - Modern GCC needs `-fcommon` (tentative definitions are shared across files) and `fixer.h` includes the C++ standard headers before defining its `min`/`max` macros; keep both.
 - Every source file is listed explicitly in the Makefile variables (`ROOT`, `AVP`, `SUPPORT`, `AVPWIN95`, `FRONTEND`, `GADGETS`, `WIN95`, `SHAPES`), one per directory. **A new source file must be added to the matching variable**, or it won't be compiled.
 - Header lookup is flat: all source dirs are on the include path (`-Isrc -Isrc/include -Isrc/win95 -Isrc/avp ...`), so headers are included by bare name.
@@ -31,7 +32,7 @@ AVP_DATA=/path/to/avp-gold ./avp -w     # windowed
 ./avp -h                                 # options: -f/-w, -s nosound, -c nocdrom, -d debug commands, -g <libGL path>
 ```
 
-Install the data from the retail Gold CD (most files on it are scrambled) with `tools/disc/avp_install.py AVP_GOLD.img ~/avp-data`. Headless runs: `tools/game/avpctl.sh` (Xvfb, menu macros, console, screenshots; pass `-g /usr/lib/i386-linux-gnu/libGL.so.1`, which it does by default).
+Install the data from the retail Gold CD (most files on it are scrambled) with `tools/disc/avp_install.py AVP_GOLD.img ~/avp-data`. Headless runs: `tools/game/avpctl.sh` (Xvfb, menu macros, console, screenshots; passes `-g libGL.so.1` by default, set `AVP_GL` to override).
 
 OpenGL is `dlopen`ed at runtime (`load_opengl_library` in `src/main.c`, function pointers in `src/oglfunc.c`), so GL failures only show up when entering a game. FMVs (Bink/Smacker) are stubbed out.
 

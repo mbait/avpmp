@@ -18,9 +18,10 @@ How facts were established is marked where it matters:
   chunk of every file decodes and re-encodes, see `tools/rif/tests`);
 * **[game]** observed by running the Linux build with modified data.
 
-All multi-byte values are **little-endian**. The engine is built 32-bit
-(`-m32`), so `int`/`long`/pointers are 4 bytes and structures are read with
-raw casts; there is no byte swapping anywhere.
+All multi-byte values are **little-endian**. The engine reads them with raw
+casts to 4-byte `int`s and structures of `int`s (originally on 32-bit Windows,
+where `long` and pointers were 4 bytes too); there is no byte swapping
+anywhere.
 
 ---
 
@@ -419,8 +420,8 @@ missing or whose UV list is empty becomes an invisible polyline.
   texture list. Shapes with `SHPEXTFL` are registered by name
   (`"obj@rif"`) for `GetLoadedShapeMSL`.
 * `SHPPRPRO`: a pre-processed memory image of the runtime `SHAPEHEADER`
-  with 32-bit pointer fix-ups; if present it replaces the geometry chunks.
-  Do not write it.
+  with 32-bit pointer fix-ups; if present it replaces the geometry chunks
+  (the 64-bit build ignores it). Do not write it.
 * `ANIMSEQU`/`ANIMFRAM`/`ANISEQDT`/`ANIFRADT`, `ANSHCEN2`, `ASALTTEX`:
   per-vertex animation and alternate texturings (not present in the Gold
   data). `ANISEQDT`/`ANIFRADT` = `int32[5]` + name padded with

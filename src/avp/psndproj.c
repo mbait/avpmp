@@ -856,7 +856,7 @@ int FindAndLoadWavFile(int soundNum,char* wavFileName)
 #if LOAD_SOUND_FROM_FAST_FILE
 	//first look in fast file
 	{
-		unsigned nLen;
+		size_t nLen;
 		if(ffreadbuf(sound_name,&nLen))
 		{
 			return LoadWavFromFastFile(soundNum,sound_name);

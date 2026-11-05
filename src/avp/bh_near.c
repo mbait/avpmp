@@ -1645,7 +1645,7 @@ static void AlienNearState_Retreat(STRATEGYBLOCK *sbPtr)
 
 		if (targetModule) {
 			//textprint("Target module is %s\n",targetModule->name);
-			textprint("Target AI module found, %x.\n",(int)targetModule);
+			textprint("Target AI module found, %p.\n",targetModule);
 		} else {
 			textprint("Target module is NULL!\n");
 		}
@@ -1829,7 +1829,7 @@ static void AlienNearState_Hunt(STRATEGYBLOCK *sbPtr)
 
 		if (targetModule) {
 			//textprint("Target module is %s\n",targetModule->name);
-			textprint("Target AI module for hunt found, %x.\n",(int)targetModule);
+			textprint("Target AI module for hunt found, %p.\n",targetModule);
 		} else {
 			textprint("Target module is NULL!\n");
 		}

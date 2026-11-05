@@ -58,13 +58,14 @@ HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int fla
 	return CreateFile(file, write, x, y, flags, flags2, z);
 }
 
-int WriteFile(HANDLE file, const void *data, int len, void *byteswritten, int lpOverlapped)
+int WriteFile(HANDLE file, const void *data, int len, DWORD *byteswritten, int lpOverlapped)
 {
-	unsigned long *bw, i;
+	DWORD *bw;
+	ssize_t i;
 	
 	fprintf(stderr, "WriteFile(%d, %p, %d, %p, %d)\n", file, data, len, byteswritten, lpOverlapped);
 
-	bw = (unsigned long *)byteswritten;
+	bw = byteswritten;
 	*bw = 0;
 	
 	i = write(file, data, len);
@@ -76,13 +77,14 @@ int WriteFile(HANDLE file, const void *data, int len, void *byteswritten, int lp
 	}
 }
 
-int ReadFile(HANDLE file, void *data, int len, void *bytesread, int lpOverlapped)
+int ReadFile(HANDLE file, void *data, int len, DWORD *bytesread, int lpOverlapped)
 {
-	unsigned long *br, i;
+	DWORD *br;
+	ssize_t i;
 	
 	fprintf(stderr, "ReadFile(%d, %p, %d, %p, %d)\n", file, data, len, bytesread, lpOverlapped);
 
-	br = (unsigned long *)bytesread;
+	br = bytesread;
 	*br = 0;
 	
 	i = read(file, data, len);

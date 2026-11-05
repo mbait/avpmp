@@ -103,7 +103,7 @@ size_t Animation_Chunk::size_chunk()
 	
 BOOL Animation_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 

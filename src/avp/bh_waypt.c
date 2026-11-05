@@ -131,7 +131,7 @@ int NPCGetWaypointDirection(WAYPOINT_HEADER *waypoints, STRATEGYBLOCK *sbPtr, VE
 
 	//Base shift value on strategy block so that the aliens don't keep changing their minds
 	//about which route to take
-	GlobalLinkShift=(((int)sbPtr)&0xffff)>>4;
+	GlobalLinkShift=(((size_t)sbPtr)&0xffff)>>4;
 	if (FindBestRoute(&current_route,waypoints)==0) {
 		/* Yuck! */
 		textprint("Waypoint dropout: no continuous route!\n");

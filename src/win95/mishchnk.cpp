@@ -33,7 +33,7 @@ BOOL Lockable_Chunk_With_Children::lock_chunk(File_Chunk & fchunk)
 	if (updated_outside || external_lock) return FALSE;
 
 	HANDLE rif_file;
-	unsigned long bytes_read;
+	DWORD bytes_read;
 
 	int tries = 0;
 	
@@ -126,7 +126,7 @@ BOOL Lockable_Chunk_With_Children::unlock_chunk (File_Chunk & fchunk, BOOL updat
 		if (updated_outside || external_lock) return FALSE;
 
 		HANDLE rif_file;
-		unsigned long bytes_read;
+		DWORD bytes_read;
 	
 		rif_file = CreateFile (fchunk.filename, GENERIC_WRITE + GENERIC_READ, 0, 0, OPEN_EXISTING, 
 							FILE_FLAG_RANDOM_ACCESS, 0);
@@ -196,7 +196,7 @@ BOOL Lockable_Chunk_With_Children::unlock_chunk (File_Chunk & fchunk, BOOL updat
 BOOL Lockable_Chunk_With_Children::update_chunk_in_file(HANDLE &rif_file)
 {
 
-	unsigned long bytes_read;
+	DWORD bytes_read;
 	int length = 0;
 
 	const char * hd_id = get_head_id();
@@ -557,7 +557,7 @@ BOOL File_Chunk::write_file (const char * fname)
 		return FALSE;
 	}
 		
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 
 	ok = WriteFile (rif_file, (long *) outPackage,outPackage->CompressedDataSize+sizeof(HuffmanPackage), &junk, 0);
@@ -661,7 +661,7 @@ BOOL File_Chunk::check_file()
 
 
 	HANDLE rif_file;
-	unsigned long bytes_read;
+	DWORD bytes_read;
 
 	int tries = 0;
 
@@ -1067,7 +1067,7 @@ BOOL File_Chunk::update_file()
 	check_file();
 
 	HANDLE rif_file;
-	unsigned long bytes_read;
+	DWORD bytes_read;
 
 	int tries = 0;
 
@@ -1250,7 +1250,7 @@ BOOL File_Chunk::update_chunks_from_file()
 	check_file();
 	
 	HANDLE rif_file;
-	unsigned long bytes_read;
+	DWORD bytes_read;
 	
 	rif_file = CreateFileA (filename, GENERIC_WRITE + GENERIC_READ, 0, 0, OPEN_EXISTING, 
 					FILE_FLAG_RANDOM_ACCESS, 0);

@@ -300,9 +300,10 @@ FFError FFHeaderI::Read(char const *_filename)
 	Clear();
 	
 	char magic[4];
-	unsigned long rffl_version;
-	size_t num_files;
-	size_t total_headsize;
+	unsigned int rffl_version;
+	unsigned int num_files;
+	unsigned int total_headsize;
+	unsigned int data_length;
 	
 	DWORD bytes_read;
 	
@@ -310,7 +311,8 @@ FFError FFHeaderI::Read(char const *_filename)
 	READ_FILE(filename,(void)0,fclose(h),h,&rffl_version,4,bytes_read,0)
 	READ_FILE(filename,(void)0,fclose(h),h,&num_files,4,bytes_read,0)
 	READ_FILE(filename,(void)0,fclose(h),h,&total_headsize,4,bytes_read,0)
-	READ_FILE(filename,(void)0,fclose(h),h,&length,4,bytes_read,0)
+	READ_FILE(filename,(void)0,fclose(h),h,&data_length,4,bytes_read,0)
+	length = data_length;
 	
 	if (strncmp(magic,"RFFL",4))
 	{
@@ -342,8 +344,8 @@ FFError FFHeaderI::Read(char const *_filename)
 	for (unsigned int i=0; i<num_files; ++i)
 	{
 		char const * fnameP = (char *)((size_t)headerP + 8);
-		size_t leng = *(size_t *)((size_t)headerP + 4);
-		void * dataP = (void *)((size_t)data + *(size_t *)headerP);
+		size_t leng = *(unsigned int *)((size_t)headerP + 4);
+		void * dataP = (void *)((size_t)data + *(unsigned int *)headerP);
 		
 		files[HashFunction(fnameP)].add_entry(FFDataI(fnameP,dataP,leng));
 		

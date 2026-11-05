@@ -225,6 +225,7 @@
 #define HASH_TEMPLATE_VERSION 12 // v1.2
 
 #include <stddef.h>
+#include <stdint.h>
 #include <ctype.h>// for toupper
 
 // v1,0 Default Hash Functions defined:
@@ -241,8 +242,8 @@
 	// a hash function for pointers
 	inline unsigned HashFunction(void const * const _vP)
 	{
-		// treat as integer
-		return HashFunction(reinterpret_cast<unsigned>(_vP));
+		// treat as integer (the low bits are the ones that vary)
+		return HashFunction(static_cast<unsigned>(reinterpret_cast<uintptr_t>(_vP)));
 	}
 
 	// a hash function for strings

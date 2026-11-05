@@ -33,14 +33,14 @@ typedef enum
 typedef struct
 {
 	
-	unsigned long type;
-	unsigned long init_state;
+	unsigned int type;
+	unsigned int init_state;
 	
-	unsigned long fade_up_speed;
-	unsigned long fade_down_speed;
+	unsigned int fade_up_speed;
+	unsigned int fade_down_speed;
 	
-	unsigned long post_fade_up_delay;
-	unsigned long post_fade_down_delay;
+	unsigned int post_fade_up_delay;
+	unsigned int post_fade_down_delay;
 
 } LightFXData;
 

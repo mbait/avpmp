@@ -290,7 +290,7 @@ static void LoadMenuFont()
 {
 	AVPMENUGFX *gfxPtr;
 	char buffer[100];
-	unsigned int fastFileLength;
+	size_t fastFileLength;
 	void const *pFastFileData;
 	
 	IntroFont_Light.height = 33;
@@ -307,7 +307,7 @@ static void LoadMenuFont()
 		gfxPtr->ImagePtr = AwCreateSurface(
 			"pxfXY",
 			pFastFileData,
-			fastFileLength,
+			(unsigned)fastFileLength,
 			AW_TLF_TRANSP|AW_TLF_CHROMAKEY,
 			&(gfxPtr->Width),
 			&(gfxPtr->Height)
@@ -381,7 +381,7 @@ int LengthOfMenuText(const char *textPtr)
 	int width = 0;
 	
 	while (textPtr && *textPtr) {
-		width += IntroFont_Light.FontWidth[(unsigned int) *textPtr];
+		width += IntroFont_Light.FontWidth[(unsigned char) *textPtr];
 		
 		textPtr++;
 	}
@@ -393,7 +393,7 @@ int LengthOfSmallMenuText(char *textPtr)
 	int width = 0;
 	
 	while (textPtr && *textPtr) {
-		width += AAFontWidths[(unsigned int) *textPtr];
+		width += AAFontWidths[(unsigned char) *textPtr];
 		
 		textPtr++;
 	}
@@ -452,7 +452,7 @@ int RenderMenuText(const char *textPtr, int sx, int sy, int alpha, enum AVPMENUF
 			int topLeftU = 1;
 			int topLeftV = 1+(c-32)*33;
 			int x, y;
-			int width = IntroFont_Light.FontWidth[(unsigned int) c];
+			int width = IntroFont_Light.FontWidth[(unsigned char) c];
 			
 			srcPtr = &image->buf[(topLeftU+topLeftV*image->w)*4];
 			
@@ -549,7 +549,7 @@ int RenderMenuText_Clipped(char *textPtr, int sx, int sy, int alpha, enum AVPMEN
 			int topLeftU = 1;
 			int topLeftV = 1+(c-32)*33;
 			int x, y;
-			int width = IntroFont_Light.FontWidth[(unsigned int) c];
+			int width = IntroFont_Light.FontWidth[(unsigned char) c];
 			
 			srcPtr = &image->buf[(topLeftU+topLeftV*image->w)*4];
 			
@@ -656,7 +656,7 @@ static int RenderSmallFontString(char *textPtr,int sx,int sy,int alpha, int red,
 				}
 				srcPtr += (image->w - HUD_FONT_WIDTH) * 4;	
 			}
-			sx += AAFontWidths[(unsigned int) c];
+			sx += AAFontWidths[(unsigned char) c];
 		}
 	}
 
@@ -690,11 +690,11 @@ Determine area used by text , so we can draw it centrally
 		int widthFromChars=0;
 		
 		while(*textPtr2 && *textPtr2==' ') {
-			widthFromSpaces+=AAFontWidths[(unsigned int) *textPtr2++];
+			widthFromSpaces+=AAFontWidths[(unsigned char) *textPtr2++];
 		}
 		
 		while(*textPtr2 && *textPtr2!=' ') {
-			widthFromChars+=AAFontWidths[(unsigned int) *textPtr2++];
+			widthFromChars+=AAFontWidths[(unsigned char) *textPtr2++];
 		}
 		
 		wordWidth=widthFromSpaces+widthFromChars;
@@ -753,11 +753,11 @@ Determine area used by text , so we can draw it centrally
 		wordWidth=0;
 		
 		while(*textPtr2 && *textPtr2==' ') {
-			wordWidth+=AAFontWidths[(unsigned int) *textPtr2++];
+			wordWidth+=AAFontWidths[(unsigned char) *textPtr2++];
 		}
 		
 		while(*textPtr2 && *textPtr2!=' ') {
-			wordWidth+=AAFontWidths[(unsigned int) *textPtr2++];
+			wordWidth+=AAFontWidths[(unsigned char) *textPtr2++];
 		}
 		
 		if(wordWidth> area->right-sx) {
@@ -781,7 +781,7 @@ Determine area used by text , so we can draw it centrally
 		}
 		
 		while(*textPtr && *textPtr==' ') {
-			sx+=AAFontWidths[(unsigned int) *textPtr++];
+			sx+=AAFontWidths[(unsigned char) *textPtr++];
 		}
 		
 		if(sx>area->right) {
@@ -795,7 +795,7 @@ Determine area used by text , so we can draw it centrally
 		
 		while(*textPtr && *textPtr!=' ') {
 			char c = *textPtr++;
-			int letterWidth = AAFontWidths[(unsigned int) c];
+			int letterWidth = AAFontWidths[(unsigned char) c];
 			
 			if(sx+letterWidth>area->right) {
 				sx=area->left;
@@ -838,7 +838,7 @@ Determine area used by text , so we can draw it centrally
 					}
 					srcPtr += (image->w - HUD_FONT_WIDTH) * 4;	
 				}
-				sx += AAFontWidths[(unsigned int) c];
+				sx += AAFontWidths[(unsigned char) c];
 			}
 		}
 	}
@@ -867,7 +867,7 @@ int RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORM
 			ptr = textPtr;
 			
 			while (*ptr) {
-				length+=AAFontWidths[(unsigned int) *ptr++];
+				length+=AAFontWidths[(unsigned char) *ptr++];
 			}
 			
 			x -= length;
@@ -877,7 +877,7 @@ int RenderSmallMenuText(char *textPtr, int x, int y, int alpha, enum AVPMENUFORM
 			ptr = textPtr;
 			
 			while (*ptr) {
-				length+=AAFontWidths[(unsigned int) *ptr++];
+				length+=AAFontWidths[(unsigned char) *ptr++];
 			}
 			
 			x -= length / 2;
@@ -905,7 +905,7 @@ int RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AV
 			ptr = textPtr;
 	
 			while (*ptr) {
-				length+=AAFontWidths[(unsigned int) *ptr++];
+				length+=AAFontWidths[(unsigned char) *ptr++];
 			}
 			
 			x -= length;
@@ -915,7 +915,7 @@ int RenderSmallMenuText_Coloured(char *textPtr, int x, int y, int alpha, enum AV
 			ptr = textPtr;
 			
 			while (*ptr) {
-				length+=AAFontWidths[(unsigned int) *ptr++];
+				length+=AAFontWidths[(unsigned char) *ptr++];
 			}
 			
 			x -= length / 2;
@@ -1050,7 +1050,7 @@ void LoadAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID)
 {
 	AVPMENUGFX *gfxPtr;
 	char buffer[100];
-	unsigned int fastFileLength;
+	size_t fastFileLength;
 	void const *pFastFileData;
 	
 	GLOBALASSERT(menuGfxID < MAX_NO_OF_AVPMENUGFXS);
@@ -1065,7 +1065,7 @@ void LoadAvPMenuGfx(enum AVPMENUGFX_ID menuGfxID)
 		gfxPtr->ImagePtr = AwCreateSurface(
 			"pxfXY",
 			pFastFileData,
-			fastFileLength,
+			(unsigned)fastFileLength,
 			AW_TLF_TRANSP|AW_TLF_CHROMAKEY,
 			&(gfxPtr->Width),
 			&(gfxPtr->Height)

@@ -69,7 +69,7 @@ void Start_Progress_Bar()
 							(
 								"pxf",
 								pFastFileData,
-								fastFileLength,
+								(unsigned)fastFileLength,
 								0
 							);
 		}
@@ -99,7 +99,7 @@ void Start_Progress_Bar()
 							(
 								"pxf",
 								pFastFileData,
-								fastFileLength,
+								(unsigned)fastFileLength,
 								0
 							);
 		}
@@ -138,7 +138,7 @@ void Start_Progress_Bar()
 						(
 							"pxf",
 							pFastFileData,
-							fastFileLength,
+							(unsigned)fastFileLength,
 							0
 						);
 	}

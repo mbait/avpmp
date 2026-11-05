@@ -48,6 +48,12 @@ extern char *GetVideoModeDescription(void);
 extern void PreviousVideoMode(void);
 extern void NextVideoMode(void);
 extern void SaveVideoModeSettings(void);
+extern char *GetVideoModeDescription2(void);
+extern char *GetVideoModeDescription3(void);
+extern void PreviousVideoMode2(void);
+extern void NextVideoMode2(void);
+extern void LoadDeviceAndVideoModePreferences(void);
+extern void SaveDeviceAndVideoModePreferences(void);
 
 
 extern void MakeSelectSessionMenu(void);
@@ -669,7 +675,10 @@ extern void AvP_UpdateMenus(void)
 				profilePtr = GetNextUserProfile();
 			
 			RenderMenuText(profilePtr->Name,MENU_CENTREX,MENU_CENTREY-100,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
-			RenderSmallMenuText(ctime(&profilePtr->FileTime),MENU_CENTREX,MENU_CENTREY-70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
+			{
+				time_t fileTime = profilePtr->FileTime;
+				RenderSmallMenuText(ctime(&fileTime),MENU_CENTREX,MENU_CENTREY-70,ONE_FIXED,AVPMENUFORMAT_CENTREJUSTIFIED);
+			}
 			
 			RenderMenu();
 			RenderHelpString();
@@ -1758,7 +1767,10 @@ static void RenderUserProfileSelectMenu(void)
 			b=Brightness[i];
 			RenderMenuText_Clipped(textPtr,MENU_CENTREX,MENU_CENTREY+y-60,b,AVPMENUFORMAT_CENTREJUSTIFIED,MENU_CENTREY-60-100,MENU_CENTREY-30+150);
 			if (i > 0)
-				RenderSmallMenuText(ctime(&profilePtr->FileTime),MENU_CENTREX,MENU_CENTREY+y-30,b,AVPMENUFORMAT_CENTREJUSTIFIED);
+			{
+				time_t fileTime = profilePtr->FileTime;
+				RenderSmallMenuText(ctime(&fileTime),MENU_CENTREX,MENU_CENTREY+y-30,b,AVPMENUFORMAT_CENTREJUSTIFIED);
+			}
 		}
 	}
 

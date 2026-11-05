@@ -146,7 +146,7 @@ BOOL Object_Chunk::deassoc_with_shape (Shape_Chunk * shpch)
 
 BOOL Object_Chunk::file_equals(HANDLE &rif_file)
 {
-	unsigned long bytes_read;
+	DWORD bytes_read;
 	char name[50];
 
 	// get header list
@@ -484,7 +484,7 @@ size_t Object_Header_Chunk::size_chunk()
 
 BOOL Object_Header_Chunk::output_chunk (HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -611,7 +611,7 @@ Object_Notes_Chunk::~Object_Notes_Chunk ()
 
 BOOL Object_Notes_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -1111,9 +1111,9 @@ Object_Track_Sound_Chunk::Object_Track_Sound_Chunk(Chunk_With_Children* parent)
 Object_Track_Sound_Chunk::Object_Track_Sound_Chunk(Chunk_With_Children* const parent,const char* data,size_t const )
 :Chunk(parent,"TRAKSOUN")
 {
-	inner_range=*(unsigned long*)data;
+	inner_range=*(unsigned int*)data;
 	data+=4;
-	outer_range=*(unsigned long*)data;
+	outer_range=*(unsigned int*)data;
 	data+=4;
 
 	max_volume=*(int*)data;
@@ -1142,9 +1142,9 @@ void Object_Track_Sound_Chunk::fill_data_block(char* data_start)
 	*((int *) data_start) = chunk_size;
 	data_start += 4;
 	
-	*(unsigned long*)data_start=inner_range;
+	*(unsigned int*)data_start=inner_range;
 	data_start+=4;
-	*(unsigned long*)data_start=outer_range;
+	*(unsigned int*)data_start=outer_range;
 	data_start+=4;
 
 	*(int*)data_start=max_volume;

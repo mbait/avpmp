@@ -339,7 +339,7 @@ static void CheckTriangleBuffer(int rver, int sver, int rtri, int stri, D3DTextu
 		FlushTriangleBuffers(0);
 	}
 
-	if ((int)tex != -1)
+	if (tex != (D3DTexture *)-1)
 		CheckBoundTextureIsCorrect(tex);
 	if (mode != -1)
 		CheckTranslucencyModeIsCorrect(mode);

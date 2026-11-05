@@ -83,7 +83,7 @@ Sprite_Action_Chunk::~Sprite_Action_Chunk()
 
 BOOL Sprite_Action_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -276,7 +276,7 @@ int Sprite_Header_Chunk::write_file(const char* fname)
 
 BOOL Sprite_Header_Chunk::output_chunk(HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -406,7 +406,7 @@ Sprite_Size_Chunk::Sprite_Size_Chunk(Chunk_With_Children* parent)
 
 BOOL Sprite_Size_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -466,7 +466,7 @@ Sprite_Version_Number_Chunk::Sprite_Version_Number_Chunk(Chunk_With_Children* pa
 
 BOOL Sprite_Version_Number_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 

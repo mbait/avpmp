@@ -234,7 +234,7 @@ void DoObjectVisibility(STRATEGYBLOCK *sbPtr)
                 module. However, we will do a paranoia check for a null containingModule... */ 
                 if(!sbPtr->containingModule)    
                 {
-                        textprint("Calling Far EmergencyRelocateObject, On object %x, type %d!\n",(int)sbPtr, sbPtr->I_SBtype);
+                        textprint("Calling Far EmergencyRelocateObject, On object %p, type %d!\n",sbPtr, sbPtr->I_SBtype);
                         IdentifyObject(sbPtr);
                         if(!(EmergencyRelocateObject(sbPtr))) {
                                 textprint("Relocate failed!\n");
@@ -430,7 +430,7 @@ void DoObjectVisibility(STRATEGYBLOCK *sbPtr)
                 if(!(newModule))
                 {
                         /* attempt to relocate object */
-                        textprint("Calling Near EmergencyRelocateObject, On object %x, type %d!\n",(int)sbPtr, sbPtr->I_SBtype);
+                        textprint("Calling Near EmergencyRelocateObject, On object %p, type %d!\n",sbPtr, sbPtr->I_SBtype);
                         IdentifyObject(sbPtr);
                         if(!(EmergencyRelocateObject(sbPtr))) {
                                 textprint("Relocate failed!\n");

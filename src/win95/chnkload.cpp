@@ -45,6 +45,15 @@ extern LOADED_SOUND const * GetSoundForMainRif(const char* wav_name);
 extern char * extsounddir ;
 extern char * sounddir ;
 
+// preprocessed shape data is a memory image with 32-bit pointers in it,
+// so it is ignored (and the shape built from its other chunks) elsewhere
+static Shape_Preprocessed_Data_Chunk* lookup_preprocessed_data(Chunk_With_Children* shape)
+{
+	if (sizeof(void*) != sizeof(unsigned int))
+		return 0;
+	return (Shape_Preprocessed_Data_Chunk*)shape->lookup_single_child("SHPPRPRO");
+}
+
 struct Shape_Fragment_Type
 {
 	Shape_Fragment_Type(const char*);
@@ -755,7 +764,7 @@ CTM_ReturnType copy_to_mainshapelist(RIFFHANDLE h, Shape_Chunk * tmpshp, int fla
 	setup_tex_conv_array (local_max_index, local_tex_index_nos, h, tmpshp);
 	
 	
-	Shape_Preprocessed_Data_Chunk* spdc=(Shape_Preprocessed_Data_Chunk*)tmpshp->lookup_single_child("SHPPRPRO");
+	Shape_Preprocessed_Data_Chunk* spdc=lookup_preprocessed_data(tmpshp);
 	if(spdc)
 	{
 		copy_preprocessed_to_shapeheader (
@@ -1007,7 +1016,7 @@ CTM_ReturnType copy_to_mainshapelist(RIFFHANDLE h, Shape_Chunk * tmpshp, int fla
 							{
 								list_pos = GetMSLPos();
 
-								Shape_Preprocessed_Data_Chunk* spdc=(Shape_Preprocessed_Data_Chunk*)afi()->shape1a->lookup_single_child("SHPPRPRO");
+								Shape_Preprocessed_Data_Chunk* spdc=lookup_preprocessed_data(afi()->shape1a);
 								if(spdc)
 								{
 									copy_preprocessed_to_shapeheader (
@@ -1074,7 +1083,7 @@ CTM_ReturnType copy_to_mainshapelist(RIFFHANDLE h, Shape_Chunk * tmpshp, int fla
 							{
 								list_pos = GetMSLPos();
 
-								Shape_Preprocessed_Data_Chunk* spdc=(Shape_Preprocessed_Data_Chunk*)afi()->shape2a->lookup_single_child("SHPPRPRO");
+								Shape_Preprocessed_Data_Chunk* spdc=lookup_preprocessed_data(afi()->shape2a);
 								if(spdc)
 								{
 									copy_preprocessed_to_shapeheader (

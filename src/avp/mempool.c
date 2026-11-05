@@ -19,6 +19,9 @@ void* PoolAllocateMem(unsigned int amount)
 {
 	char* retval;
 
+	/* keep the blocks aligned for the pointers and structures stored in them */
+	amount=(amount+7)&~7;
+
 	GLOBALASSERT(amount<=MEMORY_BLOCK_SIZE)
 	
 	if(amount>MemoryLeft)

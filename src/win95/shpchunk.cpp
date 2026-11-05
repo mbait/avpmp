@@ -323,7 +323,7 @@ void Shape_Chunk::destroy_auxiliary_chunks()
 
 BOOL Shape_Chunk::file_equals(HANDLE &rif_file)
 {
-	unsigned long bytes_read;
+	DWORD bytes_read;
 	int id;
 	Shape_Header_Chunk * hdptr = get_header();
 
@@ -604,7 +604,7 @@ Shape_Vertex_Chunk::Shape_Vertex_Chunk(Anim_Shape_Frame_Chunk * parent, const ch
 
 BOOL Shape_Vertex_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -684,7 +684,7 @@ Shape_Vertex_Normal_Chunk::Shape_Vertex_Normal_Chunk(Shape_Sub_Shape_Chunk * par
 
 BOOL Shape_Vertex_Normal_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -781,7 +781,7 @@ Shape_Polygon_Normal_Chunk::Shape_Polygon_Normal_Chunk(Anim_Shape_Frame_Chunk * 
 
 BOOL Shape_Polygon_Normal_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -918,7 +918,7 @@ Shape_Polygon_Chunk::Shape_Polygon_Chunk (Console_Shape_Chunk * parent, const ch
 
 BOOL Shape_Polygon_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -1114,7 +1114,7 @@ uv_data (NULL), num_uvs (*((int *) uvdata))
 
 BOOL Shape_UV_Coord_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -1222,7 +1222,7 @@ tex_fns (), num_tex_fns (*((int *) tfndata))
 
 BOOL Shape_Texture_Filenames_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -1363,7 +1363,7 @@ size_t Shape_Header_Chunk::size_chunk()
 
 BOOL Shape_Header_Chunk::output_chunk(HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -3335,6 +3335,11 @@ void Shape_Preprocessed_Data_Chunk::fill_data_block(char* data_start)
 
 void* Shape_Preprocessed_Data_Chunk::GetMemoryBlock()
 {
+#if UINTPTR_MAX != UINT_MAX
+	// the block is an image of the shape data with 32-bit pointers,
+	// which can't be used as is when pointers are wider
+	return 0;
+#else
 	void* retval=memory_block;
 
 	unsigned int* current=(unsigned int*)&first_pointer;
@@ -3350,5 +3355,6 @@ void* Shape_Preprocessed_Data_Chunk::GetMemoryBlock()
 	memory_block=0;
 	block_size=0;
 	return retval;
+#endif
 }
 

@@ -3015,13 +3015,14 @@ void CreateTxAnimUVArray(int *txa_data, int *uv_array, int *shapeitemptr)
 
 	/* The sequence # will have been copied across by the control block */
 
-	sequence = *txa_data++;
+	sequence = *txa_data;
 
 	#if 0
 	textprint("sequence = %d\n", sequence);
 	#endif
 
-	txah_ptr = (TXANIMHEADER **) txa_data;
+	/* The sequence is stored in the first (pointer sized) array element */
+	txah_ptr = ((TXANIMHEADER **) txa_data) + 1;
 	txah = txah_ptr[sequence];
 	txaf = txah->txa_framedata;
 
@@ -3082,7 +3083,7 @@ void CreateTxAnimUVArray(int *txa_data, int *uv_array, int *shapeitemptr)
 		/*textprint("index = %d\n", index);*/
 
 
-		txf_imageptr = (int *) txaf0->txf_image;
+		txf_imageptr = ((TXANIMFRAME_MVS *) txaf0)->txf_images;
 		pheader->PolyColour |= txf_imageptr[index];
 
 
@@ -3464,9 +3465,9 @@ void ShapeSpriteRPointsInstr(SHAPEINSTR *shapeinstrptr)
 		texture_defn_index = (pheader->PolyColour >> TxDefn);
 		texture_defn_ptr = Global_ShapeTextures[texture_defn_index];
 
-		sequence = *texture_defn_ptr++;
+		sequence = *texture_defn_ptr;
 
-		txah_ptr = (TXANIMHEADER **) texture_defn_ptr;
+		txah_ptr = ((TXANIMHEADER **) texture_defn_ptr) + 1;
 		txah = txah_ptr[sequence];
 		txaf = txah->txa_framedata;
 
@@ -3666,9 +3667,9 @@ void ShapeSpriteRPointsInstr(SHAPEINSTR *shapeinstrptr)
 		texture_defn_index = (pheader->PolyColour >> TxDefn);
 		texture_defn_ptr = Global_ShapeTextures[texture_defn_index];
 
-		sequence = *texture_defn_ptr++;
+		sequence = *texture_defn_ptr;
 
-		txah_ptr = (TXANIMHEADER **) texture_defn_ptr;
+		txah_ptr = ((TXANIMHEADER **) texture_defn_ptr) + 1;
 		txah = txah_ptr[sequence];
 		txaf = txah->txa_framedata;
 

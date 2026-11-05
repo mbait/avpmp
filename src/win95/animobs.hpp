@@ -100,7 +100,7 @@ public:
 	ChunkQuat orientation;
 	ChunkVectorInt transform;
 	
-	signed long at_frame_no;  //frame start time (0-65535)
+	int at_frame_no;  //frame start time (0-65535)
 	
 	signed long frame_ref_no; //frame index number
 	 
@@ -246,7 +246,7 @@ struct Object_Animation_Frame
 {
 	ChunkQuat orientation;
 	ChunkVectorInt transform;
-	signed long at_frame_no;  //frame start time (0-65535)
+	int at_frame_no;  //frame start time (0-65535)
 	int flags;
 
 	int get_sound_index(){return ((flags & HierarchyFrame_SoundIndexMask )>>24);}

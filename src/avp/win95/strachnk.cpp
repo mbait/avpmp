@@ -151,7 +151,7 @@ AVP_Strategy_Chunk::~AVP_Strategy_Chunk()
 
 BOOL AVP_Strategy_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -246,7 +246,7 @@ AVP_External_Strategy_Chunk::~AVP_External_Strategy_Chunk()
 
 BOOL AVP_External_Strategy_Chunk::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -923,17 +923,17 @@ LightingStrategy::LightingStrategy(const char* data_start,size_t /*size */)
 {
 	data_start+=AvpStrat::GetStrategySize();
 	
-	LightData.type=*(unsigned long*)data_start;
+	LightData.type=*(unsigned int*)data_start;
 	data_start+=4;
-	LightData.init_state=*(unsigned long*)data_start;
+	LightData.init_state=*(unsigned int*)data_start;
 	data_start+=4;
-	LightData.fade_up_speed=*(unsigned long*)data_start;
+	LightData.fade_up_speed=*(unsigned int*)data_start;
 	data_start+=4;
-	LightData.fade_down_speed=*(unsigned long*)data_start;
+	LightData.fade_down_speed=*(unsigned int*)data_start;
 	data_start+=4;
-	LightData.post_fade_up_delay=*(unsigned long*)data_start;
+	LightData.post_fade_up_delay=*(unsigned int*)data_start;
 	data_start+=4;
-	LightData.post_fade_down_delay=*(unsigned long*)data_start;
+	LightData.post_fade_down_delay=*(unsigned int*)data_start;
 	data_start+=4;
 
 	pad1=*(int*)data_start;
@@ -952,17 +952,17 @@ void LightingStrategy::fill_data_block(char* data)
 	AvpStrat::fill_data_block(data);
 	data+=AvpStrat::GetStrategySize();
 	
-	*(unsigned long*)data=LightData.type;
+	*(unsigned int*)data=LightData.type;
 	data+=4;
-	*(unsigned long*)data=LightData.init_state;
+	*(unsigned int*)data=LightData.init_state;
 	data+=4;
-	*(unsigned long*)data=LightData.fade_up_speed;
+	*(unsigned int*)data=LightData.fade_up_speed;
 	data+=4;
-	*(unsigned long*)data=LightData.fade_down_speed;
+	*(unsigned int*)data=LightData.fade_down_speed;
 	data+=4;
-	*(unsigned long*)data=LightData.post_fade_up_delay;
+	*(unsigned int*)data=LightData.post_fade_up_delay;
 	data+=4;
-	*(unsigned long*)data=LightData.post_fade_down_delay;
+	*(unsigned int*)data=LightData.post_fade_down_delay;
 	data+=4;
 	*(int*)data=pad1;
 	data+=4;

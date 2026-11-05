@@ -69,7 +69,8 @@ typedef struct
 {
 	char Name[MAX_SIZE_OF_USERS_NAME+1];
 
-	time_t FileTime;
+	/* time_t is 32 bits wide in the original file layout */
+	unsigned int FileTime;
 
 	// used to be an incomplete SYSTEMTIME struct, TimeLastUpdated
 	int unused[6];

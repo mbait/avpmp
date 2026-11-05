@@ -17,7 +17,7 @@ Chunk * Parent_File;
 
 void list_chunks_in_file(List<int> * pList, HANDLE hand, char const * chunk_id)
 {
-	unsigned long bytes_read;
+	DWORD bytes_read;
 
 	char buffer[8];
 	BOOL ok = TRUE;
@@ -113,7 +113,7 @@ Chunk::Chunk(Chunk_With_Children * _parent, const char * _identifier)
 
 BOOL Chunk::output_chunk (HANDLE & hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -275,7 +275,7 @@ size_t Chunk_With_Children::size_chunk ()
 
 BOOL Chunk_With_Children::output_chunk (HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	Chunk * child_ptr = children;
 	BOOL ok;
 

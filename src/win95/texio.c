@@ -701,7 +701,7 @@ void MakeTxAnimFrameTexturesGlobal(SHAPEHEADER *sptr,
 
 				if(sptr->shapeflags & ShapeFlag_MultiViewSprite) {
 
-					txf_imageptr = (int *) txaf->txf_image;
+					txf_imageptr = ((TXANIMFRAME_MVS *) txaf)->txf_images;
 
 					for(image = txah->txa_num_mvs_images; image!=0; image--) {
 
@@ -880,7 +880,7 @@ void SpriteResizing(SHAPEHEADER *sptr)
 
 				if(sptr->shapeflags & ShapeFlag_MultiViewSprite) {
 
-					txf_imageptr = (int *) txaf->txf_image;
+					txf_imageptr = ((TXANIMFRAME_MVS *) txaf)->txf_images;
 					num_images = txah->txa_num_mvs_images;
 
 					txf_uvarrayptr = (int **) txaf->txf_uvdata;

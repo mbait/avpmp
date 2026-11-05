@@ -53,8 +53,8 @@ public:
 	void fill_data_block (char * data_start);
 	
 	char* wav_name;
-	unsigned long inner_range;
-	unsigned long outer_range;
+	unsigned int inner_range;
+	unsigned int outer_range;
 	int max_volume;
 	int	pitch;
 	int pad;	

@@ -3125,7 +3125,7 @@ void LoadModuleData()
 /* TODO: dir separator */
  	HANDLE file = CreateFile ("avp_rifs/module.bbb", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 
  					FILE_FLAG_RANDOM_ACCESS, 0);
-	unsigned long byteswritten;
+	DWORD byteswritten;
 	WriteFile(file,&Global_VDB_Ptr->VDB_World,sizeof(VECTORCH),&byteswritten,0);
 	WriteFile(file,&Global_VDB_Ptr->VDB_Mat,sizeof(MATRIXCH),&byteswritten,0);
  	
@@ -3147,7 +3147,7 @@ void LoadModuleData()
 	int file_size=GetFileSize(file,0);
 	GLOBALASSERT((file_size % 4)==0);
 	int pos=0;
-	unsigned long bytesread;
+	DWORD bytesread;
 	{
 		char name[60];
 		ReadFile(file,name,60,&bytesread,0);

@@ -726,7 +726,7 @@ int CL_LoadImageOnce(char const * pszFileName, unsigned fFlagsEtc)
 					(
 						fFlagsEtc & LIO_RESTORABLE ? "pxfXYB" : "pxfXY",
 						pFastFileData,
-						nFastFileLen,
+						(unsigned)nFastFileLen,
 						fAwLoad,
 						&nWidth,
 						&nHeight,
@@ -835,7 +835,7 @@ int CL_LoadImageOnce(char const * pszFileName, unsigned fFlagsEtc)
 					(
 						fFlagsEtc & LIO_RESTORABLE ? "pxfWHB" : "pxfWH",
 						pFastFileData,
-						nFastFileLen,
+						(unsigned)nFastFileLen,
 						fAwLoad,
 						&nWidth,
 						&nHeight,

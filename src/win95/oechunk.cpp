@@ -125,7 +125,7 @@ void Strategy_Chunk::fill_data_block(char* data_start)
 
 BOOL Map_Block_Chunk::output_chunk(HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 
@@ -142,7 +142,7 @@ BOOL Map_Block_Chunk::output_chunk(HANDLE &hand)
 
 BOOL Strategy_Chunk::output_chunk(HANDLE &hand)
 {
-	unsigned long junk;
+	DWORD junk;
 	BOOL ok;
 	char * data_block;
 

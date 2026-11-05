@@ -162,8 +162,8 @@ typedef unsigned __int64 uint64_t;
 
 HANDLE CreateFile(const char *file, int write, int x, int y, int flags, int flags2, int z);
 HANDLE CreateFileA(const char *file, int write, int x, int y, int flags, int flags2, int z);
-int WriteFile(HANDLE file, const void *data, int len, /* unsigned long */ void *byteswritten, int x);
-int ReadFile(HANDLE file, void *data, int len, /* unsigned long */ void *bytesread, int x);
+int WriteFile(HANDLE file, const void *data, int len, DWORD *byteswritten, int x);
+int ReadFile(HANDLE file, void *data, int len, DWORD *bytesread, int x);
 int GetFileSize(HANDLE file, int x);
 int CloseHandle(HANDLE file);
 int DeleteFile(const char *file);
