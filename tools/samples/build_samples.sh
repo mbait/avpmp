@@ -17,7 +17,7 @@ set -eu
 HERE=$(cd "$(dirname "$0")" && pwd)
 TOOLS=$(cd "$HERE/.." && pwd)
 OUT=${1:?usage: build_samples.sh OUT_DIR [AVP_DATA]}
-DATA=${2:-$HOME/avp-data}
+DATA=${2:-/mnt/truenas/projects/avpmp/data}
 : "${BLENDER:=blender}"
 mkdir -p "$OUT/build" "$OUT/pack/avp_rifs" "$OUT/pack/avp_huds"
 B="$OUT/build"

@@ -709,7 +709,7 @@ exits or silently drops data.
 See [`tools/README.md`](../tools/README.md) for installation and commands.
 In short:
 
-1. Install the game data: `tools/disc/avp_install.py AVP_GOLD.img ~/avp-data`.
+1. Install the game data: `tools/disc/avp_install.py AVP_GOLD.img /mnt/truenas/projects/avpmp/data`.
 2. Model in Blender with the `io_scene_avp_rif` add-on (live through MCP or
    in batch with `blender -b`):
    * **static props**: mesh objects; geometry in object space; one Image

@@ -15,14 +15,14 @@
 #   avpctl.sh turn left|right S  turn for S seconds (keypad 4/6; arrows strafe)
 #   avpctl.sh stop               kill the game (Xvfb is left running)
 #
-# Environment: AVP_DISPLAY (default :98), AVP_DATA (default ~/avp-data),
+# Environment: AVP_DISPLAY (default :98), AVP_DATA (default /mnt/truenas/projects/avpmp/data),
 #              AVP_BIN (default <repo>/avp), AVP_GL (libGL to load),
 #              AVP_LOG (game stdout/stderr, default /tmp/avp-game.log),
 #              AVP_ARGS (extra game arguments, e.g. -d for debug commands)
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${AVP_DISPLAY:=:98}"
-: "${AVP_DATA:=$HOME/avp-data}"
+: "${AVP_DATA:=/mnt/truenas/projects/avpmp/data}"
 : "${AVP_BIN:=$HERE/../../avp}"
 : "${AVP_GL:=libGL.so.1}"
 : "${AVP_LOG:=/tmp/avp-game.log}"

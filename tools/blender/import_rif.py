@@ -3,7 +3,7 @@
     blender -b [scene.blend] --python import_rif.py -- FILE.rif [options]
 
 Options:
-    --data-dir DIR      game data (for textures), default ~/avp-data
+    --data-dir DIR      game data (for textures), default /mnt/truenas/projects/avpmp/data
     --hierarchy NAME    only this hierarchy
     --no-anims          skip animations
     --filter TEXT       non-hierarchy files: object name filter
@@ -31,7 +31,7 @@ def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     ap = argparse.ArgumentParser(prog="import_rif.py")
     ap.add_argument("rif")
-    ap.add_argument("--data-dir", default=os.path.expanduser("~/avp-data"))
+    ap.add_argument("--data-dir", default="/mnt/truenas/projects/avpmp/data")
     ap.add_argument("--hierarchy", default="")
     ap.add_argument("--no-anims", action="store_true")
     ap.add_argument("--filter", default="")

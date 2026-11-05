@@ -33,8 +33,8 @@ The Linux port needs the installed, lower-cased data of the Gold Edition.
 The retail CD stores most of it scrambled (see RESOURCES.md §1):
 
 ```sh
-tools/disc/avp_install.py /path/to/AVP_GOLD.img ~/avp-data   # .img/.bin/.iso or a mounted CD root
-AVP_DATA=~/avp-data ./avp -w
+tools/disc/avp_install.py /path/to/AVP_GOLD.img /mnt/truenas/projects/avpmp/data   # .img/.bin/.iso or a mounted CD root
+AVP_DATA=/mnt/truenas/projects/avpmp/data ./avp -w
 ```
 
 Options: `--sound low` for the low-quality sound set, `--no-fmv`,
@@ -44,12 +44,12 @@ Options: `--sound low` for the low-quality sound set, `--no-fmv`,
 
 ```sh
 cd tools/rif
-python3 rifdump.py ~/avp-data/avp_huds/hnpcalien.rif | less          # chunk tree
+python3 rifdump.py /mnt/truenas/projects/avpmp/data/avp_huds/hnpcalien.rif | less          # chunk tree
 python3 rifdump.py FILE.rif -i OBHIERNM,OBJHIERD,BMPNAMES             # decode selected chunks
 python3 rifdump.py FILE.rif --json > tree.json
-python3 rifcheck.py ~/avp-data/avp_huds/*.rif                          # kind guessed from the path
+python3 rifcheck.py /mnt/truenas/projects/avpmp/data/avp_huds/*.rif                          # kind guessed from the path
 python3 rifcheck.py --kind hud my_weapon.rif
-python3 rifpatch.py list ~/avp-data/avp_rifs/derelict.rif --placed     # placed objects
+python3 rifpatch.py list /mnt/truenas/projects/avpmp/data/avp_rifs/derelict.rif --placed     # placed objects
 python3 rifpatch.py shape  BASE.rif NEW.rif OUT.rif --object table      # swap one object's mesh
 python3 rifpatch.py hierarchy BASE.rif NEW.rif OUT.rif --name "Pulse Rifle"
 python3 rifcompare.py A.rif B.rif --hierarchy alien
@@ -74,7 +74,7 @@ Tests:
 
 ```sh
 python3 -m unittest discover tools/rif/tests                   # synthetic
-AVP_DATA=~/avp-data python3 -m unittest discover tools/rif/tests  # + every stock RIF
+AVP_DATA=/mnt/truenas/projects/avpmp/data python3 -m unittest discover tools/rif/tests  # + every stock RIF
 ```
 
 ## 3. Blender add-on
@@ -109,7 +109,7 @@ stock models can be studied and their animations reused locally.
 
 ```sh
 blender -b --factory-startup --python tools/blender/import_rif.py -- \
-    ~/avp-data/avp_huds/hnpcalien.rif --hierarchy alien --clear \
+    /mnt/truenas/projects/avpmp/data/avp_huds/hnpcalien.rif --hierarchy alien --clear \
     --action 'alien|AlienRun_Standard' --frame 8 --render run.png --save alien.blend
 blender -b model.blend --python tools/blender/export_rif.py -- out/avp_huds/hnpcalien.rif \
     --riffname HNPCalien --texture-dir 'open\alien' --check hierarchy
@@ -134,7 +134,7 @@ this way.
 ## 4. Testing in the game
 
 ```sh
-tools/game/make_overlay.sh ~/avp-data /tmp/test-data my_pack/     # my_pack/avp_huds/..., graphics/...
+tools/game/make_overlay.sh /mnt/truenas/projects/avpmp/data /tmp/test-data my_pack/     # my_pack/avp_huds/..., graphics/...
 AVP_DATA=/tmp/test-data AVP_ARGS=-d tools/game/avpctl.sh start
 tools/game/avpctl.sh marine1                 # profile -> Marine episode 1
 tools/game/avpctl.sh console ALIENBOT        # needs -d
@@ -155,6 +155,6 @@ animations covering all 44 sequence ids). Rebuild them and assemble a
 playable overlay:
 
 ```sh
-BLENDER=blender tools/samples/build_samples.sh /tmp/avp-samples ~/avp-data
+BLENDER=blender tools/samples/build_samples.sh /tmp/avp-samples /mnt/truenas/projects/avpmp/data
 AVP_DATA=/tmp/avp-samples/data AVP_ARGS=-d tools/game/avpctl.sh start
 ```

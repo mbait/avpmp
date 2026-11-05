@@ -39,7 +39,7 @@ class AVP_Preferences(bpy.types.AddonPreferences):
         name="AvP data directory",
         description="Installed game data (avp_huds/, avp_rifs/, fastfile/, graphics/)",
         subtype="DIR_PATH",
-        default=os.path.expanduser("~/avp-data"))
+        default="/mnt/truenas/projects/avpmp/data")
 
     def draw(self, context):
         self.layout.prop(self, "data_dir")

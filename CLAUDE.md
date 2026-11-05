@@ -32,7 +32,7 @@ AVP_DATA=/path/to/avp-gold ./avp -w     # windowed
 ./avp -h                                 # options: -f/-w, -s nosound, -c nocdrom, -d debug commands, -g <libGL path>
 ```
 
-Install the data from the retail Gold CD (most files on it are scrambled) with `tools/disc/avp_install.py AVP_GOLD.img ~/avp-data`. Headless runs: `tools/game/avpctl.sh` (Xvfb, menu macros, console, screenshots; passes `-g libGL.so.1` by default, set `AVP_GL` to override).
+Install the data from the retail Gold CD (most files on it are scrambled) with `tools/disc/avp_install.py AVP_GOLD.img /mnt/truenas/projects/avpmp/data`. Headless runs: `tools/game/avpctl.sh` (Xvfb, menu macros, console, screenshots; passes `-g libGL.so.1` by default, set `AVP_GL` to override).
 
 OpenGL is `dlopen`ed at runtime (`load_opengl_library` in `src/main.c`, function pointers in `src/oglfunc.c`), so GL failures only show up when entering a game. FMVs (Bink/Smacker) are stubbed out.
 
@@ -61,9 +61,9 @@ Original Windows files that are **kept in the tree but not compiled** (useful as
 ## Resource tools (`tools/`, `docs/`)
 
 - `docs/RESOURCES.md` is the reference for the model resource formats (RIF chunks, shapes, hierarchies, animation, textures, fastfiles, CD scrambling) and the names/sequences the game code expects. Update it when you learn something new about the formats.
-- `tools/rif/avprif/` is a dependency-free Python 3 library for those formats; CLIs `rifdump.py`, `rifcheck.py`, `rifpatch.py`, `rifcompare.py` sit next to it. Tests: `python3 -m unittest discover tools/rif/tests` (set `AVP_DATA=~/avp-data` to also round-trip every stock RIF).
+- `tools/rif/avprif/` is a dependency-free Python 3 library for those formats; CLIs `rifdump.py`, `rifcheck.py`, `rifpatch.py`, `rifcompare.py` sit next to it. Tests: `python3 -m unittest discover tools/rif/tests` (set `AVP_DATA=/mnt/truenas/projects/avpmp/data` to also round-trip every stock RIF).
 - `tools/blender/io_scene_avp_rif/` is the Blender 4.2+ import/export add-on (it symlinks `avprif`); `import_rif.py`/`export_rif.py` run it headless, `start_blender_mcp.sh` runs it under the blender-mcp bridge.
-- Test modified data with `tools/game/make_overlay.sh BASE OVERLAY PACK...` (never edit `~/avp-data` in place) and `tools/game/avpctl.sh`. In windowed mode mouse buttons only work after `avpctl.sh grab`; turning is keypad 4/6. The game's lighting is dark, so brighten screenshots before judging whether something rendered.
+- Test modified data with `tools/game/make_overlay.sh BASE OVERLAY PACK...` (never edit `/mnt/truenas/projects/avpmp/data` in place) and `tools/game/avpctl.sh`. In windowed mode mouse buttons only work after `avpctl.sh grab`; turning is keypad 4/6. The game's lighting is dark, so brighten screenshots before judging whether something rendered.
 - Tools and docs are MIT licensed (`tools/LICENSE`, `docs/LICENSE`); the game source keeps the Rebellion license. Never commit game data or anything derived from it; `tools/samples/` must contain original work only.
 
 ## Conventions
